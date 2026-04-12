@@ -1,13 +1,22 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { lang, setLang, t } = useLanguage();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const toggleLang = () => {
     setLang(lang === 'en' ? 'ar' : 'en');
@@ -23,12 +32,17 @@ export default function Navbar() {
   return (
     <>
       <nav className="fixed top-0 left-0 w-full z-[100] flex flex-col pointer-events-none">
-        {/* Full-width Luxury Header Stage - Using Exact Pixel Match #231F20 */}
-        <div className="relative w-full h-28 md:h-36 bg-[#231F20] pointer-events-auto shadow-[0_10px_40px_rgba(0,0,0,0.8)] flex items-center justify-center">
-
+        {/* Full-width Luxury Header Stage */}
+        <motion.div 
+          animate={{ 
+            height: scrolled ? '100px' : '144px',
+            backgroundColor: scrolled ? 'rgba(13, 13, 13, 0.95)' : 'rgba(13, 13, 13, 1)'
+          }}
+          className="relative w-full pointer-events-auto backdrop-blur-md flex items-center justify-center transition-all duration-700 ease-[0.16, 1, 0.3, 1]"
+        >
           {/* Edge-to-Edge Content Container */}
           <div className="w-full h-full max-w-[1400px] relative flex items-center justify-center px-6">
-
+            
             {/* 1. Left Control: Language Switcher */}
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
@@ -37,17 +51,23 @@ export default function Navbar() {
             >
               <button 
                 onClick={toggleLang}
-                className="w-10 h-10 border border-gold/20 flex items-center justify-center rounded-full bg-background/40 backdrop-blur-md transition-all duration-500 hover:border-gold/50 group"
+                className="w-10 h-10 border border-gold/10 flex items-center justify-center rounded-full bg-white/5 backdrop-blur-xl transition-all duration-700 hover:border-gold/50 group"
               >
-                <span className="text-lg grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500">
+                <span className="text-lg grayscale group-hover:grayscale-0 transition-all duration-700 scale-90 group-hover:scale-110">
                   {lang === 'en' ? '🇬🇧' : '🇸🇦'}
                 </span>
               </button>
             </motion.div>
 
 
-            {/* 2. CENTER PIECE: The Enseigne Artwork (SLIGHTLY BIGGER) */}
-            <div className="relative w-[85%] h-[85%] md:h-[90%]">
+            {/* 2. CENTER PIECE: The Enseigne Artwork */}
+            <motion.div 
+              animate={{ 
+                scale: scrolled ? 0.8 : 1,
+                y: scrolled ? -2 : 0
+              }}
+              className="relative w-[70%] h-[70%] md:h-[80%] transition-all duration-700"
+            >
               <Image 
                 src="/media/optimized/enseigne-1.jpg"
                 alt="Sugi Sign"
@@ -55,7 +75,7 @@ export default function Navbar() {
                 className="object-contain"
                 priority
               />
-            </div>
+            </motion.div>
 
             {/* 3. Right Control: Complex Animated Hamburger */}
             <motion.button 
@@ -64,26 +84,29 @@ export default function Navbar() {
               animate={{ opacity: 1, x: 0 }}
               className="absolute right-6 md:right-10 w-12 h-12 flex items-center justify-center rounded-full border border-gold/10 hover:border-gold/30 transition-colors duration-500 z-[110]"
             >
-              <div className="flex flex-col gap-[6px] items-end">
+              <div className="flex flex-col gap-[8px] items-end">
                 <motion.div 
-                  animate={isOpen ? { rotate: 45, y: 8, width: "28px" } : { rotate: 0, y: 0, width: "22px" }}
-                  className="h-[1px] bg-gold rounded-full origin-center" 
+                  animate={isOpen ? { rotate: 45, y: 9, width: "32px" } : { rotate: 0, y: 0, width: "24px" }}
+                  className="h-[1px] bg-gold rounded-full origin-center transition-all duration-500" 
                 />
                 <motion.div 
-                  animate={isOpen ? { opacity: 0, x: 5 } : { opacity: 1, x: 0 }}
-                  className="w-4 h-[1px] bg-gold rounded-full" 
+                  animate={isOpen ? { opacity: 0, scale: 0 } : { opacity: 1, scale: 1 }}
+                  className="w-5 h-[1px] bg-gold rounded-full transition-all duration-500" 
                 />
                 <motion.div 
-                  animate={isOpen ? { rotate: -45, y: -8, width: "28px" } : { rotate: 0, y: 0, width: "22px" }}
-                  className="h-[1px] bg-gold rounded-full origin-center" 
+                  animate={isOpen ? { rotate: -45, y: -9, width: "32px" } : { rotate: 0, y: 0, width: "24px" }}
+                  className="h-[1px] bg-gold rounded-full origin-center transition-all duration-500" 
                 />
               </div>
             </motion.button>
           </div>
 
           {/* Bottom Luxury Line */}
-          <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
-        </div>
+          <motion.div 
+            animate={{ opacity: scrolled ? 1 : 0.3 }}
+            className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/40 to-transparent" 
+          />
+        </motion.div>
       </nav>
 
       {/* Full Screen Menu Overlay */}

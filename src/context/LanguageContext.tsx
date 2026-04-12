@@ -24,6 +24,7 @@ const translations = {
     'menu.cat.Specialty Rolls': 'Specialty Rolls',
     'menu.cat.Main Dishes': 'Main Dishes',
     'menu.cat.Desserts': 'Desserts',
+    'menu.back': 'Back to Categories',
     'location': 'Washington D.C.',
     'established': 'Established 2026',
   },
@@ -40,6 +41,7 @@ const translations = {
     'menu.cat.Specialty Rolls': 'لفائف خاصة',
     'menu.cat.Main Dishes': 'الأطباق الرئيسية',
     'menu.cat.Desserts': 'الحلويات',
+    'menu.back': 'العودة للتصنيفات',
     'location': 'واشنطن دي سي',
     'established': 'تأسس عام ٢٠٢٦',
   }
