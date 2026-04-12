@@ -10,8 +10,8 @@ export default function Navbar() {
   return (
     <>
       <nav className="fixed top-0 left-0 w-full z-[100] flex flex-col pointer-events-none">
-        {/* Full-width Luxury Header Stage */}
-        <div className="relative w-full h-24 md:h-32 bg-[#000000] pointer-events-auto shadow-[0_10px_40px_rgba(0,0,0,0.8)] flex items-center justify-center">
+        {/* Full-width Luxury Header Stage - Using Exact Pixel Match #231F20 */}
+        <div className="relative w-full h-28 md:h-36 bg-[#231F20] pointer-events-auto shadow-[0_10px_40px_rgba(0,0,0,0.8)] flex items-center justify-center">
           
           {/* Edge-to-Edge Content Container */}
           <div className="w-full h-full max-w-[1400px] relative flex items-center justify-center px-6">
@@ -22,13 +22,13 @@ export default function Navbar() {
               animate={{ opacity: 1, x: 0 }}
               className="absolute left-6 md:left-10 cursor-pointer"
             >
-              <div className="w-10 h-10 border border-gold/30 flex items-center justify-center rounded-sm bg-background/20 backdrop-blur-sm gold-glow">
-                <span className="text-gold font-serif text-lg pl-0.5 pt-0.5">杉</span>
+              <div className="w-10 h-10 border border-gold/20 flex items-center justify-center rounded-sm bg-background/20 backdrop-blur-sm">
+                <span className="text-gold font-serif text-lg pl-0.5 pt-0.5 opacity-80">杉</span>
               </div>
             </motion.div>
 
-            {/* 2. CENTER PIECE: The Enseigne Artwork (NOT CROPPED) */}
-            <div className="relative w-[60%] h-[70%] md:h-[80%]">
+            {/* 2. CENTER PIECE: The Enseigne Artwork (SLIGHTLY BIGGER) */}
+            <div className="relative w-[85%] h-[85%] md:h-[90%]">
               <Image 
                 src="/media/optimized/enseigne-1.jpg"
                 alt="Sugi Sign"
@@ -43,11 +43,11 @@ export default function Navbar() {
               onClick={() => setIsOpen(!isOpen)}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="absolute right-6 md:right-10 w-12 h-12 flex items-center justify-center rounded-full border border-gold/20 hover:border-gold/50 transition-colors duration-500 z-[110]"
+              className="absolute right-6 md:right-10 w-12 h-12 flex items-center justify-center rounded-full border border-gold/10 hover:border-gold/30 transition-colors duration-500 z-[110]"
             >
               <div className="flex flex-col gap-[6px] items-end">
                 <motion.div 
-                  animate={isOpen ? { rotate: 45, y: 8, width: "28px" } : { rotate: 0, y: 0, width: "24px" }}
+                  animate={isOpen ? { rotate: 45, y: 8, width: "28px" } : { rotate: 0, y: 0, width: "22px" }}
                   className="h-[1px] bg-gold rounded-full origin-center" 
                 />
                 <motion.div 
@@ -55,7 +55,7 @@ export default function Navbar() {
                   className="w-4 h-[1px] bg-gold rounded-full" 
                 />
                 <motion.div 
-                  animate={isOpen ? { rotate: -45, y: -8, width: "28px" } : { rotate: 0, y: 0, width: "24px" }}
+                  animate={isOpen ? { rotate: -45, y: -8, width: "28px" } : { rotate: 0, y: 0, width: "22px" }}
                   className="h-[1px] bg-gold rounded-full origin-center" 
                 />
               </div>
