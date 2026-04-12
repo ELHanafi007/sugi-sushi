@@ -48,37 +48,60 @@ export default function MenuSection() {
       </div>
 
       {/* Sharp Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-16 max-w-5xl w-full">
+      <div className="max-w-5xl w-full">
         <AnimatePresence mode="wait">
-          {filteredItems.map((item, idx) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, x: idx % 2 === 0 ? -10 : 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.6, delay: idx * 0.05 }}
-              className="group flex flex-col gap-4 border-b border-gold/10 pb-6 hover:border-gold/30 transition-colors duration-700"
-            >
-              <div className="flex justify-between items-baseline">
-                <h3 className="text-foreground text-lg font-serif group-hover:text-gold transition-colors duration-500 uppercase tracking-wide">
-                  {lang === 'ar' ? item.nameAr || item.name : item.name}
-                </h3>
-                <span className="text-gold/60 font-serif italic text-sm pl-4">
-                  {item.price}
-                </span>
-              </div>
-              <p className="text-foreground/40 text-xs font-light leading-relaxed tracking-wider italic">
-                {lang === 'ar' ? item.descriptionAr || item.description : item.description}
-              </p>
-              <div className="flex gap-2">
-                {item.tags.map(tag => (
-                  <span key={tag} className="text-[7px] border border-gold/10 px-2 py-0.5 rounded-full text-gold/30 uppercase tracking-widest">
-                    {tag}
+          <motion.div
+            key={activeCategory}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { 
+                opacity: 1,
+                transition: { 
+                  staggerChildren: 0.1,
+                  delayChildren: 0.1 
+                } 
+              },
+              exit: { 
+                opacity: 0,
+                transition: { duration: 0.3 }
+              }
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-16 w-full"
+          >
+            {filteredItems.map((item) => (
+              <motion.div
+                key={item.id}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+                }}
+                className="group flex flex-col gap-4 border-b border-gold/10 pb-6 hover:border-gold/40 transition-all duration-700 cursor-default"
+              >
+                <div className="flex justify-between items-baseline gap-4">
+                  <h3 className="text-foreground text-lg font-serif group-hover:text-gold transition-colors duration-500 uppercase tracking-[0.15em]">
+                    {lang === 'ar' ? item.nameAr || item.name : item.name}
+                  </h3>
+                  <div className="flex-grow border-b border-dotted border-gold/10 group-hover:border-gold/30 transition-colors duration-700" />
+                  <span className="text-gold font-serif italic text-base whitespace-nowrap">
+                    {item.price} <span className="text-[10px] not-italic uppercase tracking-tighter ml-1">SR</span>
                   </span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
+                </div>
+                <p className="text-foreground/50 text-xs font-light leading-relaxed tracking-wider italic min-h-[2.5em]">
+                  {lang === 'ar' ? item.descriptionAr || item.description : item.description}
+                </p>
+                <div className="flex gap-2">
+                  {item.tags.map(tag => (
+                    <span key={tag} className="text-[8px] border border-gold/10 px-3 py-1 rounded-full text-gold/40 uppercase tracking-[0.2em] group-hover:border-gold/30 group-hover:text-gold/60 transition-all duration-700">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </AnimatePresence>
       </div>
 
