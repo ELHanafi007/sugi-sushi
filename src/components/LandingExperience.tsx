@@ -26,8 +26,8 @@ export default function LandingExperience() {
           transition={{ duration: 1.2, delay: 0.5 }}
           className="flex flex-col items-center"
         >
-          {/* THE REAL LOGO */}
-          <div className="relative w-64 h-32 md:w-96 md:h-48 drop-shadow-2xl">
+          {/* THE REAL LOGO with Gold Filter for Luxury feel */}
+          <div className="relative w-64 h-32 md:w-96 md:h-48 gold-glow filter-gold">
             <Image 
               src="/media/optimized/brand-logo.png" 
               alt="Sugi Logo" 
@@ -42,7 +42,7 @@ export default function LandingExperience() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.5, delay: 1.2 }}
-          className="text-foreground text-[10px] md:text-xs tracking-[0.5em] md:tracking-[0.8em] uppercase font-light drop-shadow-lg pl-[0.5em] md:pl-[0.8em] opacity-80"
+          className="text-foreground/80 text-[10px] md:text-xs tracking-[0.5em] md:tracking-[0.8em] uppercase font-light drop-shadow-md pl-[0.5em] md:pl-[0.8em]"
         >
           Artistry in every slice
         </motion.p>

@@ -14,7 +14,7 @@ export default function Navbar() {
         animate={{ opacity: 1, x: 0 }}
         className="pointer-events-auto cursor-pointer"
       >
-        <div className="w-10 h-10 border border-gold/40 flex items-center justify-center rounded-sm bg-background/20 backdrop-blur-sm">
+        <div className="w-10 h-10 border border-gold/40 flex items-center justify-center rounded-sm bg-background/40 backdrop-blur-md gold-glow">
           <span className="text-gold font-serif text-xl pl-0.5 pt-0.5">杉</span>
         </div>
       </motion.div>
@@ -27,12 +27,12 @@ export default function Navbar() {
         className="pointer-events-auto flex flex-col gap-2 p-2 group"
       >
         <motion.div 
-          animate={isOpen ? { rotate: 45, y: 5 } : { rotate: 0, y: 0 }}
-          className="w-8 h-[1px] bg-gold group-hover:bg-foreground transition-colors duration-500" 
+          animate={isOpen ? { rotate: 45, y: 5, backgroundColor: '#fcfaf7' } : { rotate: 0, y: 0, backgroundColor: '#d4af37' }}
+          className="w-8 h-[1px] group-hover:bg-foreground transition-colors duration-500" 
         />
         <motion.div 
-          animate={isOpen ? { rotate: -45, y: -5 } : { rotate: 0, y: 0 }}
-          className="w-8 h-[1px] bg-gold group-hover:bg-foreground transition-colors duration-500" 
+          animate={isOpen ? { rotate: -45, y: -5, backgroundColor: '#fcfaf7' } : { rotate: 0, y: 0, backgroundColor: '#d4af37' }}
+          className="w-8 h-[1px] group-hover:bg-foreground transition-colors duration-500" 
         />
       </motion.button>
 
