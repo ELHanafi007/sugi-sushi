@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 
 export default function LandingExperience() {
   return (
@@ -14,51 +13,44 @@ export default function LandingExperience() {
           transition={{ duration: 1.5, ease: "easeOut" }}
           className="h-full w-full bg-[url('/media/optimized/hero-wallpaper-alt-0.jpg')] bg-cover bg-center"
         />
-        {/* Enseigne Top Artwork Overlay */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 0.6, y: 0 }}
-          transition={{ delay: 1, duration: 1.5 }}
-          className="absolute top-0 left-0 w-full h-[30vh] bg-[url('/media/optimized/enseigne-1.jpg')] bg-contain bg-top bg-no-repeat z-10 opacity-40 mix-blend-screen"
-        />
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background z-10" />
       </div>
 
-      
-      {/* Centered Brand Moment */}
-      <div className="relative z-30 flex flex-col items-center gap-6 px-6 text-center">
+      {/* Elegant Animated Calligraphy (Replacing the logo) */}
+      <div className="relative z-30 flex flex-col items-center">
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.5 }}
-          className="flex flex-col items-center"
+          initial={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
+          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
+          className="relative"
         >
-          {/* THE REAL LOGO with Gold Filter for Luxury feel */}
-          <div className="relative w-64 h-32 md:w-96 md:h-48 gold-glow filter-gold">
-            <Image 
-              src="/media/optimized/brand-logo.png" 
-              alt="Sugi Logo" 
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
+          {/* Main Sugi Kanji - Luxury Animation */}
+          <span className="text-[120px] md:text-[200px] font-serif text-gold drop-shadow-[0_0_30px_rgba(212,175,55,0.4)] select-none">
+            杉
+          </span>
+
+          {/* Subtle gold particle/glow effect around kanji */}
+          <motion.div 
+            animate={{ 
+              opacity: [0.2, 0.5, 0.2],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 bg-gold/10 blur-[60px] rounded-full"
+          />
         </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5, delay: 1.2 }}
-          className="text-foreground/80 text-[10px] md:text-xs tracking-[0.5em] md:tracking-[0.8em] uppercase font-light drop-shadow-md pl-[0.5em] md:pl-[0.8em]"
+        {/* Elegant Subtitle */}
+        <motion.div
+          initial={{ opacity: 0, letterSpacing: "0.2em" }}
+          animate={{ opacity: 0.8, letterSpacing: "0.8em" }}
+          transition={{ duration: 2, delay: 1.5 }}
+          className="text-foreground text-[10px] md:text-xs uppercase font-light pl-[0.8em] mt-4"
         >
           Artistry in every slice
-        </motion.p>
-      </div>
-
-      {/* Background Kanji - Subtler */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vh] md:text-[50vh] text-white/[0.04] font-serif pointer-events-none z-10">
-        杉
+        </motion.div>
       </div>
     </section>
   );
 }
+

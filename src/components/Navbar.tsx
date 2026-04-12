@@ -2,66 +2,64 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Complex Katana-X Transition Variants
-  const topBarVariants = {
-    closed: { rotate: 0, y: 0, width: "32px" },
-    opened: { rotate: 45, y: 8, width: "40px" }
-  };
-
-  const bottomBarVariants = {
-    closed: { rotate: 0, y: 0, width: "32px", opacity: 1 },
-    opened: { rotate: -45, y: -8, width: "40px" }
-  };
-
-  const middleBarVariants = {
-    closed: { opacity: 1, x: 0 },
-    opened: { opacity: 0, x: 20 }
-  };
-
   return (
-    <nav className="fixed top-0 left-0 w-full z-[100] px-6 py-8 flex justify-between items-center pointer-events-none">
-      {/* Brand Monogram */}
-      <motion.div 
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="pointer-events-auto cursor-pointer"
-      >
-        <div className="w-12 h-12 border border-gold/60 flex items-center justify-center rounded-sm bg-background/60 backdrop-blur-md gold-glow shadow-[0_0_15px_rgba(212,175,55,0.2)]">
-          <span className="text-gold font-serif text-2xl pl-0.5 pt-0.5">杉</span>
+    <>
+      <nav className="fixed top-0 left-0 w-full z-[100] flex flex-col pointer-events-none">
+        {/* Enseigne Header Artwork - Acts as the bar background */}
+        <div className="relative w-full h-24 md:h-32 overflow-hidden pointer-events-auto">
+          <Image 
+            src="/media/optimized/enseigne-1.jpg"
+            alt="Sugi Header"
+            fill
+            className="object-contain object-top brightness-110 contrast-110 mix-blend-screen"
+            priority
+          />
+          {/* Subtle gold line below the artwork */}
+          <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
         </div>
-      </motion.div>
 
-      {/* Complex Animated Hamburger - Top Right */}
-      <motion.button 
-        onClick={() => setIsOpen(!isOpen)}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="pointer-events-auto relative w-14 h-14 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-xl border border-gold/30 shadow-[0_0_20px_rgba(0,0,0,0.5)] z-[110]"
-      >
-        <div className="flex flex-col gap-[7px] items-end">
+        {/* Floating Controls Row */}
+        <div className="flex justify-between items-center px-6 py-4 -mt-4">
+          {/* Brand Monogram */}
           <motion.div 
-            variants={topBarVariants}
-            animate={isOpen ? "opened" : "closed"}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="h-[2px] bg-gold rounded-full origin-center shadow-[0_0_8px_rgba(212,175,55,0.5)]" 
-          />
-          <motion.div 
-            variants={middleBarVariants}
-            animate={isOpen ? "opened" : "closed"}
-            className="w-6 h-[2px] bg-gold rounded-full shadow-[0_0_8px_rgba(212,175,55,0.5)]" 
-          />
-          <motion.div 
-            variants={bottomBarVariants}
-            animate={isOpen ? "opened" : "closed"}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="h-[2px] bg-gold rounded-full origin-center shadow-[0_0_8px_rgba(212,175,55,0.5)]" 
-          />
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="pointer-events-auto cursor-pointer"
+          >
+            <div className="w-10 h-10 border border-gold/40 flex items-center justify-center rounded-sm bg-background/60 backdrop-blur-md gold-glow">
+              <span className="text-gold font-serif text-xl pl-0.5 pt-0.5">杉</span>
+            </div>
+          </motion.div>
+
+          {/* Complex Animated Hamburger */}
+          <motion.button 
+            onClick={() => setIsOpen(!isOpen)}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="pointer-events-auto relative w-12 h-12 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-xl border border-gold/30 shadow-lg z-[110]"
+          >
+            <div className="flex flex-col gap-[6px] items-end">
+              <motion.div 
+                animate={isOpen ? { rotate: 45, y: 8, width: "32px" } : { rotate: 0, y: 0, width: "24px" }}
+                className="h-[1.5px] bg-gold rounded-full origin-center" 
+              />
+              <motion.div 
+                animate={isOpen ? { opacity: 0, x: 10 } : { opacity: 1, x: 0 }}
+                className="w-5 h-[1.5px] bg-gold rounded-full" 
+              />
+              <motion.div 
+                animate={isOpen ? { rotate: -45, y: -8, width: "32px" } : { rotate: 0, y: 0, width: "24px" }}
+                className="h-[1.5px] bg-gold rounded-full origin-center" 
+              />
+            </div>
+          </motion.button>
         </div>
-      </motion.button>
+      </nav>
 
       {/* Full Screen Menu Overlay */}
       <AnimatePresence>
@@ -111,6 +109,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   );
 }
