@@ -1,67 +1,41 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 
 export default function LandingExperience() {
-  const [isVisible, setIsVisible] = useState(true);
-
-  // The "Sugi" Expo Out Curve
-  const transition = { duration: 1.2, ease: [0.16, 1, 0.3, 1] };
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 1.05 }}
-      transition={transition}
-      className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-background"
-    >
-      {/* Background Living Canvas - Placeholder for TIFF Artwork */}
-      <div className="absolute inset-0 z-0">
+    <section className="relative h-screen w-full flex flex-col items-center justify-center bg-background washi overflow-hidden">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 z-0 vignette opacity-60" />
+      
+      {/* Centered Brand Moment */}
+      <div className="relative z-10 flex flex-col items-center gap-8">
         <motion.div
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-          className="h-full w-full bg-[url('/media/source/placeholder-bg.jpg')] bg-cover bg-center opacity-40 grayscale-[20%]"
-        />
-        {/* Sumi-e Mist Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
-      </div>
-
-      {/* Brand Moment */}
-      <div className="relative z-10 flex flex-col items-center gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ ...transition, delay: 0.5 }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center gap-4"
         >
-          {/* Logo Placeholder - Will be SVG or PNG from the assets */}
-          <div className="text-gold text-4xl md:text-6xl font-serif tracking-widest uppercase">
+          <h1 className="text-gold text-6xl md:text-9xl font-serif tracking-[0.6em] md:tracking-[0.8em] uppercase pl-[0.6em] md:pl-[0.8em] select-none">
             Sugi
-          </div>
+          </h1>
+          <div className="h-[1px] w-20 md:w-32 bg-gold/20" />
         </motion.div>
 
-        <motion.div
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 2, delay: 1.2 }}
-          className="text-foreground/60 text-sm md:text-base font-light tracking-[0.4em] uppercase"
+          transition={{ duration: 2, delay: 1 }}
+          className="text-foreground/40 text-[10px] md:text-xs tracking-[0.4em] md:tracking-[0.6em] uppercase font-light"
         >
           Artistry in every slice
-        </motion.div>
+        </motion.p>
       </div>
 
-      {/* Navigation Anchor Suggestion (Nature Anchors Phase 2) */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ ...transition, delay: 1.8 }}
-        className="absolute bottom-12 flex flex-col items-center gap-2 cursor-pointer"
-        onClick={() => setIsVisible(false)}
-      >
-        <span className="text-[10px] tracking-[0.5em] text-gold uppercase">Begin Ritual</span>
-        <div className="w-[1px] h-12 bg-gradient-to-b from-gold to-transparent" />
-      </motion.div>
-    </motion.div>
+      {/* Background Kanji for Depth */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vh] md:text-[50vh] text-white/[0.02] font-serif select-none pointer-events-none z-0">
+        杉
+      </div>
+    </section>
   );
 }
