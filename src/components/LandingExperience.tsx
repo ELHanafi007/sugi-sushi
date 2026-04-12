@@ -1,8 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function LandingExperience() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative h-screen w-full flex flex-col items-center justify-center bg-background washi overflow-hidden">
       {/* Background Image - Using the alt wallpaper with natural colors */}
@@ -50,7 +53,7 @@ export default function LandingExperience() {
           transition={{ duration: 2, delay: 1.5 }}
           className="text-foreground text-[11px] md:text-sm uppercase font-medium pl-[0.8em] mt-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]"
         >
-          Artistry in every slice
+          {t('hero.subtitle')}
         </motion.div>
       </div>
     </section>

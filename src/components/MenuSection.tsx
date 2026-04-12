@@ -3,8 +3,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { MENU_DATA, CATEGORIES } from '@/data/menuData';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function MenuSection() {
+  const { t, lang } = useLanguage();
   const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
   const filteredItems = MENU_DATA.filter(item => item.category === activeCategory);
 
@@ -17,8 +19,8 @@ export default function MenuSection() {
         viewport={{ once: true }}
         className="flex flex-col items-center mb-24"
       >
-        <span className="text-gold text-[10px] tracking-[0.8em] uppercase mb-4 pl-[0.8em]">The Collection</span>
-        <h2 className="text-foreground text-4xl font-serif uppercase tracking-widest">Menu</h2>
+        <span className="text-gold text-[10px] tracking-[0.8em] uppercase mb-4 pl-[0.8em]">{t('menu.collection')}</span>
+        <h2 className="text-foreground text-4xl font-serif uppercase tracking-widest">{t('menu.title')}</h2>
         <div className="h-[1px] w-12 bg-gold/40 mt-8" />
       </motion.div>
 
@@ -33,7 +35,7 @@ export default function MenuSection() {
                 activeCategory === cat ? 'text-gold' : 'text-foreground/30 hover:text-foreground/60'
               }`}
             >
-              {cat}
+              {t(`menu.cat.${cat}`)}
               {activeCategory === cat && (
                 <motion.div 
                   layoutId="activeUnderline"
@@ -59,14 +61,14 @@ export default function MenuSection() {
             >
               <div className="flex justify-between items-baseline">
                 <h3 className="text-foreground text-lg font-serif group-hover:text-gold transition-colors duration-500 uppercase tracking-wide">
-                  {item.name}
+                  {lang === 'ar' ? item.nameAr || item.name : item.name}
                 </h3>
                 <span className="text-gold/60 font-serif italic text-sm pl-4">
                   {item.price}
                 </span>
               </div>
               <p className="text-foreground/40 text-xs font-light leading-relaxed tracking-wider italic">
-                {item.description}
+                {lang === 'ar' ? item.descriptionAr || item.description : item.description}
               </p>
               <div className="flex gap-2">
                 {item.tags.map(tag => (
