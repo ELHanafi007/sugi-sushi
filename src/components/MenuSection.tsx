@@ -56,7 +56,7 @@ export default function MenuSection() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8"
             >
               {CATEGORIES.map((cat, idx) => (
                 <motion.div
@@ -65,7 +65,7 @@ export default function MenuSection() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1 + 0.2, duration: 1 }}
                   onClick={() => setActiveCategory(cat)}
-                  className="group relative h-[450px] cursor-pointer overflow-hidden border border-white/5 hover:border-gold/30 transition-all duration-700 rounded-sm"
+                  className="group relative h-[250px] md:h-[450px] cursor-pointer overflow-hidden border border-white/5 hover:border-gold/30 transition-all duration-700 rounded-sm"
                 >
                   {/* Category Image Background */}
                   <Image 
