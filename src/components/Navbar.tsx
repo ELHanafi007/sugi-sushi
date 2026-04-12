@@ -10,54 +10,55 @@ export default function Navbar() {
   return (
     <>
       <nav className="fixed top-0 left-0 w-full z-[100] flex flex-col pointer-events-none">
-        {/* Enseigne Header Artwork - Acts as the bar background */}
-        <div className="relative w-full h-24 md:h-32 overflow-hidden pointer-events-auto">
+        {/* Larger Enseigne Header Artwork - Containing the Icons */}
+        <div className="relative w-full h-32 md:h-48 overflow-hidden pointer-events-auto shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
           <Image 
             src="/media/optimized/enseigne-1.jpg"
             alt="Sugi Header"
             fill
-            className="object-contain object-top brightness-110 contrast-110 mix-blend-screen"
+            className="object-cover object-top brightness-110 contrast-110 mix-blend-lighten"
             priority
           />
-          {/* Subtle gold line below the artwork */}
-          <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
-        </div>
+          
+          {/* Internal Controls Overlay */}
+          <div className="absolute inset-0 flex justify-between items-center px-6 md:px-10">
+            {/* Brand Monogram - Inside the sign */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="cursor-pointer"
+            >
+              <div className="w-12 h-12 border border-gold/40 flex items-center justify-center rounded-sm bg-background/40 backdrop-blur-md gold-glow">
+                <span className="text-gold font-serif text-2xl pl-0.5 pt-0.5">杉</span>
+              </div>
+            </motion.div>
 
-        {/* Floating Controls Row */}
-        <div className="flex justify-between items-center px-6 py-4 -mt-4">
-          {/* Brand Monogram */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="pointer-events-auto cursor-pointer"
-          >
-            <div className="w-10 h-10 border border-gold/40 flex items-center justify-center rounded-sm bg-background/60 backdrop-blur-md gold-glow">
-              <span className="text-gold font-serif text-xl pl-0.5 pt-0.5">杉</span>
-            </div>
-          </motion.div>
+            {/* Complex Animated Hamburger - Inside the sign */}
+            <motion.button 
+              onClick={() => setIsOpen(!isOpen)}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="relative w-14 h-14 flex items-center justify-center rounded-full bg-background/60 backdrop-blur-xl border border-gold/30 shadow-2xl z-[110]"
+            >
+              <div className="flex flex-col gap-[7px] items-end">
+                <motion.div 
+                  animate={isOpen ? { rotate: 45, y: 9, width: "32px" } : { rotate: 0, y: 0, width: "28px" }}
+                  className="h-[2px] bg-gold rounded-full origin-center shadow-[0_0_8px_rgba(212,175,55,0.4)]" 
+                />
+                <motion.div 
+                  animate={isOpen ? { opacity: 0, x: 10 } : { opacity: 1, x: 0 }}
+                  className="w-6 h-[2px] bg-gold rounded-full shadow-[0_0_8px_rgba(212,175,55,0.4)]" 
+                />
+                <motion.div 
+                  animate={isOpen ? { rotate: -45, y: -9, width: "32px" } : { rotate: 0, y: 0, width: "28px" }}
+                  className="h-[2px] bg-gold rounded-full origin-center shadow-[0_0_8px_rgba(212,175,55,0.4)]" 
+                />
+              </div>
+            </motion.button>
+          </div>
 
-          {/* Complex Animated Hamburger */}
-          <motion.button 
-            onClick={() => setIsOpen(!isOpen)}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="pointer-events-auto relative w-12 h-12 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-xl border border-gold/30 shadow-lg z-[110]"
-          >
-            <div className="flex flex-col gap-[6px] items-end">
-              <motion.div 
-                animate={isOpen ? { rotate: 45, y: 8, width: "32px" } : { rotate: 0, y: 0, width: "24px" }}
-                className="h-[1.5px] bg-gold rounded-full origin-center" 
-              />
-              <motion.div 
-                animate={isOpen ? { opacity: 0, x: 10 } : { opacity: 1, x: 0 }}
-                className="w-5 h-[1.5px] bg-gold rounded-full" 
-              />
-              <motion.div 
-                animate={isOpen ? { rotate: -45, y: -8, width: "32px" } : { rotate: 0, y: 0, width: "24px" }}
-                className="h-[1.5px] bg-gold rounded-full origin-center" 
-              />
-            </div>
-          </motion.button>
+          {/* Bottom Edge Gold Line */}
+          <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
         </div>
       </nav>
 
