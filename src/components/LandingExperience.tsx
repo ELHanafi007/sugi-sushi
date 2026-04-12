@@ -14,9 +14,16 @@ export default function LandingExperience() {
           transition={{ duration: 1.5, ease: "easeOut" }}
           className="h-full w-full bg-[url('/media/optimized/hero-wallpaper-alt-0.jpg')] bg-cover bg-center"
         />
-        {/* Subtle overlay only to ensure text contrast */}
-        <div className="absolute inset-0 bg-black/20 z-10" />
+        {/* Enseigne Top Artwork Overlay */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 0.6, y: 0 }}
+          transition={{ delay: 1, duration: 1.5 }}
+          className="absolute top-0 left-0 w-full h-[30vh] bg-[url('/media/optimized/enseigne-1.jpg')] bg-contain bg-top bg-no-repeat z-10 opacity-40 mix-blend-screen"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background z-10" />
       </div>
+
       
       {/* Centered Brand Moment */}
       <div className="relative z-30 flex flex-col items-center gap-6 px-6 text-center">
