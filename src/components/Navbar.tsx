@@ -16,16 +16,21 @@ export default function Navbar() {
           {/* Edge-to-Edge Content Container */}
           <div className="w-full h-full max-w-[1400px] relative flex items-center justify-center px-6">
             
-            {/* 1. Left Control: Brand Monogram */}
+            {/* 1. Left Control: Language Switcher */}
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="absolute left-6 md:left-10 cursor-pointer"
+              className="absolute left-6 md:left-10 flex items-center gap-2 pointer-events-auto"
             >
-              <div className="w-10 h-10 border border-gold/20 flex items-center justify-center rounded-sm bg-background/20 backdrop-blur-sm">
-                <span className="text-gold font-serif text-lg pl-0.5 pt-0.5 opacity-80">杉</span>
-              </div>
+              <button className="w-10 h-10 border border-gold/20 flex items-center justify-center rounded-full bg-background/40 backdrop-blur-md transition-all duration-500 hover:border-gold/50 group">
+                <span className="text-lg grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500">🇬🇧</span>
+              </button>
+              <div className="w-[1px] h-4 bg-gold/20 mx-1" />
+              <button className="w-10 h-10 border border-gold/20 flex items-center justify-center rounded-full bg-background/40 backdrop-blur-md transition-all duration-500 hover:border-gold/50 group">
+                <span className="text-lg grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500">🇸🇦</span>
+              </button>
             </motion.div>
+
 
             {/* 2. CENTER PIECE: The Enseigne Artwork (SLIGHTLY BIGGER) */}
             <div className="relative w-[85%] h-[85%] md:h-[90%]">
