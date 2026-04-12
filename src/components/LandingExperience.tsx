@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export default function LandingExperience() {
   return (
@@ -13,29 +14,35 @@ export default function LandingExperience() {
           transition={{ duration: 1.5, ease: "easeOut" }}
           className="h-full w-full bg-[url('/media/optimized/hero-wallpaper-alt-0.jpg')] bg-cover bg-center"
         />
-        {/* Subtle overlay only to ensure text contrast, no more heavy blackening */}
-        <div className="absolute inset-0 bg-black/10 z-10" />
+        {/* Subtle overlay only to ensure text contrast */}
+        <div className="absolute inset-0 bg-black/20 z-10" />
       </div>
       
       {/* Centered Brand Moment */}
-      <div className="relative z-30 flex flex-col items-center gap-8 px-6 text-center">
+      <div className="relative z-30 flex flex-col items-center gap-6 px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 0.5 }}
-          className="flex flex-col items-center gap-4"
+          className="flex flex-col items-center"
         >
-          <h1 className="text-gold text-6xl md:text-9xl font-serif tracking-[0.5em] md:tracking-[0.7em] uppercase pl-[0.5em] md:pl-[0.7em] drop-shadow-2xl">
-            Sugi
-          </h1>
-          <div className="h-[1.5px] w-16 md:w-24 bg-gold/50 shadow-lg" />
+          {/* THE REAL LOGO */}
+          <div className="relative w-64 h-32 md:w-96 md:h-48 drop-shadow-2xl">
+            <Image 
+              src="/media/optimized/brand-logo.png" 
+              alt="Sugi Logo" 
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
         </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.5, delay: 1.2 }}
-          className="text-foreground text-[10px] md:text-xs tracking-[0.4em] md:tracking-[0.6em] uppercase font-medium drop-shadow-lg"
+          className="text-foreground text-[10px] md:text-xs tracking-[0.5em] md:tracking-[0.8em] uppercase font-light drop-shadow-lg pl-[0.5em] md:pl-[0.8em] opacity-80"
         >
           Artistry in every slice
         </motion.p>
