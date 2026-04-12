@@ -1,17 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0d0d0d; /* Deep Ink (Sumi) */
-  --foreground: #fcfaf7; /* Washi White */
-  --gold: #d4af37; /* Imperial Gold (Kin) */
-  --gold-muted: #8a7342;
+  --background: #0a0a0a; /* Richer Black */
+  --foreground: #f5f0e6; /* Warmer Washi */
+  --gold: #c5a059; /* Sophisticated Gold */
+  --gold-light: #e6d5b8;
+  --gold-dark: #8c6d3f;
+  --accent-red: #8b0000; /* Deep Japanese Red */
 }
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-gold: var(--gold);
-  --color-gold-muted: var(--gold-muted);
+  --color-gold-light: var(--gold-light);
+  --color-gold-dark: var(--gold-dark);
+  --color-accent-red: var(--accent-red);
   --font-serif: "Shippori Mincho", "Hiragino Mincho ProN", "MS PMincho", serif;
 }
 
@@ -20,6 +24,9 @@ body {
   color: var(--foreground);
   font-family: "Shippori Mincho", "Hiragino Mincho ProN", "MS PMincho", serif;
   -webkit-font-smoothing: antialiased;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(197, 160, 89, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(139, 0, 0, 0.03) 0%, transparent 40%);
 }
 
 /* Washi Texture Overlay */

@@ -21,11 +21,15 @@ export default function MenuSection() {
   const filteredItems = MENU_DATA.filter(item => item.category === activeCategory);
 
   return (
-    <section id="menu" className="w-full min-h-screen bg-[#0D0D0D] py-32 px-6 flex flex-col items-center relative overflow-hidden">
+    <section id="menu" className="w-full min-h-screen bg-[#080808] py-32 px-6 flex flex-col items-center relative overflow-hidden">
       {/* Background Subtle Elements */}
-      <div className="absolute inset-0 washi opacity-20 pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-64 bg-gradient-to-b from-gold/40 to-transparent opacity-20" />
+      <div className="absolute inset-0 washi opacity-[0.03] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-64 bg-gradient-to-b from-gold/30 via-gold/10 to-transparent" />
       
+      {/* Rich Ambient Glow */}
+      <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-gold/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-accent-red/3 blur-[120px] rounded-full pointer-events-none" />
+
       {/* Header Area */}
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
@@ -34,14 +38,14 @@ export default function MenuSection() {
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         className="flex flex-col items-center mb-32 z-10"
       >
-        <span className="text-gold text-[10px] tracking-[1em] uppercase mb-6 pl-[1em] font-medium opacity-60">
+        <span className="text-gold text-[10px] tracking-[1em] uppercase mb-6 pl-[1em] font-medium">
           {activeCategory ? t(`menu.cat.${activeCategory}`) : t('menu.collection')}
         </span>
-        <h2 className="text-foreground text-5xl md:text-7xl font-serif uppercase tracking-[0.2em] relative">
+        <h2 className="text-foreground text-5xl md:text-8xl font-serif uppercase tracking-[0.2em] relative">
           {activeCategory ? activeCategory : t('menu.title')}
           <motion.div 
             layoutId="header-underline"
-            className="absolute -bottom-8 left-1/2 -translate-x-1/2 h-[1px] w-24 bg-gold/50" 
+            className="absolute -bottom-8 left-1/2 -translate-x-1/2 h-[1px] w-24 bg-gradient-to-r from-transparent via-gold to-transparent" 
           />
         </h2>
       </motion.div>
@@ -65,32 +69,32 @@ export default function MenuSection() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1 + 0.2, duration: 1 }}
                   onClick={() => setActiveCategory(cat)}
-                  className="group relative h-[250px] md:h-[450px] cursor-pointer overflow-hidden border border-white/5 hover:border-gold/30 transition-all duration-700 rounded-sm"
+                  className="group relative h-[250px] md:h-[500px] cursor-pointer overflow-hidden rounded-sm border border-gold/5 hover:border-gold/30 transition-all duration-700 shadow-2xl"
                 >
-                  {/* Category Image Background */}
+                  {/* Category Image Background - Removed grayscale */}
                   <Image 
                     src={CATEGORY_IMAGES[cat] || '/media/optimized/wallpaper.webp'}
                     alt={cat}
                     fill
-                    className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-[1.5s] ease-out opacity-40 group-hover:opacity-70"
+                    className="object-cover scale-[1.02] group-hover:scale-110 transition-all duration-[2s] ease-out opacity-60 group-hover:opacity-90"
                   />
                   
-                  {/* Overlay Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80" />
+                  {/* Rich Luxury Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-all duration-700 group-hover:via-black/40" />
+                  
+                  {/* Subtle Inner Border on Hover */}
+                  <div className="absolute inset-4 border border-gold/0 group-hover:border-gold/20 transition-all duration-700 pointer-events-none" />
                   
                   {/* Text Content */}
-                  <div className="absolute inset-0 p-12 flex flex-col justify-end items-center text-center">
-                    <span className="text-gold/40 text-[9px] tracking-[0.6em] uppercase mb-4 opacity-0 group-hover:opacity-100 group-hover:mb-2 transition-all duration-700 font-serif">
+                  <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-end items-center text-center">
+                    <span className="text-gold text-[8px] md:text-[9px] tracking-[0.6em] uppercase mb-4 opacity-0 group-hover:opacity-100 group-hover:mb-3 transition-all duration-700 font-serif font-bold">
                       Explore
                     </span>
-                    <h3 className="text-foreground text-2xl font-serif uppercase tracking-[0.3em] group-hover:text-gold transition-colors duration-500 mb-2">
+                    <h3 className="text-foreground text-xl md:text-3xl font-serif uppercase tracking-[0.2em] group-hover:text-gold transition-colors duration-500 mb-2 drop-shadow-lg">
                       {t(`menu.cat.${cat}`)}
                     </h3>
-                    <div className="w-0 h-[1px] bg-gold/40 group-hover:w-16 transition-all duration-700" />
+                    <div className="w-8 h-[1px] bg-gold/20 group-hover:w-24 group-hover:bg-gold transition-all duration-700" />
                   </div>
-
-                  {/* Subtle Border Glow */}
-                  <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] pointer-events-none" />
                 </motion.div>
               ))}
             </motion.div>
@@ -113,33 +117,34 @@ export default function MenuSection() {
                 {t('menu.back')}
               </button>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-32 gap-y-20 w-full max-w-5xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 md:gap-x-32 gap-y-16 md:gap-y-24 w-full max-w-6xl px-4">
                 {filteredItems.map((item, idx) => (
                   <motion.div
                     key={item.id}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1, duration: 1 }}
-                    className="group flex flex-col gap-6 relative"
+                    transition={{ delay: idx * 0.05, duration: 1 }}
+                    className="group flex flex-col gap-5 relative"
                   >
-                    <div className="flex justify-between items-baseline gap-6 border-b border-gold/10 pb-4 group-hover:border-gold/40 transition-colors duration-700">
-                      <div className="flex flex-col gap-1">
-                        <h4 className="text-foreground text-xl font-serif uppercase tracking-[0.1em] group-hover:text-gold transition-colors duration-500">
+                    <div className="flex justify-between items-baseline gap-4">
+                      <div className="flex flex-col gap-2">
+                        <h4 className="text-foreground text-lg md:text-2xl font-serif uppercase tracking-[0.1em] group-hover:text-gold transition-colors duration-500">
                           {lang === 'ar' ? item.nameAr || item.name : item.name}
                         </h4>
-                        <div className="flex gap-3">
+                        <div className="flex flex-wrap gap-2">
                           {item.tags.map(tag => (
-                            <span key={tag} className="text-[7px] text-gold/40 uppercase tracking-[0.2em]">
+                            <span key={tag} className="text-[7px] md:text-[8px] px-2 py-0.5 border border-gold/10 text-gold/60 uppercase tracking-[0.2em] rounded-full">
                               {tag}
                             </span>
                           ))}
                         </div>
                       </div>
-                      <span className="text-gold font-serif italic text-lg">
-                        {item.price} <span className="text-[9px] not-italic ml-1">SR</span>
+                      <div className="flex-grow border-b border-dotted border-gold/20 mb-2 min-w-[20px]" />
+                      <span className="text-gold font-serif italic text-lg md:text-2xl whitespace-nowrap">
+                        {item.price} <span className="text-[10px] not-italic ml-0.5 opacity-60">SR</span>
                       </span>
                     </div>
-                    <p className="text-foreground/40 text-xs leading-relaxed font-light tracking-wider italic">
+                    <p className="text-foreground/60 text-[11px] md:text-sm leading-relaxed font-light tracking-wide italic max-w-[90%] border-l-2 border-gold/5 pl-4 group-hover:border-gold/30 transition-all duration-700">
                       {lang === 'ar' ? item.descriptionAr || item.description : item.description}
                     </p>
                   </motion.div>

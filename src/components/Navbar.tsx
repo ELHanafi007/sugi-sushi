@@ -36,7 +36,7 @@ export default function Navbar() {
         <motion.div 
           animate={{ 
             height: scrolled ? '100px' : '144px',
-            backgroundColor: scrolled ? 'rgba(13, 13, 13, 0.95)' : 'rgba(13, 13, 13, 1)'
+            backgroundColor: scrolled ? 'rgba(10, 10, 10, 0.95)' : 'rgba(10, 10, 10, 1)'
           }}
           className="relative w-full pointer-events-auto backdrop-blur-md flex items-center justify-center transition-all duration-700 ease-[0.16, 1, 0.3, 1]"
         >
