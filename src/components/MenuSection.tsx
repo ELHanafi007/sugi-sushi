@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { MENU_DATA, CATEGORIES, Dish } from '@/data/menuData';
+import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { useLanguage } from '@/context/LanguageContext';
 
 /* ===== STAGGER VARIANTS ===== */
@@ -152,7 +152,7 @@ export default function MenuSection() {
   const sectionRef = useRef<HTMLElement>(null);
 
   // Get dishes for active category
-  const filteredItems = MENU_DATA.filter((item) => item.category === activeCategory);
+  const filteredItems = menuData.filter((item) => item.category === activeCategory);
 
   // Scroll active tab into view
   useEffect(() => {
@@ -222,7 +222,7 @@ export default function MenuSection() {
         >
           {CATEGORIES.map((cat) => {
             const isActive = cat === activeCategory;
-            const count = MENU_DATA.filter((d) => d.category === cat).length;
+            const count = menuData.filter((d) => d.category === cat).length;
             if (count === 0) return null;
 
             return (
