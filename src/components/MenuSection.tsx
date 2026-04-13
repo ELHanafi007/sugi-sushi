@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
 import { MENU_DATA, CATEGORIES } from '@/data/menuData';
 import { useLanguage } from '@/context/LanguageContext';
 import Image from 'next/image';
@@ -14,152 +14,370 @@ const CATEGORY_IMAGES: Record<string, string> = {
   'Desserts': '/media/optimized/brochure-10.jpg',
 };
 
+const CATEGORY_ICONS: Record<string, string> = {
+  'Starters': '前',
+  'Sushi & Sashimi': '鮨',
+  'Specialty Rolls': '巻',
+  'Main Dishes': '主',
+  'Desserts': '甘',
+};
+
+/* ===== STAGGER VARIANTS ===== */
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.15 },
+  },
+  exit: { opacity: 0, transition: { staggerChildren: 0.05, staggerDirection: -1 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+  },
+  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+};
+
+/* ===== DISH CARD COMPONENT ===== */
+function DishCard({
+  item,
+  index,
+  lang,
+}: {
+  item: typeof MENU_DATA[0];
+  index: number;
+  lang: 'en' | 'ar';
+}) {
+  const [isPressed, setIsPressed] = useState(false);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '0px 0px -50px 0px' });
+
+  const name = lang === 'ar' ? item.nameAr || item.name : item.name;
+  const description = lang === 'ar' ? item.descriptionAr || item.description : item.description;
+
+  return (
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={inView ? 'visible' : 'hidden'}
+      variants={itemVariants}
+      onPointerDown={() => setIsPressed(true)}
+      onPointerUp={() => setIsPressed(false)}
+      onPointerLeave={() => setIsPressed(false)}
+      className="group relative"
+    >
+      {/* Card Container */}
+      <motion.div
+        animate={isPressed ? { scale: 0.98 } : { scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="card-luxury p-4 relative overflow-hidden"
+      >
+        {/* Subtle Gold Accent on Top Edge */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r 
+                        from-transparent via-gold/10 to-transparent 
+                        group-hover:via-gold/30 transition-all duration-700" />
+
+        {/* Dish Header */}
+        <div className="flex justify-between items-start gap-3 mb-3">
+          <div className="flex-1 min-w-0">
+            <h4 className="text-foreground text-sm font-serif uppercase tracking-[0.15em] 
+                           group-hover:text-gold transition-colors duration-500 
+                           truncate pr-2">
+              {name}
+            </h4>
+            {/* Tags */}
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {item.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-[6px] px-2 py-0.5 border border-gold/15 text-gold/70 
+                             uppercase tracking-[0.25em] rounded-full bg-gold/5
+                             font-medium"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Price */}
+          <div className="flex-shrink-0 text-right">
+            <span className="text-gold font-serif text-base font-medium block">
+              {item.price}
+            </span>
+            <span className="text-[7px] text-gold/50 uppercase tracking-wider">SR</span>
+          </div>
+        </div>
+
+        {/* Dotted Separator */}
+        <div className="w-full h-[1px] border-b border-dotted border-gold/10 my-2.5" />
+
+        {/* Description */}
+        <p className="text-foreground-muted/70 text-[10px] leading-relaxed font-light 
+                      tracking-wide italic border-l-[1px] border-gold/10 pl-2.5
+                      group-hover:border-gold/25 transition-all duration-500 line-clamp-2">
+          {description}
+        </p>
+
+        {/* Hover Glow Effect */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gold/5 blur-[60px] 
+                        rounded-full opacity-0 group-hover:opacity-100 
+                        transition-opacity duration-700 pointer-events-none" />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ===== CATEGORY CARD COMPONENT ===== */
+function CategoryCard({
+  cat,
+  idx,
+  onClick,
+}: {
+  cat: string;
+  idx: number;
+  onClick: () => void;
+}) {
+  const { t } = useLanguage();
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '0px 0px -30px 0px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
+      transition={{
+        delay: idx * 0.08 + 0.1,
+        duration: 0.8,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      whileTap={{ scale: 0.97 }}
+      onClick={onClick}
+      className="group relative h-[180px] rounded-xl overflow-hidden cursor-pointer 
+                 border-luxury active:border-gold/20 transition-all duration-500"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); }}
+    >
+      {/* Image Background */}
+      <Image
+        src={CATEGORY_IMAGES[cat] || '/media/optimized/wallpaper.webp'}
+        alt={cat}
+        fill
+        className="object-cover scale-100 group-hover:scale-110 
+                   transition-transform duration-[2s] ease-out opacity-50 
+                   group-hover:opacity-80"
+        sizes="(max-width: 768px) 50vw, 33vw"
+        quality={75}
+      />
+
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 
+                      to-transparent transition-all duration-700" />
+
+      {/* Kanji Watermark */}
+      <span className="absolute top-3 right-3 text-[20px] font-serif text-gold/10 
+                       group-hover:text-gold/20 transition-all duration-700 select-none">
+        {CATEGORY_ICONS[cat]}
+      </span>
+
+      {/* Content */}
+      <div className="absolute inset-0 flex flex-col justify-end p-4">
+        {/* "Explore" Label */}
+        <motion.span
+          className="text-gold text-[7px] tracking-[0.5em] uppercase mb-1.5 
+                     opacity-0 group-hover:opacity-100 transition-opacity duration-500 
+                     font-serif font-medium"
+        >
+          Explore
+        </motion.span>
+
+        {/* Category Name */}
+        <h3 className="text-foreground text-sm font-serif uppercase tracking-[0.2em] 
+                       group-hover:text-gold transition-colors duration-500 drop-shadow-lg">
+          {t(`menu.cat.${cat}`)}
+        </h3>
+
+        {/* Animated Line */}
+        <motion.div
+          className="mt-2 h-[1px] bg-gold/20"
+          initial={{ width: 20 }}
+          whileHover={{ width: 48 }}
+          whileTap={{ width: 48 }}
+          transition={{ duration: 0.4 }}
+        />
+      </div>
+
+      {/* Item Count Badge */}
+      <div className="absolute top-3 left-3 px-2 py-0.5 bg-black/60 backdrop-blur-sm 
+                      rounded-full border border-gold/10">
+        <span className="text-[7px] text-gold/60 uppercase tracking-wider font-serif">
+          {MENU_DATA.filter((d) => d.category === cat).length} items
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ===== MAIN MENU SECTION ===== */
 export default function MenuSection() {
   const { t, lang } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const isHeaderInView = useInView(headerRef, { once: true, margin: '0px 0px -50px 0px' });
 
-  const filteredItems = MENU_DATA.filter(item => item.category === activeCategory);
+  const filteredItems = activeCategory
+    ? MENU_DATA.filter((item) => item.category === activeCategory)
+    : [];
+
+  // Scroll to top of menu section when category changes
+  useEffect(() => {
+    if (activeCategory && sectionRef.current) {
+      const yOffset = -100;
+      const element = sectionRef.current;
+      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, [activeCategory]);
 
   return (
-    <section id="menu" className="w-full min-h-screen bg-[#080808] py-32 px-6 flex flex-col items-center relative overflow-hidden">
-      {/* Background Subtle Elements */}
-      <div className="absolute inset-0 washi opacity-[0.03] pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-64 bg-gradient-to-b from-gold/30 via-gold/10 to-transparent" />
-      
-      {/* Rich Ambient Glow */}
-      <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-gold/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-accent-red/3 blur-[120px] rounded-full pointer-events-none" />
+    <section
+      id="menu"
+      ref={sectionRef}
+      className="w-full min-h-[100dvh] bg-background py-24 px-4 flex flex-col 
+                 items-center relative overflow-hidden"
+    >
+      {/* ===== AMBIENT BACKGROUND ===== */}
+      <div className="absolute inset-0 washi opacity-[0.02] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-32 
+                      bg-gradient-to-b from-gold/20 via-gold/5 to-transparent" />
+      <div className="absolute -top-[10%] -left-[20%] w-[60%] h-[40%] bg-gold/[0.03] 
+                      blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute -bottom-[10%] -right-[20%] w-[60%] h-[40%] 
+                      bg-accent-red/[0.02] blur-[100px] rounded-full pointer-events-none" />
 
-      {/* Header Area */}
-      <motion.div 
+      {/* ===== SECTION HEADER ===== */}
+      <motion.div
+        ref={headerRef}
         initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className="flex flex-col items-center mb-32 z-10"
+        animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        className="flex flex-col items-center mb-12 z-10 text-center px-2"
       >
-        <span className="text-gold text-[10px] tracking-[1em] uppercase mb-6 pl-[1em] font-medium">
+        {/* Decorative Top Element */}
+        <motion.div
+          className="w-6 h-[1px] bg-gold/30 mb-6"
+          initial={{ scaleX: 0 }}
+          animate={isHeaderInView ? { scaleX: 1 } : {}}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        />
+
+        <span className="text-gold text-[8px] tracking-[0.8em] uppercase mb-4 
+                         font-serif font-medium">
           {activeCategory ? t(`menu.cat.${activeCategory}`) : t('menu.collection')}
         </span>
-        <h2 className="text-foreground text-5xl md:text-8xl font-serif uppercase tracking-[0.2em] relative">
+
+        <h2 className="text-foreground text-3xl font-serif uppercase tracking-[0.25em] 
+                       relative pb-4">
           {activeCategory ? activeCategory : t('menu.title')}
-          <motion.div 
+          <motion.div
             layoutId="header-underline"
-            className="absolute -bottom-8 left-1/2 -translate-x-1/2 h-[1px] w-24 bg-gradient-to-r from-transparent via-gold to-transparent" 
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[1px] w-16 
+                       bg-gradient-to-r from-transparent via-gold/50 to-transparent"
           />
         </h2>
       </motion.div>
 
-      <div className="max-w-[1400px] w-full z-10">
+      {/* ===== CONTENT AREA ===== */}
+      <div className="w-full max-w-lg z-10">
         <AnimatePresence mode="wait">
           {!activeCategory ? (
-            /* --- CATEGORY GRID VIEW --- */
+            /* --- CATEGORY GRID --- */
             <motion.div
               key="categories"
-              initial={{ opacity: 0, scale: 1.05 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="grid grid-cols-2 gap-3"
             >
               {CATEGORIES.map((cat, idx) => (
-                <motion.div
+                <CategoryCard
                   key={cat}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1 + 0.2, duration: 1 }}
+                  cat={cat}
+                  idx={idx}
                   onClick={() => setActiveCategory(cat)}
-                  className="group relative h-[250px] md:h-[500px] cursor-pointer overflow-hidden rounded-sm border border-gold/5 hover:border-gold/30 transition-all duration-700 shadow-2xl"
-                >
-                  {/* Category Image Background - Removed grayscale */}
-                  <Image 
-                    src={CATEGORY_IMAGES[cat] || '/media/optimized/wallpaper.webp'}
-                    alt={cat}
-                    fill
-                    className="object-cover scale-[1.02] group-hover:scale-110 transition-all duration-[2s] ease-out opacity-60 group-hover:opacity-90"
-                  />
-                  
-                  {/* Rich Luxury Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-all duration-700 group-hover:via-black/40" />
-                  
-                  {/* Subtle Inner Border on Hover */}
-                  <div className="absolute inset-4 border border-gold/0 group-hover:border-gold/20 transition-all duration-700 pointer-events-none" />
-                  
-                  {/* Text Content */}
-                  <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-end items-center text-center">
-                    <span className="text-gold text-[8px] md:text-[9px] tracking-[0.6em] uppercase mb-4 opacity-0 group-hover:opacity-100 group-hover:mb-3 transition-all duration-700 font-serif font-bold">
-                      Explore
-                    </span>
-                    <h3 className="text-foreground text-xl md:text-3xl font-serif uppercase tracking-[0.2em] group-hover:text-gold transition-colors duration-500 mb-2 drop-shadow-lg">
-                      {t(`menu.cat.${cat}`)}
-                    </h3>
-                    <div className="w-8 h-[1px] bg-gold/20 group-hover:w-24 group-hover:bg-gold transition-all duration-700" />
-                  </div>
-                </motion.div>
+                />
               ))}
             </motion.div>
           ) : (
-            /* --- PRODUCT LIST VIEW --- */
+            /* --- PRODUCT LIST --- */
             <motion.div
               key="products"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center"
+              className="flex flex-col"
             >
               {/* Back Button */}
-              <button 
+              <motion.button
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
                 onClick={() => setActiveCategory(null)}
-                className="group mb-20 flex items-center gap-4 text-[10px] tracking-[0.4em] uppercase text-gold/60 hover:text-gold transition-colors duration-500"
+                whileTap={{ scale: 0.97 }}
+                className="group flex items-center gap-3 text-[8px] tracking-[0.4em] 
+                           uppercase text-gold/50 hover:text-gold transition-colors 
+                           duration-500 mb-8 pb-4 border-b border-gold/5 self-start
+                           active:text-gold"
               >
-                <span className="w-8 h-[1px] bg-gold/20 group-hover:w-12 group-hover:bg-gold transition-all duration-500" />
-                {t('menu.back')}
-              </button>
+                <motion.span
+                  className="w-6 h-[1px] bg-gold/20 group-hover:w-8 group-hover:bg-gold/50 
+                             transition-all duration-500"
+                />
+                <span className="font-serif">{t('menu.back')}</span>
+              </motion.button>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 md:gap-x-32 gap-y-16 md:gap-y-24 w-full max-w-6xl px-4">
+              {/* Dishes Grid */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col gap-3"
+              >
                 {filteredItems.map((item, idx) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05, duration: 1 }}
-                    className="group flex flex-col gap-5 relative"
-                  >
-                    <div className="flex justify-between items-baseline gap-4">
-                      <div className="flex flex-col gap-2">
-                        <h4 className="text-foreground text-lg md:text-2xl font-serif uppercase tracking-[0.1em] group-hover:text-gold transition-colors duration-500">
-                          {lang === 'ar' ? item.nameAr || item.name : item.name}
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {item.tags.map(tag => (
-                            <span key={tag} className="text-[7px] md:text-[8px] px-2 py-0.5 border border-gold/10 text-gold/60 uppercase tracking-[0.2em] rounded-full">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex-grow border-b border-dotted border-gold/20 mb-2 min-w-[20px]" />
-                      <span className="text-gold font-serif italic text-lg md:text-2xl whitespace-nowrap">
-                        {item.price} <span className="text-[10px] not-italic ml-0.5 opacity-60">SR</span>
-                      </span>
-                    </div>
-                    <p className="text-foreground/60 text-[11px] md:text-sm leading-relaxed font-light tracking-wide italic max-w-[90%] border-l-2 border-gold/5 pl-4 group-hover:border-gold/30 transition-all duration-700">
-                      {lang === 'ar' ? item.descriptionAr || item.description : item.description}
-                    </p>
-                  </motion.div>
+                  <DishCard key={item.id} item={item} index={idx} lang={lang} />
                 ))}
-              </div>
+              </motion.div>
+
+              {/* Category Footer Decoration */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 1 }}
+                className="mt-12 flex flex-col items-center gap-3"
+              >
+                <div className="w-8 h-[1px] bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
+                <span className="text-[8px] text-foreground-dim/40 uppercase tracking-[0.4em] 
+                                 font-serif text-center">
+                  End of {t(`menu.cat.${activeCategory}`)}
+                </span>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Background Ritual Seal */}
-      <motion.div 
+      {/* ===== BACKGROUND KANJI SEAL ===== */}
+      <motion.div
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 0.03 }}
-        className="mt-48 text-[250px] font-serif select-none pointer-events-none text-gold z-0 fixed bottom-0 right-0"
+        whileInView={{ opacity: 0.02 }}
+        viewport={{ once: true }}
+        className="absolute bottom-8 right-4 text-[150px] font-serif select-none 
+                   pointer-events-none text-gold z-0 leading-none"
       >
         杉
       </motion.div>

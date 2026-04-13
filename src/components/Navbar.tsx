@@ -11,149 +11,221 @@ export default function Navbar() {
   const { lang, setLang, t } = useLanguage();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 30);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleLang = () => {
-    setLang(lang === 'en' ? 'ar' : 'en');
-  };
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  const toggleLang = () => setLang(lang === 'en' ? 'ar' : 'en');
 
   const menuItems = [
-    { label: t('nav.menu'), href: '#menu' },
-    { label: t('nav.story'), href: '#story' },
-    { label: t('nav.reserve'), href: '#reserve' },
-    { label: t('nav.contact'), href: '#contact' },
+    { label: t('nav.menu'), href: '#menu', icon: '膳' },
+    { label: t('nav.story'), href: '#story', icon: '物語' },
+    { label: t('nav.reserve'), href: '#reserve', icon: '予約' },
+    { label: t('nav.contact'), href: '#contact', icon: '連絡' },
   ];
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full z-[100] flex flex-col pointer-events-none">
-        {/* Full-width Luxury Header Stage */}
-        <motion.div 
-          animate={{ 
-            height: scrolled ? '100px' : '144px',
-            backgroundColor: scrolled ? 'rgba(10, 10, 10, 0.95)' : 'rgba(10, 10, 10, 1)'
+      {/* ===== MOBILE LUXURY HEADER ===== */}
+      <nav className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
+        <motion.div
+          animate={{
+            height: scrolled ? 64 : 88,
+            backgroundColor: scrolled ? 'rgba(5, 5, 5, 0.92)' : 'rgba(5, 5, 5, 0.85)',
           }}
-          className="relative w-full pointer-events-auto backdrop-blur-md flex items-center justify-center transition-all duration-700 ease-[0.16, 1, 0.3, 1]"
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full pointer-events-auto backdrop-blur-xl"
         >
-          {/* Edge-to-Edge Content Container */}
-          <div className="w-full h-full max-w-[1400px] relative flex items-center justify-center px-6">
+          {/* Content Row */}
+          <div className="h-full flex items-center justify-between px-4 max-w-lg mx-auto">
             
-            {/* 1. Left Control: Language Switcher */}
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
+            {/* Language Toggle — Left */}
+            <motion.button
+              onClick={toggleLang}
+              initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="absolute left-6 md:left-10 flex items-center gap-2 pointer-events-auto"
+              whileTap={{ scale: 0.92 }}
+              className="relative w-10 h-10 rounded-full flex items-center justify-center
+                         border border-gold/10 bg-white/[0.03] backdrop-blur-md
+                         active:border-gold/30 transition-colors duration-300"
+              aria-label="Toggle language"
             >
-              <button 
-                onClick={toggleLang}
-                className="w-10 h-10 border border-gold/10 flex items-center justify-center rounded-full bg-white/5 backdrop-blur-xl transition-all duration-700 hover:border-gold/50 group"
+              <motion.span
+                animate={{ rotate: lang === 'ar' ? 360 : 0 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="text-base select-none"
               >
-                <span className="text-lg grayscale group-hover:grayscale-0 transition-all duration-700 scale-90 group-hover:scale-110">
-                  {lang === 'en' ? '🇬🇧' : '🇸🇦'}
-                </span>
-              </button>
-            </motion.div>
+                {lang === 'en' ? '🇬🇧' : '🇸🇦'}
+              </motion.span>
+              {/* Active indicator */}
+              <motion.div
+                animate={{ opacity: lang === 'en' ? 0 : 1 }}
+                className="absolute inset-0 rounded-full bg-gold/5"
+              />
+            </motion.button>
 
-
-            {/* 2. CENTER PIECE: The Enseigne Artwork */}
-            <motion.div 
-              animate={{ 
-                scale: scrolled ? 0.8 : 1,
-                y: scrolled ? -2 : 0
+            {/* Center Logo */}
+            <motion.div
+              animate={{
+                scale: scrolled ? 0.75 : 1,
+                y: scrolled ? -2 : 0,
               }}
-              className="relative w-[70%] h-[70%] md:h-[80%] transition-all duration-700"
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-[120px] h-[40px] flex-shrink-0"
             >
-              <Image 
+              <Image
                 src="/media/optimized/enseigne-1.jpg"
-                alt="Sugi Sign"
+                alt="Sugi Sushi"
                 fill
                 className="object-contain"
                 priority
+                quality={80}
               />
             </motion.div>
 
-            {/* 3. Right Control: Complex Animated Hamburger */}
-            <motion.button 
+            {/* Hamburger — Right */}
+            <motion.button
               onClick={() => setIsOpen(!isOpen)}
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="absolute right-6 md:right-10 w-12 h-12 flex items-center justify-center rounded-full border border-gold/10 hover:border-gold/30 transition-colors duration-500 z-[110]"
+              whileTap={{ scale: 0.9 }}
+              aria-label="Toggle menu"
+              aria-expanded={isOpen}
+              className="relative w-10 h-10 rounded-full flex items-center justify-center
+                         border border-gold/10 bg-white/[0.03] backdrop-blur-md
+                         active:border-gold/30 transition-colors duration-300"
             >
-              <div className="flex flex-col gap-[8px] items-end">
-                <motion.div 
-                  animate={isOpen ? { rotate: 45, y: 9, width: "32px" } : { rotate: 0, y: 0, width: "24px" }}
-                  className="h-[1px] bg-gold rounded-full origin-center transition-all duration-500" 
+              <div className="flex flex-col gap-[6px] items-center">
+                <motion.div
+                  animate={isOpen
+                    ? { rotate: 45, y: 6, width: 20 }
+                    : { rotate: 0, y: 0, width: 16 }
+                  }
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="h-[1px] bg-gold rounded-full"
                 />
-                <motion.div 
-                  animate={isOpen ? { opacity: 0, scale: 0 } : { opacity: 1, scale: 1 }}
-                  className="w-5 h-[1px] bg-gold rounded-full transition-all duration-500" 
+                <motion.div
+                  animate={isOpen
+                    ? { opacity: 0, scaleX: 0 }
+                    : { opacity: 1, scaleX: 1 }
+                  }
+                  transition={{ duration: 0.3 }}
+                  className="w-3 h-[1px] bg-gold/70 rounded-full"
                 />
-                <motion.div 
-                  animate={isOpen ? { rotate: -45, y: -9, width: "32px" } : { rotate: 0, y: 0, width: "24px" }}
-                  className="h-[1px] bg-gold rounded-full origin-center transition-all duration-500" 
+                <motion.div
+                  animate={isOpen
+                    ? { rotate: -45, y: -6, width: 20 }
+                    : { rotate: 0, y: 0, width: 16 }
+                  }
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="h-[1px] bg-gold rounded-full"
                 />
               </div>
             </motion.button>
           </div>
 
-          {/* Bottom Luxury Line */}
-          <motion.div 
-            animate={{ opacity: scrolled ? 1 : 0.3 }}
-            className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/40 to-transparent" 
+          {/* Bottom Gold Line */}
+          <motion.div
+            animate={{ opacity: scrolled ? 0.4 : 0.15 }}
+            className="absolute bottom-0 left-0 right-0 h-[1px] 
+                       bg-gradient-to-r from-transparent via-gold/50 to-transparent"
           />
         </motion.div>
       </nav>
 
-      {/* Full Screen Menu Overlay */}
-      <AnimatePresence>
+      {/* ===== FULL-SCREEN MENU OVERLAY ===== */}
+      <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 bg-background washi z-[105] flex flex-col items-center justify-center p-12 pointer-events-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-[105] bg-background"
           >
-            <div className="absolute inset-0 vignette opacity-60 pointer-events-none" />
-            
-            <div className="flex flex-col items-center gap-12 relative z-10">
-              {menuItems.map((item, idx) => (
-                <motion.a
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1 + 0.3 }}
-                  className="group relative"
-                >
-                  <span className="text-gold/20 absolute -left-10 top-1/2 -translate-y-1/2 text-[10px] tracking-[0.4em] font-serif">0{idx + 1}</span>
-                  <span className="text-foreground text-4xl font-serif uppercase tracking-[0.5em] group-hover:text-gold transition-all duration-700 pl-[0.5em] block">
-                    {item.label}
-                  </span>
-                  <motion.div 
-                    whileHover={{ width: "100%" }}
-                    className="h-[1px] w-0 bg-gold/50 mx-auto mt-4 transition-all duration-700" 
-                  />
-                </motion.a>
-              ))}
-            </div>
+            {/* Ambient Background */}
+            <div className="absolute inset-0 washi pointer-events-none" />
+            <div className="absolute inset-0 vignette opacity-40 pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                            w-[300px] h-[300px] bg-gold/[0.03] blur-[100px] rounded-full pointer-events-none" />
 
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="absolute bottom-16 flex flex-col items-center gap-4 text-[10px] tracking-[0.6em] text-gold/40 uppercase pl-[0.6em]"
-            >
-              <div className="w-12 h-[1px] bg-gold/20 mb-2" />
-              <span>{t('location')}</span>
-              <span>{t('established')}</span>
-            </motion.div>
+            {/* Menu Content */}
+            <div className="relative z-10 h-full flex flex-col justify-between px-8 py-24">
+              
+              {/* Nav Items */}
+              <div className="flex flex-col items-center justify-center flex-1 gap-0">
+                {menuItems.map((item, idx) => (
+                  <motion.a
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                      delay: idx * 0.08 + 0.2,
+                      duration: 0.6,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    whileTap={{ scale: 0.97 }}
+                    className="group relative py-6 text-center"
+                  >
+                    {/* Kanji Icon */}
+                    <span className="absolute -left-12 top-1/2 -translate-y-1/2 text-[10px] 
+                                     text-gold/15 font-serif opacity-0 group-hover:opacity-100 
+                                     transition-opacity duration-500">
+                      {item.icon}
+                    </span>
+                    
+                    {/* Label */}
+                    <span className="text-foreground text-3xl font-serif uppercase tracking-[0.4em] 
+                                     group-hover:text-gold transition-colors duration-500">
+                      {item.label}
+                    </span>
+                    
+                    {/* Animated Underline */}
+                    <motion.div
+                      className="absolute bottom-4 left-1/2 -translate-x-1/2 h-[1px] bg-gold/40"
+                      initial={{ width: 0 }}
+                      whileHover={{ width: '60%' }}
+                      transition={{ duration: 0.4 }}
+                    />
+                    
+                    {/* Number */}
+                    <span className="absolute -right-8 top-1/2 -translate-y-1/2 text-[8px] 
+                                     text-gold/20 font-serif tracking-widest">
+                      0{idx + 1}
+                    </span>
+                  </motion.a>
+                ))}
+              </div>
+
+              {/* Footer Info */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="flex flex-col items-center gap-3"
+              >
+                <div className="w-8 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+                <p className="text-[9px] text-foreground-dim uppercase tracking-[0.5em] font-serif">
+                  {t('location')}
+                </p>
+                <p className="text-[8px] text-foreground-dim/60 uppercase tracking-[0.4em] font-serif">
+                  {t('established')}
+                </p>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

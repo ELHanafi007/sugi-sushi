@@ -25,37 +25,61 @@ const translations = {
     'menu.cat.Main Dishes': 'Main Dishes',
     'menu.cat.Desserts': 'Desserts',
     'menu.back': 'Back to Categories',
-    'location': 'Washington D.C.',
+    'location': 'Saudi Arabia',
     'established': 'Established 2026',
   },
   ar: {
     'nav.menu': 'القائمة',
     'nav.story': 'قصتنا',
-    'nav.reserve': 'حجز',
-    'nav.contact': 'اتصل بنا',
+    'nav.reserve': 'حجز طاولة',
+    'nav.contact': 'تواصل معنا',
     'hero.subtitle': 'الفن في كل شريحة',
     'menu.title': 'القائمة',
-    'menu.collection': 'المجموعة المختارة',
+    'menu.collection': 'التشكيلة المختارة',
     'menu.cat.Starters': 'المقبلات',
     'menu.cat.Sushi & Sashimi': 'سوشي وساشيمي',
     'menu.cat.Specialty Rolls': 'لفائف خاصة',
     'menu.cat.Main Dishes': 'الأطباق الرئيسية',
     'menu.cat.Desserts': 'الحلويات',
     'menu.back': 'العودة للتصنيفات',
-    'location': 'واشنطن دي سي',
+    'location': 'المملكة العربية السعودية',
     'established': 'تأسس عام ٢٠٢٦',
-  }
+  },
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Language>('en');
+  const [lang, setLang] = useState<Language>(() => {
+    // Check for saved preference
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sugi-lang');
+      if (saved === 'ar' || saved === 'en') return saved;
+      // Detect Arabic locale
+      const browserLang = navigator.language;
+      if (browserLang.startsWith('ar')) return 'ar';
+    }
+    return 'en';
+  });
 
-  // Handle RTL
+  // Handle RTL and persist preference
   useEffect(() => {
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
+
+    // Update body class for RTL-specific styling
+    if (lang === 'ar') {
+      document.body.classList.add('rtl');
+    } else {
+      document.body.classList.remove('rtl');
+    }
+
+    // Persist preference
+    try {
+      localStorage.setItem('sugi-lang', lang);
+    } catch {
+      // localStorage may not be available
+    }
   }, [lang]);
 
   const t = (key: string) => {
