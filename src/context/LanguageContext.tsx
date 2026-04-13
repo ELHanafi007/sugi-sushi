@@ -1,39 +1,30 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-type Language = 'en' | 'ar';
+type Lang = 'en' | 'ar';
 
-interface LanguageContextType {
-  lang: Language;
-  setLang: (lang: Language) => void;
-  t: (key: string) => string;
+interface Ctx {
+  lang: Lang;
+  setLang: (l: Lang) => void;
+  t: (k: string) => string;
 }
 
-const translations = {
+const D: Record<Lang, Record<string, string>> = {
   en: {
-    // Nav
     'nav.menu': 'Menu',
-    'nav.about': 'About',
+    'nav.story': 'Story',
     'nav.contact': 'Contact',
-
-    // Hero
     'hero.brand': 'SUGI SUSHI',
-    'hero.kanji': '杉',
     'hero.tagline': 'Artistry in every slice',
-    'hero.scroll': 'Scroll',
-
-    // Story / About
+    'hero.explore': 'Explore',
     'story.label': 'Our Story',
-    'story.title': 'Crafted with\nDevotion',
-    'story.body': 'Every piece of sushi at Sugi is a testament to the Japanese pursuit of perfection. We source the finest ingredients from Tsukiji Market and local farms, preparing each dish with decades of traditional technique.',
-    'story.signature': '— The Sugi Kitchen',
-
-    // Menu
+    'story.title': 'Crafted with Devotion',
+    'story.p1': 'Every piece of sushi at Sugi is a testament to the Japanese pursuit of perfection. We source the finest ingredients — fresh fish from Tsukiji Market, premium wagyu, organic vegetables from local farms.',
+    'story.p2': 'Our chefs bring decades of traditional training to every dish, honoring techniques passed down through generations while embracing the subtle innovation that defines modern Japanese cuisine.',
+    'story.sig': '— The Sugi Kitchen',
     'menu.label': 'The Collection',
     'menu.title': 'Menu',
-
-    // Category names
     'menu.cat.Salads': 'Salads',
     'menu.cat.Soups': 'Soups',
     'menu.cat.Starters': 'Starters',
@@ -59,60 +50,42 @@ const translations = {
     'menu.cat.Hot Drinks': 'Hot Drinks',
     'menu.cat.Desserts': 'Desserts',
     'menu.cat.Extra Sauces': 'Sauces',
-
-    // Dish tags
-    'tag.signature': 'Signature',
-    'tag.best seller': 'Best Seller',
-    "tag.chef's choice": "Chef's Choice",
-    'tag.spicy': 'Spicy',
-    'tag.premium': 'Premium',
-    'tag.new': 'New',
-    'tag.classic': 'Classic',
-    'tag.seafood': 'Seafood',
-    'tag.vegetarian': 'Vegetarian',
-    'tag.healthy': 'Healthy',
-
-    // Contact
     'contact.label': 'Visit Us',
-    'contact.title': 'Reserve\nYour Table',
+    'contact.title': 'Reserve Your Table',
     'contact.location': 'Saudi Arabia',
     'contact.hours': 'Daily 12 PM — 11 PM',
     'contact.cta': 'Call to Reserve',
-    'contact.phone': '+966 XX XXX XXXX',
-
-    // Footer
     'footer.copy': '© 2026 Sugi Sushi',
-    'footer.made': 'Crafted with 心 (kokoro)',
-
-    // Common
+    'footer.heart': 'Crafted with 心 (kokoro)',
     'common.sr': 'SR',
     'common.cal': 'cal',
-    'common.coming-soon': 'Coming Soon',
-    'common.end-of': 'End of',
+    'common.coming': 'Coming Soon',
+    'common.end': 'End of',
+    'tag.Signature': 'Signature',
+    'tag.Best Seller': 'Best Seller',
+    "tag.Chef's Choice": "Chef's Choice",
+    'tag.Spicy': 'Spicy',
+    'tag.Premium': 'Premium',
+    'tag.New': 'New',
+    'tag.Classic': 'Classic',
+    'tag.Seafood': 'Seafood',
+    'tag.Vegetarian': 'Vegetarian',
+    'tag.Healthy': 'Healthy',
   },
   ar: {
-    // Nav
     'nav.menu': 'القائمة',
-    'nav.about': 'قصتنا',
+    'nav.story': 'قصتنا',
     'nav.contact': 'تواصل',
-
-    // Hero
     'hero.brand': 'سوجي سوشي',
-    'hero.kanji': '杉',
     'hero.tagline': 'الفن في كل شريحة',
-    'hero.scroll': 'اسحب',
-
-    // Story / About
+    'hero.explore': 'استكشف',
     'story.label': 'قصتنا',
-    'story.title': 'صُنع بإتقان\nوشغف',
-    'story.body': 'كل قطعة سوشي في سوجي هي شهادة على السعي الياباني وراء الكمال. نحضر أجود المكونات من سوق تسوكيجي والمزارع المحلية، ونعد كل طبق بعقود من التقنية التقليدية.',
-    'story.signature': '— مطبخ سوجي',
-
-    // Menu
+    'story.title': 'صُنع بإتقان وشغف',
+    'story.p1': 'كل قطعة سوشي في سوجي هي شهادة على السعي الياباني وراء الكمال. نحضر أجود المكونات — الأسماك الطازجة من سوق تسوكيجي، والواغيو الممتاز، والخضروات العضوية من المزارع المحلية.',
+    'story.p2': 'يحمل طهاتنا عقوداً من التدريب التقليدي إلى كل طبق، مع تقنيات توارثتها الأجيال مع لمسة من الابتكار الذي يميز المطبخ الياباني الحديث.',
+    'story.sig': '— مطبخ سوجي',
     'menu.label': 'التشكيلة المختارة',
     'menu.title': 'القائمة',
-
-    // Category names
     'menu.cat.Salads': 'السلطات',
     'menu.cat.Soups': 'الشوربات',
     'menu.cat.Starters': 'المقبلات',
@@ -138,46 +111,37 @@ const translations = {
     'menu.cat.Hot Drinks': 'مشروبات ساخنة',
     'menu.cat.Desserts': 'الحلويات',
     'menu.cat.Extra Sauces': 'صلصات',
-
-    // Dish tags
-    'tag.signature': 'مميز',
-    'tag.best seller': 'الأكثر طلباً',
-    "tag.chef's choice": 'اختيار الشيف',
-    'tag.spicy': 'حار',
-    'tag.premium': 'ممتاز',
-    'tag.new': 'جديد',
-    'tag.classic': 'كلاسيكي',
-    'tag.seafood': 'ثمار البحر',
-    'tag.vegetarian': 'نباتي',
-    'tag.healthy': 'صحي',
-
-    // Contact
     'contact.label': 'زورونا',
-    'contact.title': 'احجز\nطاولتك',
+    'contact.title': 'احجز طاولتك',
     'contact.location': 'المملكة العربية السعودية',
     'contact.hours': 'يومياً ١٢ ظهراً — ١١ مساءً',
     'contact.cta': 'اتصل للحجز',
-    'contact.phone': '+966 XX XXX XXXX',
-
-    // Footer
     'footer.copy': '© ٢٠٢٦ سوجي سوشي',
-    'footer.made': 'صُنع بـ 心 (كوكورو)',
-
-    // Common
+    'footer.heart': 'صُنع بـ 心 (كوكورو)',
     'common.sr': 'ر.س',
     'common.cal': 'سعرة',
-    'common.coming-soon': 'قريباً',
-    'common.end-of': 'نهاية',
+    'common.coming': 'قريباً',
+    'common.end': 'نهاية',
+    'tag.Signature': 'مميز',
+    'tag.Best Seller': 'الأكثر طلباً',
+    "tag.Chef's Choice": 'اختيار الشيف',
+    'tag.Spicy': 'حار',
+    'tag.Premium': 'ممتاز',
+    'tag.New': 'جديد',
+    'tag.Classic': 'كلاسيكي',
+    'tag.Seafood': 'ثمار البحر',
+    'tag.Vegetarian': 'نباتي',
+    'tag.Healthy': 'صحي',
   },
 };
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const Ctx = createContext<Ctx | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Language>(() => {
+  const [lang, setLang] = useState<Lang>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sugi-lang');
-      if (saved === 'ar' || saved === 'en') return saved;
+      const s = localStorage.getItem('sugi-lang');
+      if (s === 'ar' || s === 'en') return s;
       if (navigator.language?.startsWith('ar')) return 'ar';
     }
     return 'en';
@@ -189,21 +153,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     try { localStorage.setItem('sugi-lang', lang); } catch {}
   }, [lang]);
 
-  const t = (key: string) => {
-    return translations[lang][key as keyof typeof translations['en']] || key;
-  };
+  const t = useCallback((k: string) => D[lang][k] || k, [lang]);
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t }}>
+    <Ctx.Provider value={{ lang, setLang, t }}>
       {children}
-    </LanguageContext.Provider>
+    </Ctx.Provider>
   );
 }
 
-export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
-  }
-  return context;
-}
+export const useLanguage = () => {
+  const c = useContext(Ctx);
+  if (!c) throw new Error('useLanguage must be used within LanguageProvider');
+  return c;
+};

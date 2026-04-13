@@ -4,8 +4,8 @@ import { LanguageProvider } from "@/context/LanguageContext";
 
 export const metadata: Metadata = {
   title: "Sugi Sushi — 杉",
-  description: "Experience the art of Japanese cuisine. Premium sushi & sashimi crafted with the finest ingredients.",
-  keywords: ["sushi", "japanese", "premium", "sashimi", "sugi", "saudi arabia"],
+  description: "Experience the art of Japanese cuisine. Premium sushi & sashimi crafted with the finest ingredients, served in an atmosphere of understated luxury.",
+  keywords: ["sushi", "japanese restaurant", "premium sushi", "sashimi", "omakase", "saudi arabia"],
   authors: [{ name: "Sugi Sushi" }],
   creator: "Sugi Sushi",
   openGraph: {
@@ -13,27 +13,23 @@ export const metadata: Metadata = {
     locale: "en_US",
     siteName: "Sugi Sushi",
     title: "Sugi Sushi — 杉",
-    description: "Experience the art of Japanese cuisine.",
+    description: "The art of Japanese cuisine, perfected.",
   },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/favicon.ico",
-  },
+  icons: { icon: "/favicon.ico" },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#0a0a0a",
-  viewportFit: "cover",
+  themeColor: "#050505",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html
       lang="en"
@@ -42,16 +38,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link
-          rel="preconnect"
-          href="https://fonts.googleapis.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap"
           rel="stylesheet"
@@ -60,10 +48,11 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="bg-bg-primary text-text-primary min-h-dvh overflow-x-hidden">
+      <body className="bg-bg text-text min-h-dvh overflow-x-hidden">
         <LanguageProvider>
           {children}
         </LanguageProvider>
+        <div className="grain" />
       </body>
     </html>
   );

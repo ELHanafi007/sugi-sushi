@@ -3,17 +3,17 @@
 import { Suspense, lazy } from 'react';
 import Navbar from '@/components/Navbar';
 
-const Hero = lazy(() => import('@/components/LandingExperience'));
+const Hero = lazy(() => import('@/components/Hero'));
 const MenuSection = lazy(() => import('@/components/MenuSection'));
 
 export default function Home() {
   return (
-    <main className="min-h-dvh bg-bg-primary">
+    <main className="bg-bg text-text min-h-dvh">
       <Navbar />
       <Suspense
         fallback={
-          <div className="h-dvh flex items-center justify-center bg-bg-primary">
-            <div className="w-6 h-6 border border-gold/15 border-t-gold/40 rounded-full animate-spin" />
+          <div className="h-dvh flex items-center justify-center bg-bg">
+            <div className="w-5 h-5 border border-gold/15 border-t-gold/40 rounded-full animate-spin" />
           </div>
         }
       >
