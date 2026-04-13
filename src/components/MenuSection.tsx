@@ -1,39 +1,20 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { useLanguage } from '@/context/LanguageContext';
+import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 
-/* ===== STAGGER VARIANTS ===== */
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
-  },
-};
-
-/* ===== CATEGORY ICONS ===== */
-const CATEGORY_ICONS: Record<string, string> = {
-  'Salads': '🥗',
-  'Soups': '🍜',
+/* ─── Category Icons (Japanese Kanji) ─── */
+const CAT_ICON: Record<string, string> = {
+  'Salads': '菜',
+  'Soups': '汁',
   'Starters': '前',
   'Wok, Noodles & Rice': '炒',
   'Tempura': '天',
   'Sugi Dishes': '主',
   'Sashimi': '刺',
   'Tataki': '叩',
-  'Ceviche': '酸',
+  'Ceviche': '酢',
   'Nigiri': '握',
   'Gunkan': '軍',
   'Temaki': '手',
@@ -52,257 +33,344 @@ const CATEGORY_ICONS: Record<string, string> = {
   'Extra Sauces': '醤',
 };
 
-/* ===== DISH CARD COMPONENT ===== */
-function DishCard({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) {
-  const [isPressed, setIsPressed] = useState(false);
+/* ─── Tag Style Mapper ─── */
+function tagStyle(tag: string): string {
+  const t = tag.toLowerCase();
+  if (t === 'signature' || t === "chef's choice")
+    return 'bg-gold/10 text-gold border border-gold/20';
+  if (t === 'best seller')
+    return 'bg-gold/15 text-gold-bright border border-gold/30';
+  if (t === 'spicy' || t === 'hot')
+    return 'bg-vermilion-soft text-vermilion border border-vermilion/20';
+  if (t === 'premium')
+    return 'bg-gold/10 text-gold-soft border border-gold/15';
+  if (t === 'new')
+    return 'bg-bg-elevated text-text-muted border border-border-subtle';
+  if (t === 'vegetarian')
+    return 'bg-bg-tertiary text-text-muted border border-border-subtle';
+  return 'bg-bg-tertiary text-text-dim border border-border-subtle';
+}
 
+/* ═══════════════════════════════════════════════════════════
+   DISH CARD — Minimal, fast, no framer-motion per-card
+   ═══════════════════════════════════════════════════════════ */
+function DishCard({ dish, lang, index }: { dish: Dish; lang: 'en' | 'ar'; index: number }) {
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
-  const description = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
-
-  // Tag color logic
-  const getTagStyle = (tag: string) => {
-    const t = tag.toLowerCase();
-    if (['signature', 'best seller', "chef's choice"].includes(t))
-      return 'bg-gold/10 border-gold/20 text-gold/80';
-    if (['spicy', 'hot'].includes(t))
-      return 'bg-accent-red/10 border-accent-red/20 text-accent-red-light/80';
-    if (['premium', 'luxury', 'ultimate luxury'].includes(t))
-      return 'bg-gold/15 border-gold/30 text-gold';
-    if (['new'].includes(t))
-      return 'bg-foreground/5 border-foreground/15 text-foreground-muted/70';
-    return 'bg-gold/5 border-gold/10 text-gold/60';
-  };
+  const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
+  const price = dish.price.replace(' SR', '').trim();
 
   return (
-    <motion.div
-      variants={itemVariants}
-      onPointerDown={() => setIsPressed(true)}
-      onPointerUp={() => setIsPressed(false)}
-      onPointerLeave={() => setIsPressed(false)}
+    <article
+      className="card p-4 animate-stagger"
+      style={{ animationDelay: `${index * 60}ms`, animationFillMode: 'both' }}
     >
-      <motion.div
-        animate={isPressed ? { scale: 0.985 } : { scale: 1 }}
-        transition={{ duration: 0.15 }}
-        className="card-luxury p-4 relative overflow-hidden active:scale-[0.985]"
-      >
-        {/* Gold accent line on top */}
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r 
-                        from-transparent via-gold/8 to-transparent" />
+      {/* Top gold hairline */}
+      <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
 
-        {/* Name + Price Row */}
-        <div className="flex justify-between items-start gap-3 mb-2">
-          <div className="flex-1 min-w-0">
-            <h4 className="text-foreground text-sm font-serif uppercase tracking-[0.12em] 
-                           leading-tight pr-2">
-              {name}
-            </h4>
+      <div className="flex items-start justify-between gap-3">
+        {/* Left: Name + Description */}
+        <div className="flex-1 min-w-0">
+          <h4 className="text-text-primary text-[13px] font-serif uppercase tracking-[0.1em] leading-tight">
+            {name}
+          </h4>
 
-            {/* Tags */}
-            {dish.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {dish.tags.slice(0, 3).map((tag) => (
-                  <span
-                    key={tag}
-                    className={`text-[6px] px-2 py-0.5 border uppercase tracking-[0.2em] 
-                               rounded-full font-medium ${getTagStyle(tag)}`}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Tags */}
+          {dish.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {dish.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className={`text-[7px] px-2 py-0.5 rounded-full uppercase tracking-[0.15em]
+                             font-medium ${tagStyle(tag)}`}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
-          {/* Price + Calories */}
-          <div className="flex-shrink-0 text-right flex flex-col items-end">
-            <span className="text-gold font-serif text-base font-medium leading-none">
-              {dish.price.replace(' SR', '')}
-            </span>
-            <span className="text-[7px] text-gold/50 uppercase tracking-wider">SR</span>
-            {dish.calories && (
-              <span className="text-[7px] text-foreground-dim/50 mt-1 tracking-wider">
-                {dish.calories} cal
-              </span>
-            )}
-          </div>
+          {/* Description (only if exists) */}
+          {desc && (
+            <>
+              <div className="divider-gold my-2.5" />
+              <p className="text-text-muted/50 text-[10px] leading-relaxed font-light
+                           tracking-wide border-l-2 border-gold/10 pl-2.5 line-clamp-2">
+                {desc}
+              </p>
+            </>
+          )}
         </div>
 
-        {/* Dotted Separator */}
-        {description && (
-          <>
-            <div className="w-full h-[1px] border-b border-dotted border-gold/8 my-2" />
-            {/* Description */}
-            <p className="text-foreground-muted/60 text-[10px] leading-relaxed font-light 
-                          tracking-wide border-l-[1px] border-gold/8 pl-2.5 line-clamp-2">
-              {description}
-            </p>
-          </>
-        )}
-      </motion.div>
-    </motion.div>
+        {/* Right: Price + Calories */}
+        <div className="flex flex-col items-end flex-shrink-0">
+          {price ? (
+            <>
+              <span className="text-gold font-serif text-base font-medium leading-none">
+                {price}
+              </span>
+              <span className="text-[7px] text-gold/40 uppercase tracking-wider mt-0.5">
+                SR
+              </span>
+            </>
+          ) : (
+            <span className="text-text-dim text-[8px] uppercase tracking-wider">—</span>
+          )}
+
+          {dish.calories && (
+            <span className="text-[7px] text-text-dim/40 mt-1.5 tracking-wider">
+              {dish.calories}
+            </span>
+          )}
+        </div>
+      </div>
+    </article>
   );
 }
 
-/* ===== MAIN MENU SECTION ===== */
-export default function MenuSection() {
-  const { t, lang } = useLanguage();
-  const [activeCategory, setActiveCategory] = useState<string>(CATEGORIES[0]);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const tabBarRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLElement>(null);
+/* ═══════════════════════════════════════════════════════════
+   SECTION: Story / About
+   ═══════════════════════════════════════════════════════════ */
+function StorySection() {
+  const { t } = useLanguage();
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
-  // Get dishes for active category
-  const filteredItems = menuData.filter((item) => item.category === activeCategory);
-
-  // Scroll active tab into view
   useEffect(() => {
-    if (tabBarRef.current) {
-      const activeTab = tabBarRef.current.querySelector('[data-active="true"]');
-      if (activeTab) {
-        activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-      }
-    }
-  }, [activeCategory]);
-
-  // Scroll to menu section when category changes
-  const handleCategoryChange = useCallback((cat: string) => {
-    setActiveCategory(cat);
-    if (sectionRef.current) {
-      const yOffset = -80;
-      const y = sectionRef.current.getBoundingClientRect().top + window.scrollY + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.2 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
   return (
     <section
-      id="menu"
-      ref={sectionRef}
-      className="w-full min-h-[100dvh] bg-background flex flex-col items-center relative overflow-hidden"
+      id="story"
+      ref={ref}
+      className="w-full py-20 px-4 flex flex-col items-center text-center"
     >
-      {/* ===== AMBIENT BACKGROUND ===== */}
-      <div className="absolute inset-0 washi opacity-[0.02] pointer-events-none" />
-      <div className="absolute -top-[10%] -left-[20%] w-[60%] h-[40%] bg-gold/[0.03] 
-                      blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute -bottom-[10%] -right-[20%] w-[60%] h-[40%] 
-                      bg-accent-red/[0.02] blur-[100px] rounded-full pointer-events-none" />
+      {/* Label */}
+      <span className="text-gold text-[8px] tracking-[0.6em] uppercase font-serif mb-4">
+        {t('story.label')}
+      </span>
 
-      {/* ===== SECTION HEADER ===== */}
-      <div className="w-full max-w-lg z-10 pt-20 pb-4 px-4 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="flex flex-col items-center"
+      {/* Title */}
+      <h2 className="text-text-primary text-xl font-serif uppercase tracking-[0.2em] leading-tight whitespace-pre-line mb-6">
+        {t('story.title')}
+      </h2>
+
+      {/* Body */}
+      <p
+        className={`text-text-secondary/60 text-[12px] leading-relaxed max-w-xs
+                    mx-auto transition-all duration-700
+                    ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      >
+        {t('story.body')}
+      </p>
+
+      {/* Signature */}
+      <div className="mt-6 flex flex-col items-center">
+        <div className="w-6 h-[1px] bg-border-subtle mb-3" />
+        <p className="text-text-dim text-[9px] italic tracking-wider font-serif">
+          {t('story.signature')}
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION: Contact
+   ═══════════════════════════════════════════════════════════ */
+function ContactSection() {
+  const { t } = useLanguage();
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.2 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <section
+      id="contact"
+      ref={ref}
+      className="w-full py-20 px-4 flex flex-col items-center text-center"
+    >
+      <span className="text-gold text-[8px] tracking-[0.6em] uppercase font-serif mb-4">
+        {t('contact.label')}
+      </span>
+
+      <h2 className="text-text-primary text-xl font-serif uppercase tracking-[0.2em] leading-tight whitespace-pre-line mb-6">
+        {t('contact.title')}
+      </h2>
+
+      {/* Info */}
+      <div
+        className={`flex flex-col items-center gap-3 transition-all duration-700
+                    ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      >
+        <p className="text-text-secondary/60 text-[11px] tracking-wider">
+          {t('contact.location')}
+        </p>
+        <p className="text-text-muted/50 text-[10px] tracking-wider">
+          {t('contact.hours')}
+        </p>
+
+        {/* CTA Button */}
+        <a
+          href={`tel:${t('contact.phone')}`}
+          className="mt-4 inline-flex items-center gap-2 px-8 py-3
+                     rounded-full border border-gold/20 bg-gold-glow
+                     text-gold text-[10px] uppercase tracking-[0.2em] font-serif
+                     active:scale-95 transition-transform"
         >
-          <div className="w-6 h-[1px] bg-gold/30 mb-5" />
-          <span className="text-gold text-[8px] tracking-[0.8em] uppercase font-serif font-medium">
-            {t('menu.collection')}
-          </span>
-          <h2 className="text-foreground text-2xl font-serif uppercase tracking-[0.25em] 
-                         relative pb-3 mt-3">
-            {t('menu.title')}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[1px] w-12 
-                           bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-          </h2>
-        </motion.div>
+          {t('contact.cta')}
+        </a>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION: Menu (with category tabs + dish cards)
+   ═══════════════════════════════════════════════════════════ */
+function MenuSectionContent() {
+  const { t, lang } = useLanguage();
+  const [active, setActive] = useState(CATEGORIES[0]);
+  const tabBarRef = useRef<HTMLDivElement>(null);
+
+  // Filter dishes for active category (only show categories with items)
+  const dishes = menuData.filter((d) => d.category === active);
+
+  // Build list of categories that actually have items
+  const availableCats = CATEGORIES.filter((cat) =>
+    menuData.some((d) => d.category === cat)
+  );
+
+  // Scroll active tab into view
+  useEffect(() => {
+    const bar = tabBarRef.current;
+    if (!bar) return;
+    const tab = bar.querySelector('[data-active="true"]') as HTMLElement;
+    if (tab) {
+      tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }, [active]);
+
+  return (
+    <section id="menu" className="w-full min-h-dvh flex flex-col items-center">
+      {/* ─── Section Header ─── */}
+      <div className="w-full max-w-lg pt-20 pb-4 px-4 text-center">
+        <span className="text-gold text-[8px] tracking-[0.8em] uppercase font-serif">
+          {t('menu.label')}
+        </span>
+        <h2 className="text-text-primary text-2xl font-serif uppercase tracking-[0.25em] mt-3">
+          {t('menu.title')}
+        </h2>
+        <div className="w-8 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent mx-auto mt-4" />
       </div>
 
-      {/* ===== STICKY CATEGORY TAB BAR ===== */}
-      <div
-        ref={scrollRef}
-        className="sticky top-[64px] z-50 w-full bg-background/95 backdrop-blur-xl 
-                    border-b border-gold/5 py-3"
-      >
+      {/* ─── Sticky Category Bar ─── */}
+      <div className="sticky top-[52px] z-40 w-full bg-bg-primary/90 backdrop-blur-xl
+                      border-b border-border-subtle py-2.5">
         <div
           ref={tabBarRef}
-          className="flex gap-2 px-4 overflow-x-auto no-scrollbar max-w-lg mx-auto"
+          className="flex gap-1.5 px-4 overflow-x-auto no-scrollbar max-w-lg mx-auto"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {CATEGORIES.map((cat) => {
-            const isActive = cat === activeCategory;
+          {availableCats.map((cat) => {
+            const isActive = cat === active;
             const count = menuData.filter((d) => d.category === cat).length;
-            if (count === 0) return null;
-
             return (
-              <motion.button
+              <button
                 key={cat}
                 data-active={isActive}
-                onClick={() => handleCategoryChange(cat)}
-                whileTap={{ scale: 0.95 }}
-                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full 
-                            text-[8px] uppercase tracking-[0.15em] font-serif transition-all 
-                            duration-300 ${
-                              isActive
-                                ? 'bg-gold/15 text-gold border border-gold/30'
-                                : 'bg-foreground/[0.03] text-foreground-dim/60 border border-transparent'
-                            }`}
+                onClick={() => setActive(cat)}
+                className={`pill flex-shrink-0 transition-all ${isActive ? 'active' : ''}`}
               >
-                <span className="text-[10px]">
-                  {CATEGORY_ICONS[cat] || '•'}
+                <span className="text-[11px] font-jp">
+                  {CAT_ICON[cat] || '•'}
                 </span>
-                <span className="whitespace-nowrap">
-                  {t(`menu.cat.${cat}`)}
-                </span>
-                <span className={`text-[7px] ${isActive ? 'text-gold/60' : 'text-foreground-dim/30'}`}>
+                <span>{t(`menu.cat.${cat}`)}</span>
+                <span className={`text-[8px] ${isActive ? 'text-gold/50' : 'text-text-dim/30'}`}>
                   {count}
                 </span>
-              </motion.button>
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* ===== CONTENT AREA ===== */}
-      <div className="w-full max-w-lg z-10 px-4 pb-32">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col gap-3 mt-6"
-          >
-            {filteredItems.map((dish) => (
-              <DishCard key={dish.id} dish={dish} lang={lang} />
-            ))}
+      {/* ─── Dish Cards ─── */}
+      <div className="w-full max-w-lg px-4 pb-32">
+        <div className="flex flex-col gap-3 mt-4">
+          {dishes.map((dish, i) => (
+            <DishCard key={dish.id} dish={dish} lang={lang} index={i} />
+          ))}
 
-            {filteredItems.length === 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center py-20 text-foreground-dim/40"
-              >
-                <span className="text-4xl mb-4">{CATEGORY_ICONS[activeCategory] || '•'}</span>
-                <p className="text-[10px] uppercase tracking-[0.4em] font-serif text-center">
-                  Coming Soon
-                </p>
-              </motion.div>
-            )}
+          {/* Empty state */}
+          {dishes.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-20 text-text-dim/40">
+              <span className="text-3xl mb-3 font-jp">
+                {CAT_ICON[active] || '•'}
+              </span>
+              <p className="text-[9px] uppercase tracking-[0.3em] font-serif">
+                {t('common.coming-soon')}
+              </p>
+            </div>
+          )}
 
-            {filteredItems.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-8 flex flex-col items-center gap-3"
-              >
-                <div className="w-8 h-[1px] bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
-                <span className="text-[7px] text-foreground-dim/30 uppercase tracking-[0.4em] font-serif">
-                  End of {t(`menu.cat.${activeCategory}`)}
-                </span>
-              </motion.div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* ===== BACKGROUND KANJI SEAL ===== */}
-      <div className="fixed bottom-4 right-2 text-[120px] font-serif select-none 
-                      pointer-events-none text-gold/[0.02] z-0 leading-none">
-        杉
+          {/* End marker */}
+          {dishes.length > 0 && (
+            <div className="flex flex-col items-center gap-3 mt-8 mb-4">
+              <div className="w-10 h-[1px] bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
+              <span className="text-[7px] text-text-dim/30 uppercase tracking-[0.3em] font-serif">
+                {t('common.end-of')} {t(`menu.cat.${active}`)}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CSS STAGGER ANIMATION (defined here for the component)
+   ═══════════════════════════════════════════════════════════ */
+const StaggerStyle = () => (
+  <style>{`
+    @keyframes stagger-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-stagger {
+      animation: stagger-in 0.4s ease-out;
+    }
+  `}</style>
+);
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN EXPORT — Combines Story + Menu + Contact
+   ═══════════════════════════════════════════════════════════ */
+export default function MenuSection() {
+  return (
+    <>
+      <StaggerStyle />
+      <StorySection />
+      <MenuSectionContent />
+      <ContactSection />
+    </>
   );
 }

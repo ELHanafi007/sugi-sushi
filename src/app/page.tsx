@@ -3,22 +3,21 @@
 import { Suspense, lazy } from 'react';
 import Navbar from '@/components/Navbar';
 
-// Lazy load heavy components for better mobile performance
-const LandingExperience = lazy(() => import('@/components/LandingExperience'));
+const Hero = lazy(() => import('@/components/LandingExperience'));
 const MenuSection = lazy(() => import('@/components/MenuSection'));
 
 export default function Home() {
   return (
-    <main className="min-h-dvh bg-background selection:bg-gold/30 selection:text-gold-lighter">
+    <main className="min-h-dvh bg-bg-primary">
       <Navbar />
       <Suspense
         fallback={
-          <div className="h-[100dvh] flex items-center justify-center bg-background">
-            <div className="w-8 h-8 border border-gold/20 border-t-gold/60 rounded-full animate-spin" />
+          <div className="h-dvh flex items-center justify-center bg-bg-primary">
+            <div className="w-6 h-6 border border-gold/15 border-t-gold/40 rounded-full animate-spin" />
           </div>
         }
       >
-        <LandingExperience />
+        <Hero />
         <MenuSection />
       </Suspense>
     </main>
