@@ -2,86 +2,39 @@
 
 /* ═══════════════════════════════════════════════════════════
    SUGI SUSHI — Mobile-First Digital Menu
-   Design Philosophy: 侘寂 (Wabi-Sabi) — Beauty in simplicity
    ═══════════════════════════════════════════════════════════ */
 
-/* ─── Color System ─── */
-:root {
-  /* Base — Deep ink blacks & warm whites */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #111111;
-  --bg-tertiary: #1a1a1a;
-  --bg-elevated: #222222;
-
-  /* Text — Warm ivory tones */
-  --text-primary: #f0ebe3;
-  --text-secondary: #b8b0a2;
-  --text-muted: #7a7268;
-  --text-dim: #4a4540;
-
-  /* Accent — Vermilion gold (金) */
-  --gold: #c9a84c;
-  --gold-bright: #e8c94a;
-  --gold-soft: #d4b96a;
-  --gold-muted: rgba(201, 168, 76, 0.15);
-  --gold-glow: rgba(201, 168, 76, 0.08);
-
-  /* Accent — Vermilion red (朱) */
-  --vermilion: #c4362b;
-  --vermilion-soft: rgba(196, 54, 43, 0.12);
-
-  /* Semantic */
-  --border-subtle: rgba(201, 168, 76, 0.08);
-  --border-medium: rgba(201, 168, 76, 0.15);
-  --border-active: rgba(201, 168, 76, 0.35);
-
-  /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-gold: 0 0 24px rgba(201, 168, 76, 0.06);
-
-  /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-full: 9999px;
-}
-
-/* ─── Theme Mapping ─── */
+/* ─── Color Palette (direct hex values for Tailwind v4) ─── */
 @theme {
-  --color-bg-primary: var(--bg-primary);
-  --color-bg-secondary: var(--bg-secondary);
-  --color-bg-tertiary: var(--bg-tertiary);
-  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #111111;
+  --color-bg-tertiary: #1a1a1a;
+  --color-bg-elevated: #222222;
 
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
-  --color-text-dim: var(--text-dim);
+  --color-text-primary: #f0ebe3;
+  --color-text-secondary: #b8b0a2;
+  --color-text-muted: #7a7268;
+  --color-text-dim: #4a4540;
 
-  --color-gold: var(--gold);
-  --color-gold-bright: var(--gold-bright);
-  --color-gold-soft: var(--gold-soft);
-  --color-gold-muted: var(--gold-muted);
-  --color-gold-glow: var(--gold-glow);
+  --color-gold: #c9a84c;
+  --color-gold-bright: #e8c94a;
+  --color-gold-soft: #d4b96a;
+  --color-vermilion: #c4362b;
 
-  --color-vermilion: var(--vermilion);
-  --color-vermilion-soft: var(--vermilion-soft);
+  --color-border-subtle: rgba(201, 168, 76, 0.08);
+  --color-border-medium: rgba(201, 168, 76, 0.15);
+  --color-border-active: rgba(201, 168, 76, 0.35);
+  --color-gold-glow: rgba(201, 168, 76, 0.08);
+  --color-vermilion-soft: rgba(196, 54, 43, 0.12);
 
-  --color-border-subtle: var(--border-subtle);
-  --color-border-medium: var(--border-medium);
-  --color-border-active: var(--border-active);
-
-  --font-serif: "Shippori Mincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
-  --font-sans: "Noto Sans Arabic", "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: "Shippori Mincho", "Yu Mincho", serif;
+  --font-sans: "Noto Sans Arabic", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-jp: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   BASE RESETS & MOBILE FOUNDATIONS
+   BASE RESETS
    ═══════════════════════════════════════════════════════════ */
-
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -95,32 +48,17 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 body {
   font-family: var(--font-serif);
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: #0a0a0a;
+  color: #f0ebe3;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100dvh;
-  min-height: -webkit-fill-available;
   overflow-x: hidden;
-  overflow-y: auto;
-  position: relative;
-
-  /* Subtle ambient gradient — like washi paper lit from behind */
-  background-image:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201, 168, 76, 0.03) 0%, transparent 70%);
-  background-attachment: scroll;
-}
-
-/* iOS fill-available fix */
-@supports (-webkit-touch-callout: none) {
-  html { height: -webkit-fill-available; }
-  body { min-height: -webkit-fill-available; }
 }
 
 img {
@@ -128,12 +66,6 @@ img {
   height: auto;
   display: block;
   -webkit-user-drag: none;
-  image-rendering: -webkit-optimize-contrast;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
 }
 
 button {
@@ -146,71 +78,39 @@ button {
   appearance: none;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* ═══════════════════════════════════════════════════════════
-   CSS-ONLY ANIMATIONS (Zero JS Scroll Dependencies)
+   KEYFRAMES
    ═══════════════════════════════════════════════════════════ */
-
-/* ─── Ambient gold shimmer ─── */
-@keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+@keyframes kanji-pulse {
+  0%, 100% { text-shadow: 0 0 40px rgba(201, 168, 76, 0.08); }
+  50% { text-shadow: 0 0 80px rgba(201, 168, 76, 0.15); }
 }
 
-/* ─── Breathing glow ─── */
-@keyframes breathe {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.7; }
-}
-
-/* ─── Fade in up (IntersectionObserver triggered) ─── */
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(24px); }
+@keyframes stagger-in {
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── Scale in ─── */
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.92); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-/* ─── Reveal line ─── */
-@keyframes reveal-line {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-/* ─── Floating dot ─── */
-@keyframes float-dot {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  25% { transform: translateY(-12px) translateX(4px); }
-  50% { transform: translateY(-4px) translateX(-4px); }
-  75% { transform: translateY(-16px) translateX(2px); }
-}
-
-/* ─── Scroll indicator ─── */
 @keyframes scroll-bounce {
   0%, 100% { transform: translateY(0); opacity: 0.4; }
   50% { transform: translateY(8px); opacity: 1; }
 }
 
-/* ─── Kanji pulse ─── */
-@keyframes kanji-pulse {
-  0%, 100% { text-shadow: 0 0 40px rgba(201, 168, 76, 0.08); }
-  50% { text-shadow: 0 0 80px rgba(201, 168, 76, 0.15), 0 0 120px rgba(201, 168, 76, 0.05); }
-}
-
-/* ─── Ink spread (for menu open) ─── */
-@keyframes ink-spread {
-  from { transform: scale(0); opacity: 1; }
-  to { transform: scale(4); opacity: 0; }
+@keyframes breathe {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
 /* ═══════════════════════════════════════════════════════════
    UTILITY CLASSES
    ═══════════════════════════════════════════════════════════ */
 
-/* ─── Noise texture overlay (CSS-only grain) ─── */
+/* Grain overlay */
 .grain::before {
   content: "";
   position: fixed;
@@ -218,30 +118,17 @@ button {
   pointer-events: none;
   z-index: 9999;
   opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ─── Gold text gradient ─── */
-.text-gold-gradient {
-  background: linear-gradient(135deg, var(--gold-soft) 0%, var(--gold-bright) 50%, var(--gold) 100%);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 6s ease-in-out infinite;
-}
-
-/* ─── Card — Minimal luxury ─── */
+/* Card */
 .card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  background: #111111;
+  border: 1px solid rgba(201, 168, 76, 0.08);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   position: relative;
   overflow: hidden;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card::before {
@@ -251,21 +138,16 @@ button {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-muted), transparent);
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.1), transparent);
 }
 
-.card:active {
-  border-color: var(--border-medium);
-  box-shadow: var(--shadow-md), var(--shadow-gold);
-}
-
-/* ─── Pill button (category tabs) ─── */
+/* Pill button */
 .pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border-radius: var(--radius-full);
+  border-radius: 9999px;
   font-size: 10px;
   font-family: var(--font-serif);
   font-weight: 500;
@@ -273,8 +155,8 @@ button {
   text-transform: uppercase;
   white-space: nowrap;
   border: 1px solid transparent;
-  background: var(--bg-tertiary);
-  color: var(--text-muted);
+  background: #1a1a1a;
+  color: #7a7268;
   transition: all 0.25s ease;
   -webkit-user-select: none;
   user-select: none;
@@ -285,53 +167,28 @@ button {
 }
 
 .pill.active {
-  background: var(--gold-glow);
-  border-color: var(--border-active);
-  color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+  border-color: rgba(201, 168, 76, 0.35);
+  color: #c9a84c;
 }
 
-/* ─── Divider ─── */
-.divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border-medium), transparent);
-}
-
+/* Divider */
 .divider-gold {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-muted), transparent);
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.15), transparent);
 }
 
-/* ─── Section reveal (IntersectionObserver) ─── */
-.reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ─── Scroll indicator dot ─── */
+/* Scroll hint */
 .scroll-hint {
   animation: scroll-bounce 2s ease-in-out infinite;
 }
 
-/* ─── Ambient glow ─── */
-.ambient-glow {
-  position: absolute;
-  border-radius: 50%;
-  background: var(--gold-glow);
-  filter: blur(80px);
-  animation: breathe 6s ease-in-out infinite;
-  pointer-events: none;
+/* Stagger animation */
+.animate-stagger {
+  animation: stagger-in 0.4s ease-out both;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SCROLLBAR — Minimal, elegant
-   ═══════════════════════════════════════════════════════════ */
-
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 2px;
 }
@@ -341,75 +198,17 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--gold-muted);
-  border-radius: var(--radius-full);
+  background: rgba(201, 168, 76, 0.15);
+  border-radius: 9999px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--border-active);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   SELECTION
-   ═══════════════════════════════════════════════════════════ */
-
+/* Selection */
 ::selection {
-  background: var(--gold-muted);
-  color: var(--gold-soft);
+  background: rgba(201, 168, 76, 0.15);
+  color: #d4b96a;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   RTL SUPPORT
-   ═══════════════════════════════════════════════════════════ */
-
-[dir="rtl"] body {
-  font-family: var(--font-serif);
-}
-
-[dir="rtl"] .text-left {
-  text-align: right;
-}
-
-[dir="rtl"] .text-right {
-  text-align: left;
-}
-
-[dir="rtl"] .border-l-2 {
-  border-left: none;
-  border-right: 2px solid var(--gold-muted);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   REDUCED MOTION
-   ═══════════════════════════════════════════════════════════ */
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   SAFE AREA (notch, home indicator)
-   ═══════════════════════════════════════════════════════════ */
-
-@supports (padding: max(0px)) {
-  body {
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   HIDE SCROLLBAR (horizontal scroll containers)
-   ═══════════════════════════════════════════════════════════ */
-
+/* Hide scrollbar for horizontal scroll */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -418,10 +217,7 @@ button {
   scrollbar-width: none;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   LINE CLAMP
-   ═══════════════════════════════════════════════════════════ */
-
+/* Line clamp */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -429,9 +225,27 @@ button {
   overflow: hidden;
 }
 
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* RTL */
+[dir="rtl"] .text-left {
+  text-align: right;
+}
+[dir="rtl"] .text-right {
+  text-align: left;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Safe area */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
 }
