@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /* ─── Intersection Observer Hook ─── */
 function useReveal() {
@@ -14,7 +15,7 @@ function useReveal() {
     if (!el) return;
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -39,10 +40,8 @@ const KANJI: Record<string, string> = {
 /* ─── Tag style mapper ─── */
 function tagCls(tag: string): string {
   const t = tag.toLowerCase();
-  if (t === 'signature' || t === "chef's choice") return 'tag tag--gold';
-  if (t === 'best seller') return 'tag tag--gold';
+  if (t === 'signature' || t === "chef's choice" || t === 'premium' || t === 'best seller') return 'tag tag--gold';
   if (t === 'spicy' || t === 'hot') return 'tag tag--red';
-  if (t === 'premium') return 'tag tag--gold';
   return 'tag tag--muted';
 }
 
@@ -53,22 +52,36 @@ function DishCard({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: num
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
   const price = dish.price.replace(' SR', '').trim();
+  const isSignature = dish.tags.some(t => t.toLowerCase() === 'signature');
 
   return (
-    <article
-      className="card animate-[fade-up_0.45s_ease_both]"
-      style={{ animationDelay: `${Math.min(idx * 50, 400)}ms` }}
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ 
+        duration: 0.5, 
+        delay: Math.min(idx * 0.05, 0.4),
+        ease: [0.16, 1, 0.3, 1]
+      }}
+      className={`card group ${isSignature ? 'border-gold/20' : ''}`}
     >
       <div className="flex items-start justify-between gap-4">
         {/* Name + Description */}
         <div className="flex-1 min-w-0">
-          <h4 className="text-text text-[13px] font-serif uppercase tracking-[0.08em] leading-snug">
-            {name}
-          </h4>
+          <div className="flex items-center gap-2">
+            <h4 className="text-text text-[14px] font-serif uppercase tracking-[0.1em] leading-snug group-hover:text-gold transition-colors duration-300">
+              {name}
+            </h4>
+            {isSignature && (
+              <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse shrink-0" />
+            )}
+          </div>
 
           {/* Tags */}
           {dish.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-2">
+            <div className="flex flex-wrap gap-1.5 mt-2.5">
               {dish.tags.slice(0, 3).map((tag) => (
                 <span key={tag} className={tagCls(tag)}>
                   {tag}
@@ -79,38 +92,40 @@ function DishCard({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: num
 
           {/* Description */}
           {desc && (
-            <>
-              <div className="divider-gold my-2.5" />
-              <p className="text-text-muted/40 text-[10px] leading-relaxed font-light tracking-wide
-                           border-s border-gold/10 ps-2.5 line-clamp-2">
+            <div className="mt-3 relative">
+              <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-gold/30 via-gold/10 to-transparent" />
+              <p className="text-text-muted/50 text-[10.5px] leading-[1.6] font-light tracking-wide ps-3 line-clamp-2 italic">
                 {desc}
               </p>
-            </>
+            </div>
           )}
         </div>
 
         {/* Price */}
         <div className="flex flex-col items-end flex-shrink-0 pt-0.5">
           {price ? (
-            <>
-              <span className="text-gold font-serif text-[17px] font-medium leading-none">
+            <div className="flex flex-col items-end">
+              <span className="text-gold font-serif text-[18px] font-medium leading-none tracking-tight">
                 {price}
               </span>
-              <span className="text-[7px] text-gold/35 uppercase tracking-wider mt-0.5">
+              <span className="text-[8px] text-gold/40 uppercase tracking-[0.2em] mt-1.5 font-medium">
                 {lang === 'ar' ? 'ر.س' : 'SR'}
               </span>
-            </>
+            </div>
           ) : (
-            <div className="w-4 h-px bg-stroke mt-1" />
+            <div className="w-6 h-px bg-stroke mt-2" />
           )}
           {dish.calories && (
-            <span className="text-[7px] text-text-dim/30 mt-2 tracking-wider">
+            <span className="text-[7px] text-text-muted/30 mt-3 tracking-[0.15em] uppercase font-medium">
               {dish.calories}
             </span>
           )}
         </div>
       </div>
-    </article>
+
+      {/* Hover glow */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-radial-gradient from-gold/[0.03] to-transparent" />
+    </motion.article>
   );
 }
 
@@ -122,70 +137,86 @@ function StorySection() {
   const { ref, visible } = useReveal();
 
   return (
-    <section id="story" ref={ref} className="w-full py-24 px-5">
-      <div className="max-w-md mx-auto text-center">
-        {/* Label */}
-        <span
-          className="section-label reveal"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(12px)', transition: 'all 0.6s ease' }}
+    <section id="story" ref={ref} className="w-full py-32 px-5 relative overflow-hidden">
+      {/* Background Decorative Kanji */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0">
+        <span className="text-[280px] text-gold/[0.02] font-serif leading-none">
+          杉
+        </span>
+      </div>
+
+      <div className="max-w-md mx-auto text-center relative z-10">
+        <motion.span
+          initial={{ opacity: 0, y: 10 }}
+          animate={visible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="section-label"
         >
           {t('story.label')}
-        </span>
+        </motion.span>
 
-        {/* Title */}
-        <h2
-          className="section-title mt-4 mb-6"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(16px)', transition: 'all 0.7s ease 0.08s' }}
+        <motion.h2
+          initial={{ opacity: 0, y: 15 }}
+          animate={visible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="section-title mt-5 mb-8"
         >
           {t('story.title')}
-        </h2>
+        </motion.h2>
 
-        {/* Deco line */}
-        <div
-          className="deco-line deco-line-center mb-8"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'scaleX(1)' : 'scaleX(0)', transition: 'all 0.8s ease 0.15s', transformOrigin: 'center' }}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={visible ? { scaleX: 1 } : {}}
+          transition={{ duration: 1.2, delay: 0.2 }}
+          className="deco-line deco-line-center mb-10"
         />
 
-        {/* Paragraphs */}
-        <p
-          className="text-text-secondary/50 text-[12px] leading-[1.8] mb-5"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(12px)', transition: 'all 0.6s ease 0.2s' }}
-        >
-          {t('story.p1')}
-        </p>
-        <p
-          className="text-text-secondary/50 text-[12px] leading-[1.8]"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(12px)', transition: 'all 0.6s ease 0.28s' }}
-        >
-          {t('story.p2')}
-        </p>
+        <div className="space-y-6">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={visible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-text-secondary/60 text-[13px] leading-[1.9] tracking-wide"
+          >
+            {t('story.p1')}
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={visible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-text-secondary/60 text-[13px] leading-[1.9] tracking-wide"
+          >
+            {t('story.p2')}
+          </motion.p>
+        </div>
 
-        {/* Signature */}
-        <div
-          className="mt-10 flex flex-col items-center"
-          style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.6s ease 0.4s' }}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={visible ? { opacity: 1 } : {}}
+          transition={{ duration: 1, delay: 0.6 }}
+          className="mt-14 flex flex-col items-center"
         >
-          <div className="w-5 h-px bg-stroke mb-3" />
-          <p className="text-text-muted/30 text-[9px] italic tracking-wider font-serif">
+          <div className="w-6 h-px bg-gold/20 mb-4" />
+          <p className="text-gold/40 text-[10px] italic tracking-[0.2em] font-serif uppercase">
             {t('story.sig')}
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 }
 
 /* ═══════════════════════════════════════════════════════
-   MENU SECTION (with category tabs + dish cards)
+   MENU CONTENT
    ═══════════════════════════════════════════════════════ */
 function MenuContent() {
   const { t, lang } = useLanguage();
   const [active, setActive] = useState(CATEGORIES[0]);
   const tabBarRef = useRef<HTMLDivElement>(null);
-  const dishes = menuData.filter((d) => d.category === active);
-  const availCats = CATEGORIES.filter((cat) => menuData.some((d) => d.category === cat));
+  
+  const dishes = useMemo(() => menuData.filter((d) => d.category === active), [active]);
+  const availCats = useMemo(() => CATEGORIES.filter((cat) => menuData.some((d) => d.category === cat)), []);
 
-  // Scroll active tab into view
   useEffect(() => {
     const bar = tabBarRef.current;
     if (!bar) return;
@@ -196,18 +227,17 @@ function MenuContent() {
   return (
     <section id="menu" className="w-full min-h-dvh flex flex-col items-center">
       {/* ─── Section Header ─── */}
-      <div className="w-full max-w-xl pt-20 pb-6 px-5 text-center">
+      <div className="w-full max-w-xl pt-28 pb-10 px-6 text-center">
         <span className="section-label">{t('menu.label')}</span>
-        <h2 className="section-title mt-4">{t('menu.title')}</h2>
-        <div className="deco-line deco-line-center mt-6" />
+        <h2 className="section-title mt-5">{t('menu.title')}</h2>
+        <div className="deco-line deco-line-center mt-8" />
       </div>
 
       {/* ─── Sticky Category Bar ─── */}
-      <div className="sticky top-[52px] z-40 w-full bg-bg/90 backdrop-blur-xl border-b border-stroke">
+      <div className="sticky top-[60px] z-40 w-full bg-bg/80 backdrop-blur-2xl border-y border-stroke/50">
         <div
           ref={tabBarRef}
-          className="flex gap-1.5 px-4 py-3 overflow-x-auto no-scrollbar max-w-xl mx-auto"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex gap-2 px-4 py-4 overflow-x-auto no-scrollbar max-w-xl mx-auto"
         >
           {availCats.map((cat) => {
             const on = cat === active;
@@ -217,11 +247,13 @@ function MenuContent() {
                 key={cat}
                 data-active={on}
                 onClick={() => setActive(cat)}
-                className={`pill ${on ? 'pill--active' : ''}`}
+                className={`pill shrink-0 ${on ? 'pill--active' : 'hover:bg-white/[0.03]'}`}
               >
-                <span className="text-[11px]">{KANJI[cat] || '•'}</span>
-                <span>{t(`menu.cat.${cat}`)}</span>
-                <span className={`text-[7px] ${on ? 'text-gold/40' : 'text-text-dim/20'}`}>
+                <span className={`text-[12px] transition-colors duration-300 ${on ? 'text-gold' : 'text-text-muted/60'}`}>
+                  {KANJI[cat] || '•'}
+                </span>
+                <span className="font-medium tracking-wide">{t(`menu.cat.${cat}`)}</span>
+                <span className={`text-[8px] transition-opacity duration-300 ${on ? 'opacity-60' : 'opacity-20'}`}>
                   {count}
                 </span>
               </button>
@@ -231,28 +263,39 @@ function MenuContent() {
       </div>
 
       {/* ─── Dish Cards ─── */}
-      <div className="w-full max-w-xl px-4 pb-32">
-        <div className="flex flex-col gap-3 mt-5">
-          {dishes.map((dish, i) => (
-            <DishCard key={dish.id} dish={dish} lang={lang} idx={i} />
-          ))}
+      <div className="w-full max-w-xl px-5 pb-32">
+        <div className="flex flex-col gap-4 mt-8">
+          <AnimatePresence mode="popLayout">
+            {dishes.map((dish, i) => (
+              <DishCard key={dish.id} dish={dish} lang={lang} idx={i} />
+            ))}
+          </AnimatePresence>
 
           {dishes.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 text-text-dim/30">
-              <span className="text-3xl mb-3">{KANJI[active] || '•'}</span>
-              <p className="text-[9px] uppercase tracking-[0.3em] font-serif">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-32 text-text-muted/20"
+            >
+              <span className="text-4xl mb-4 opacity-50">{KANJI[active] || '•'}</span>
+              <p className="text-[10px] uppercase tracking-[0.4em] font-serif font-medium">
                 {t('common.coming')}
               </p>
-            </div>
+            </motion.div>
           )}
 
           {dishes.length > 0 && (
-            <div className="flex flex-col items-center gap-3 mt-8 mb-4">
-              <div className="w-10 h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
-              <span className="text-[7px] text-text-dim/20 uppercase tracking-[0.3em] font-serif">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-col items-center gap-4 mt-16 mb-8"
+            >
+              <div className="w-12 h-px bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
+              <span className="text-[8px] text-text-muted/30 uppercase tracking-[0.5em] font-serif">
                 {t('common.end')} {t(`menu.cat.${active}`)}
               </span>
-            </div>
+            </motion.div>
           )}
         </div>
       </div>
@@ -268,45 +311,53 @@ function ContactSection() {
   const { ref, visible } = useReveal();
 
   return (
-    <section id="contact" ref={ref} className="w-full py-24 px-5">
-      <div className="max-w-md mx-auto text-center">
-        <span
+    <section id="contact" ref={ref} className="w-full py-32 px-5 relative">
+      <div className="max-w-md mx-auto text-center relative z-10">
+        <motion.span
+          initial={{ opacity: 0, y: 10 }}
+          animate={visible ? { opacity: 1, y: 0 } : {}}
           className="section-label"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(12px)', transition: 'all 0.6s ease' }}
         >
           {t('contact.label')}
-        </span>
+        </motion.span>
 
-        <h2
-          className="section-title mt-4 mb-6"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(16px)', transition: 'all 0.7s ease 0.08s' }}
+        <motion.h2
+          initial={{ opacity: 0, y: 15 }}
+          animate={visible ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.1 }}
+          className="section-title mt-5 mb-8"
         >
           {t('contact.title')}
-        </h2>
+        </motion.h2>
 
-        <div
-          className="deco-line deco-line-center mb-8"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'scaleX(1)' : 'scaleX(0)', transition: 'all 0.8s ease 0.15s', transformOrigin: 'center' }}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={visible ? { scaleX: 1 } : {}}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="deco-line deco-line-center mb-10"
         />
 
-        <div
-          className="flex flex-col items-center gap-3"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(12px)', transition: 'all 0.6s ease 0.2s' }}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={visible ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.3 }}
+          className="flex flex-col items-center gap-4"
         >
-          <p className="text-text-secondary/50 text-[12px] tracking-wider">
+          <p className="text-text-secondary/70 text-[14px] tracking-[0.05em] font-serif">
             {t('contact.location')}
           </p>
-          <p className="text-text-muted/40 text-[11px] tracking-wider">
+          <p className="text-text-muted/50 text-[12px] tracking-wide">
             {t('contact.hours')}
           </p>
 
           <a
             href="tel:+966"
-            className="cta-btn mt-6"
+            className="cta-btn mt-10 px-10 py-4 group"
           >
-            {t('contact.cta')}
+            <span className="relative z-10">{t('contact.cta')}</span>
+            <div className="absolute inset-0 bg-gold/10 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
           </a>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -318,15 +369,17 @@ function ContactSection() {
 function Footer() {
   const { t } = useLanguage();
   return (
-    <footer className="w-full py-12 px-5 border-t border-stroke">
-      <div className="max-w-md mx-auto text-center flex flex-col items-center gap-4">
-        <div className="w-5 h-px bg-stroke" />
-        <p className="text-text-dim/30 text-[8px] uppercase tracking-[0.3em] font-serif">
-          {t('footer.copy')}
-        </p>
-        <p className="text-text-dim/20 text-[8px] tracking-wider font-serif">
-          {t('footer.heart')}
-        </p>
+    <footer className="w-full py-20 px-5 border-t border-stroke/30 bg-bg-card/30">
+      <div className="max-w-md mx-auto text-center flex flex-col items-center gap-6">
+        <div className="w-6 h-px bg-gold/20" />
+        <div className="flex flex-col gap-2">
+          <p className="text-text-muted/40 text-[9px] uppercase tracking-[0.5em] font-serif font-medium">
+            {t('footer.copy')}
+          </p>
+          <p className="text-text-muted/20 text-[9px] tracking-[0.2em] font-serif uppercase">
+            {t('footer.heart')}
+          </p>
+        </div>
       </div>
     </footer>
   );
@@ -337,11 +390,11 @@ function Footer() {
    ═══════════════════════════════════════════════════════ */
 export default function MenuSection() {
   return (
-    <>
+    <div className="bg-bg relative">
       <StorySection />
       <MenuContent />
       <ContactSection />
       <Footer />
-    </>
+    </div>
   );
 }
