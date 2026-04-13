@@ -1,21 +1,19 @@
 'use client';
 
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useSpring } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 // Floating particle component for ambient luxury
 function FloatingParticle({
   delay,
   duration,
   x,
-  y,
   size,
 }: {
   delay: number;
   duration: number;
   x: string;
-  y: string;
   size: number;
 }) {
   return (
@@ -34,7 +32,7 @@ function FloatingParticle({
         ease: 'easeOut',
       }}
       className="absolute rounded-full bg-gold/20 blur-[2px]"
-      style={{ left: x, bottom: y, width: size, height: size }}
+      style={{ left: x, bottom: '0', width: size, height: size }}
     />
   );
 }
@@ -43,24 +41,28 @@ export default function LandingExperience() {
   const { t } = useLanguage();
   const containerRef = useRef<HTMLElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end start'],
-  });
+  // Passive scroll listener — doesn't block mobile scroll
+  const handleScroll = useCallback(() => {
+    setScrollY(window.scrollY);
+  }, []);
 
-  // Smooth spring physics for parallax
-  const scrollYSmooth = useSpring(scrollYProgress, {
-    stiffness: 80,
-    damping: 25,
-    mass: 0.8,
-  });
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
-  const yBg = useTransform(scrollYSmooth, [0, 1], ['0%', '40%']);
-  const opacityHero = useTransform(scrollYSmooth, [0, 0.4], [1, 0]);
-  const scaleHero = useTransform(scrollYSmooth, [0, 0.4], [1, 0.92]);
-  const yKanji = useTransform(scrollYSmooth, [0, 0.5], [0, -60]);
-  const blurKanji = useTransform(scrollYSmooth, [0, 0.3], ['0px', '15px']);
+  // Compute parallax values from scrollY (no framer-motion useScroll)
+  const heroHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+  const scrollProgress = Math.min(scrollY / heroHeight, 1);
+
+  // Derived values — NO useScroll to avoid mobile scroll hijacking
+  const yBg = scrollProgress * 40; // %
+  const opacityHero = Math.max(1 - scrollProgress / 0.4, 0);
+  const scaleHero = 1 - scrollProgress * 0.08;
+  const yKanji = -scrollProgress * 60;
+  const blurKanji = scrollProgress * 50;
 
   // Mark as loaded for entrance animations
   useEffect(() => {
@@ -69,37 +71,35 @@ export default function LandingExperience() {
   }, []);
 
   const particles = [
-    { delay: 0, duration: 8, x: '10%', y: '20%', size: 3 },
-    { delay: 2, duration: 10, x: '70%', y: '10%', size: 2 },
-    { delay: 4, duration: 9, x: '40%', y: '30%', size: 4 },
-    { delay: 1, duration: 11, x: '85%', y: '15%', size: 2 },
-    { delay: 3, duration: 7, x: '25%', y: '25%', size: 3 },
-    { delay: 5, duration: 12, x: '60%', y: '5%', size: 2 },
+    { delay: 0, duration: 8, x: '10%', size: 3 },
+    { delay: 2, duration: 10, x: '70%', size: 2 },
+    { delay: 4, duration: 9, x: '40%', size: 4 },
+    { delay: 1, duration: 11, x: '85%', size: 2 },
+    { delay: 3, duration: 7, x: '25%', size: 3 },
+    { delay: 5, duration: 12, x: '60%', size: 2 },
   ];
 
   return (
     <section
       ref={containerRef}
       className="relative h-[100dvh] w-full flex flex-col items-center justify-center 
-                 bg-background overflow-hidden"
+                 overflow-hidden"
     >
       {/* ===== PARALLAX BACKGROUND ===== */}
-      <motion.div
-        style={{ y: yBg }}
+      <div
         className="absolute inset-0 z-0"
+        style={{ transform: `translateY(${yBg}%)` }}
       >
-        <motion.div
-          initial={{ scale: 1.15, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 2.5, ease: [0.22, 1, 0.36, 1] }}
+        <div
           className="h-full w-full bg-[url('/media/optimized/hero-wallpaper-alt-0.jpg')] 
                      bg-cover bg-center"
+          style={{ transform: `scale(${isLoaded ? 1 : 1.15})`, opacity: isLoaded ? 1 : 0, transition: 'transform 2.5s cubic-bezier(0.22,1,0.36,1), opacity 2s' }}
         />
         {/* Multiple overlay layers for depth */}
         <div className="absolute inset-0 bg-black/50 z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-transparent to-background z-20" />
         <div className="absolute inset-0 bg-gradient-to-r from-background/30 via-transparent to-background/30 z-20" />
-      </motion.div>
+      </div>
 
       {/* ===== FLOATING GOLD PARTICLES ===== */}
       <div className="absolute inset-0 z-[5] pointer-events-none overflow-hidden">
@@ -121,9 +121,12 @@ export default function LandingExperience() {
       />
 
       {/* ===== MAIN HERO CONTENT ===== */}
-      <motion.div
-        style={{ opacity: opacityHero, scale: scaleHero }}
+      <div
         className="relative z-30 flex flex-col items-center px-6"
+        style={{
+          opacity: opacityHero,
+          transform: `scale(${scaleHero})`,
+        }}
       >
         {/* Decorative Top Line */}
         <motion.div
@@ -134,9 +137,12 @@ export default function LandingExperience() {
         />
 
         {/* KANJI — Centerpiece */}
-        <motion.div
-          style={{ y: yKanji, filter: `blur(${blurKanji})` }}
+        <div
           className="relative"
+          style={{
+            transform: `translateY(${yKanji}px)`,
+            filter: `blur(${blurKanji}px)`,
+          }}
         >
           {/* Main Kanji Character */}
           <motion.span
@@ -175,7 +181,7 @@ export default function LandingExperience() {
             transition={{ duration: 2, delay: 1.5 }}
             className="absolute inset-[-20px] border border-gold/10 rounded-full -z-10"
           />
-        </motion.div>
+        </div>
 
         {/* Brand Name */}
         <motion.div
@@ -206,7 +212,7 @@ export default function LandingExperience() {
           transition={{ duration: 1.2, delay: 2, ease: [0.22, 1, 0.36, 1] }}
           className="w-12 h-[1px] bg-gradient-to-r from-transparent via-gold/50 to-transparent mt-10"
         />
-      </motion.div>
+      </div>
 
       {/* ===== SCROLL INDICATOR ===== */}
       <motion.div
@@ -215,6 +221,7 @@ export default function LandingExperience() {
         transition={{ delay: 3, duration: 1 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 
                    flex flex-col items-center gap-3"
+        style={{ opacity: Math.max(1 - scrollProgress * 3, 0) }}
       >
         <span className="text-[7px] uppercase tracking-[0.5em] text-gold/40 font-serif">
           Scroll
