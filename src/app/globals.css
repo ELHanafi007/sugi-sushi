@@ -278,6 +278,15 @@ button, a, [role="button"] {
   will-change: transform;
 }
 
+/* ===== HIDE SCROLLBAR (for category tabs) ===== */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* ===== SMOOTH PAGE TRANSITIONS ===== */
 ::view-transition-old(root),
 ::view-transition-new(root) {

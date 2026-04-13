@@ -1,225 +1,144 @@
 'use client';
 
-import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { useState, useRef, useEffect } from 'react';
-import { MENU_DATA, CATEGORIES } from '@/data/menuData';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { MENU_DATA, CATEGORIES, Dish } from '@/data/menuData';
 import { useLanguage } from '@/context/LanguageContext';
-import Image from 'next/image';
-
-const CATEGORY_IMAGES: Record<string, string> = {
-  'Starters': '/media/optimized/brochure-1.jpg',
-  'Sushi & Sashimi': '/media/optimized/brochure-3.jpg',
-  'Specialty Rolls': '/media/optimized/brochure-5.jpg',
-  'Main Dishes': '/media/optimized/brochure-8.jpg',
-  'Desserts': '/media/optimized/brochure-10.jpg',
-};
-
-const CATEGORY_ICONS: Record<string, string> = {
-  'Starters': '前',
-  'Sushi & Sashimi': '鮨',
-  'Specialty Rolls': '巻',
-  'Main Dishes': '主',
-  'Desserts': '甘',
-};
 
 /* ===== STAGGER VARIANTS ===== */
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.15 },
+    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
   },
-  exit: { opacity: 0, transition: { staggerChildren: 0.05, staggerDirection: -1 } },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
   },
-  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+};
+
+/* ===== CATEGORY ICONS ===== */
+const CATEGORY_ICONS: Record<string, string> = {
+  'Salads': '🥗',
+  'Soups': '🍜',
+  'Starters': '前',
+  'Wok, Noodles & Rice': '炒',
+  'Tempura': '天',
+  'Sugi Dishes': '主',
+  'Sashimi': '刺',
+  'Tataki': '叩',
+  'Ceviche': '酸',
+  'Nigiri': '握',
+  'Gunkan': '軍',
+  'Temaki': '手',
+  'Maki Rolls': '巻',
+  'Aromaki Rolls': '香',
+  'Aromaki Fried': '揚',
+  'California Rolls': '加',
+  'Special Rolls': '特',
+  'Fried Rolls': '衣',
+  'Boxes': '箱',
+  'Sugi Boat': '舟',
+  'Cold Drinks': '冷',
+  'Fresh Juices': '搾',
+  'Hot Drinks': '温',
+  'Desserts': '甘',
+  'Extra Sauces': '醤',
 };
 
 /* ===== DISH CARD COMPONENT ===== */
-function DishCard({
-  item,
-  index,
-  lang,
-}: {
-  item: typeof MENU_DATA[0];
-  index: number;
-  lang: 'en' | 'ar';
-}) {
+function DishCard({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) {
   const [isPressed, setIsPressed] = useState(false);
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '0px 0px -50px 0px' });
 
-  const name = lang === 'ar' ? item.nameAr || item.name : item.name;
-  const description = lang === 'ar' ? item.descriptionAr || item.description : item.description;
+  const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
+  const description = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
+
+  // Tag color logic
+  const getTagStyle = (tag: string) => {
+    const t = tag.toLowerCase();
+    if (['signature', 'best seller', "chef's choice"].includes(t))
+      return 'bg-gold/10 border-gold/20 text-gold/80';
+    if (['spicy', 'hot'].includes(t))
+      return 'bg-accent-red/10 border-accent-red/20 text-accent-red-light/80';
+    if (['premium', 'luxury', 'ultimate luxury'].includes(t))
+      return 'bg-gold/15 border-gold/30 text-gold';
+    if (['new'].includes(t))
+      return 'bg-foreground/5 border-foreground/15 text-foreground-muted/70';
+    return 'bg-gold/5 border-gold/10 text-gold/60';
+  };
 
   return (
     <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={inView ? 'visible' : 'hidden'}
       variants={itemVariants}
       onPointerDown={() => setIsPressed(true)}
       onPointerUp={() => setIsPressed(false)}
       onPointerLeave={() => setIsPressed(false)}
-      className="group relative"
     >
-      {/* Card Container */}
       <motion.div
-        animate={isPressed ? { scale: 0.98 } : { scale: 1 }}
-        transition={{ duration: 0.2 }}
-        className="card-luxury p-4 relative overflow-hidden"
+        animate={isPressed ? { scale: 0.985 } : { scale: 1 }}
+        transition={{ duration: 0.15 }}
+        className="card-luxury p-4 relative overflow-hidden active:scale-[0.985]"
       >
-        {/* Subtle Gold Accent on Top Edge */}
+        {/* Gold accent line on top */}
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r 
-                        from-transparent via-gold/10 to-transparent 
-                        group-hover:via-gold/30 transition-all duration-700" />
+                        from-transparent via-gold/8 to-transparent" />
 
-        {/* Dish Header */}
-        <div className="flex justify-between items-start gap-3 mb-3">
+        {/* Name + Price Row */}
+        <div className="flex justify-between items-start gap-3 mb-2">
           <div className="flex-1 min-w-0">
-            <h4 className="text-foreground text-sm font-serif uppercase tracking-[0.15em] 
-                           group-hover:text-gold transition-colors duration-500 
-                           truncate pr-2">
+            <h4 className="text-foreground text-sm font-serif uppercase tracking-[0.12em] 
+                           leading-tight pr-2">
               {name}
             </h4>
+
             {/* Tags */}
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {item.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="text-[6px] px-2 py-0.5 border border-gold/15 text-gold/70 
-                             uppercase tracking-[0.25em] rounded-full bg-gold/5
-                             font-medium"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            {dish.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {dish.tags.slice(0, 3).map((tag) => (
+                  <span
+                    key={tag}
+                    className={`text-[6px] px-2 py-0.5 border uppercase tracking-[0.2em] 
+                               rounded-full font-medium ${getTagStyle(tag)}`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Price */}
-          <div className="flex-shrink-0 text-right">
-            <span className="text-gold font-serif text-base font-medium block">
-              {item.price}
+          {/* Price + Calories */}
+          <div className="flex-shrink-0 text-right flex flex-col items-end">
+            <span className="text-gold font-serif text-base font-medium leading-none">
+              {dish.price.replace(' SR', '')}
             </span>
             <span className="text-[7px] text-gold/50 uppercase tracking-wider">SR</span>
+            {dish.calories && (
+              <span className="text-[7px] text-foreground-dim/50 mt-1 tracking-wider">
+                {dish.calories} cal
+              </span>
+            )}
           </div>
         </div>
 
         {/* Dotted Separator */}
-        <div className="w-full h-[1px] border-b border-dotted border-gold/10 my-2.5" />
-
-        {/* Description */}
-        <p className="text-foreground-muted/70 text-[10px] leading-relaxed font-light 
-                      tracking-wide italic border-l-[1px] border-gold/10 pl-2.5
-                      group-hover:border-gold/25 transition-all duration-500 line-clamp-2">
-          {description}
-        </p>
-
-        {/* Hover Glow Effect */}
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gold/5 blur-[60px] 
-                        rounded-full opacity-0 group-hover:opacity-100 
-                        transition-opacity duration-700 pointer-events-none" />
+        {description && (
+          <>
+            <div className="w-full h-[1px] border-b border-dotted border-gold/8 my-2" />
+            {/* Description */}
+            <p className="text-foreground-muted/60 text-[10px] leading-relaxed font-light 
+                          tracking-wide border-l-[1px] border-gold/8 pl-2.5 line-clamp-2">
+              {description}
+            </p>
+          </>
+        )}
       </motion.div>
-    </motion.div>
-  );
-}
-
-/* ===== CATEGORY CARD COMPONENT ===== */
-function CategoryCard({
-  cat,
-  idx,
-  onClick,
-}: {
-  cat: string;
-  idx: number;
-  onClick: () => void;
-}) {
-  const { t } = useLanguage();
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '0px 0px -30px 0px' });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40, scale: 0.95 }}
-      animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{
-        delay: idx * 0.08 + 0.1,
-        duration: 0.8,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      whileTap={{ scale: 0.97 }}
-      onClick={onClick}
-      className="group relative h-[180px] rounded-xl overflow-hidden cursor-pointer 
-                 border-luxury active:border-gold/20 transition-all duration-500"
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); }}
-    >
-      {/* Image Background */}
-      <Image
-        src={CATEGORY_IMAGES[cat] || '/media/optimized/wallpaper.webp'}
-        alt={cat}
-        fill
-        className="object-cover scale-100 group-hover:scale-110 
-                   transition-transform duration-[2s] ease-out opacity-50 
-                   group-hover:opacity-80"
-        sizes="(max-width: 768px) 50vw, 33vw"
-        quality={75}
-      />
-
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 
-                      to-transparent transition-all duration-700" />
-
-      {/* Kanji Watermark */}
-      <span className="absolute top-3 right-3 text-[20px] font-serif text-gold/10 
-                       group-hover:text-gold/20 transition-all duration-700 select-none">
-        {CATEGORY_ICONS[cat]}
-      </span>
-
-      {/* Content */}
-      <div className="absolute inset-0 flex flex-col justify-end p-4">
-        {/* "Explore" Label */}
-        <motion.span
-          className="text-gold text-[7px] tracking-[0.5em] uppercase mb-1.5 
-                     opacity-0 group-hover:opacity-100 transition-opacity duration-500 
-                     font-serif font-medium"
-        >
-          Explore
-        </motion.span>
-
-        {/* Category Name */}
-        <h3 className="text-foreground text-sm font-serif uppercase tracking-[0.2em] 
-                       group-hover:text-gold transition-colors duration-500 drop-shadow-lg">
-          {t(`menu.cat.${cat}`)}
-        </h3>
-
-        {/* Animated Line */}
-        <motion.div
-          className="mt-2 h-[1px] bg-gold/20"
-          initial={{ width: 20 }}
-          whileHover={{ width: 48 }}
-          whileTap={{ width: 48 }}
-          transition={{ duration: 0.4 }}
-        />
-      </div>
-
-      {/* Item Count Badge */}
-      <div className="absolute top-3 left-3 px-2 py-0.5 bg-black/60 backdrop-blur-sm 
-                      rounded-full border border-gold/10">
-        <span className="text-[7px] text-gold/60 uppercase tracking-wider font-serif">
-          {MENU_DATA.filter((d) => d.category === cat).length} items
-        </span>
-      </div>
     </motion.div>
   );
 }
@@ -227,160 +146,163 @@ function CategoryCard({
 /* ===== MAIN MENU SECTION ===== */
 export default function MenuSection() {
   const { t, lang } = useLanguage();
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>(CATEGORIES[0]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const tabBarRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const isHeaderInView = useInView(headerRef, { once: true, margin: '0px 0px -50px 0px' });
 
-  const filteredItems = activeCategory
-    ? MENU_DATA.filter((item) => item.category === activeCategory)
-    : [];
+  // Get dishes for active category
+  const filteredItems = MENU_DATA.filter((item) => item.category === activeCategory);
 
-  // Scroll to top of menu section when category changes
+  // Scroll active tab into view
   useEffect(() => {
-    if (activeCategory && sectionRef.current) {
-      const yOffset = -100;
-      const element = sectionRef.current;
-      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+    if (tabBarRef.current) {
+      const activeTab = tabBarRef.current.querySelector('[data-active="true"]');
+      if (activeTab) {
+        activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
     }
   }, [activeCategory]);
+
+  // Scroll to menu section when category changes
+  const handleCategoryChange = useCallback((cat: string) => {
+    setActiveCategory(cat);
+    if (sectionRef.current) {
+      const yOffset = -80;
+      const y = sectionRef.current.getBoundingClientRect().top + window.scrollY + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, []);
 
   return (
     <section
       id="menu"
       ref={sectionRef}
-      className="w-full min-h-[100dvh] bg-background py-24 px-4 flex flex-col 
-                 items-center relative overflow-hidden"
+      className="w-full min-h-[100dvh] bg-background flex flex-col items-center relative overflow-hidden"
     >
       {/* ===== AMBIENT BACKGROUND ===== */}
       <div className="absolute inset-0 washi opacity-[0.02] pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-32 
-                      bg-gradient-to-b from-gold/20 via-gold/5 to-transparent" />
       <div className="absolute -top-[10%] -left-[20%] w-[60%] h-[40%] bg-gold/[0.03] 
                       blur-[100px] rounded-full pointer-events-none" />
       <div className="absolute -bottom-[10%] -right-[20%] w-[60%] h-[40%] 
                       bg-accent-red/[0.02] blur-[100px] rounded-full pointer-events-none" />
 
       {/* ===== SECTION HEADER ===== */}
-      <motion.div
-        ref={headerRef}
-        initial={{ opacity: 0, y: 30 }}
-        animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="flex flex-col items-center mb-12 z-10 text-center px-2"
-      >
-        {/* Decorative Top Element */}
+      <div className="w-full max-w-lg z-10 pt-20 pb-4 px-4 text-center">
         <motion.div
-          className="w-6 h-[1px] bg-gold/30 mb-6"
-          initial={{ scaleX: 0 }}
-          animate={isHeaderInView ? { scaleX: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        />
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col items-center"
+        >
+          <div className="w-6 h-[1px] bg-gold/30 mb-5" />
+          <span className="text-gold text-[8px] tracking-[0.8em] uppercase font-serif font-medium">
+            {t('menu.collection')}
+          </span>
+          <h2 className="text-foreground text-2xl font-serif uppercase tracking-[0.25em] 
+                         relative pb-3 mt-3">
+            {t('menu.title')}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[1px] w-12 
+                           bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+          </h2>
+        </motion.div>
+      </div>
 
-        <span className="text-gold text-[8px] tracking-[0.8em] uppercase mb-4 
-                         font-serif font-medium">
-          {activeCategory ? t(`menu.cat.${activeCategory}`) : t('menu.collection')}
-        </span>
+      {/* ===== STICKY CATEGORY TAB BAR ===== */}
+      <div
+        ref={scrollRef}
+        className="sticky top-[64px] z-50 w-full bg-background/95 backdrop-blur-xl 
+                    border-b border-gold/5 py-3"
+      >
+        <div
+          ref={tabBarRef}
+          className="flex gap-2 px-4 overflow-x-auto no-scrollbar max-w-lg mx-auto"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {CATEGORIES.map((cat) => {
+            const isActive = cat === activeCategory;
+            const count = MENU_DATA.filter((d) => d.category === cat).length;
+            if (count === 0) return null;
 
-        <h2 className="text-foreground text-3xl font-serif uppercase tracking-[0.25em] 
-                       relative pb-4">
-          {activeCategory ? activeCategory : t('menu.title')}
-          <motion.div
-            layoutId="header-underline"
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[1px] w-16 
-                       bg-gradient-to-r from-transparent via-gold/50 to-transparent"
-          />
-        </h2>
-      </motion.div>
+            return (
+              <motion.button
+                key={cat}
+                data-active={isActive}
+                onClick={() => handleCategoryChange(cat)}
+                whileTap={{ scale: 0.95 }}
+                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full 
+                            text-[8px] uppercase tracking-[0.15em] font-serif transition-all 
+                            duration-300 ${
+                              isActive
+                                ? 'bg-gold/15 text-gold border border-gold/30'
+                                : 'bg-foreground/[0.03] text-foreground-dim/60 border border-transparent'
+                            }`}
+              >
+                <span className="text-[10px]">
+                  {CATEGORY_ICONS[cat] || '•'}
+                </span>
+                <span className="whitespace-nowrap">
+                  {t(`menu.cat.${cat}`)}
+                </span>
+                <span className={`text-[7px] ${isActive ? 'text-gold/60' : 'text-foreground-dim/30'}`}>
+                  {count}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* ===== CONTENT AREA ===== */}
-      <div className="w-full max-w-lg z-10">
+      <div className="w-full max-w-lg z-10 px-4 pb-32">
         <AnimatePresence mode="wait">
-          {!activeCategory ? (
-            /* --- CATEGORY GRID --- */
-            <motion.div
-              key="categories"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="grid grid-cols-2 gap-3"
-            >
-              {CATEGORIES.map((cat, idx) => (
-                <CategoryCard
-                  key={cat}
-                  cat={cat}
-                  idx={idx}
-                  onClick={() => setActiveCategory(cat)}
-                />
-              ))}
-            </motion.div>
-          ) : (
-            /* --- PRODUCT LIST --- */
-            <motion.div
-              key="products"
-              className="flex flex-col"
-            >
-              {/* Back Button */}
-              <motion.button
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                onClick={() => setActiveCategory(null)}
-                whileTap={{ scale: 0.97 }}
-                className="group flex items-center gap-3 text-[8px] tracking-[0.4em] 
-                           uppercase text-gold/50 hover:text-gold transition-colors 
-                           duration-500 mb-8 pb-4 border-b border-gold/5 self-start
-                           active:text-gold"
-              >
-                <motion.span
-                  className="w-6 h-[1px] bg-gold/20 group-hover:w-8 group-hover:bg-gold/50 
-                             transition-all duration-500"
-                />
-                <span className="font-serif">{t('menu.back')}</span>
-              </motion.button>
+          <motion.div
+            key={activeCategory}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex flex-col gap-3 mt-6"
+          >
+            {filteredItems.map((dish) => (
+              <DishCard key={dish.id} dish={dish} lang={lang} />
+            ))}
 
-              {/* Dishes Grid */}
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="flex flex-col gap-3"
-              >
-                {filteredItems.map((item, idx) => (
-                  <DishCard key={item.id} item={item} index={idx} lang={lang} />
-                ))}
-              </motion.div>
-
-              {/* Category Footer Decoration */}
+            {filteredItems.length === 0 && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 1 }}
-                className="mt-12 flex flex-col items-center gap-3"
+                className="flex flex-col items-center justify-center py-20 text-foreground-dim/40"
+              >
+                <span className="text-4xl mb-4">{CATEGORY_ICONS[activeCategory] || '•'}</span>
+                <p className="text-[10px] uppercase tracking-[0.4em] font-serif text-center">
+                  Coming Soon
+                </p>
+              </motion.div>
+            )}
+
+            {filteredItems.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="mt-8 flex flex-col items-center gap-3"
               >
                 <div className="w-8 h-[1px] bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
-                <span className="text-[8px] text-foreground-dim/40 uppercase tracking-[0.4em] 
-                                 font-serif text-center">
+                <span className="text-[7px] text-foreground-dim/30 uppercase tracking-[0.4em] font-serif">
                   End of {t(`menu.cat.${activeCategory}`)}
                 </span>
               </motion.div>
-            </motion.div>
-          )}
+            )}
+          </motion.div>
         </AnimatePresence>
       </div>
 
       {/* ===== BACKGROUND KANJI SEAL ===== */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 0.02 }}
-        viewport={{ once: true }}
-        className="absolute bottom-8 right-4 text-[150px] font-serif select-none 
-                   pointer-events-none text-gold z-0 leading-none"
-      >
+      <div className="fixed bottom-4 right-2 text-[120px] font-serif select-none 
+                      pointer-events-none text-gold/[0.02] z-0 leading-none">
         杉
-      </motion.div>
+      </div>
     </section>
   );
 }
