@@ -4,42 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
-
-/* ─── HUD Components ─── */
-const HUD = () => {
-  const { lang, setLang, t } = useLanguage();
-  return (
-    <div className="fixed inset-0 z-50 pointer-events-none p-6 flex flex-col justify-between">
-      <div className="flex justify-between items-start pointer-events-auto">
-        <div className="flex flex-col gap-1">
-          <span className="mono-tag !text-white/40">Established</span>
-          <span className="mono-tag">2024 — Tokyo/Riyadh</span>
-        </div>
-        <button 
-          onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
-          className="mono-tag px-4 py-2 hud-border rounded-full hover:bg-white hover:text-black transition-colors"
-        >
-          {lang === 'en' ? 'Arabic' : 'English'}
-        </button>
-      </div>
-      
-      <div className="flex justify-between items-end pointer-events-auto">
-        <div className="flex flex-col gap-1">
-          <span className="mono-tag !text-white/40">Status</span>
-          <span className="flex items-center gap-2 mono-tag">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
-            Live Kitchen
-          </span>
-        </div>
-        <div className="flex gap-8">
-          <a href="#menu" className="mono-tag hover:text-white transition-colors">Menu</a>
-          <a href="#story" className="mono-tag hover:text-white transition-colors">Path</a>
-          <a href="tel:+966" className="mono-tag hover:text-white transition-colors">Reserve</a>
-        </div>
-      </div>
-    </div>
-  );
-};
+import Navbar from '@/components/Navbar';
 
 /* ─── Kinetic Hero ─── */
 const KineticHero = () => {
@@ -84,7 +49,7 @@ const KineticMenu = () => {
   const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
 
   return (
-    <section ref={containerRef} className="relative py-48 bg-bg">
+    <section id="menu" ref={containerRef} className="relative py-48 bg-bg">
       <div className="container mx-auto px-6">
         <div className="flex flex-col lg:flex-row gap-24">
           {/* Vertical Category HUD */}
@@ -95,7 +60,7 @@ const KineticMenu = () => {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`text-left transition-all duration-500 group ${
+                  className={`text-left transition-all duration-500 group relative ${
                     activeCategory === cat ? 'pl-8 text-gold' : 'text-white/20 hover:text-white/50'
                   }`}
                 >
@@ -108,7 +73,7 @@ const KineticMenu = () => {
                   {activeCategory === cat && (
                     <motion.div 
                       layoutId="catUnderline"
-                      className="absolute left-0 w-6 h-px bg-gold mt-[-12px]"
+                      className="absolute left-0 top-1/2 w-6 h-px bg-gold"
                     />
                   )}
                 </button>
@@ -197,8 +162,6 @@ const ImmersiveStory = () => {
 
 /* ─── Main Page ─── */
 export default function Home() {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
   useEffect(() => {
     const handleMouse = (e: MouseEvent) => {
       document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
@@ -210,15 +173,13 @@ export default function Home() {
 
   return (
     <main className="bg-bg text-white relative min-h-screen">
-      <HUD />
+      <Navbar />
       <KineticHero />
-      <div id="menu">
-        <KineticMenu />
-      </div>
+      <KineticMenu />
       <ImmersiveStory />
       
       {/* Footer Utility */}
-      <footer className="py-24 border-t border-white/5 text-center">
+      <footer id="contact" className="py-24 border-t border-white/5 text-center relative overflow-hidden">
         <span className="heading-huge opacity-[0.02] absolute left-0 right-0 pointer-events-none">SUGI SUSHI</span>
         <div className="container mx-auto px-6 relative z-10">
           <span className="mono-tag opacity-20 block mb-4">© 2026 Crafted with obsession</span>
