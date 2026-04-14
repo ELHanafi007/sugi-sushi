@@ -9,165 +9,170 @@ export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
-  const scale = useTransform(scrollY, [0, 300], [1, 1.05]);
+  const y1 = useTransform(scrollY, [0, 1000], [0, 300]);
+  const opacity = useTransform(scrollY, [0, 500], [1, 0]);
+  const scale = useTransform(scrollY, [0, 500], [1, 1.1]);
 
   return (
     <section 
       ref={containerRef}
-      className="relative min-h-[92dvh] w-full flex flex-col items-center justify-center overflow-hidden bg-bg"
+      className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-bg"
     >
       {/* ─── Background Layers ─── */}
       <motion.div 
         style={{ y: y1, scale }}
         className="absolute inset-0 z-0"
       >
-        {/* Subtle Image Overlay (if available) */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.15] mix-blend-luminosity"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.2] mix-blend-luminosity"
           style={{ backgroundImage: 'url("/media/optimized/hero-wallpaper-2.jpg")' }}
         />
         
         {/* Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-b from-bg/20 via-bg/60 to-bg" />
+        <div className="absolute inset-0 bg-gradient-to-b from-bg/20 via-bg/40 to-bg" />
         <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
         
         {/* Ambient Glows */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] rounded-full pointer-events-none opacity-20"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] rounded-full pointer-events-none opacity-30"
           style={{
-            background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)',
-            filter: 'blur(80px)',
+            background: 'radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%)',
+            filter: 'blur(100px)',
           }}
         />
       </motion.div>
 
       {/* ─── Decorative Elements ─── */}
-      <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.03, scale: 1 }}
+          animate={{ opacity: 0.05, scale: 1 }}
           transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }}
-          className="w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] rounded-full border border-gold"
+          className="w-[120vh] h-[120vh] rounded-full border border-gold"
         />
         <motion.div
           initial={{ opacity: 0, scale: 1.2 }}
-          animate={{ opacity: 0.02, scale: 1 }}
+          animate={{ opacity: 0.03, scale: 1 }}
           transition={{ duration: 3, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute w-[95vw] h-[95vw] max-w-[800px] max-h-[800px] rounded-full border border-gold"
+          className="absolute w-[140vh] h-[140vh] rounded-full border border-gold"
         />
       </div>
 
       {/* ─── Content ─── */}
       <motion.div 
         style={{ opacity }}
-        className="relative z-10 flex flex-col items-center px-6 text-center"
+        className="relative z-10 container-wide flex flex-col items-center text-center"
       >
         {/* Top Decorative Label */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          className="mb-8 flex items-center gap-3"
+          className="mb-12 flex items-center gap-4"
         >
-          <div className="w-8 h-px bg-gold/20" />
-          <span className="text-[9px] uppercase tracking-[0.4em] text-gold/60 font-serif font-medium">
+          <div className="w-12 h-px bg-gold/30" />
+          <span className="text-[10px] uppercase tracking-[0.5em] text-gold font-serif font-medium">
             Est. 2024
           </span>
-          <div className="w-8 h-px bg-gold/20" />
+          <div className="w-12 h-px bg-gold/30" />
         </motion.div>
 
-        {/* Main Kanji */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-          className="relative mb-6"
-        >
-          <span
-            className="text-[120px] sm:text-[140px] font-serif text-gold select-none leading-none block"
-            style={{
-              textShadow: '0 0 40px rgba(201, 168, 76, 0.2), 0 0 80px rgba(201, 168, 76, 0.1)',
-              filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))'
-            }}
+        {/* Main Brand Presentation */}
+        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-20">
+           {/* Kanji */}
+           <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+            className="relative"
           >
-            杉
-          </span>
-          {/* Sugi Arabic translation if needed, but Kanji is more artistic */}
-        </motion.div>
+            <span
+              className="text-[140px] md:text-[220px] font-serif text-gold select-none leading-none block"
+              style={{
+                textShadow: '0 0 60px rgba(201, 168, 76, 0.3)',
+                filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.5))'
+              }}
+            >
+              杉
+            </span>
+          </motion.div>
 
-        {/* Brand Name */}
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-text text-[14px] sm:text-[16px] uppercase tracking-[0.6em] font-serif font-semibold"
-        >
-          {t('hero.brand')}
-        </motion.h1>
+          {/* Text Content */}
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <motion.h1
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="text-text text-[18px] md:text-[24px] uppercase tracking-[0.8em] font-serif font-bold"
+            >
+              {t('hero.brand')}
+            </motion.h1>
 
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-text-secondary/60 text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-serif mt-5 max-w-[280px]"
-        >
-          {t('hero.tagline')}
-        </motion.p>
+            <motion.p
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.7, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="text-text-secondary/70 text-[12px] md:text-[14px] uppercase tracking-[0.4em] font-serif mt-6 max-w-[400px] leading-relaxed"
+            >
+              {t('hero.tagline')}
+            </motion.p>
 
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-14"
-        >
-          <a
-            href="#menu"
-            className="group relative inline-flex flex-col items-center"
-          >
-            <div className="relative px-10 py-4 rounded-full border border-gold/20 bg-gold/[0.02] 
-                          overflow-hidden transition-all duration-500 group-active:scale-95 group-hover:border-gold/40">
-              {/* Shimmer Effect */}
-              <div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/[0.08] to-transparent"
-                style={{ animation: 'shimmer 3s ease-in-out infinite' }}
-              />
-              <span className="relative text-gold text-[11px] uppercase tracking-[0.4em] font-serif font-bold">
-                {t('hero.explore')}
-              </span>
-            </div>
-            
-            {/* Scroll Indicator Dot */}
-            <motion.div 
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="mt-6 w-1 h-1 rounded-full bg-gold/40"
-            />
-          </a>
-        </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-12"
+            >
+              <a
+                href="#menu"
+                className="group relative inline-flex items-center gap-6 px-10 py-5 rounded-full border border-gold/20 bg-gold/[0.03] 
+                            overflow-hidden transition-all duration-500 hover:border-gold/50 hover:bg-gold/5 active:scale-95"
+              >
+                <div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/[0.1] to-transparent"
+                  style={{ animation: 'shimmer 3s ease-in-out infinite' }}
+                />
+                <span className="relative text-gold text-[12px] uppercase tracking-[0.4em] font-bold">
+                  {t('hero.explore')}
+                </span>
+                <svg className="w-5 h-5 text-gold transition-transform duration-500 group-hover:translate-x-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </motion.div>
+          </div>
+        </div>
       </motion.div>
 
-      {/* ─── Bottom Info Bar ─── */}
+      {/* ─── Bottom Status Bar ─── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-10 inset-x-0 px-8 flex justify-between items-end z-10"
+        className="absolute bottom-12 inset-x-0 z-10"
       >
-        <div className="flex flex-col gap-1">
-          <span className="text-[7px] text-gold/30 uppercase tracking-[0.2em] font-serif">Location</span>
-          <span className="text-[9px] text-text-secondary/50 uppercase tracking-[0.1em]">{t('contact.location')}</span>
-        </div>
-        
-        <div className="flex flex-col items-end gap-1">
-          <span className="text-[7px] text-gold/30 uppercase tracking-[0.2em] font-serif">Language</span>
-          <div className="flex gap-2 text-[9px] text-text-secondary/50 uppercase tracking-[0.1em]">
-            <span className={lang === 'en' ? 'text-gold' : ''}>EN</span>
-            <span className="text-gold/10">/</span>
-            <span className={lang === 'ar' ? 'text-gold' : ''}>AR</span>
+        <div className="container-wide flex justify-between items-end">
+          <div className="flex flex-col gap-2">
+            <span className="text-[8px] text-gold/40 uppercase tracking-[0.3em] font-serif font-bold">Location</span>
+            <span className="text-[10px] text-text-secondary/60 uppercase tracking-[0.1em]">{t('contact.location')}</span>
+          </div>
+          
+          <div className="hidden md:flex flex-col items-center gap-4">
+            <div className="w-px h-12 bg-gradient-to-b from-transparent via-gold/20 to-transparent" />
+            <motion.div 
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-1.5 h-1.5 rounded-full bg-gold/40 shadow-[0_0_10px_rgba(201,168,76,0.3)]"
+            />
+          </div>
+
+          <div className="flex flex-col items-end gap-2">
+            <span className="text-[8px] text-gold/40 uppercase tracking-[0.3em] font-serif font-bold">Language</span>
+            <div className="flex gap-4 text-[10px] text-text-secondary/60 uppercase tracking-[0.2em]">
+              <button onClick={() => setLang('en')} className={`transition-colors ${lang === 'en' ? 'text-gold font-bold' : 'hover:text-gold'}`}>EN</button>
+              <span className="text-gold/10">|</span>
+              <button onClick={() => setLang('ar')} className={`transition-colors ${lang === 'ar' ? 'text-gold font-bold' : 'hover:text-gold'}`}>AR</button>
+            </div>
           </div>
         </div>
       </motion.div>

@@ -36,71 +36,89 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-0 inset-x-0 z-[60] transition-all duration-700"
+        className="fixed top-0 inset-x-0 z-[60] py-4 transition-all duration-700"
       >
         <div 
-          className={`flex items-center justify-between px-6 py-4 max-w-lg mx-auto transition-all duration-500 ${
-            scrolled ? 'mt-2 rounded-full bg-bg/80 backdrop-blur-xl border border-white/[0.05] shadow-2xl' : ''
+          className={`container-wide flex items-center justify-between transition-all duration-500 ${
+            scrolled ? 'py-3 mt-2 rounded-full bg-bg/60 backdrop-blur-xl border border-white/[0.05] shadow-2xl' : 'py-4'
           }`}
-          style={scrolled ? { width: 'calc(100% - 24px)' } : {}}
         >
-          {/* Language Toggle */}
-          <button
-            onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full
-                       border border-white/[0.06] bg-white/[0.02]
-                       text-text-secondary text-[10px] tracking-[0.1em] uppercase font-medium
-                       active:scale-90 transition-all duration-300"
-          >
-            <span className="opacity-70">{lang === 'en' ? '🇸🇦' : '🇬🇧'}</span>
-            <span className="font-serif">{lang === 'en' ? 'عربي' : 'EN'}</span>
-          </button>
-
           {/* Brand Mark */}
-          <a href="#" className="flex flex-col items-center group">
-            <span className={`text-gold font-serif leading-none transition-all duration-500 ${scrolled ? 'text-lg' : 'text-2xl'}`}>
+          <a href="#" className="flex items-center gap-4 group">
+            <span className="text-gold font-serif text-3xl leading-none transition-transform duration-500 group-hover:scale-110">
               杉
             </span>
-            <motion.span
-              animate={{ opacity: scrolled ? 1 : 0.4, scale: scrolled ? 0.8 : 1 }}
-              className="text-[7px] text-gold uppercase tracking-[0.4em] font-serif font-bold mt-1"
-            >
-              SUGI
-            </motion.span>
+            <div className="flex flex-col">
+              <span className="text-[12px] text-text font-serif font-bold tracking-[0.4em] leading-none">SUGI</span>
+              <span className="text-[8px] text-gold uppercase tracking-[0.2em] mt-1">{t('nav.cuisine')}</span>
+            </div>
           </a>
 
-          {/* Hamburger */}
-          <button
-            onClick={() => setOpen(!open)}
-            className="w-10 h-10 flex items-center justify-center active:scale-90 transition-transform relative"
-            aria-label="Menu"
-          >
-            <div className="flex flex-col gap-[6px] items-end">
-              <motion.span
-                animate={open ? { rotate: 45, y: 7, width: 20 } : { rotate: 0, y: 0, width: 20 }}
-                className="block h-[1px] bg-gold/80 rounded-full origin-center"
-              />
-              <motion.span
-                animate={open ? { opacity: 0, x: 10 } : { opacity: 0.4, x: 0 }}
-                className="block w-3 h-[1px] bg-gold rounded-full"
-              />
-              <motion.span
-                animate={open ? { rotate: -45, y: -7, width: 20 } : { rotate: 0, y: 0, width: 14 }}
-                className="block h-[1px] bg-gold/80 rounded-full origin-center"
-              />
-            </div>
-          </button>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-12">
+            {items.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="group flex items-center gap-3"
+              >
+                <span className="text-[10px] text-gold/40 font-serif transition-colors duration-300 group-hover:text-gold">
+                  {item.kanji}
+                </span>
+                <span className="text-[11px] text-text-secondary uppercase tracking-[0.2em] font-medium transition-colors duration-300 group-hover:text-gold">
+                  {item.label}
+                </span>
+              </a>
+            ))}
+          </nav>
+
+          {/* Controls */}
+          <div className="flex items-center gap-6">
+            {/* Language Toggle */}
+            <button
+              onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
+              className="flex items-center gap-2 px-4 py-2 rounded-full
+                         border border-white/[0.06] bg-white/[0.02]
+                         text-text-secondary text-[10px] tracking-[0.1em] uppercase font-medium
+                         hover:bg-gold/5 hover:border-gold/20 transition-all duration-300"
+            >
+              <span>{lang === 'en' ? '🇸🇦' : '🇬🇧'}</span>
+              <span className="font-serif">{lang === 'en' ? 'عربي' : 'EN'}</span>
+            </button>
+
+            {/* Hamburger (Mobile Only) */}
+            <button
+              onClick={() => setOpen(!open)}
+              className="md:hidden w-10 h-10 flex items-center justify-center active:scale-90 transition-transform relative"
+              aria-label="Menu"
+            >
+              <div className="flex flex-col gap-[6px] items-end">
+                <motion.span
+                  animate={open ? { rotate: 45, y: 7, width: 20 } : { rotate: 0, y: 0, width: 20 }}
+                  className="block h-[1px] bg-gold/80 rounded-full origin-center"
+                />
+                <motion.span
+                  animate={open ? { opacity: 0, x: 10 } : { opacity: 0.4, x: 0 }}
+                  className="block w-3 h-[1px] bg-gold rounded-full"
+                />
+                <motion.span
+                  animate={open ? { rotate: -45, y: -7, width: 20 } : { rotate: 0, y: 0, width: 14 }}
+                  className="block h-[1px] bg-gold/80 rounded-full origin-center"
+                />
+              </div>
+            </button>
+          </div>
         </div>
       </motion.header>
 
-      {/* ─── Fullscreen Overlay Menu ─── */}
+      {/* ─── Fullscreen Overlay Menu (Mobile Only) ─── */}
       <AnimatePresence>
         {open && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[55] bg-bg/[0.98] backdrop-blur-3xl overflow-hidden"
+            className="fixed inset-0 z-[55] bg-bg/[0.98] backdrop-blur-3xl md:hidden"
           >
             {/* Decorative Kanji background */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
@@ -121,7 +139,7 @@ export default function Navbar() {
                     transition={{ delay: i * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     className="flex flex-col items-center py-4 group"
                   >
-                    <span className="text-[12px] text-gold/20 mb-2 font-serif tracking-widest transition-colors duration-500 group-active:text-gold/40">
+                    <span className="text-[12px] text-gold/20 mb-2 font-serif tracking-widest">
                       {item.kanji}
                     </span>
                     <span className="text-text text-3xl font-serif uppercase tracking-[0.3em] group-active:text-gold transition-colors duration-300">
@@ -131,26 +149,9 @@ export default function Navbar() {
                 ))}
               </div>
 
-              {/* Language switch in menu too for convenience */}
-              <div className="flex justify-center gap-6 mb-12">
-                <button 
-                  onClick={() => { setLang('en'); setOpen(false); }}
-                  className={`text-[11px] tracking-widest font-serif ${lang === 'en' ? 'text-gold' : 'text-text-muted/40'}`}
-                >
-                  ENGLISH
-                </button>
-                <div className="w-px h-3 bg-white/10" />
-                <button 
-                  onClick={() => { setLang('ar'); setOpen(false); }}
-                  className={`text-[11px] tracking-widest font-serif ${lang === 'ar' ? 'text-gold' : 'text-text-muted/40'}`}
-                >
-                  العربية
-                </button>
-              </div>
-
               <div className="text-center px-10">
                 <div className="w-8 h-px bg-gold/20 mx-auto mb-6" />
-                <p className="text-[8px] text-text-muted/30 uppercase tracking-[0.5em] font-serif max-w-[200px] mx-auto leading-relaxed">
+                <p className="text-[10px] text-text-muted/60 uppercase tracking-[0.5em] font-serif max-w-[240px] mx-auto leading-relaxed">
                   {t('contact.location')}
                 </p>
               </div>
