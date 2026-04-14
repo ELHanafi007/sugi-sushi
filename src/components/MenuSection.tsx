@@ -152,7 +152,7 @@ function StorySection() {
               <div className="absolute bottom-8 left-8 p-6 bg-bg/80 backdrop-blur-xl border border-white/10 rounded-2xl max-w-[200px]">
                 <span className="text-gold text-4xl font-serif block mb-2">杉</span>
                 <p className="text-[10px] text-text-secondary uppercase tracking-widest leading-relaxed">
-                  Authentic taste of Japan in every bite.
+                  {t('story.badge')}
                 </p>
               </div>
             </div>
@@ -279,7 +279,7 @@ function MenuContent() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [availCats, isSearching]);
 
   const scrollToActiveTab = useCallback(() => {
@@ -359,7 +359,7 @@ function MenuContent() {
           </div>
 
           <div className="hidden lg:flex items-center gap-4 text-gold/40 font-serif text-[11px] tracking-widest uppercase">
-            <span>Scroll to browse</span>
+            <span>{t('menu.scroll')}</span>
             <div className="w-8 h-px bg-gold/20" />
             <span className="text-gold">膳</span>
           </div>
@@ -483,7 +483,7 @@ function MenuContent() {
                           </div>
                         </div>
                         <span className="text-[10px] text-text-muted/30 uppercase tracking-[0.2em] font-serif">
-                          {dishes.length} Items Available
+                          {dishes.length} {t('menu.items')}
                         </span>
                       </motion.div>
 
@@ -633,16 +633,23 @@ function Footer() {
           <span className="text-gold text-5xl font-serif">杉</span>
           <div className="flex flex-col items-center gap-2">
             <span className="text-text text-[16px] font-serif font-bold tracking-[0.6em]">SUGI SUSHI</span>
-            <span className="text-gold/40 text-[10px] uppercase tracking-[0.2em]">Crafted Perfection</span>
+            <span className="text-gold/40 text-[10px] uppercase tracking-[0.2em]">{t('footer.perfection')}</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 w-full max-w-3xl pt-12 border-t border-white/[0.05]">
-          {['Menu', 'Story', 'Contact', 'Privacy'].map((link) => (
-            <a key={link} href={`#${link.toLowerCase()}`} className="text-[11px] text-text-secondary/40 uppercase tracking-widest hover:text-gold transition-colors">
-              {link}
-            </a>
-          ))}
+          <a href="#menu" className="text-[11px] text-text-secondary/40 uppercase tracking-widest hover:text-gold transition-colors">
+            {t('nav.menu')}
+          </a>
+          <a href="#story" className="text-[11px] text-text-secondary/40 uppercase tracking-widest hover:text-gold transition-colors">
+            {t('nav.story')}
+          </a>
+          <a href="#contact" className="text-[11px] text-text-secondary/40 uppercase tracking-widest hover:text-gold transition-colors">
+            {t('nav.contact')}
+          </a>
+          <a href="#" className="text-[11px] text-text-secondary/40 uppercase tracking-widest hover:text-gold transition-colors">
+            {t('footer.privacy')}
+          </a>
         </div>
 
         <div className="flex flex-col gap-4 mt-12">
@@ -663,19 +670,6 @@ function Footer() {
 }
 
 /* ═══════════════════════════════════════════════════════
-   MAIN EXPORT
-   ═══════════════════════════════════════════════════════ */
-export default function MenuSection() {
-  return (
-    <div className="bg-bg relative">
-      <StorySection />
-      <MenuContent />
-      <ContactSection />
-      <Footer />
-    </div>
-  );
-}
-�═══════════
    MAIN EXPORT
    ═══════════════════════════════════════════════════════ */
 export default function MenuSection() {
