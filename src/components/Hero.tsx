@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 
 export default function Hero() {
-  const { t, lang } = useLanguage();
+  const { t, lang, setLang } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { scrollY } = useScroll();
