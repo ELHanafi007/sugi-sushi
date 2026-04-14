@@ -78,7 +78,7 @@ export default function Hero() {
         </motion.div>
 
         {/* Main Brand Presentation */}
-        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-20">
+        <div className="flex flex-col md:flex-row items-center gap-12 md:gap-24">
            {/* Kanji */}
            <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -87,7 +87,7 @@ export default function Hero() {
             className="relative"
           >
             <span
-              className="text-[140px] md:text-[220px] font-serif text-gold select-none leading-none block"
+              className="text-[160px] md:text-[240px] font-serif text-gold select-none leading-none block"
               style={{
                 textShadow: '0 0 60px rgba(201, 168, 76, 0.3)',
                 filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.5))'
@@ -103,7 +103,7 @@ export default function Hero() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-text text-[18px] md:text-[24px] uppercase tracking-[0.8em] font-serif font-bold"
+              className="text-text text-[20px] md:text-[28px] uppercase tracking-[0.8em] font-serif font-bold"
             >
               {t('hero.brand')}
             </motion.h1>
@@ -112,7 +112,7 @@ export default function Hero() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.7, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-text-secondary/70 text-[12px] md:text-[14px] uppercase tracking-[0.4em] font-serif mt-6 max-w-[400px] leading-relaxed"
+              className="text-text-secondary/70 text-[13px] md:text-[15px] uppercase tracking-[0.4em] font-serif mt-8 max-w-[440px] leading-relaxed"
             >
               {t('hero.tagline')}
             </motion.p>
@@ -121,11 +121,11 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-12"
+              className="mt-16"
             >
               <a
                 href="#menu"
-                className="group relative inline-flex items-center gap-6 px-10 py-5 rounded-full border border-gold/20 bg-gold/[0.03] 
+                className="group relative inline-flex items-center gap-6 px-12 py-6 rounded-full border border-gold/20 bg-gold/[0.03] 
                             overflow-hidden transition-all duration-500 hover:border-gold/50 hover:bg-gold/5 active:scale-95"
               >
                 <div
@@ -152,23 +152,23 @@ export default function Hero() {
         className="absolute bottom-12 inset-x-0 z-10"
       >
         <div className="container-wide flex justify-between items-end">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <span className="text-[8px] text-gold/40 uppercase tracking-[0.3em] font-serif font-bold">Location</span>
             <span className="text-[10px] text-text-secondary/60 uppercase tracking-[0.1em]">{t('contact.location')}</span>
           </div>
           
-          <div className="hidden md:flex flex-col items-center gap-4">
-            <div className="w-px h-12 bg-gradient-to-b from-transparent via-gold/20 to-transparent" />
+          <div className="hidden md:flex flex-col items-center gap-6">
+            <div className="w-px h-16 bg-gradient-to-b from-transparent via-gold/20 to-transparent" />
             <motion.div 
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="w-1.5 h-1.5 rounded-full bg-gold/40 shadow-[0_0_10px_rgba(201,168,76,0.3)]"
+              className="w-2 h-2 rounded-full bg-gold/40 shadow-[0_0_12px_rgba(201,168,76,0.3)]"
             />
           </div>
 
-          <div className="flex flex-col items-end gap-2">
+          <div className="flex flex-col items-end gap-3">
             <span className="text-[8px] text-gold/40 uppercase tracking-[0.3em] font-serif font-bold">Language</span>
-            <div className="flex gap-4 text-[10px] text-text-secondary/60 uppercase tracking-[0.2em]">
+            <div className="flex gap-6 text-[11px] text-text-secondary/60 uppercase tracking-[0.2em]">
               <button onClick={() => setLang('en')} className={`transition-colors ${lang === 'en' ? 'text-gold font-bold' : 'hover:text-gold'}`}>EN</button>
               <span className="text-gold/10">|</span>
               <button onClick={() => setLang('ar')} className={`transition-colors ${lang === 'ar' ? 'text-gold font-bold' : 'hover:text-gold'}`}>AR</button>

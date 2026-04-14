@@ -68,44 +68,41 @@ function DishCard({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: num
       className={`menu-card ${isSignature ? 'menu-card--signature' : ''}`}
     >
       <div className="flex flex-col h-full">
+        {/* Header: Name | Price */}
         <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex-1 min-w-0">
-             <div className="flex items-center gap-3">
-              <h4 className="text-text text-[16px] md:text-[18px] font-serif uppercase tracking-[0.05em] leading-snug">
-                {name}
-              </h4>
-              {isSignature && (
-                <span
-                  className="w-2 h-2 rounded-full bg-gold shrink-0 shadow-[0_0_10px_rgba(201,168,76,0.6)]"
-                  style={{ animation: 'pulse-dot 2s ease-in-out infinite' }}
-                />
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col items-end shrink-0">
-            {price ? (
-              <div className="flex items-baseline gap-1 bg-white/[0.04] px-3 py-1.5 rounded-xl border border-white/[0.08]">
-                <span className="text-gold font-serif text-[18px] md:text-[20px] font-medium leading-none">
-                  {price}
-                </span>
-                <span className="text-[8px] text-gold/50 uppercase tracking-tighter">
-                  {lang === 'ar' ? 'ر.س' : 'SR'}
-                </span>
-              </div>
-            ) : (
-              <span className="text-[12px] text-text-muted/30">—</span>
+          <div className="flex items-center gap-3 min-w-0">
+            <h4 className="text-text text-[16px] md:text-[18px] font-serif uppercase tracking-[0.05em] leading-snug">
+              {name}
+            </h4>
+            {isSignature && (
+              <span
+                className="w-2 h-2 rounded-full bg-gold shrink-0 shadow-[0_0_10px_rgba(201,168,76,0.6)]"
+                style={{ animation: 'pulse-dot 2s ease-in-out infinite' }}
+              />
             )}
           </div>
+
+          {price && (
+            <div className="flex items-baseline gap-1 shrink-0">
+              <span className="text-gold font-serif text-[18px] md:text-[20px] font-medium leading-none">
+                {price}
+              </span>
+              <span className="text-[8px] text-gold/50 uppercase tracking-tighter">
+                {lang === 'ar' ? 'ر.س' : 'SR'}
+              </span>
+            </div>
+          )}
         </div>
 
+        {/* Description */}
         {desc && (
-          <p className="text-text-secondary/60 text-[12px] md:text-[13px] leading-relaxed mb-6 flex-1">
+          <p className="text-text-secondary/60 text-[12px] md:text-[13px] leading-relaxed mb-8 flex-1">
             {desc}
           </p>
         )}
 
-        <div className="mt-auto pt-4 border-t border-white/[0.03] flex items-center justify-between gap-4">
+        {/* Footer: Tags | Calories */}
+        <div className="mt-auto pt-5 border-t border-white/[0.04] flex items-center justify-between gap-4">
           <div className="flex flex-wrap gap-2">
             {dish.tags.slice(0, 3).map((tag) => (
               <span key={tag} className={tagCls(tag)}>
@@ -114,7 +111,7 @@ function DishCard({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: num
             ))}
           </div>
           {dish.calories && (
-            <span className="text-[9px] text-text-muted/40 tracking-[0.1em] uppercase shrink-0">
+            <span className="text-[9px] text-text-muted/40 tracking-[0.1em] uppercase font-bold shrink-0">
               {dish.calories}
             </span>
           )}
@@ -134,7 +131,7 @@ function StorySection() {
   return (
     <section id="story" ref={ref} className="w-full py-32 md:py-48 px-6 relative overflow-hidden bg-bg-warm/30">
       <div className="container-wide relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-32 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={visible ? { opacity: 1, x: 0 } : {}}
@@ -230,7 +227,6 @@ function MenuContent() {
   const [isSearching, setIsSearching] = useState(false);
   
   const tabBarRef = useRef<HTMLDivElement>(null);
-  const sidebarRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const availCats = useMemo(() => CATEGORIES.filter((cat) => menuData.some((d) => d.category === cat)), []);
@@ -324,9 +320,9 @@ function MenuContent() {
           <h2 className="section-title mt-6">{t('menu.title')}</h2>
         </motion.div>
         
-        {/* Search Bar - Responsive Placement */}
-        <div className="mt-12 flex flex-col md:flex-row gap-6 items-center justify-between">
-           <div className="relative w-full max-w-xl">
+        {/* Search Bar & Categories with consistent spacing */}
+        <div className="mt-16 flex flex-col gap-12">
+           <div className="relative w-full max-w-xl mx-auto lg:mx-0">
             <input
               type="text"
               placeholder={t('menu.search')}
@@ -358,20 +354,44 @@ function MenuContent() {
             )}
           </div>
 
-          <div className="hidden lg:flex items-center gap-4 text-gold/40 font-serif text-[11px] tracking-widest uppercase">
-            <span>{t('menu.scroll')}</span>
-            <div className="w-8 h-px bg-gold/20" />
-            <span className="text-gold">膳</span>
+          <div className="flex flex-col lg:flex-row gap-8 items-center justify-between">
+             {/* Mobile Horizontal Bar */}
+             <div
+              ref={tabBarRef}
+              className="w-full lg:hidden flex gap-3 overflow-x-auto no-scrollbar py-2"
+            >
+              {availCats.map((cat) => {
+                const on = !isSearching && cat === active;
+                return (
+                  <button
+                    key={cat}
+                    data-active={on}
+                    onClick={() => handleCatClick(cat)}
+                    className={`cat-pill ${on ? 'cat-pill--active' : 'active:scale-95'}`}
+                  >
+                    <span className={`text-[14px] font-serif transition-colors duration-200 ${on ? 'text-gold' : 'text-gold/30'}`}>
+                      {KANJI[cat]}
+                    </span>
+                    <span className="font-medium text-[11px]">{t(`menu.cat.${cat}`)}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="hidden lg:flex items-center gap-4 text-gold/40 font-serif text-[11px] tracking-widest uppercase ml-auto">
+              <span>{t('menu.scroll')}</span>
+              <div className="w-8 h-px bg-gold/20" />
+              <span className="text-gold">膳</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="container-wide flex flex-col lg:flex-row gap-16 relative">
-        {/* ─── Sticky Sidebar / Top Bar ─── */}
-        <div className="lg:w-72 lg:shrink-0">
-          <div className="sticky top-28 space-y-8">
-            {/* Desktop Sidebar */}
-            <div className="hidden lg:flex flex-col gap-2 p-2 bg-white/[0.02] border border-white/[0.05] rounded-3xl backdrop-blur-md">
+      <div className="container-wide flex flex-col lg:flex-row gap-20 relative">
+        {/* ─── Sticky Sidebar (Desktop Only) ─── */}
+        <div className="hidden lg:block w-72 shrink-0">
+          <div className="sticky top-32 space-y-8">
+            <div className="flex flex-col gap-2 p-2 bg-white/[0.02] border border-white/[0.05] rounded-3xl backdrop-blur-md">
               {availCats.map((cat) => {
                 const on = !isSearching && cat === active;
                 return (
@@ -395,29 +415,6 @@ function MenuContent() {
                 );
               })}
             </div>
-
-            {/* Mobile Horizontal Bar */}
-            <div
-              ref={tabBarRef}
-              className="lg:hidden flex gap-3 overflow-x-auto no-scrollbar py-2 -mx-6 px-6 sticky top-0 bg-bg/80 backdrop-blur-xl z-30 border-y border-white/[0.05]"
-            >
-              {availCats.map((cat) => {
-                const on = !isSearching && cat === active;
-                return (
-                  <button
-                    key={cat}
-                    data-active={on}
-                    onClick={() => handleCatClick(cat)}
-                    className={`cat-pill ${on ? 'cat-pill--active' : 'active:scale-95'}`}
-                  >
-                    <span className={`text-[14px] font-serif transition-colors duration-200 ${on ? 'text-gold' : 'text-gold/30'}`}>
-                      {KANJI[cat]}
-                    </span>
-                    <span className="font-medium text-[11px]">{t(`menu.cat.${cat}`)}</span>
-                  </button>
-                );
-              })}
-            </div>
           </div>
         </div>
 
@@ -429,10 +426,10 @@ function MenuContent() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col gap-20"
+                className="flex flex-col gap-24"
               >
                 {Object.entries(groupedDishes).map(([cat, dishes]) => (
-                  <div key={cat} className="flex flex-col gap-8">
+                  <div key={cat} className="flex flex-col gap-10">
                     <div className="flex items-center gap-6">
                       <span className="text-gold/40 font-serif text-3xl">{KANJI[cat]}</span>
                       <h3 className="text-[14px] text-gold uppercase tracking-[0.4em] font-serif font-bold">
@@ -440,21 +437,13 @@ function MenuContent() {
                       </h3>
                       <div className="flex-1 h-px bg-white/[0.05]" />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {dishes.map((dish, i) => (
                         <DishCard key={dish.id} dish={dish} lang={lang} idx={i} />
                       ))}
                     </div>
                   </div>
                 ))}
-                {filteredDishes.length === 0 && (
-                  <div className="flex flex-col items-center justify-center py-48 text-center">
-                    <span className="text-gold/10 text-9xl font-serif mb-8">杉</span>
-                    <p className="text-text-muted/40 text-[18px] font-serif italic">
-                      {t('menu.no_results')}
-                    </p>
-                  </div>
-                )}
               </motion.div>
             ) : (
               <div className="flex flex-col gap-32">
@@ -465,13 +454,13 @@ function MenuContent() {
                       key={cat} 
                       id={`cat-${cat}`}
                       ref={el => { sectionRefs.current[cat] = el; }}
-                      className="flex flex-col gap-8 scroll-mt-40"
+                      className="flex flex-col gap-12 scroll-mt-40"
                     >
                       <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
-                        className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8"
+                        className="flex flex-col lg:flex-row lg:items-end justify-between gap-6"
                       >
                         <div className="flex items-center gap-6">
                           <span className="text-[40px] text-gold/15 font-serif leading-none">{KANJI[cat]}</span>
@@ -487,7 +476,7 @@ function MenuContent() {
                         </span>
                       </motion.div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                         {dishes.map((dish, i) => (
                           <DishCard key={dish.id} dish={dish} lang={lang} idx={i} />
                         ))}
@@ -505,7 +494,7 @@ function MenuContent() {
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] md:hidden"
+        className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] md:hidden"
       >
         <a
           href="tel:+966"
@@ -548,12 +537,12 @@ function ContactSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={visible ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.1, duration: 1 }}
-            className="section-title mt-6 mb-16"
+            className="section-title mt-6 mb-20"
           >
             {t('contact.title')}
           </motion.h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             {[
               {
                 icon: (
@@ -584,7 +573,7 @@ function ContactSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={visible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.2 + i * 0.1 }}
-                className="flex flex-col items-center gap-6 p-10 rounded-3xl bg-white/[0.02] border border-white/[0.05] hover:bg-gold/5 transition-all duration-500"
+                className="flex flex-col items-center gap-8 p-10 rounded-3xl bg-white/[0.02] border border-white/[0.05] hover:bg-gold/5 transition-all duration-500"
               >
                 <div className="w-16 h-16 rounded-2xl bg-gold/5 border border-gold/10 flex items-center justify-center">
                   <svg className="w-8 h-8 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -593,7 +582,7 @@ function ContactSection() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-gold/40 text-[10px] tracking-[0.3em] uppercase font-serif font-bold mb-2">{item.label}</h4>
+                  <h4 className="text-gold/40 text-[10px] tracking-[0.3em] uppercase font-serif font-bold mb-3">{item.label}</h4>
                   <p className="text-text-secondary text-[16px] md:text-[18px] tracking-wide font-serif leading-relaxed">
                     {item.content}
                   </p>
@@ -606,7 +595,7 @@ function ContactSection() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={visible ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: 0.6 }}
-            className="mt-20"
+            className="mt-24"
           >
             <a
               href="tel:+966"
@@ -627,8 +616,8 @@ function ContactSection() {
 function Footer() {
   const { t } = useLanguage();
   return (
-    <footer className="w-full py-32 px-6 border-t border-white/[0.03] bg-bg-overlay relative overflow-hidden">
-      <div className="container-wide flex flex-col items-center gap-12 text-center">
+    <footer className="w-full pt-32 pb-48 px-6 border-t border-white/[0.03] bg-bg-overlay relative overflow-hidden">
+      <div className="container-wide flex flex-col items-center gap-16 text-center">
         <div className="flex flex-col items-center gap-6">
           <span className="text-gold text-5xl font-serif">杉</span>
           <div className="flex flex-col items-center gap-2">
@@ -637,7 +626,7 @@ function Footer() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 w-full max-w-3xl pt-12 border-t border-white/[0.05]">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 w-full max-w-3xl pt-16 border-t border-white/[0.05]">
           <a href="#menu" className="text-[11px] text-text-secondary/40 uppercase tracking-widest hover:text-gold transition-colors">
             {t('nav.menu')}
           </a>
@@ -652,16 +641,16 @@ function Footer() {
           </a>
         </div>
 
-        <div className="flex flex-col gap-4 mt-12">
+        <div className="flex flex-col gap-6 mt-12">
           <p className="text-text-muted/40 text-[10px] uppercase tracking-[0.5em] font-serif font-bold">
             {t('footer.copy')}
           </p>
-          <div className="flex items-center justify-center gap-3">
-            <div className="w-8 h-px bg-gold/10" />
+          <div className="flex items-center justify-center gap-4">
+            <div className="w-12 h-px bg-gold/10" />
             <p className="text-text-muted/20 text-[10px] tracking-[0.3em] font-serif uppercase">
               {t('footer.heart')}
             </p>
-            <div className="w-8 h-px bg-gold/10" />
+            <div className="w-12 h-px bg-gold/10" />
           </div>
         </div>
       </div>

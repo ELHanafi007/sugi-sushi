@@ -73,11 +73,11 @@ export default function Navbar() {
           </nav>
 
           {/* Controls */}
-          <div className="flex items-center gap-6">
-            {/* Language Toggle */}
+          <div className="flex items-center gap-4 md:gap-8">
+            {/* Desktop Language Toggle */}
             <button
               onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
-              className="flex items-center gap-2 px-4 py-2 rounded-full
+              className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full
                          border border-white/[0.06] bg-white/[0.02]
                          text-text-secondary text-[10px] tracking-[0.1em] uppercase font-medium
                          hover:bg-gold/5 hover:border-gold/20 transition-all duration-300"
@@ -86,10 +86,10 @@ export default function Navbar() {
               <span className="font-serif">{lang === 'en' ? 'عربي' : 'EN'}</span>
             </button>
 
-            {/* Hamburger (Mobile Only) */}
+            {/* Hamburger (Always visible on mobile) */}
             <button
               onClick={() => setOpen(!open)}
-              className="md:hidden w-10 h-10 flex items-center justify-center active:scale-90 transition-transform relative"
+              className="w-10 h-10 flex items-center justify-center active:scale-90 transition-transform relative"
               aria-label="Menu"
             >
               <div className="flex flex-col gap-[6px] items-end">
@@ -111,14 +111,14 @@ export default function Navbar() {
         </div>
       </motion.header>
 
-      {/* ─── Fullscreen Overlay Menu (Mobile Only) ─── */}
+      {/* ─── Fullscreen Overlay Menu ─── */}
       <AnimatePresence>
         {open && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[55] bg-bg/[0.98] backdrop-blur-3xl md:hidden"
+            className="fixed inset-0 z-[55] bg-bg/[0.98] backdrop-blur-3xl overflow-hidden"
           >
             {/* Decorative Kanji background */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
@@ -147,6 +147,25 @@ export default function Navbar() {
                     </span>
                   </motion.a>
                 ))}
+              </div>
+
+              {/* Language Switch inside Mobile Menu */}
+              <div className="flex flex-col items-center gap-8 mb-16">
+                 <div className="flex items-center gap-6">
+                    <button 
+                      onClick={() => { setLang('en'); setOpen(false); }}
+                      className={`text-[12px] tracking-widest font-serif ${lang === 'en' ? 'text-gold' : 'text-text-muted/40'}`}
+                    >
+                      ENGLISH
+                    </button>
+                    <div className="w-px h-4 bg-white/10" />
+                    <button 
+                      onClick={() => { setLang('ar'); setOpen(false); }}
+                      className={`text-[12px] tracking-widest font-serif ${lang === 'ar' ? 'text-gold' : 'text-text-muted/40'}`}
+                    >
+                      العربية
+                    </button>
+                 </div>
               </div>
 
               <div className="text-center px-10">
