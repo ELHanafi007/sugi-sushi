@@ -46,34 +46,66 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
         </button>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-12">
+        <nav className="hidden md:flex items-center bg-white/[0.03] border border-white/5 rounded-full px-2 py-1 relative">
+          {/* Active Pill Indicator */}
+          <motion.div
+            className="absolute h-[80%] rounded-full bg-gold/10 border border-gold/20"
+            initial={false}
+            animate={{
+              width: activeTab === 'home' ? 0 : 'calc(33.33% - 8px)',
+              x: activeTab === 'menu' ? 4 : activeTab === 'reservations' ? '100%' : activeTab === 'location' ? '200%' : 0,
+              opacity: (activeTab === 'home' || activeTab === 'gallery') ? 0 : 1
+            }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            style={{ 
+              width: 'calc(33.33% - 4px)',
+              left: activeTab === 'menu' ? '4px' : activeTab === 'reservations' ? '4px' : '4px' // Logic handled by x
+            }}
+          />
+
           {navItems.map((item) => (
             <button 
               key={item.id}
               onClick={() => onTabChange(item.id)}
-              className={`text-[9px] uppercase transition-all duration-500 font-bold ${
-                lang === 'ar' ? 'tracking-normal text-[11px] px-2' : 'tracking-[0.4em]'
+              className={`relative z-10 px-6 py-2 text-[9px] uppercase transition-all duration-700 font-bold flex items-center gap-2 group ${
+                lang === 'ar' ? 'tracking-normal text-[11px]' : 'tracking-[0.3em]'
               } ${
-                activeTab === item.id ? 'text-gold' : 'text-white/40 hover:text-white/60'
+                activeTab === item.id ? 'text-gold' : 'text-white/40 hover:text-white/80'
               }`}
             >
-              {t(item.labelKey)}
+              <span className="relative">
+                {t(item.labelKey)}
+                {activeTab === item.id && (
+                  <motion.span 
+                    layoutId="navGlow"
+                    className="absolute -bottom-1 left-0 right-0 h-px bg-gold/50 shadow-[0_0_8px_gold]"
+                  />
+                )}
+              </span>
             </button>
           ))}
         </nav>
 
         {/* Controls */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
            <button
             onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/5 hover:border-gold/40 transition-all duration-700"
+            className="relative group flex items-center justify-center w-10 h-10 rounded-full border border-white/5 bg-white/[0.02] overflow-hidden transition-all duration-700 hover:border-gold/50"
           >
-            <span className="text-[9px] font-mono font-bold text-white/40 hover:text-gold">
+            <div className="absolute inset-0 bg-gold/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+            <span className="relative text-[9px] font-mono font-bold text-white/40 group-hover:text-gold transition-colors">
               {lang === 'en' ? 'AR' : 'EN'}
             </span>
           </button>
           
-          <div className="w-1.5 h-1.5 rounded-full bg-gold/40 animate-pulse" />
+          <div className="hidden sm:flex flex-col items-end gap-0.5">
+            <div className="flex gap-1">
+              <div className={`w-1 h-1 rounded-full transition-colors duration-1000 ${activeTab === 'home' ? 'bg-gold' : 'bg-white/10'}`} />
+              <div className={`w-1 h-1 rounded-full transition-colors duration-1000 ${activeTab === 'menu' ? 'bg-gold' : 'bg-white/10'}`} />
+              <div className={`w-1 h-1 rounded-full transition-colors duration-1000 ${activeTab === 'reservations' ? 'bg-gold' : 'bg-white/10'}`} />
+            </div>
+            <span className="text-[6px] text-white/20 uppercase tracking-[0.3em]">Status: Live</span>
+          </div>
         </div>
       </motion.div>
     </motion.header>
