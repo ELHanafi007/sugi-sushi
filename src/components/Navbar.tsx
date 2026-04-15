@@ -51,7 +51,9 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
             <button 
               key={item.id}
               onClick={() => onTabChange(item.id)}
-              className={`text-[9px] uppercase tracking-[0.4em] transition-all duration-500 font-bold ${
+              className={`text-[9px] uppercase transition-all duration-500 font-bold ${
+                lang === 'ar' ? 'tracking-normal text-[11px] px-2' : 'tracking-[0.4em]'
+              } ${
                 activeTab === item.id ? 'text-gold' : 'text-white/40 hover:text-white/60'
               }`}
             >

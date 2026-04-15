@@ -165,15 +165,18 @@ export default function StrictMenu() {
         </div>
         <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 pb-4">
           {CATEGORIES.map((cat) => (
-            <button
+            <motion.button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className="relative flex-shrink-0 w-32 h-44 rounded-2xl overflow-hidden group"
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative flex-shrink-0 w-32 h-44 rounded-2xl overflow-hidden group shadow-2xl transition-shadow duration-500 hover:shadow-gold/10"
             >
-              <img 
+              <motion.img 
+                layoutId={`img-${cat}`}
                 src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
-                className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ${
-                  selectedCategory === cat ? 'scale-110' : 'scale-100 opacity-40 group-hover:opacity-60'
+                className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${
+                  selectedCategory === cat ? 'scale-110 blur-0' : 'scale-100 opacity-30 blur-[2px] group-hover:opacity-60 group-hover:blur-0'
                 }`} 
               />
               <div className={`absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent ${
@@ -196,8 +199,8 @@ export default function StrictMenu() {
       </div>
 
       {/* Product List */}
-      <div className="px-6 space-y-4">
-        <div className="flex justify-between items-baseline mb-8">
+      <div className={`px-6 space-y-4 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
+        <div className={`flex justify-between items-baseline mb-8 ${lang === 'ar' ? 'flex-row-reverse' : ''}`}>
           <h3 className="text-white text-3xl font-serif">{selectedCategory}</h3>
           <span className="text-white/20 text-xs font-mono">{filteredDishes.length} Items</span>
         </div>
@@ -210,12 +213,16 @@ export default function StrictMenu() {
             exit={{ opacity: 0, x: -20 }}
             className="grid grid-cols-1 gap-4"
           >
-            {filteredDishes.map((dish) => (
+            {filteredDishes.map((dish, idx) => (
               <motion.div
                 key={dish.id}
                 onClick={() => setSelectedDish(dish)}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: idx * 0.05, ease: [0.19, 1, 0.22, 1] }}
+                whileHover={{ scale: 1.02, x: lang === 'ar' ? -8 : 8 }}
                 whileTap={{ scale: 0.98 }}
-                className="group relative flex items-center gap-4 p-4 rounded-3xl bg-white/[0.02] border border-white/5 hover:border-gold/30 hover:bg-gold/5 transition-all duration-500 cursor-pointer"
+                className="group relative flex items-center gap-4 p-4 rounded-3xl bg-white/[0.02] border border-white/5 hover:border-gold/30 hover:bg-gold/[0.03] transition-all duration-500 cursor-pointer"
               >
                 <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-white/5">
                   <img 

@@ -80,20 +80,25 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
-            className={`relative flex flex-col items-center justify-center w-full h-full transition-all duration-300 ${
-              activeTab === tab.id ? 'text-gold' : 'text-white/40 hover:text-white/60'
+            className={`relative flex flex-col items-center justify-center w-full h-full transition-all duration-500 outline-none ${
+              activeTab === tab.id ? 'text-gold' : 'text-white/30 hover:text-white/60'
             }`}
           >
-            <span className={`transition-transform duration-500 ${activeTab === tab.id ? 'scale-110 -y-1' : 'scale-90'}`}>
+            <motion.div 
+              whileTap={{ scale: 0.8 }}
+              className={`transition-transform duration-700 ${activeTab === tab.id ? 'scale-110 -translate-y-1' : 'scale-90'}`}
+            >
               {tab.icon}
-            </span>
-            <span className={`text-[10px] mt-1 font-medium tracking-tight uppercase ${activeTab === tab.id ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
+            </motion.div>
+            <span className={`text-[10px] mt-1 font-medium tracking-tight uppercase transition-all duration-500 ${
+              lang === 'ar' ? 'text-[12px] tracking-normal' : ''
+            } ${activeTab === tab.id ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 h-0 overflow-hidden'}`}>
               {lang === 'ar' ? tab.labelAr : tab.labelEn}
             </span>
             {activeTab === tab.id && (
               <motion.div
                 layoutId="navDot"
-                className="absolute -top-1 w-1 h-1 rounded-full bg-gold"
+                className="absolute -top-1 w-1 h-1 rounded-full bg-gold shadow-[0_0_10px_rgba(226,183,20,0.8)]"
               />
             )}
           </button>

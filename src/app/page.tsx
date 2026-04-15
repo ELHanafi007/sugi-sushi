@@ -43,6 +43,17 @@ export default function Home() {
 
   return (
     <main className={`relative min-h-screen bg-bg selection:bg-gold/30 selection:text-white overflow-x-hidden ${isLetterbox ? 'letterbox-active' : ''}`}>
+      {/* Cinematic Shutter Transition Layer */}
+      <AnimatePresence>
+        <motion.div 
+          key={activeTab + "-shutter"}
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+          className="fixed inset-0 z-[500] bg-black pointer-events-none"
+        />
+      </AnimatePresence>
+
       {/* Cinematic Letterbox System */}
       <div className="letterbox-bar top" />
       <div className="letterbox-bar bottom" />
