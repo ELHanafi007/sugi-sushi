@@ -7,20 +7,16 @@ import Atmosphere from '@/components/Atmosphere';
 import ChefArtistry from '@/components/ChefArtistry';
 import Signature from '@/components/Signature';
 import MenuSection from '@/components/MenuSection';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import BottomNav, { NavTab } from '@/components/BottomNav';
+import StrictMenu from '@/components/StrictMenu';
+import { motion, useScroll, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 
 /**
  * SUGI SUSHI - Luxury Cinematic Experience Orchestrator
- * 
- * EMOTIONAL FLOW (THE FILM):
- * 1. Opening: Cinematic Hero (Aspiration)
- * 2. Transition: Atmosphere (Emotional Pause)
- * 3. Curation: Signature Selection (The Best of Sugi)
- * 4. CLIMAX: Chef Artistry (Emotional Peak)
- * 5. Discovery: The Holistic Experience (Full Menu)
  */
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [isLetterbox, setIsLetterbox] = useState(false);
   const { scrollYProgress } = useScroll();
   
@@ -30,58 +26,108 @@ export default function Home() {
     restDelta: 0.001
   });
 
-  // Letterbox trigger based on scroll depth (The Cinematic Frame)
+  // Letterbox trigger based on scroll depth
   useEffect(() => {
+    if (activeTab !== 'home') {
+      setIsLetterbox(false);
+      return;
+    }
     const handleScroll = () => {
       const scrollPos = window.scrollY;
       const windowHeight = window.innerHeight;
-      // Activate letterbox during transitions or climax
       setIsLetterbox(scrollPos > windowHeight * 0.5);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [activeTab]);
 
   return (
     <main className={`relative min-h-screen bg-bg selection:bg-gold/30 selection:text-white overflow-x-hidden ${isLetterbox ? 'letterbox-active' : ''}`}>
-      {/* Cinematic Letterbox System (Film Cut) */}
+      {/* Cinematic Letterbox System */}
       <div className="letterbox-bar top" />
       <div className="letterbox-bar bottom" />
 
       {/* Editorial Progress Bar */}
-      <motion.div 
-        className="fixed top-0 left-0 right-0 h-[1px] bg-gold/40 z-[110] origin-left"
-        style={{ scaleX }}
-      />
+      {activeTab === 'home' && (
+        <motion.div 
+          className="fixed top-0 left-0 right-0 h-[1px] bg-gold/40 z-[110] origin-left"
+          style={{ scaleX }}
+        />
+      )}
 
       {/* Global Navigation HUD */}
-      <Navbar />
+      <Navbar onTabChange={setActiveTab} activeTab={activeTab} />
 
-      <div className="flex flex-col">
-        {/* Scene 1: Cinematic Opening */}
-        <Hero />
+      <AnimatePresence mode="wait">
+        {activeTab === 'home' && (
+          <motion.div 
+            key="home"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex flex-col"
+          >
+            {/* Scene 1: Cinematic Opening */}
+            <Hero onTabChange={setActiveTab} />
 
-        {/* Cinematic Cut 01 */}
-        <div className="h-60 flex items-center justify-center opacity-20">
-          <div className="w-px h-full bg-gradient-to-b from-white via-gold/50 to-transparent" />
-        </div>
+            {/* Cinematic Cut 01 */}
+            <div className="h-60 flex items-center justify-center opacity-20">
+              <div className="w-px h-full bg-gradient-to-b from-white via-gold/50 to-transparent" />
+            </div>
 
-        {/* Scene 2: Atmospheric Pause */}
-        <Atmosphere />
+            {/* Scene 2: Atmospheric Pause */}
+            <Atmosphere />
 
-        {/* Scene 3: Curated Selection */}
-        <Signature />
+            {/* Scene 3: Curated Selection */}
+            <Signature />
 
-        {/* Scene 4: THE CLIMAX (Emotional Peak) */}
-        <ChefArtistry />
+            {/* Scene 4: THE CLIMAX (Emotional Peak) */}
+            <ChefArtistry />
 
-        {/* Scene 5: The Holistic Experience */}
-        <div className="relative z-10 bg-bg">
-          <MenuSection />
-        </div>
-      </div>
+            {/* Scene 5: The Holistic Experience */}
+            <div className="relative z-10 bg-bg">
+              <MenuSection />
+            </div>
+          </motion.div>
+        )}
 
-      {/* Film Grain & Noise (Identity Layer) */}
+        {activeTab === 'menu' && (
+          <motion.div 
+            key="menu"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+          >
+            <StrictMenu />
+          </motion.div>
+        )}
+
+        {(activeTab === 'reservations' || activeTab === 'gallery' || activeTab === 'location') && (
+          <motion.div 
+            key="placeholders"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-screen flex flex-col items-center justify-center p-6 text-center"
+          >
+            <span className="text-gold text-8xl font-serif mb-8">杉</span>
+            <h2 className="text-white text-4xl font-serif mb-4 uppercase tracking-widest">{activeTab}</h2>
+            <p className="text-white/40 max-w-md">The {activeTab} experience is being refined for your arrival. Perfection takes time.</p>
+            <button 
+              onClick={() => setActiveTab('home')}
+              className="mt-12 px-8 py-3 border border-gold/30 text-gold text-xs uppercase tracking-widest rounded-full hover:bg-gold/10 transition-colors"
+            >
+              Return to Journey
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Global Bottom Navigation */}
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* Film Grain & Noise */}
       <div className="noise-overlay" />
       
       {/* Global Interactive Spotlight */}

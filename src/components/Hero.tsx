@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import { NavTab } from './BottomNav';
 
 /**
  * SUGI SUSHI - Signature Brand Hero
@@ -9,7 +10,11 @@ import { useEffect, useRef, useState } from 'react';
  * SIGNATURE MOMENT: Cinematic Focus Shift & Depth-Scale Transition.
  */
 
-export default function Hero() {
+interface HeroProps {
+  onTabChange: (tab: NavTab) => void;
+}
+
+export default function Hero({ onTabChange }: HeroProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -97,6 +102,23 @@ export default function Hero() {
             Traditional Soul, Modern Vision.
           </p>
           <div className="h-px w-24 bg-gradient-to-l from-transparent to-white/40" />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 1.8 }}
+          className="mt-16"
+        >
+          <button 
+            onClick={() => onTabChange('menu')}
+            className="group relative px-12 py-5 overflow-hidden rounded-full border border-gold/40 bg-black/20 backdrop-blur-md transition-all duration-700 hover:border-gold"
+          >
+            <div className="absolute inset-0 bg-gold/10 translate-y-full group-hover:translate-y-0 transition-transform duration-700" />
+            <span className="relative text-white text-[12px] uppercase tracking-[0.5em] font-bold group-hover:text-gold transition-colors">
+              Explore the Menu
+            </span>
+          </button>
         </motion.div>
       </motion.div>
 
