@@ -49,7 +49,7 @@ export default function Hero() {
         preload="auto"
         className="absolute inset-0 w-full h-full object-cover z-0 opacity-100"
       >
-        <source src="/videos/hero-cinematic.mp4" type="video/mp4" />
+        <source src="/videos/sushi-hero.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
