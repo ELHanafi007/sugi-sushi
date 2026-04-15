@@ -59,10 +59,25 @@ body {
 }
 
 /* ─── Hide Scrollbars ─── */
-::-webkit-scrollbar { display: none; }
-* { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ─── Noise Grain ─── */
+/* ─── Safe Area Spacing ─── */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 24px);
+}
+
+/* ─── Bottom Sheet Backdrop ─── */
+.sheet-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+/* ─── Typography Refinement ─── */
+.text-balance {
+  text-wrap: balance;
+}
+
 .noise {
   position: fixed;
   inset: 0;
