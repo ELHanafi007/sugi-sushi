@@ -1,8 +1,19 @@
 'use client';
 
 import { motion, Variants } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 
 export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.error("Autoplay failed:", error);
+      });
+    }
+  }, []);
+
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -27,20 +38,23 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+    <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
       {/* ─── Background Video ─── */}
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover z-0"
+        preload="auto"
+        className="absolute inset-0 w-full h-full object-cover z-0 opacity-100"
       >
-        <source src="/videos/sushi-hero.mp4" type="video/mp4" />
+        <source src="/videos/hero-cinematic.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
       </video>
 
       {/* ─── Dark Overlay ─── */}
-      <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px] z-10" />
+      <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px] z-10 pointer-events-none" />
 
       {/* ─── Content ─── */}
       <motion.div
