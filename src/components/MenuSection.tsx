@@ -144,8 +144,8 @@ function StorySection() {
   const { ref, visible } = useReveal();
 
   return (
-    <section id="story" ref={ref} className="w-full py-40 md:py-64 px-6 relative overflow-hidden">
-      <div className="container-wide relative z-10">
+    <section id="story" ref={ref} className="w-full section-padding relative overflow-hidden">
+      <div className="container-luxury relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-40 items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -313,7 +313,7 @@ function MenuContent() {
   return (
     <section id="menu" className="w-full min-h-screen flex flex-col items-center pb-32">
       {/* ─── Section Header ─── */}
-      <div className="container-wide pt-32 pb-16 text-center lg:text-left">
+      <div className="container-luxury pt-32 pb-16 text-center lg:text-left">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -390,7 +390,7 @@ function MenuContent() {
         </div>
       </div>
 
-      <div className="container-wide flex flex-col lg:flex-row gap-20 relative">
+      <div className="container-luxury flex flex-col lg:flex-row gap-20 relative">
         {/* ─── Sticky Sidebar (Desktop Only) ─── */}
         <div className="hidden lg:block w-72 shrink-0">
           <div className="sticky top-32 space-y-8">
@@ -521,90 +521,78 @@ function ContactSection() {
   const { ref, visible } = useReveal();
 
   return (
-    <section id="contact" ref={ref} className="w-full py-48 px-6 relative bg-bg overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-gold/5 rounded-full blur-[100px] pointer-events-none" />
+    <section id="contact" ref={ref} className="w-full section-padding relative bg-bg overflow-hidden border-t border-white/[0.03]">
+      {/* Decorative Branding */}
+      <span className="heading-huge opacity-[0.01] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none whitespace-nowrap">
+        SUGI SUSHI
+      </span>
 
-      <div className="container-wide relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.span
+      <div className="container-luxury relative z-10">
+        <div className="max-w-5xl mx-auto text-center">
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={visible ? { opacity: 1, y: 0 } : {}}
-            className="section-label"
+            transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
           >
-            {t('contact.label')}
-          </motion.span>
+            <span className="mono-tag mb-8 block text-gold/40 tracking-[0.5em]">{t('contact.label')}</span>
+            <h2 className="text-white text-4xl md:text-6xl font-serif font-light mb-24 tracking-wide italic">
+              Experience the <span className="text-gold">Art of Motion.</span>
+            </h2>
+          </motion.div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={visible ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.1, duration: 1 }}
-            className="section-title mt-6 mb-20"
-          >
-            {t('contact.title')}
-          </motion.h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
             {[
               {
-                icon: (
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-                ),
-                circle: <circle cx="12" cy="9" r="2.5" />,
                 label: t('contact.visit'),
-                content: t('contact.location')
+                content: t('contact.location'),
+                sub: "Riyadh, KSA"
               },
               {
-                icon: (
-                  <path d="M12 6v6l4 2" />
-                ),
-                circle: <circle cx="12" cy="12" r="10" />,
                 label: t('contact.opening'),
-                content: t('contact.hours')
+                content: t('contact.hours'),
+                sub: "7 Days a Week"
               },
               {
-                icon: (
-                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
-                ),
                 label: t('contact.reservation'),
-                content: "+966 55 000 0000"
+                content: "+966 55 000 0000",
+                sub: "Book your table"
               }
             ].map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={visible ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.2 + i * 0.1 }}
-                className="flex flex-col items-center gap-8 p-10 rounded-3xl bg-white/[0.02] border border-white/[0.05] hover:bg-gold/5 transition-all duration-500"
+                transition={{ delay: 0.3 + i * 0.1, duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+                className="flex flex-col items-center gap-8 group"
               >
-                <div className="w-16 h-16 rounded-2xl bg-gold/5 border border-gold/10 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    {item.icon}
-                    {item.circle}
-                  </svg>
-                </div>
+                <div className="w-px h-16 bg-gradient-to-b from-transparent via-gold/30 to-transparent group-hover:via-gold transition-all duration-700" />
                 <div>
-                  <h4 className="text-gold/40 text-[10px] tracking-[0.3em] uppercase font-serif font-bold mb-3">{item.label}</h4>
-                  <p className="text-text-secondary text-[16px] md:text-[18px] tracking-wide font-serif leading-relaxed">
+                  <h4 className="mono-tag !text-gold/40 mb-4">{item.label}</h4>
+                  <p className="text-white text-lg md:text-xl font-serif font-light tracking-wide mb-2 leading-relaxed">
                     {item.content}
                   </p>
+                  <span className="text-[10px] mono-tag opacity-30">{item.sub}</span>
                 </div>
               </motion.div>
             ))}
           </div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={visible ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 0.6 }}
-            className="mt-24"
+            transition={{ delay: 0.8, duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+            className="mt-32"
           >
             <a
               href="tel:+966"
-              className="cta-btn px-16 py-6 group text-[14px] tracking-[0.4em]"
+              className="group relative inline-flex items-center gap-10 px-16 py-7 rounded-full 
+                         border border-white/10 bg-white/[0.02] overflow-hidden transition-all duration-700 
+                         hover:bg-gold/10 hover:border-gold/40 active:scale-95"
             >
-              <span className="relative z-10">{t('contact.cta')}</span>
+              <span className="relative text-white text-[12px] uppercase tracking-[0.5em] font-bold group-hover:text-gold-bright transition-colors">
+                {t('contact.cta')}
+              </span>
+              <div className="w-2 h-2 rounded-full bg-gold animate-pulse" />
             </a>
           </motion.div>
         </div>
@@ -619,41 +607,41 @@ function ContactSection() {
 function Footer() {
   const { t } = useLanguage();
   return (
-    <footer className="w-full pt-32 pb-48 px-6 border-t border-white/[0.03] bg-bg-overlay relative overflow-hidden">
-      <div className="container-wide flex flex-col items-center gap-16 text-center">
-        <div className="flex flex-col items-center gap-6">
-          <span className="text-gold text-5xl font-serif">杉</span>
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-text text-[16px] font-serif font-bold tracking-[0.6em]">SUGI SUSHI</span>
-            <span className="text-gold/40 text-[10px] uppercase tracking-[0.2em]">{t('footer.perfection')}</span>
+    <footer className="w-full pt-32 pb-16 px-6 border-t border-white/[0.03] bg-bg relative overflow-hidden">
+      <div className="container-luxury flex flex-col items-center">
+        {/* Brand Signature */}
+        <div className="flex flex-col items-center gap-12 mb-32">
+          <div className="relative group">
+            <span className="text-gold text-7xl font-serif transition-transform duration-1000 group-hover:scale-110 block">杉</span>
+            <div className="absolute inset-0 bg-gold/20 blur-2xl opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
+          </div>
+          <div className="flex flex-col items-center gap-4">
+            <span className="text-white text-2xl font-serif font-light tracking-[0.8em]">SUGI SUSHI</span>
+            <span className="mono-tag text-gold/40">{t('footer.perfection')}</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 w-full max-w-3xl pt-16 border-t border-white/[0.05]">
-          <a href="#menu" className="text-[11px] text-text-secondary/40 uppercase tracking-widest hover:text-gold transition-colors">
-            {t('nav.menu')}
-          </a>
-          <a href="#story" className="text-[11px] text-text-secondary/40 uppercase tracking-widest hover:text-gold transition-colors">
-            {t('nav.story')}
-          </a>
-          <a href="#contact" className="text-[11px] text-text-secondary/40 uppercase tracking-widest hover:text-gold transition-colors">
-            {t('nav.contact')}
-          </a>
-          <a href="#" className="text-[11px] text-text-secondary/40 uppercase tracking-widest hover:text-gold transition-colors">
-            {t('footer.privacy')}
-          </a>
-        </div>
+        {/* Global Nav HUD */}
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-12 pt-16 border-t border-white/[0.05]">
+          <div className="flex flex-wrap justify-center gap-12">
+            {['menu', 'story', 'contact'].map(item => (
+              <a 
+                key={item}
+                href={`#${item}`} 
+                className="mono-tag !text-[10px] text-white/30 hover:text-gold transition-colors duration-500"
+              >
+                {t(`nav.${item}`)}
+              </a>
+            ))}
+          </div>
 
-        <div className="flex flex-col gap-6 mt-12">
-          <p className="text-text-muted/40 text-[10px] uppercase tracking-[0.5em] font-serif font-bold">
-            {t('footer.copy')}
-          </p>
-          <div className="flex items-center justify-center gap-4">
-            <div className="w-12 h-px bg-gold/10" />
-            <p className="text-text-muted/20 text-[10px] tracking-[0.3em] font-serif uppercase">
-              {t('footer.heart')}
-            </p>
-            <div className="w-12 h-px bg-gold/10" />
+          <div className="flex flex-col items-center md:items-end gap-6">
+            <p className="mono-tag !text-[10px] opacity-20">© 2024 SUGI • All Rights Reserved</p>
+            <div className="flex items-center gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-gold/20" />
+              <p className="mono-tag !text-[8px] opacity-10 uppercase tracking-[0.4em]">{t('footer.heart')}</p>
+              <span className="w-1.5 h-1.5 rounded-full bg-gold/20" />
+            </div>
           </div>
         </div>
       </div>

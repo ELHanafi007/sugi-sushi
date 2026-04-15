@@ -12,6 +12,25 @@
   --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
+/* ─── Global Spacing Scale ─── */
+:root {
+  --section-py: clamp(80px, 15vh, 200px);
+  --container-px: clamp(24px, 5vw, 80px);
+}
+
+.section-padding {
+  padding-top: var(--section-py);
+  padding-bottom: var(--section-py);
+}
+
+.container-luxury {
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-px);
+  padding-right: var(--container-px);
+}
+
 /* ─── The Obsidian Stage ─── */
 html {
   scroll-behavior: smooth;
@@ -25,6 +44,15 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   cursor: crosshair;
+}
+
+/* ─── Luxury Glows & Shadows ─── */
+.shadow-gold-soft {
+  shadow: 0 20px 50px rgba(226, 183, 20, 0.05);
+}
+
+.glow-gold {
+  filter: drop-shadow(0 0 15px rgba(226, 183, 20, 0.2));
 }
 
 /* ─── Kinetic Typography ─── */
