@@ -52,42 +52,48 @@ function DishCard({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: num
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
   const price = dish.price.replace(' SR', '').trim();
-  const isSignature = dish.tags.some(t => ['signature', "chef's choice"].includes(t.toLowerCase()));
+  const isSignature = dish.tags.some(t => ['signature', "chef's choice", "premium"].includes(t.toLowerCase()));
 
   return (
     <motion.article
       layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
       transition={{
-        duration: 0.5,
-        delay: Math.min(idx * 0.05, 0.4),
-        ease: [0.16, 1, 0.3, 1]
+        duration: 0.8,
+        delay: Math.min(idx * 0.08, 0.4),
+        ease: [0.19, 1, 0.22, 1]
       }}
-      className={`menu-card ${isSignature ? 'menu-card--signature' : ''}`}
+      className={`relative group p-6 md:p-8 rounded-[2rem] border transition-all duration-700 ${
+        isSignature 
+        ? 'bg-gold/[0.04] border-gold/20 shadow-[0_20px_50px_rgba(226,183,20,0.05)]' 
+        : 'bg-white/[0.02] border-white/[0.05] hover:bg-white/[0.04] hover:border-white/10'
+      }`}
     >
       <div className="flex flex-col h-full">
         {/* Header: Name | Price */}
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <h4 className="text-text text-[16px] md:text-[18px] font-serif uppercase tracking-[0.05em] leading-snug">
+        <div className="flex items-start justify-between gap-6 mb-6">
+          <div className="flex flex-col gap-2 min-w-0">
+            <h4 className="text-white text-[17px] md:text-[20px] font-serif font-medium tracking-wide leading-tight group-hover:text-gold transition-colors duration-500">
               {name}
             </h4>
-            {isSignature && (
-              <span
-                className="w-2 h-2 rounded-full bg-gold shrink-0 shadow-[0_0_10px_rgba(201,168,76,0.6)]"
-                style={{ animation: 'pulse-dot 2s ease-in-out infinite' }}
-              />
-            )}
+            <div className="flex items-center gap-3">
+              {isSignature && (
+                <span className="mono-tag !text-[8px] !text-gold">Chef's Selection</span>
+              )}
+              {dish.calories && (
+                <span className="text-[9px] text-white/20 tracking-widest font-mono uppercase italic">{dish.calories}</span>
+              )}
+            </div>
           </div>
 
           {price && (
-            <div className="flex items-baseline gap-1 shrink-0">
-              <span className="text-gold font-serif text-[18px] md:text-[20px] font-medium leading-none">
+            <div className="flex items-baseline gap-1 shrink-0 pt-1">
+              <span className="text-gold font-serif text-[20px] md:text-[24px] font-light leading-none">
                 {price}
               </span>
-              <span className="text-[8px] text-gold/50 uppercase tracking-tighter">
+              <span className="text-[9px] text-gold/40 uppercase tracking-widest font-bold">
                 {lang === 'ar' ? 'ر.س' : 'SR'}
               </span>
             </div>
@@ -96,25 +102,18 @@ function DishCard({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: num
 
         {/* Description */}
         {desc && (
-          <p className="text-text-secondary/60 text-[12px] md:text-[13px] leading-relaxed mb-8 flex-1">
+          <p className="text-white/50 text-[13px] md:text-[14px] leading-relaxed mb-10 flex-1 font-serif italic font-light text-balance">
             {desc}
           </p>
         )}
 
-        {/* Footer: Tags | Calories */}
-        <div className="mt-auto pt-5 border-t border-white/[0.04] flex items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-2">
-            {dish.tags.slice(0, 3).map((tag) => (
-              <span key={tag} className={tagCls(tag)}>
-                {tag}
-              </span>
-            ))}
-          </div>
-          {dish.calories && (
-            <span className="text-[9px] text-text-muted/40 tracking-[0.1em] uppercase font-bold shrink-0">
-              {dish.calories}
+        {/* Footer: Tags */}
+        <div className="mt-auto pt-6 border-t border-white/[0.04] flex flex-wrap gap-2">
+          {dish.tags.map((tag) => (
+            <span key={tag} className={`px-3 py-1 rounded-full text-[9px] uppercase tracking-widest font-bold ${tagCls(tag)}`}>
+              {tag}
             </span>
-          )}
+          ))}
         </div>
       </div>
     </motion.article>
@@ -129,36 +128,29 @@ function StorySection() {
   const { ref, visible } = useReveal();
 
   return (
-    <section id="story" ref={ref} className="w-full py-32 md:py-48 px-6 relative overflow-hidden bg-bg-warm/30">
+    <section id="story" ref={ref} className="w-full py-40 md:py-64 px-6 relative overflow-hidden">
       <div className="container-wide relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-32 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-40 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={visible ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={visible ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 1.8, ease: [0.19, 1, 0.22, 1] }}
             className="relative order-2 lg:order-1"
           >
-            <div className="aspect-[4/5] md:aspect-square relative rounded-3xl overflow-hidden group">
+            <div className="aspect-[4/5] relative rounded-[3rem] overflow-hidden group shadow-2xl">
                <div 
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-[2s] group-hover:scale-110"
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-[3s] ease-expo group-hover:scale-110"
                 style={{ backgroundImage: 'url("/media/optimized/hero-wallpaper-2.jpg")' }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-60" />
+              <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-80" />
               
               {/* Floating Badge */}
-              <div className="absolute bottom-8 left-8 p-6 bg-bg/80 backdrop-blur-xl border border-white/10 rounded-2xl max-w-[200px]">
-                <span className="text-gold text-4xl font-serif block mb-2">杉</span>
-                <p className="text-[10px] text-text-secondary uppercase tracking-widest leading-relaxed">
+              <div className="absolute bottom-10 left-10 p-8 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] max-w-[240px]">
+                <span className="text-gold text-5xl font-serif block mb-4">杉</span>
+                <p className="text-[11px] text-white/60 uppercase tracking-[0.3em] font-medium leading-relaxed">
                   {t('story.badge')}
                 </p>
               </div>
-            </div>
-
-            {/* Background Kanji */}
-            <div className="absolute -top-12 -left-12 pointer-events-none select-none z-[-1]">
-              <span className="text-[300px] text-gold/[0.03] font-serif leading-none">
-                杉
-              </span>
             </div>
           </motion.div>
 
@@ -166,50 +158,45 @@ function StorySection() {
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               animate={visible ? { opacity: 1, y: 0 } : {}}
-              className="section-label"
+              className="mono-tag mb-8"
             >
               {t('story.label')}
             </motion.span>
 
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={visible ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.1, duration: 1 }}
-              className="section-title mt-6 mb-10"
+              transition={{ delay: 0.2, duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+              className="text-white text-4xl md:text-6xl font-serif font-light mb-12 tracking-wide leading-tight"
             >
               {t('story.title')}
             </motion.h2>
 
-            <div className="space-y-8 max-w-xl">
+            <div className="space-y-10 max-w-xl">
               <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={visible ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.2 }}
-                className="text-text-secondary/70 text-[15px] md:text-[17px] leading-[1.8] font-serif italic"
+                initial={{ opacity: 0 }}
+                animate={visible ? { opacity: 1 } : {}}
+                transition={{ delay: 0.4 }}
+                className="text-white/70 text-[16px] md:text-[18px] leading-[1.8] font-serif italic font-light"
               >
                 {t('story.p1')}
               </motion.p>
               <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={visible ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.3 }}
-                className="text-text-secondary/60 text-[15px] md:text-[16px] leading-[1.8] font-serif"
+                initial={{ opacity: 0 }}
+                animate={visible ? { opacity: 1 } : {}}
+                transition={{ delay: 0.6 }}
+                className="text-white/50 text-[15px] md:text-[16px] leading-[1.8] font-serif font-light"
               >
                 {t('story.p2')}
               </motion.p>
             </div>
 
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={visible ? { opacity: 1 } : {}}
-              transition={{ delay: 0.5 }}
-              className="mt-16 flex flex-col items-center lg:items-start"
-            >
-              <div className="w-12 h-px bg-gold/30 mb-6" />
-              <p className="text-gold/50 text-[11px] tracking-[0.4em] font-serif uppercase font-bold">
-                {t('story.sig')}
-              </p>
-            </motion.div>
+              initial={{ opacity: 0, width: 0 }}
+              animate={visible ? { opacity: 1, width: '4rem' } : {}}
+              transition={{ delay: 0.8, duration: 1 }}
+              className="mt-20 h-px bg-gold/50"
+            />
           </div>
         </div>
       </div>

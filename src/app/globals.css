@@ -13,6 +13,11 @@
 }
 
 /* ─── The Obsidian Stage ─── */
+html {
+  scroll-behavior: smooth;
+  background-color: var(--color-bg);
+}
+
 body {
   background-color: var(--color-bg);
   color: #fff;
@@ -67,12 +72,6 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 24px);
 }
 
-/* ─── Bottom Sheet Backdrop ─── */
-.sheet-backdrop {
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(8px);
-}
-
 /* ─── Typography Refinement ─── */
 .text-balance {
   text-wrap: balance;
@@ -90,13 +89,29 @@ body {
 /* ─── Interactive Light ─── */
 .spotlight {
   position: fixed;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   pointer-events: none;
   background: radial-gradient(
-    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(226, 183, 20, 0.05) 0%,
-    transparent 50%
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(226, 183, 20, 0.06) 0%,
+    transparent 70%
   );
-  z-index: 1;
+  z-index: 50;
+}
+
+/* ─── Menu Tags ─── */
+.tag {
+  @apply px-3 py-1 rounded-full text-[9px] uppercase tracking-widest font-bold border transition-all duration-300;
+}
+
+.tag--gold {
+  @apply bg-gold/10 text-gold border-gold/20 shadow-[0_0_15px_rgba(226,183,20,0.1)];
+}
+
+.tag--red {
+  @apply bg-red-500/10 text-red-400 border-red-500/20;
+}
+
+.tag--muted {
+  @apply bg-white/5 text-white/40 border-white/10;
 }
