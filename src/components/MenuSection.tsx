@@ -54,68 +54,84 @@ function DishCard({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: num
   const price = dish.price.replace(' SR', '').trim();
   const isSignature = dish.tags.some(t => ['signature', "chef's choice", "premium"].includes(t.toLowerCase()));
 
+  // Use a default luxury placeholder if no image exists
+  const imageUrl = dish.image || "/media/optimized/hero-wallpaper-2.jpg";
+
   return (
     <motion.article
       layout
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{
-        duration: 0.8,
-        delay: Math.min(idx * 0.08, 0.4),
+        duration: 1.2,
+        delay: idx % 2 === 0 ? 0.1 : 0.3,
         ease: [0.19, 1, 0.22, 1]
       }}
-      className={`relative group p-6 md:p-8 rounded-[2rem] border transition-all duration-700 ${
-        isSignature 
-        ? 'bg-gold/[0.04] border-gold/20 shadow-[0_20px_50px_rgba(226,183,20,0.05)]' 
-        : 'bg-white/[0.02] border-white/[0.05] hover:bg-white/[0.04] hover:border-white/10'
+      className={`relative group overflow-hidden rounded-[2.5rem] aspect-[4/5] md:aspect-[3/4] transition-all duration-1000 ${
+        idx % 3 === 1 ? 'md:mt-24' : '' // Create asymmetric rhythm
       }`}
     >
-      <div className="flex flex-col h-full">
-        {/* Header: Name | Price */}
-        <div className="flex items-start justify-between gap-6 mb-6">
-          <div className="flex flex-col gap-2 min-w-0">
-            <h4 className="text-white text-[17px] md:text-[20px] font-serif font-medium tracking-wide leading-tight group-hover:text-gold transition-colors duration-500">
-              {name}
-            </h4>
-            <div className="flex items-center gap-3">
-              {isSignature && (
-                <span className="mono-tag !text-[8px] !text-gold">Chef's Selection</span>
-              )}
-              {dish.calories && (
-                <span className="text-[9px] text-white/20 tracking-widest font-mono uppercase italic">{dish.calories}</span>
-              )}
-            </div>
+      {/* ─── Background Image ─── */}
+      <div className="absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-[2s] ease-expo group-hover:scale-110"
+          style={{ backgroundImage: `url("${imageUrl}")` }}
+        />
+        {/* Editorial Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 transition-opacity duration-700 group-hover:opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent opacity-40" />
+      </div>
+
+      {/* ─── Card Content ─── */}
+      <div className="absolute inset-0 z-10 p-8 md:p-10 flex flex-col justify-end">
+        <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700 ease-expo">
+          {/* Top Metadata */}
+          <div className="flex items-center gap-3 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+            {isSignature && (
+              <span className="mono-tag !text-[8px] !text-gold border border-gold/30 px-2 py-0.5 rounded-full">
+                Signature
+              </span>
+            )}
+            {dish.calories && (
+              <span className="text-[9px] text-white/40 tracking-widest font-mono uppercase">{dish.calories}</span>
+            )}
           </div>
 
-          {price && (
-            <div className="flex items-baseline gap-1 shrink-0 pt-1">
-              <span className="text-gold font-serif text-[20px] md:text-[24px] font-light leading-none">
+          {/* Dish Identity */}
+          <div className="flex items-end justify-between gap-6 mb-6">
+            <h4 className="text-white text-3xl md:text-4xl font-serif font-light tracking-tight leading-[0.9] text-balance">
+              {name}
+            </h4>
+            <div className="flex flex-col items-end shrink-0">
+              <span className="text-gold font-serif text-xl md:text-2xl font-light leading-none">
                 {price}
               </span>
-              <span className="text-[9px] text-gold/40 uppercase tracking-widest font-bold">
+              <span className="text-[8px] text-gold/40 uppercase tracking-widest font-bold mt-1">
                 {lang === 'ar' ? 'ر.س' : 'SR'}
               </span>
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Description */}
-        {desc && (
-          <p className="text-white/50 text-[13px] md:text-[14px] leading-relaxed mb-10 flex-1 font-serif italic font-light text-balance">
+          {/* Description - Revealed on Hover */}
+          <p className="text-white/60 text-[13px] md:text-[14px] leading-relaxed max-w-[90%] font-serif italic font-light opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-200 line-clamp-2 mb-6">
             {desc}
           </p>
-        )}
 
-        {/* Footer: Tags */}
-        <div className="mt-auto pt-6 border-t border-white/[0.04] flex flex-wrap gap-2">
-          {dish.tags.map((tag) => (
-            <span key={tag} className={`px-3 py-1 rounded-full text-[9px] uppercase tracking-widest font-bold ${tagCls(tag)}`}>
-              {tag}
-            </span>
-          ))}
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-300">
+            {dish.tags.slice(0, 2).map((tag) => (
+              <span key={tag} className="text-[8px] uppercase tracking-[0.2em] text-white/30 border border-white/10 px-3 py-1 rounded-full">
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* ─── Hover Interaction Frame ─── */}
+      <div className="absolute inset-0 border border-white/0 group-hover:border-white/10 rounded-[2.5rem] transition-all duration-1000 pointer-events-none" />
+      <div className="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none blur-3xl" />
     </motion.article>
   );
 }
@@ -416,15 +432,15 @@ function MenuContent() {
                 className="flex flex-col gap-24"
               >
                 {Object.entries(groupedDishes).map(([cat, dishes]) => (
-                  <div key={cat} className="flex flex-col gap-10">
-                    <div className="flex items-center gap-6">
-                      <span className="text-gold/40 font-serif text-3xl">{KANJI[cat]}</span>
-                      <h3 className="text-[14px] text-gold uppercase tracking-[0.4em] font-serif font-bold">
+                  <div key={cat} className="flex flex-col gap-12 md:gap-20">
+                    <div className="flex items-center gap-8">
+                      <span className="text-gold/20 font-serif text-5xl md:text-6xl">{KANJI[cat]}</span>
+                      <h3 className="text-[18px] md:text-[22px] text-gold uppercase tracking-[0.5em] font-serif font-light">
                         {t(`menu.cat.${cat}`)}
                       </h3>
                       <div className="flex-1 h-px bg-white/[0.05]" />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16 md:gap-y-32">
                       {dishes.map((dish, i) => (
                         <DishCard key={dish.id} dish={dish} lang={lang} idx={i} />
                       ))}
@@ -433,7 +449,7 @@ function MenuContent() {
                 ))}
               </motion.div>
             ) : (
-              <div className="flex flex-col gap-32">
+              <div className="flex flex-col gap-40 md:gap-64">
                 {availCats.map((cat) => {
                   const dishes = menuData.filter(d => d.category === cat);
                   return (
@@ -441,29 +457,29 @@ function MenuContent() {
                       key={cat} 
                       id={`cat-${cat}`}
                       ref={el => { sectionRefs.current[cat] = el; }}
-                      className="flex flex-col gap-12 scroll-mt-40"
+                      className="flex flex-col gap-16 md:gap-24 scroll-mt-40"
                     >
                       <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
-                        className="flex flex-col lg:flex-row lg:items-end justify-between gap-6"
+                        className="flex flex-col lg:flex-row lg:items-end justify-between gap-10"
                       >
-                        <div className="flex items-center gap-6">
-                          <span className="text-[40px] text-gold/15 font-serif leading-none">{KANJI[cat]}</span>
+                        <div className="flex items-center gap-8">
+                          <span className="text-[60px] md:text-[80px] text-gold/10 font-serif leading-none">{KANJI[cat]}</span>
                           <div>
-                            <h3 className="text-[18px] md:text-[22px] text-gold uppercase tracking-[0.5em] font-serif font-bold leading-none">
+                            <h3 className="text-[24px] md:text-[32px] text-gold uppercase tracking-[0.4em] font-serif font-light leading-none">
                               {t(`menu.cat.${cat}`)}
                             </h3>
-                            <div className="w-12 h-px bg-gold/30 mt-4" />
+                            <div className="w-16 h-px bg-gold/20 mt-6" />
                           </div>
                         </div>
-                        <span className="text-[10px] text-text-muted/30 uppercase tracking-[0.2em] font-serif">
+                        <span className="text-[11px] text-white/30 uppercase tracking-[0.3em] font-serif italic">
                           {dishes.length} {t('menu.items')}
                         </span>
                       </motion.div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16 md:gap-y-32">
                         {dishes.map((dish, i) => (
                           <DishCard key={dish.id} dish={dish} lang={lang} idx={i} />
                         ))}

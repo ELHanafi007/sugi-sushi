@@ -8,6 +8,7 @@ export interface Dish {
   category: string;
   calories?: string;
   tags: string[];
+  image?: string;
 }
 
 export const CATEGORIES = [
