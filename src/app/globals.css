@@ -10,12 +10,21 @@
   --font-mono: "Space Mono", monospace;
 
   --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
 }
 
 /* ─── Global Spacing Scale ─── */
 :root {
-  --section-py: clamp(80px, 15vh, 200px);
-  --container-px: clamp(24px, 5vw, 80px);
+  --section-py: clamp(100px, 20vh, 280px);
+  --container-px: clamp(24px, 8vw, 120px);
+  
+  /* Typography Scale */
+  --type-display: clamp(80px, 18vw, 280px);
+  --type-h1: clamp(60px, 10vw, 120px);
+  --type-h2: clamp(40px, 6vw, 80px);
+  --type-h3: clamp(24px, 3vw, 42px);
+  --type-body: 16px;
+  --type-mono: 10px;
 }
 
 .section-padding {
@@ -24,11 +33,56 @@
 }
 
 .container-luxury {
-  max-width: 1440px;
+  max-width: 1600px;
   margin-left: auto;
   margin-right: auto;
   padding-left: var(--container-px);
   padding-right: var(--container-px);
+}
+
+/* ─── Typography System (Editorial Discipline) ─── */
+.text-display {
+  font-size: var(--type-display);
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.text-h1 {
+  font-size: var(--type-h1);
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  font-weight: 300;
+}
+
+.text-h2 {
+  font-size: var(--type-h2);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 300;
+}
+
+.text-h3 {
+  font-size: var(--type-h3);
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+  font-weight: 300;
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.text-body {
+  font-size: var(--type-body);
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  opacity: 0.6;
 }
 
 /* ─── The Obsidian Stage ─── */
@@ -43,36 +97,30 @@ body {
   font-family: var(--font-serif);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  cursor: crosshair;
+  cursor: none; /* Custom interaction cursor */
 }
 
-/* ─── Luxury Glows & Shadows ─── */
-.shadow-gold-soft {
-  shadow: 0 20px 50px rgba(226, 183, 20, 0.05);
+/* ─── Cinematic Interaction Language ─── */
+.film-blur {
+  filter: blur(20px);
+  opacity: 0;
+  transition: all 1.5s var(--ease-expo);
 }
 
-.glow-gold {
-  filter: drop-shadow(0 0 15px rgba(226, 183, 20, 0.2));
+.film-blur.active {
+  filter: blur(0px);
+  opacity: 1;
 }
 
-/* ─── Kinetic Typography ─── */
-.heading-huge {
-  font-size: clamp(80px, 15vw, 240px);
-  line-height: 0.8;
-  letter-spacing: -0.05em;
-  font-weight: 700;
-  text-transform: uppercase;
+.black-fade-overlay {
+  position: fixed;
+  inset: 0;
+  background: black;
+  z-index: 500;
+  pointer-events: none;
 }
 
-.mono-tag {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--color-gold);
-}
-
-/* ─── Liquid Metal Effect ─── */
+/* ─── Liquid Metal Branding ─── */
 .liquid-gold {
   background: linear-gradient(
     to bottom,
@@ -82,64 +130,40 @@ body {
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px rgba(226, 183, 20, 0.2));
+  filter: drop-shadow(0 0 30px rgba(226, 183, 20, 0.3));
 }
 
-/* ─── GlassHUD ─── */
-.hud-border {
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
+/* ─── Layout Utils ─── */
+.vertical-text {
+  writing-mode: vertical-rl;
 }
 
-/* ─── Hide Scrollbars ─── */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ─── Safe Area Spacing ─── */
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 24px);
-}
-
-/* ─── Typography Refinement ─── */
-.text-balance {
-  text-wrap: balance;
-}
-
-.noise {
+.noise-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 1000;
   pointer-events: none;
-  opacity: 0.04;
+  opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-/* ─── Interactive Light ─── */
-.spotlight {
+/* Letterbox Bars */
+.letterbox-bar {
   position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(226, 183, 20, 0.06) 0%,
-    transparent 70%
-  );
-  z-index: 50;
+  left: 0;
+  right: 0;
+  height: 0vh;
+  background: #000;
+  z-index: 1000;
+  transition: height 0.8s var(--ease-expo);
 }
 
-/* ─── Menu Tags ─── */
-.tag {
-  @apply px-3 py-1 rounded-full text-[9px] uppercase tracking-widest font-bold border transition-all duration-300;
-}
+.letterbox-bar.top { top: 0; }
+.letterbox-bar.bottom { bottom: 0; }
 
-.tag--gold {
-  @apply bg-gold/10 text-gold border-gold/20 shadow-[0_0_15px_rgba(226,183,20,0.1)];
-}
-
-.tag--red {
-  @apply bg-red-500/10 text-red-400 border-red-500/20;
-}
-
-.tag--muted {
-  @apply bg-white/5 text-white/40 border-white/10;
+.letterbox-active .letterbox-bar {
+  height: 10vh;
 }
