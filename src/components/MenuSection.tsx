@@ -71,7 +71,7 @@ const CHAPTERS = [
 const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => {
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
-  const imageUrl = dish.image || "/media/optimized/hero-wallpaper-1.jpg";
+  const imageUrl = dish.image || "/media/optimized/hero-wallpaper-alt-1.jpg";
 
   return (
     <motion.div 
@@ -105,7 +105,7 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
 
 const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: number }) => {
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
-  const imageUrl = dish.image || "/media/optimized/hero-wallpaper-2.jpg";
+  const imageUrl = dish.image || "/media/optimized/hero-wallpaper-alt-2.jpg";
 
   return (
     <motion.div 

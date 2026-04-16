@@ -18,13 +18,13 @@ const CAT_IMAGES: Record<string, string> = {
   'Tataki': '/media/optimized/brochure-8.jpg',
   'Ceviche': '/media/optimized/brochure-9.jpg',
   'Nigiri': '/media/optimized/brochure-10.jpg',
-  'Maki Rolls': '/media/optimized/hero-wallpaper-1.jpg',
-  'Special Rolls': '/media/optimized/hero-wallpaper-2.jpg',
-  'Fried Rolls': '/media/optimized/hero-wallpaper-4.jpg',
+  'Maki Rolls': '/media/optimized/hero-wallpaper-alt-1.jpg',
+  'Special Rolls': '/media/optimized/hero-wallpaper-alt-2.jpg',
+  'Fried Rolls': '/media/optimized/hero-wallpaper-alt-3.jpg',
   'Desserts': '/media/optimized/hero-wallpaper-alt-4.jpg',
 };
 
-const DEFAULT_IMAGE = '/media/optimized/hero-wallpaper-0.jpg';
+const DEFAULT_IMAGE = '/media/optimized/hero-wallpaper-alt-0.jpg';
 
 /* ═══════════════════════════════════════════════════════
    DISH MODAL (DETAILED VIEW)

@@ -31,7 +31,7 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
         }}
         transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: 'url("/media/optimized/hero-wallpaper-2.jpg")' }} 
+        style={{ backgroundImage: 'url("/media/optimized/hero-wallpaper-alt-2.jpg")' }} 
       />
       
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
@@ -86,7 +86,7 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
 };
 
 const SecondaryDish = ({ dish, idx }: { dish: Dish, idx: number }) => {
-  const imageUrl = idx === 0 ? "/media/optimized/hero-wallpaper-3.jpg" : "/media/optimized/hero-wallpaper-4.jpg";
+  const imageUrl = idx === 0 ? "/media/optimized/hero-wallpaper-alt-3.jpg" : "/media/optimized/hero-wallpaper-alt-4.jpg";
   
   return (
     <motion.div 
