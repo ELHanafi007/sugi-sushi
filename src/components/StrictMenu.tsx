@@ -211,7 +211,7 @@ export default function StrictMenu() {
                   <motion.div layoutId="catActive" className="w-1 h-1 rounded-full bg-gold mt-2" />
                 )}
               </div>
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
