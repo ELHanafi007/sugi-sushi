@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import Image from 'next/image';
 
 /**
  * CHEF ARTISTRY - Emotional Peak Moment
@@ -31,15 +32,12 @@ export default function ChefArtistry() {
         style={{ scale, opacity }}
         className="absolute inset-0 z-0"
       >
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover opacity-60 grayscale-[0.5] contrast-125"
-        >
-          <source src="/videos/sushi-hero.mp4" type="video/mp4" />
-        </video>
+        <Image
+          src="/media/optimized/hero-wallpaper-alt-4.jpg"
+          alt="Chef Artistry Background"
+          fill
+          className="object-cover opacity-60 grayscale-[0.5] contrast-125"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
         <div className="absolute inset-0 bg-black/20" />
       </motion.div>
@@ -58,7 +56,7 @@ export default function ChefArtistry() {
               <div className="flex flex-col items-center gap-12">
                 <div className="w-px h-32 bg-gradient-to-b from-gold/40 to-transparent" />
                 <p className="text-h3 text-white/40 max-w-3xl font-serif italic">
-                  "In the silence of the kitchen, every cut is a conversation between the ocean and the blade."
+                  &quot;In the silence of the kitchen, every cut is a conversation between the ocean and the blade.&quot;
                 </p>
               </div>
             </motion.div>

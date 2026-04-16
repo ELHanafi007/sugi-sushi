@@ -29,16 +29,20 @@ export default function Home() {
   // Letterbox trigger based on scroll depth
   useEffect(() => {
     if (activeTab !== 'home') {
-      setIsLetterbox(false);
-      return;
+      const timeoutId = setTimeout(() => setIsLetterbox(false), 0);
+      return () => clearTimeout(timeoutId);
     }
-    const handleScroll = () => {
+    
+    // Initial check
+    const checkScroll = () => {
       const scrollPos = window.scrollY;
       const windowHeight = window.innerHeight;
       setIsLetterbox(scrollPos > windowHeight * 0.5);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    checkScroll();
+
+    window.addEventListener('scroll', checkScroll);
+    return () => window.removeEventListener('scroll', checkScroll);
   }, [activeTab]);
 
   return (

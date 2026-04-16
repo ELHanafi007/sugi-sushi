@@ -91,7 +91,7 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
         <div className="max-w-2xl">
           <span className="mono-tag !text-gold mb-4 !bg-gold/10 !border-gold/20">Featured Selection</span>
           <h3 className="text-white text-4xl md:text-6xl font-serif font-light mb-6 tracking-tight">{name}</h3>
-          <p className="text-white/60 text-lg font-serif italic mb-8 line-clamp-2">"{desc}"</p>
+          <p className="text-white/60 text-lg font-serif italic mb-8 line-clamp-2">&quot;{desc}&quot;</p>
           <div className="flex items-center gap-6">
             <span className="text-gold text-2xl font-serif">{dish.price}</span>
             <div className="h-px w-12 bg-white/10" />

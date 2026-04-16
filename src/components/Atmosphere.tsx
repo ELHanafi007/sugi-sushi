@@ -52,7 +52,7 @@ export default function Atmosphere() {
           <div className="max-w-5xl mx-auto">
             <span className="text-gold/30 text-[10px] uppercase tracking-[1em] mb-12 block font-bold">The Atmosphere</span>
             <h2 className="text-white text-4xl md:text-7xl lg:text-8xl font-serif font-light leading-[1.1] tracking-tight italic">
-              "A sanctuary where <span className="text-gold">time slows down</span>, and every flavor tells a story of tradition."
+              &quot;A sanctuary where <span className="text-gold">time slows down</span>, and every flavor tells a story of tradition.&quot;
             </h2>
           </div>
 

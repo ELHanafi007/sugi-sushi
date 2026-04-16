@@ -68,7 +68,7 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
             <p className="text-h3 text-white/60 max-w-2xl italic">
-              "{dish.description}"
+              &quot;{dish.description}&quot;
             </p>
             
             <div className="flex items-baseline gap-4">

@@ -1,7 +1,8 @@
 'use client';
 
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { NavTab } from './BottomNav';
 
 /**
@@ -15,7 +16,6 @@ interface HeroProps {
 }
 
 export default function Hero({ onTabChange }: HeroProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +26,6 @@ export default function Hero({ onTabChange }: HeroProps) {
 
   // Cinematic Parallax & Focus Shift
   const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
-  const videoBlur = useTransform(scrollYProgress, [0, 0.5, 1], [0, 10, 25]);
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
@@ -43,17 +42,14 @@ export default function Hero({ onTabChange }: HeroProps) {
         style={{ scale: videoScale, filter: `blur(0px)` }}
         className="absolute inset-0 z-0"
       >
-        <motion.div style={{ filter: `blur(0px)` }}>
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover grayscale-[0.2] brightness-75 scale-[1.05]"
-          >
-            <source src="/videos/sushi-hero.mp4" type="video/mp4" />
-          </video>
+        <motion.div style={{ filter: `blur(0px)` }} className="relative w-full h-full">
+          <Image
+            src="/media/optimized/hero-wallpaper-alt-4.jpg"
+            alt="Sugi Sushi Hero Wallpaper"
+            fill
+            priority
+            className="object-cover grayscale-[0.2] brightness-[0.6] scale-[1.05]"
+          />
         </motion.div>
         
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-bg" />
