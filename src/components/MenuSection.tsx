@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
-/* ─── Kanji per category (enhanced) ─── */
+/* ─── Kanji per category ─── */
 const KANJI: Record<string, string> = {
   'Salads': '菜', 'Soups': '汁', 'Starters': '前',
   'Wok, Noodles & Rice': '炒', 'Tempura': '天', 'Sugi Dishes': '主',
@@ -18,7 +19,7 @@ const KANJI: Record<string, string> = {
   'Desserts': '甘', 'Extra Sauces': '醤',
 };
 
-/* ─── Chapter Grouping for Editorial Flow ─── */
+/* ─── Chapter Grouping ─── */
 const CHAPTERS = [
   { 
     id: 'beginnings', 
@@ -64,6 +65,21 @@ const CHAPTERS = [
   }
 ];
 
+/* ─── Category Images (using existing brochure assets) ─── */
+const CAT_IMAGES: Record<string, string> = {
+  'Salads': '/media/optimized/brochure-1.jpg',
+  'Soups': '/media/optimized/brochure-2.jpg',
+  'Starters': '/media/optimized/brochure-3.jpg',
+  'Wok, Noodles & Rice': '/media/optimized/brochure-4.jpg',
+  'Tempura': '/media/optimized/brochure-5.jpg',
+  'Sugi Dishes': '/media/optimized/brochure-6.jpg',
+  'Sashimi': '/media/optimized/brochure-7.jpg',
+  'Tataki': '/media/optimized/brochure-8.jpg',
+  'Ceviche': '/media/optimized/brochure-9.jpg',
+  'Nigiri': '/media/optimized/brochure-10.jpg',
+};
+const DEFAULT_IMAGE = '/media/optimized/hero-wallpaper-alt-0.jpg';
+
 /* ═══════════════════════════════════════════════════════
    EDITORIAL DISH COMPONENTS
    ═══════════════════════════════════════════════════════ */
@@ -71,7 +87,7 @@ const CHAPTERS = [
 const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => {
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
-  const imageUrl = dish.image || "/media/optimized/hero-wallpaper-alt-1.jpg";
+  const imageUrl = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
 
   return (
     <motion.div 
@@ -79,23 +95,25 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
-      className="relative w-full h-[60vh] md:h-[70vh] rounded-[2.5rem] overflow-hidden group shadow-2xl"
+      className="relative w-full h-[55vh] md:h-[65vh] rounded-[2rem] overflow-hidden group shadow-2xl"
     >
-      <div 
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-[6s] group-hover:scale-105"
-        style={{ backgroundImage: `url("${imageUrl}")` }} 
+      <Image
+        src={imageUrl}
+        alt={name}
+        fill
+        className="object-cover transition-transform duration-[6s] group-hover:scale-105 brightness-[0.6]"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
       
-      <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-end">
+      <div className="absolute inset-0 p-6 md:p-12 lg:p-16 flex flex-col justify-end">
         <div className="max-w-2xl">
-          <span className="mono-tag !text-gold mb-4 !bg-gold/10 !border-gold/20">Featured Selection</span>
-          <h3 className="text-white text-4xl md:text-6xl font-serif font-light mb-6 tracking-tight">{name}</h3>
-          <p className="text-white/60 text-lg font-serif italic mb-8 line-clamp-2">&quot;{desc}&quot;</p>
-          <div className="flex items-center gap-6">
-            <span className="text-gold text-2xl font-serif">{dish.price}</span>
-            <div className="h-px w-12 bg-white/10" />
-            <span className="text-white/20 text-[10px] uppercase tracking-widest">{dish.category}</span>
+          <span className="mono-tag !text-gold mb-4 !bg-gold/10 !border-gold/20 inline-flex text-[8px]">Featured Selection</span>
+          <h3 className="text-white text-3xl md:text-5xl font-serif font-light mb-4 tracking-tight group-hover:text-gold transition-colors duration-700">{name}</h3>
+          <p className="text-white/50 text-sm md:text-base font-serif italic mb-6 line-clamp-2">&quot;{desc}&quot;</p>
+          <div className="flex items-center gap-4">
+            <span className="text-gold text-xl font-serif">{dish.price}</span>
+            <div className="h-px w-8 bg-white/10" />
+            <span className="text-white/20 text-[9px] uppercase tracking-widest font-mono">{dish.category}</span>
           </div>
         </div>
       </div>
@@ -105,29 +123,31 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
 
 const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: number }) => {
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
-  const imageUrl = dish.image || "/media/optimized/hero-wallpaper-alt-2.jpg";
+  const imageUrl = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
 
   return (
     <motion.div 
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: 0.2 * idx, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-      className={`relative rounded-[2rem] overflow-hidden group shadow-xl ${
-        idx === 0 ? 'aspect-[4/5]' : 'aspect-square mt-12'
+      transition={{ delay: 0.15 * idx, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+      className={`relative rounded-[1.5rem] overflow-hidden group shadow-xl ${
+        idx === 0 ? 'aspect-[4/5]' : 'aspect-square mt-8'
       }`}
     >
-      <div 
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-[4s] group-hover:scale-110"
-        style={{ backgroundImage: `url("${imageUrl}")` }}
+      <Image
+        src={imageUrl}
+        alt={name}
+        fill
+        className="object-cover transition-transform duration-[4s] group-hover:scale-110 brightness-[0.5]"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
       
-      <div className="absolute inset-0 p-8 flex flex-col justify-end">
-        <h4 className="text-white text-2xl font-serif font-light mb-2">{name}</h4>
+      <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end">
+        <h4 className="text-white text-xl md:text-2xl font-serif font-light mb-2 group-hover:text-gold transition-colors duration-500">{name}</h4>
         <div className="flex justify-between items-center">
-          <span className="text-gold/60 text-sm font-serif">{dish.price}</span>
-          <span className="w-1 h-1 rounded-full bg-gold/20 group-hover:bg-gold transition-colors duration-500" />
+          <span className="text-gold/50 text-sm font-serif">{dish.price}</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-gold/10 group-hover:bg-gold transition-colors duration-500" />
         </div>
       </div>
     </motion.div>
@@ -140,46 +160,53 @@ const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar';
 function PhilosophySection() {
   const { t } = useLanguage();
   return (
-    <section className="w-full section-padding relative bg-bg overflow-hidden border-t border-white/[0.03]">
+    <section className="w-full section-padding relative bg-bg overflow-hidden">
+      {/* Subtle top border */}
+      <div className="divider-gold mb-32" />
+      
       <div className="container-luxury">
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
           <motion.span 
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="mono-tag text-gold/40 mb-12 tracking-[0.5em]"
+            viewport={{ once: true }}
+            className="section-label mb-10 tracking-[0.8em]"
           >
             {t('story.label')}
           </motion.span>
           
           <motion.h2 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 1.5 }}
-            className="text-white text-4xl md:text-7xl font-serif font-light mb-16 tracking-tight leading-tight italic"
+            initial={{ opacity: 0, y: 30, filter: 'blur(6px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+            className="text-white text-3xl md:text-6xl lg:text-7xl font-serif font-light mb-16 tracking-tight leading-tight italic"
           >
             {t('story.title')}
           </motion.h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 text-left">
             <motion.p 
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-white/60 text-lg font-serif italic leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="text-white/50 text-base md:text-lg font-serif italic leading-relaxed"
             >
               {t('story.p1')}
             </motion.p>
             <motion.p 
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="text-white/40 text-base leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+              className="text-white/30 text-sm md:text-base leading-relaxed"
             >
               {t('story.p2')}
             </motion.p>
           </div>
           
-          <div className="mt-24 w-px h-32 bg-gradient-to-b from-gold/30 to-transparent" />
+          <div className="mt-20 w-px h-20 bg-gradient-to-b from-gold/20 to-transparent" />
         </div>
       </div>
     </section>
@@ -194,100 +221,114 @@ function MenuExperience() {
   const [activeChapter, setActiveChapter] = useState(CHAPTERS[0].id);
 
   return (
-    <section id="menu" className="w-full py-32 bg-bg relative">
+    <section id="menu" className="w-full py-24 md:py-32 bg-bg relative">
       <div className="container-luxury">
-        {/* Cinematic Header */}
-        <div className="mb-40 text-center lg:text-left">
+        {/* Header */}
+        <div className="mb-24 md:mb-32 text-center lg:text-left">
           <span className="section-label">{t('menu.label')}</span>
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mt-8">
-            <h2 className="text-white text-6xl md:text-9xl font-serif font-light tracking-tighter leading-none italic">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mt-6">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-white text-5xl md:text-8xl lg:text-9xl font-serif font-light tracking-tighter leading-none italic"
+            >
               The <span className="text-gold">Experience.</span>
-            </h2>
-            <div className="flex gap-8 overflow-x-auto no-scrollbar pb-4 -mx-6 px-6 lg:mx-0 lg:px-0">
+            </motion.h2>
+            
+            {/* Chapter Navigation */}
+            <div className="flex gap-3 md:gap-6 overflow-x-auto no-scrollbar pb-4 -mx-6 px-6 lg:mx-0 lg:px-0">
               {CHAPTERS.map((chap) => (
                 <button
                   key={chap.id}
                   onClick={() => setActiveChapter(chap.id)}
-                  className={`relative group flex flex-col items-center gap-2 min-w-fit px-4 transition-all duration-500 ${
-                    activeChapter === chap.id ? 'opacity-100 scale-110' : 'opacity-30 hover:opacity-50'
+                  className={`relative group flex flex-col items-center gap-1.5 min-w-fit px-3 py-2 rounded-xl transition-all duration-500 ${
+                    activeChapter === chap.id 
+                      ? 'opacity-100 bg-gold/[0.06] border border-gold/15' 
+                      : 'opacity-30 hover:opacity-50 border border-transparent'
                   }`}
                 >
-                  <span className="text-gold font-serif text-2xl">{chap.kanji}</span>
-                  <span className="text-white text-[10px] uppercase tracking-[0.2em] font-medium whitespace-nowrap">
+                  <span className={`font-serif text-xl transition-all duration-500 ${
+                    activeChapter === chap.id ? 'text-gold' : 'text-white/60'
+                  }`}>{chap.kanji}</span>
+                  <span className={`text-[9px] uppercase tracking-[0.15em] font-medium whitespace-nowrap font-mono ${
+                    activeChapter === chap.id ? 'text-gold/80' : 'text-white/40'
+                  }`}>
                     {lang === 'ar' ? chap.titleAr : chap.title}
                   </span>
-                  {activeChapter === chap.id && (
-                    <motion.div layoutId="chapUnderline" className="absolute -bottom-2 w-1 h-1 rounded-full bg-gold" />
-                  )}
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Dynamic Gallery Content */}
+        {/* Chapter Content */}
         <AnimatePresence mode="wait">
           {CHAPTERS.map((chap) => chap.id === activeChapter && (
             <motion.div
               key={chap.id}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-              className="space-y-40"
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+              className="space-y-24 md:space-y-32"
             >
               {chap.cats.map((catName) => {
                 const dishes = menuData.filter(d => d.category === catName);
                 if (dishes.length === 0) return null;
                 
-                // Signature Selection Hierarchy
                 const featured = dishes.find(d => d.tags.includes('Signature')) || dishes[0];
                 const secondary = dishes.filter(d => d.id !== featured.id).slice(0, 2);
                 const others = dishes.filter(d => d.id !== featured.id && !secondary.find(s => s.id === d.id));
 
                 return (
                   <div key={catName} className="relative">
-                    {/* Category Intro */}
-                    <div className="flex items-center gap-8 mb-20 opacity-40 group">
-                      <span className="text-gold font-serif text-5xl md:text-7xl">{KANJI[catName]}</span>
-                      <h3 className="text-white text-2xl md:text-4xl font-serif font-light tracking-widest uppercase">
+                    {/* Category Header */}
+                    <div className="flex items-center gap-6 mb-12 md:mb-16">
+                      <span className="text-gold/30 font-serif text-4xl md:text-5xl">{KANJI[catName]}</span>
+                      <h3 className="text-white/50 text-xl md:text-2xl font-serif font-light tracking-widest uppercase">
                         {t(`menu.cat.${catName}`)}
                       </h3>
-                      <div className="flex-1 h-px bg-white/5" />
+                      <div className="flex-1 h-px bg-white/[0.04]" />
+                      <span className="text-white/15 text-[9px] font-mono uppercase tracking-widest hidden md:block">
+                        {dishes.length} items
+                      </span>
                     </div>
 
-                    {/* Signature Selection System */}
-                    <div className="flex flex-col gap-12 md:gap-32">
+                    <div className="flex flex-col gap-10 md:gap-20">
                       <FeaturedDishCard dish={featured} lang={lang} />
                       
                       {secondary.length > 0 && (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-32 items-start">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-start">
                           {secondary.map((s, i) => (
                             <SecondaryDishCard key={s.id} dish={s} lang={lang} idx={i} />
                           ))}
                         </div>
                       )}
 
-                      {/* Remaining items in an editorial list format */}
+                      {/* Remaining items — editorial list */}
                       {others.length > 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-20 gap-y-12 pt-20 border-t border-white/[0.03]">
-                          {others.map((dish) => (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-6 pt-12 border-t border-white/[0.04]">
+                          {others.map((dish, idx) => (
                             <motion.div 
                               key={dish.id} 
-                              className="flex justify-between items-baseline group"
-                              whileHover={{ x: 10 }}
-                              transition={{ duration: 0.5 }}
+                              className="flex justify-between items-baseline group py-2"
+                              initial={{ opacity: 0, y: 10 }}
+                              whileInView={{ opacity: 1, y: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: idx * 0.03 }}
+                              whileHover={{ x: 6 }}
                             >
-                              <div className="flex flex-col gap-1">
-                                <span className="text-white/80 font-serif text-lg group-hover:text-gold transition-colors">
+                              <div className="flex flex-col gap-0.5 min-w-0">
+                                <span className="text-white/70 font-serif text-base group-hover:text-gold transition-colors duration-500 truncate">
                                   {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
                                 </span>
-                                <span className="text-white/30 text-[11px] italic font-serif truncate max-w-[200px]">
+                                <span className="text-white/20 text-[10px] italic font-serif truncate max-w-[180px]">
                                   {lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}
                                 </span>
                               </div>
-                              <div className="flex-1 border-b border-white/[0.05] mx-4 mb-1.5 border-dotted" />
-                              <span className="text-gold/50 font-serif group-hover:text-gold transition-colors">{dish.price}</span>
+                              <div className="flex-1 border-b border-dotted border-white/[0.04] mx-3 mb-1.5 min-w-[20px]" />
+                              <span className="text-gold/40 font-serif text-sm group-hover:text-gold transition-colors duration-500 flex-shrink-0">{dish.price}</span>
                             </motion.div>
                           ))}
                         </div>
@@ -310,42 +351,61 @@ function MenuExperience() {
 function ContactSection() {
   const { t } = useLanguage();
   return (
-    <section id="contact" className="w-full section-padding relative bg-bg overflow-hidden border-t border-white/[0.03]">
+    <section id="contact" className="w-full section-padding relative bg-bg overflow-hidden">
+      <div className="divider-gold mb-32" />
+      
       <div className="container-luxury relative z-10">
+        {/* Ambient background */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[40vh] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.02),transparent_60%)] pointer-events-none" />
+        
         <div className="max-w-5xl mx-auto text-center">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>
-            <span className="mono-tag mb-8 block text-gold/40 tracking-[0.5em]">{t('contact.label')}</span>
-            <h2 className="text-white text-5xl md:text-8xl font-serif font-light mb-32 tracking-tighter leading-none italic">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="section-label mb-6 block tracking-[0.8em]">{t('contact.label')}</span>
+            <h2 className="text-white text-4xl md:text-7xl lg:text-8xl font-serif font-light mb-24 md:mb-32 tracking-tighter leading-none italic">
               Experience the <span className="text-gold">Art of Motion.</span>
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-24">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
             {[
-              { label: t('contact.visit'), content: t('contact.location'), sub: "Riyadh, KSA" },
-              { label: t('contact.opening'), content: t('contact.hours'), sub: "7 Days a Week" },
-              { label: t('contact.reservation'), content: "+966 55 000 0000", sub: "Digital Booking" }
+              { label: t('contact.visit'), content: t('contact.location'), sub: "Riyadh, KSA", icon: "📍" },
+              { label: t('contact.opening'), content: t('contact.hours'), sub: "7 Days a Week", icon: "🕐" },
+              { label: t('contact.reservation'), content: "+966 55 000 0000", sub: "Digital Booking", icon: "📞" }
             ].map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 * i }}
-                className="flex flex-col items-center gap-8"
+                viewport={{ once: true }}
+                transition={{ delay: 0.15 * i, duration: 1 }}
+                className="card-glass rounded-2xl p-8 flex flex-col items-center gap-5"
               >
-                <div className="w-px h-12 bg-gold/30" />
+                <span className="text-2xl">{item.icon}</span>
                 <div>
-                  <h4 className="mono-tag !text-gold/40 mb-4">{item.label}</h4>
-                  <p className="text-white text-xl font-serif font-light mb-2">{item.content}</p>
-                  <span className="text-[10px] mono-tag opacity-20">{item.sub}</span>
+                  <h4 className="text-gold/40 text-[9px] uppercase tracking-[0.4em] font-mono font-bold mb-3">{item.label}</h4>
+                  <p className="text-white text-lg font-serif font-light mb-1">{item.content}</p>
+                  <span className="text-white/15 text-[9px] uppercase tracking-widest font-mono">{item.sub}</span>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          <motion.div className="mt-40" whileInView={{ opacity: 1 }}>
-            <a href="tel:+966" className="cta-btn group px-20 py-8 rounded-full border-white/10 bg-white/[0.02] hover:bg-gold/10 hover:border-gold/40 transition-all duration-700">
-              <span className="text-white text-[12px] uppercase tracking-[0.5em] font-bold group-hover:text-gold transition-colors">
+          <motion.div 
+            className="mt-24 md:mt-32" 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <a 
+              href="tel:+966" 
+              className="group relative inline-flex items-center gap-4 px-12 md:px-16 py-5 md:py-6 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl overflow-hidden transition-all duration-700 hover:border-gold/30 hover:shadow-[0_0_40px_rgba(212,175,55,0.08)]"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <span className="relative text-white text-[11px] uppercase tracking-[0.5em] font-bold group-hover:text-gold transition-colors duration-500">
                 {t('contact.cta')}
               </span>
             </a>
@@ -362,22 +422,42 @@ function ContactSection() {
 function Footer() {
   const { t } = useLanguage();
   return (
-    <footer className="w-full pt-40 pb-16 bg-bg relative overflow-hidden">
+    <footer className="w-full pt-32 pb-28 bg-bg relative overflow-hidden">
       <div className="container-luxury flex flex-col items-center">
-        <div className="flex flex-col items-center gap-12 mb-40">
-          <span className="text-gold text-8xl font-serif">杉</span>
-          <div className="flex flex-col items-center gap-4">
-            <span className="text-white text-3xl font-serif font-light tracking-[0.8em]">SUGI SUSHI</span>
-            <span className="mono-tag text-gold/40 uppercase tracking-[0.5em]">{t('footer.perfection')}</span>
+        {/* Brand Mark */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="flex flex-col items-center gap-8 mb-24"
+        >
+          <motion.span 
+            className="text-gold/80 text-7xl font-serif"
+            animate={{ filter: ['drop-shadow(0 0 8px rgba(212,175,55,0.1))', 'drop-shadow(0 0 20px rgba(212,175,55,0.3))', 'drop-shadow(0 0 8px rgba(212,175,55,0.1))'] }}
+            transition={{ duration: 4, repeat: Infinity }}
+          >
+            杉
+          </motion.span>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-white/80 text-2xl font-serif font-light tracking-[0.7em]">SUGI SUSHI</span>
+            <span className="text-gold/25 text-[8px] font-mono uppercase tracking-[0.5em]">{t('footer.perfection')}</span>
           </div>
-        </div>
-        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-12 pt-16 border-t border-white/[0.05]">
-          <div className="flex gap-12">
+        </motion.div>
+
+        {/* Navigation Links */}
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-8 pt-12 border-t border-white/[0.04]">
+          <div className="flex gap-8 md:gap-12">
             {['menu', 'story', 'contact'].map(item => (
-              <a key={item} href={`#${item}`} className="text-[10px] text-white/30 hover:text-gold transition-colors uppercase tracking-widest">{t(`nav.${item}`)}</a>
+              <a 
+                key={item} 
+                href={`#${item}`} 
+                className="text-[10px] text-white/20 hover:text-gold transition-colors duration-500 uppercase tracking-widest font-mono"
+              >
+                {t(`nav.${item}`)}
+              </a>
             ))}
           </div>
-          <p className="text-[10px] text-white/10 uppercase tracking-widest">© 2026 SUGI • Riyadh</p>
+          <p className="text-[10px] text-white/10 uppercase tracking-widest font-mono">© 2026 SUGI • Riyadh</p>
         </div>
       </div>
     </footer>

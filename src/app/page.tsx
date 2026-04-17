@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Atmosphere from '@/components/Atmosphere';
@@ -9,10 +9,13 @@ import Signature from '@/components/Signature';
 import MenuSection from '@/components/MenuSection';
 import BottomNav, { NavTab } from '@/components/BottomNav';
 import StrictMenu from '@/components/StrictMenu';
-import { motion, useScroll, useSpring, useTransform, AnimatePresence } from 'framer-motion';
+import StoryPage from '@/components/StoryPage';
+import GalleryPage from '@/components/GalleryPage';
+import LocationPage from '@/components/LocationPage';
+import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
 /**
- * SUGI SUSHI - Luxury Cinematic Experience Orchestrator
+ * SUGI SUSHI — Luxury Cinematic Experience Orchestrator
  */
 
 export default function Home() {
@@ -26,14 +29,18 @@ export default function Home() {
     restDelta: 0.001
   });
 
+  // Scroll to top on tab change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeTab]);
+
   // Letterbox trigger based on scroll depth
   useEffect(() => {
     if (activeTab !== 'home') {
-      const timeoutId = setTimeout(() => setIsLetterbox(false), 0);
-      return () => clearTimeout(timeoutId);
+      setIsLetterbox(false);
+      return;
     }
     
-    // Initial check
     const checkScroll = () => {
       const scrollPos = window.scrollY;
       const windowHeight = window.innerHeight;
@@ -41,38 +48,39 @@ export default function Home() {
     };
     checkScroll();
 
-    window.addEventListener('scroll', checkScroll);
+    window.addEventListener('scroll', checkScroll, { passive: true });
     return () => window.removeEventListener('scroll', checkScroll);
   }, [activeTab]);
 
   return (
-    <main className={`relative min-h-screen bg-bg selection:bg-gold/30 selection:text-white overflow-x-hidden ${isLetterbox ? 'letterbox-active' : ''}`}>
-      {/* Cinematic Shutter Transition Layer */}
+    <main className={`relative min-h-screen bg-bg overflow-x-hidden ${isLetterbox ? 'letterbox-active' : ''}`}>
+      {/* Cinematic Shutter — Appears on tab change */}
       <AnimatePresence>
         <motion.div 
           key={activeTab + "-shutter"}
           initial={{ opacity: 1 }}
           animate={{ opacity: 0 }}
-          transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+          transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
           className="fixed inset-0 z-[500] bg-black pointer-events-none"
         />
       </AnimatePresence>
 
-      {/* Cinematic Letterbox System */}
+      {/* Letterbox Bars */}
       <div className="letterbox-bar top" />
       <div className="letterbox-bar bottom" />
 
-      {/* Editorial Progress Bar */}
+      {/* Progress Bar */}
       {activeTab === 'home' && (
         <motion.div 
-          className="fixed top-0 left-0 right-0 h-[1px] bg-gold/40 z-[110] origin-left"
+          className="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-gold/20 via-gold/50 to-gold/20 z-[110] origin-left"
           style={{ scaleX }}
         />
       )}
 
-      {/* Global Navigation HUD */}
+      {/* Navigation */}
       <Navbar onTabChange={setActiveTab} activeTab={activeTab} />
 
+      {/* Page Content */}
       <AnimatePresence mode="wait">
         {activeTab === 'home' && (
           <motion.div 
@@ -80,15 +88,21 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
             className="flex flex-col"
           >
             {/* Scene 1: Cinematic Opening */}
             <Hero onTabChange={setActiveTab} />
 
-            {/* Cinematic Cut 01 */}
-            <div className="h-60 flex items-center justify-center opacity-20">
-              <div className="w-px h-full bg-gradient-to-b from-white via-gold/50 to-transparent" />
+            {/* Cinematic Divider */}
+            <div className="h-40 md:h-56 flex items-center justify-center">
+              <motion.div 
+                initial={{ height: 0 }}
+                whileInView={{ height: '100%' }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.5 }}
+                className="w-px bg-gradient-to-b from-transparent via-gold/20 to-transparent max-h-full" 
+              />
             </div>
 
             {/* Scene 2: Atmospheric Pause */}
@@ -97,10 +111,10 @@ export default function Home() {
             {/* Scene 3: Curated Selection */}
             <Signature />
 
-            {/* Scene 4: THE CLIMAX (Emotional Peak) */}
+            {/* Scene 4: Emotional Peak */}
             <ChefArtistry />
 
-            {/* Scene 5: The Holistic Experience */}
+            {/* Scene 5: Full Experience */}
             <div className="relative z-10 bg-bg">
               <MenuSection />
             </div>
@@ -110,43 +124,57 @@ export default function Home() {
         {activeTab === 'menu' && (
           <motion.div 
             key="menu"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
           >
             <StrictMenu onTabChange={setActiveTab} />
           </motion.div>
         )}
 
-        {(activeTab === 'reservations' || activeTab === 'gallery' || activeTab === 'location') && (
+        {activeTab === 'reservations' && (
           <motion.div 
-            key="placeholders"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="min-h-screen flex flex-col items-center justify-center p-6 text-center"
+            key="reservations"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
           >
-            <span className="text-gold text-8xl font-serif mb-8">杉</span>
-            <h2 className="text-white text-4xl font-serif mb-4 uppercase tracking-widest">{activeTab}</h2>
-            <p className="text-white/40 max-w-md">The {activeTab} experience is being refined for your arrival. Perfection takes time.</p>
-            <button 
-              onClick={() => setActiveTab('home')}
-              className="mt-12 px-8 py-3 border border-gold/30 text-gold text-xs uppercase tracking-widest rounded-full hover:bg-gold/10 transition-colors"
-            >
-              Return to Journey
-            </button>
+            <StoryPage />
+          </motion.div>
+        )}
+
+        {activeTab === 'gallery' && (
+          <motion.div 
+            key="gallery"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+          >
+            <GalleryPage />
+          </motion.div>
+        )}
+
+        {activeTab === 'location' && (
+          <motion.div 
+            key="location"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+          >
+            <LocationPage />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Global Bottom Navigation */}
+      {/* Bottom Navigation */}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Film Grain & Noise */}
-      <div className="noise-overlay" />
-      
-      {/* Global Interactive Spotlight */}
-      <div className="spotlight" />
+      {/* Ambient spotlight */}
+      <div className="ambient-spotlight" />
     </main>
   );
 }

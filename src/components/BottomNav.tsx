@@ -16,7 +16,7 @@ const TABS: { id: NavTab; labelEn: string; labelAr: string; icon: React.ReactNod
     labelEn: 'Home',
     labelAr: 'الرئيسية',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     )
   },
   {
@@ -24,15 +24,15 @@ const TABS: { id: NavTab; labelEn: string; labelAr: string; icon: React.ReactNod
     labelEn: 'Menu',
     labelAr: 'المنيو',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3h18v18H3z"/><path d="M7 8h10"/><path d="M7 12h10"/><path d="M7 16h10"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h12"/></svg>
     )
   },
   {
     id: 'reservations',
-    labelEn: 'Booking',
-    labelAr: 'الحجز',
+    labelEn: 'Story',
+    labelAr: 'قصتنا',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
     )
   },
   {
@@ -40,15 +40,15 @@ const TABS: { id: NavTab; labelEn: string; labelAr: string; icon: React.ReactNod
     labelEn: 'Gallery',
     labelAr: 'المعرض',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
     )
   },
   {
     id: 'location',
-    labelEn: 'Location',
-    labelAr: 'الموقع',
+    labelEn: 'Contact',
+    labelAr: 'تواصل',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
     )
   }
 ];
@@ -57,52 +57,70 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const { lang } = useLanguage();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[200] px-4 pb-6 pt-2 pointer-events-none">
+    <div className="fixed bottom-0 left-0 right-0 z-[200] px-4 pb-5 pt-2 pointer-events-none">
       <motion.div 
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-        className="max-w-xl mx-auto bg-black/40 backdrop-blur-2xl border border-white/10 rounded-full h-16 pointer-events-auto shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex items-center justify-around px-2 relative overflow-hidden"
+        transition={{ duration: 1, delay: 0.5, ease: [0.19, 1, 0.22, 1] }}
+        className="max-w-md mx-auto bg-black/60 backdrop-blur-3xl border border-white/[0.08] rounded-2xl h-[62px] pointer-events-auto shadow-[0_-4px_30px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.02)_inset] flex items-center justify-around px-1 relative overflow-hidden"
       >
-        {/* Animated Background Indicator */}
+        {/* Ambient glow behind active tab */}
         <motion.div
-          className="absolute h-12 rounded-full bg-gold/10 border border-gold/20"
+          className="absolute h-full rounded-2xl"
           initial={false}
           animate={{
             width: `${100 / TABS.length}%`,
-            x: `${TABS.findIndex(t => t.id === activeTab) * (100)}%`
+            x: `${TABS.findIndex(t => t.id === activeTab) * 100}%`,
           }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          style={{ width: `calc((100% - 16px) / ${TABS.length})`, left: '8px' }}
-        />
+          transition={{ type: "spring", stiffness: 350, damping: 30 }}
+          style={{ width: `calc(100% / ${TABS.length})`, left: 0 }}
+        >
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-gold/[0.08] blur-xl" />
+          </div>
+        </motion.div>
 
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => onTabChange(tab.id)}
-            className={`relative flex flex-col items-center justify-center w-full h-full transition-all duration-500 outline-none ${
-              activeTab === tab.id ? 'text-gold' : 'text-white/30 hover:text-white/60'
-            }`}
-          >
-            <motion.div 
-              whileTap={{ scale: 0.8 }}
-              className={`transition-transform duration-700 ${activeTab === tab.id ? 'scale-110 -translate-y-1' : 'scale-90'}`}
+        {TABS.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => {
+                onTabChange(tab.id);
+                if (tab.id === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`relative flex flex-col items-center justify-center flex-1 h-full transition-all duration-500 outline-none ${
+                isActive ? 'text-gold' : 'text-white/25 hover:text-white/50 active:text-white/60'
+              }`}
             >
-              {tab.icon}
-            </motion.div>
-            <span className={`text-[10px] mt-1 font-medium tracking-tight uppercase transition-all duration-500 ${
-              lang === 'ar' ? 'text-[12px] tracking-normal' : ''
-            } ${activeTab === tab.id ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 h-0 overflow-hidden'}`}>
-              {lang === 'ar' ? tab.labelAr : tab.labelEn}
-            </span>
-            {activeTab === tab.id && (
-              <motion.div
-                layoutId="navDot"
-                className="absolute -top-1 w-1 h-1 rounded-full bg-gold shadow-[0_0_10px_rgba(226,183,20,0.8)]"
-              />
-            )}
-          </button>
-        ))}
+              <motion.div 
+                animate={isActive ? { scale: 1, y: -2 } : { scale: 0.85, y: 0 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+              >
+                {tab.icon}
+              </motion.div>
+              
+              <motion.span 
+                animate={isActive ? { opacity: 1, y: 0, height: 'auto' } : { opacity: 0, y: 4, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`text-[9px] mt-0.5 font-medium tracking-tight uppercase overflow-hidden ${
+                  lang === 'ar' ? 'text-[10px] tracking-normal' : ''
+                }`}
+              >
+                {lang === 'ar' ? tab.labelAr : tab.labelEn}
+              </motion.span>
+
+              {/* Active indicator dot */}
+              {isActive && (
+                <motion.div
+                  layoutId="bottomNavDot"
+                  className="absolute -top-0.5 w-4 h-[2px] rounded-full bg-gold"
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                />
+              )}
+            </button>
+          );
+        })}
       </motion.div>
     </div>
   );

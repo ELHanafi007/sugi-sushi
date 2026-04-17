@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { getDynamicRecommendations } from '@/utils/recommendationEngine';
+import Image from 'next/image';
 
-/* ─── Category Imagery (Using available assets) ─── */
+/* ─── Category Imagery (using available assets) ─── */
 const CAT_IMAGES: Record<string, string> = {
   'Salads': '/media/optimized/brochure-1.jpg',
   'Soups': '/media/optimized/brochure-2.jpg',
@@ -18,169 +19,179 @@ const CAT_IMAGES: Record<string, string> = {
   'Tataki': '/media/optimized/brochure-8.jpg',
   'Ceviche': '/media/optimized/brochure-9.jpg',
   'Nigiri': '/media/optimized/brochure-10.jpg',
-  'Maki Rolls': '/media/optimized/hero-wallpaper-alt-1.jpg',
-  'Special Rolls': '/media/optimized/hero-wallpaper-alt-2.jpg',
-  'Fried Rolls': '/media/optimized/hero-wallpaper-alt-3.jpg',
-  'Desserts': '/media/optimized/hero-wallpaper-alt-4.jpg',
+  'Maki Rolls': '/media/optimized/brochure-1.jpg',
+  'Special Rolls': '/media/optimized/brochure-3.jpg',
+  'Fried Rolls': '/media/optimized/brochure-5.jpg',
+  'Desserts': '/media/optimized/brochure-9.jpg',
 };
 
 const DEFAULT_IMAGE = '/media/optimized/hero-wallpaper-alt-0.jpg';
 
 /* ═══════════════════════════════════════════════════════
-   DISH MODAL (DETAILED VIEW)
+   DISH MODAL
    ═══════════════════════════════════════════════════════ */
 function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
   const image = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
 
-  // Recommended dishes (dynamic pairing engine)
   const recommendations = useMemo(() => {
     return getDynamicRecommendations(dish, menuData, lang as 'en' | 'ar');
   }, [dish, lang]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
 
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-xl overflow-y-auto no-scrollbar"
+      transition={{ duration: 0.4 }}
+      className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-2xl overflow-y-auto no-scrollbar"
+      onClick={onClose}
     >
-      {/* Top Header / Close */}
-      <div className="sticky top-0 z-10 flex justify-between items-center p-6 bg-gradient-to-b from-black to-transparent">
-        <button onClick={onClose} className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-        <div className="mono-tag !bg-gold/20 !text-gold">{dish.category}</div>
-        <div className="w-12" />
-      </div>
+      <div className="min-h-screen" onClick={e => e.stopPropagation()}>
+        {/* Close Button */}
+        <div className="sticky top-0 z-10 flex justify-between items-center p-4 md:p-6 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
+          <motion.button 
+            onClick={onClose} 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-11 h-11 rounded-xl bg-white/[0.06] border border-white/[0.08] flex items-center justify-center text-white/60 hover:text-white hover:border-white/20 transition-all duration-300"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m15 18-6-6 6-6"/></svg>
+          </motion.button>
+          <span className="mono-tag !bg-gold/10 !text-gold/70 !border-gold/15 text-[8px]">{dish.category}</span>
+          <div className="w-11" />
+        </div>
 
-      <div className="max-w-2xl mx-auto px-6 pb-32">
-        {/* Large Swipable Photos (Simulated) */}
-        <motion.div 
-          initial={{ y: 40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
-          className="relative aspect-[4/5] rounded-[3rem] overflow-hidden mb-12 shadow-[0_40px_100px_rgba(0,0,0,0.8)]"
-        >
-          <img src={image} alt={name} className="absolute inset-0 w-full h-full object-cover scale-105" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
-          
-          <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end">
-            <div className="flex gap-2.5">
-              <div className="w-10 h-1 rounded-full bg-gold shadow-[0_0_15px_rgba(226,183,20,0.8)]" />
-              <div className="w-2.5 h-1 rounded-full bg-white/20" />
-              <div className="w-2.5 h-1 rounded-full bg-white/20" />
+        <div className="max-w-lg mx-auto px-5 pb-32">
+          {/* Hero Image */}
+          <motion.div 
+            initial={{ y: 30, opacity: 0, scale: 0.98 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+            className="relative aspect-[4/5] rounded-[2rem] overflow-hidden mb-8 shadow-[0_30px_80px_rgba(0,0,0,0.6)]"
+          >
+            <Image src={image} alt={name} fill className="object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            
+            {/* Image indicators */}
+            <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+              <div className="flex gap-2">
+                <div className="w-8 h-[3px] rounded-full bg-gold" />
+                <div className="w-3 h-[3px] rounded-full bg-white/15" />
+                <div className="w-3 h-[3px] rounded-full bg-white/15" />
+              </div>
             </div>
-            <span className="text-white/40 text-[9px] font-mono uppercase tracking-[0.3em] bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/5">Visual Presentation</span>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Info Section */}
-        <div className="space-y-12">
-          <div className="space-y-4">
-            <div className="flex justify-between items-baseline gap-6">
-              <h2 className="text-5xl font-serif text-white tracking-tight leading-tight">{name}</h2>
-              <div className="flex flex-col items-end">
-                <span className="text-3xl text-gold font-serif drop-shadow-[0_0_20px_rgba(226,183,20,0.3)]">{dish.price}</span>
-                <span className="text-white/20 text-[10px] uppercase tracking-widest mt-1">VAT Included</span>
+          {/* Info */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="space-y-8"
+          >
+            {/* Name & Price */}
+            <div className="flex justify-between items-start gap-4">
+              <h2 className="text-3xl md:text-4xl font-serif text-white tracking-tight leading-tight">{name}</h2>
+              <div className="flex flex-col items-end flex-shrink-0">
+                <span className="text-2xl text-gold font-serif">{dish.price}</span>
+                <span className="text-white/15 text-[9px] uppercase tracking-widest mt-0.5 font-mono">VAT Incl.</span>
               </div>
             </div>
 
-            <p className="text-2xl text-white/70 font-serif italic leading-relaxed max-w-xl">
+            <p className="text-lg text-white/50 font-serif italic leading-relaxed">
               &quot;{desc}&quot;
             </p>
-          </div>
 
-          {/* Core Traits */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/5 space-y-2">
-              <span className="text-gold/40 text-[9px] uppercase tracking-[0.3em] font-bold block">Flavor Profile</span>
-              <p className="text-white text-sm font-serif">{dish.tags.includes('Spicy') ? 'Spicy & Vibrant' : 'Balanced & Umami'}</p>
+            {/* Info Cards */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="card-glass rounded-xl p-5 space-y-2">
+                <span className="text-gold/30 text-[8px] uppercase tracking-[0.3em] font-mono font-bold block">Flavor</span>
+                <p className="text-white/80 text-sm font-serif">{dish.tags.includes('Spicy') ? 'Spicy & Vibrant' : 'Balanced & Umami'}</p>
+              </div>
+              <div className="card-glass rounded-xl p-5 space-y-2">
+                <span className="text-gold/30 text-[8px] uppercase tracking-[0.3em] font-mono font-bold block">Chef Note</span>
+                <p className="text-white/80 text-sm font-serif">{dish.tags.includes('Signature') ? 'House Special' : 'Seasonal Pick'}</p>
+              </div>
             </div>
-            <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/5 space-y-2">
-              <span className="text-gold/40 text-[9px] uppercase tracking-[0.3em] font-bold block">Chef Recommendation</span>
-              <p className="text-white text-sm font-serif">{dish.tags.includes('Signature') ? 'A House Special' : 'Seasonal Favorite'}</p>
-            </div>
-          </div>
 
-          {/* Details Tabs */}
-          <div className="pt-12 border-t border-white/5 space-y-10">
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="w-8 h-px bg-gold/30" />
-                <h4 className="text-gold text-[10px] uppercase tracking-[0.5em] font-bold">Provenance & Integrity</h4>
+            {/* Tags */}
+            <div className="pt-6 border-t border-white/[0.04] space-y-5">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-px bg-gold/20" />
+                <h4 className="text-gold/40 text-[9px] uppercase tracking-[0.4em] font-mono font-bold">Details</h4>
               </div>
               
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-2">
                 {dish.tags.map(tag => (
-                  <span key={tag} className="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-[9px] text-white/50 uppercase tracking-[0.2em] font-bold">
+                  <span key={tag} className="px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-[9px] text-white/40 uppercase tracking-[0.15em] font-mono font-bold">
                     {tag}
                   </span>
                 ))}
                 {dish.calories && (
-                  <span className="px-5 py-2 rounded-full bg-gold/10 border border-gold/20 text-[9px] text-gold uppercase tracking-[0.2em] font-bold">
+                  <span className="px-4 py-1.5 rounded-full bg-gold/[0.06] border border-gold/15 text-[9px] text-gold/70 uppercase tracking-[0.15em] font-mono font-bold">
                     🔥 {dish.calories}
                   </span>
                 )}
               </div>
 
-              <p className="text-white/40 text-sm leading-relaxed font-serif italic max-w-lg">
+              <p className="text-white/25 text-sm leading-relaxed font-serif italic">
                 Sourced with respect for the ocean and the season. Prepared with the precision of a master&apos;s blade.
               </p>
-              
-              <div className="flex gap-8 pt-4">
-                <div className="flex flex-col items-center gap-2 group cursor-help">
-                  <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-2xl group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-500">🌾</div>
-                  <span className="text-[8px] uppercase tracking-widest text-white/20 group-hover:text-white/40">Gluten</span>
-                </div>
-                <div className="flex flex-col items-center gap-2 group cursor-help">
-                  <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-2xl group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-500">🥜</div>
-                  <span className="text-[8px] uppercase tracking-widest text-white/20 group-hover:text-white/40">Nuts</span>
-                </div>
-                <div className="flex flex-col items-center gap-2 group cursor-help">
-                  <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-2xl group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-500">🦐</div>
-                  <span className="text-[8px] uppercase tracking-widest text-white/20 group-hover:text-white/40">Shellfish</span>
+            </div>
+
+            {/* Recommendations */}
+            {recommendations.length > 0 && (
+              <div className="pt-8 space-y-5">
+                <h4 className="text-white/70 text-base font-serif italic">
+                  {lang === 'ar' ? 'نقترح عليك تجربته مع...' : 'Pairs beautifully with...'}
+                </h4>
+                <div className="grid grid-cols-1 gap-3">
+                  {recommendations.map(rec => (
+                    <motion.div 
+                      key={rec.dish.id}
+                      onClick={() => {
+                        onClose();
+                        setTimeout(() => {
+                          (window as any).dispatchDishSelect?.(rec.dish);
+                        }, 150);
+                      }}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      className="flex items-center gap-3 p-3 rounded-xl card-glass cursor-pointer group"
+                    >
+                      <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-white/[0.04]">
+                        <Image 
+                          src={rec.dish.image || CAT_IMAGES[rec.dish.category] || DEFAULT_IMAGE}
+                          alt={rec.dish.name}
+                          width={56}
+                          height={56}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h5 className="text-white/80 font-serif text-sm truncate group-hover:text-gold transition-colors duration-300">
+                          {lang === 'ar' ? rec.dish.nameAr || rec.dish.name : rec.dish.name}
+                        </h5>
+                        <p className="text-gold/40 text-[9px] uppercase tracking-wider mt-0.5 italic font-mono line-clamp-1">{rec.reason}</p>
+                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-gold/[0.06] flex items-center justify-center text-gold/50 group-hover:bg-gold group-hover:text-black transition-all duration-300 flex-shrink-0">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Recommendations */}
-          <div className="pt-16 space-y-8">
-            <h4 className="text-white text-lg font-serif italic">{lang === 'ar' ? 'نقترح عليك تجربته مع...' : 'Recommended to pair with...'}</h4>
-            <div className="grid grid-cols-1 gap-4">
-              {recommendations.map(rec => (
-                <div 
-                  key={rec.dish.id} 
-                  onClick={() => {
-                    onClose();
-                    // Small timeout to allow the modal to close before reopening with the new dish
-                    setTimeout(() => {
-                      (window as any).dispatchDishSelect?.(rec.dish);
-                    }, 100);
-                  }}
-                  className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-gold/[0.02] hover:border-gold/20 transition-all group cursor-pointer"
-                >
-                  <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-white/5">
-                    <img 
-                      src={rec.dish.image || CAT_IMAGES[rec.dish.category] || DEFAULT_IMAGE} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h5 className="text-white font-serif truncate group-hover:text-gold transition-colors">{lang === 'ar' ? rec.dish.nameAr || rec.dish.name : rec.dish.name}</h5>
-                    <p className="text-gold/60 text-[10px] uppercase tracking-wider mt-0.5 line-clamp-1 italic">{rec.reason}</p>
-                    <span className="text-white/40 text-xs mt-1 block">{rec.dish.price}</span>
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black transition-colors">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+            )}
+          </motion.div>
         </div>
       </div>
     </motion.div>
@@ -224,59 +235,81 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
   };
 
   return (
-    <div className="min-h-screen bg-bg pt-12 pb-32">
+    <div className="min-h-screen bg-bg pt-20 pb-32">
+      {/* Header */}
+      <div className="px-6 mb-6">
+        <motion.h1 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-white text-3xl font-serif font-light mb-1"
+        >
+          Menu
+        </motion.h1>
+        <span className="text-white/15 text-[9px] font-mono uppercase tracking-[0.4em]">
+          {menuData.length} Items • {CATEGORIES.length} Categories
+        </span>
+      </div>
+
       {/* Category Slider */}
-      <div className="mb-12">
-        <div className="px-6 mb-6">
-          <h2 className="text-white/40 text-[10px] uppercase tracking-[0.5em] font-bold">Categories</h2>
+      <div className="mb-8">
+        <div className="px-6 mb-4">
+          <h2 className="text-white/25 text-[9px] uppercase tracking-[0.4em] font-mono font-bold">Categories</h2>
         </div>
-        <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 pb-4">
-          {CATEGORIES.map((cat) => (
-            <motion.button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative flex-shrink-0 w-32 h-44 rounded-2xl overflow-hidden group shadow-2xl transition-shadow duration-500 hover:shadow-gold/10"
-            >
-              <motion.img 
-                layoutId={`img-${cat}`}
-                src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
-                className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${
-                  selectedCategory === cat ? 'scale-110 blur-0' : 'scale-100 opacity-30 blur-[2px] group-hover:opacity-60 group-hover:blur-0'
-                }`} 
-              />
-              <div className={`absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent ${
-                selectedCategory === cat ? 'opacity-90' : 'opacity-60'
-              }`} />
-              
-              <div className="absolute inset-0 p-4 flex flex-col justify-end items-center text-center">
-                <span className={`text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-500 font-mono ${
-                  selectedCategory === cat ? 'text-gold scale-110 drop-shadow-[0_0_10px_rgba(226,183,20,0.5)]' : 'text-white/40'
-                }`}>
-                  {cat}
-                </span>
-                {selectedCategory === cat && (
-                  <motion.div 
-                    layoutId="catActive" 
-                    className="w-12 h-0.5 rounded-full bg-gold mt-2 shadow-[0_0_15px_rgba(226,183,20,0.8)]" 
-                  />
-                )}
-              </div>
-            </motion.button>
-          ))}
+        <div className="flex gap-3 overflow-x-auto no-scrollbar px-6 pb-3">
+          {CATEGORIES.map((cat) => {
+            const isActive = selectedCategory === cat;
+            return (
+              <motion.button
+                key={cat}
+                onClick={() => { setSelectedCategory(cat); setActiveFilters([]); }}
+                whileTap={{ scale: 0.95 }}
+                className={`relative flex-shrink-0 w-28 h-40 rounded-2xl overflow-hidden group transition-all duration-500 ${
+                  isActive 
+                    ? 'shadow-[0_8px_30px_rgba(212,175,55,0.12)] ring-1 ring-gold/20' 
+                    : 'shadow-lg hover:shadow-xl'
+                }`}
+              >
+                <Image 
+                  src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
+                  alt={cat}
+                  fill
+                  className={`object-cover transition-all duration-700 ${
+                    isActive ? 'scale-110 brightness-[0.5]' : 'scale-100 brightness-[0.25] group-hover:brightness-[0.4] group-hover:scale-105'
+                  }`}
+                />
+                <div className={`absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent ${
+                  isActive ? 'opacity-80' : 'opacity-60'
+                }`} />
+                
+                <div className="absolute inset-0 p-3 flex flex-col justify-end items-center text-center">
+                  <span className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-500 font-mono leading-tight ${
+                    isActive ? 'text-gold' : 'text-white/30'
+                  }`}>
+                    {cat}
+                  </span>
+                  {isActive && (
+                    <motion.div 
+                      layoutId="catLine" 
+                      className="w-8 h-[2px] rounded-full bg-gold mt-2" 
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Product List */}
+      {/* Active Category & Filters */}
       <div className={`px-6 space-y-4 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
-        <div className={`flex justify-between items-baseline mb-4 ${lang === 'ar' ? 'flex-row-reverse' : ''}`}>
-          <h3 className="text-white text-3xl font-serif">{selectedCategory}</h3>
-          <span className="text-white/20 text-xs font-mono">{filteredDishes.length} Items</span>
+        <div className={`flex justify-between items-baseline ${lang === 'ar' ? 'flex-row-reverse' : ''}`}>
+          <h3 className="text-white text-2xl font-serif">{selectedCategory}</h3>
+          <span className="text-white/15 text-[10px] font-mono">{filteredDishes.length} Items</span>
         </div>
 
         {/* Dietary Filters */}
-        <div className={`flex flex-wrap gap-2 mb-8 ${lang === 'ar' ? 'flex-row-reverse' : ''}`}>
+        <div className={`flex flex-wrap gap-2 ${lang === 'ar' ? 'flex-row-reverse' : ''}`}>
           {[
             { id: 'Vegetarian', label: lang === 'ar' ? 'نباتي' : 'Vegetarian', icon: '🍃' },
             { id: 'Spicy', label: lang === 'ar' ? 'حار' : 'Spicy', icon: '🌶️' },
@@ -286,64 +319,73 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
               key={filter.id}
               onClick={() => toggleFilter(filter.id)}
               whileTap={{ scale: 0.95 }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border transition-all duration-300 ${
                 activeFilters.includes(filter.id)
-                  ? 'bg-gold border-gold text-black shadow-[0_0_15px_rgba(212,175,55,0.3)]'
-                  : 'bg-white/5 border-white/10 text-white/60 hover:border-gold/30'
+                  ? 'bg-gold/90 border-gold text-black shadow-[0_0_16px_rgba(212,175,55,0.2)]'
+                  : 'bg-white/[0.03] border-white/[0.06] text-white/50 hover:border-gold/20'
               }`}
             >
               <span className="text-xs">{filter.icon}</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest">{filter.label}</span>
+              <span className="text-[9px] font-bold uppercase tracking-wider font-mono">{filter.label}</span>
             </motion.button>
           ))}
         </div>
 
+        {/* Dish List */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={selectedCategory}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="grid grid-cols-1 gap-4"
+            key={selectedCategory + activeFilters.join(',')}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
+            className="grid grid-cols-1 gap-3 pt-4"
           >
             {filteredDishes.length > 0 ? (
               filteredDishes.map((dish, idx) => (
                 <motion.div
                   key={dish.id}
                   onClick={() => setSelectedDish(dish)}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: idx * 0.05, ease: [0.19, 1, 0.22, 1] }}
-                  whileHover={{ scale: 1.02, x: lang === 'ar' ? -8 : 8 }}
+                  transition={{ duration: 0.5, delay: idx * 0.04, ease: [0.19, 1, 0.22, 1] }}
                   whileTap={{ scale: 0.98 }}
-                  className="group relative flex items-center gap-4 p-4 rounded-3xl bg-white/[0.02] border border-white/5 hover:border-gold/30 hover:bg-gold/[0.03] transition-all duration-500 cursor-pointer"
+                  className="group relative flex items-center gap-4 p-3.5 rounded-2xl card-glass cursor-pointer"
                 >
-                  <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-white/5">
-                    <img 
-                      src={dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE} 
+                  {/* Thumbnail */}
+                  <div className="w-[72px] h-[72px] rounded-xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
+                    <Image 
+                      src={dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE}
+                      alt={dish.name}
+                      width={72}
+                      height={72}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                     />
                   </div>
+
+                  {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start">
-                      <h4 className="text-white font-serif text-lg group-hover:text-gold transition-all duration-500 truncate">
+                    <div className="flex justify-between items-start gap-2">
+                      <h4 className="text-white/80 font-serif text-base group-hover:text-gold transition-colors duration-400 truncate">
                         {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
                       </h4>
-                      <div className="flex items-center gap-2">
-                        <span className="text-gold font-serif text-lg tracking-tight">{dish.price}</span>
-                        <div className="w-1 h-1 rounded-full bg-gold/0 group-hover:bg-gold transition-all duration-500 shadow-[0_0_10px_rgba(226,183,20,1)]" />
-                      </div>
+                      <span className="text-gold/70 font-serif text-base flex-shrink-0">{dish.price}</span>
                     </div>
-                    <p className="text-white/30 text-[11px] font-serif italic mt-1 line-clamp-2 leading-relaxed group-hover:text-white/50 transition-colors">
+                    <p className="text-white/20 text-[11px] font-serif italic mt-1 line-clamp-1 leading-relaxed group-hover:text-white/35 transition-colors">
                       {lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}
                     </p>
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex gap-1.5 mt-2.5">
                       {dish.tags.slice(0, 3).map(tag => (
-                        <span key={tag} className="text-[8px] uppercase tracking-[0.2em] px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/40 group-hover:border-gold/20 group-hover:text-gold/60 transition-all">
+                        <span key={tag} className="text-[7px] uppercase tracking-[0.15em] px-2 py-0.5 rounded-md bg-white/[0.03] border border-white/[0.05] text-white/25 group-hover:border-gold/15 group-hover:text-gold/40 transition-all font-mono">
                           {tag}
                         </span>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Arrow indicator */}
+                  <div className="w-6 h-6 rounded-md flex items-center justify-center text-white/10 group-hover:text-gold/40 transition-colors flex-shrink-0">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
                   </div>
                 </motion.div>
               ))
@@ -351,17 +393,17 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="py-20 text-center space-y-4"
+                className="py-16 text-center space-y-4"
               >
-                <div className="text-4xl">🍽️</div>
-                <p className="text-white/40 font-serif italic">
+                <div className="text-3xl opacity-40">🍽️</div>
+                <p className="text-white/30 font-serif italic text-sm">
                   {lang === 'ar' 
                     ? 'لا توجد أطباق تطابق هذه الفلاتر في هذه الفئة.' 
                     : 'No dishes match these filters in this category.'}
                 </p>
                 <button 
                   onClick={() => setActiveFilters([])}
-                  className="text-gold text-xs uppercase tracking-widest border-b border-gold/30 pb-1"
+                  className="text-gold/60 text-[10px] uppercase tracking-widest border-b border-gold/20 pb-0.5 hover:text-gold hover:border-gold/40 transition-colors font-mono"
                 >
                   {lang === 'ar' ? 'مسح الفلاتر' : 'Clear Filters'}
                 </button>

@@ -6,9 +6,10 @@ import Image from 'next/image';
 import { NavTab } from './BottomNav';
 
 /**
- * SUGI SUSHI - Signature Brand Hero
+ * SUGI SUSHI — Cinematic Hero
  * 
- * SIGNATURE MOMENT: Cinematic Focus Shift & Depth-Scale Transition.
+ * Video background with parallax depth shift, staggered text reveal,
+ * and custom cursor interaction.
  */
 
 interface HeroProps {
@@ -17,7 +18,9 @@ interface HeroProps {
 
 export default function Hero({ onTabChange }: HeroProps) {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -25,9 +28,10 @@ export default function Hero({ onTabChange }: HeroProps) {
   });
 
   // Cinematic Parallax & Focus Shift
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.3, 0.8]);
 
   useEffect(() => {
     const handleMouse = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
@@ -37,97 +41,149 @@ export default function Hero({ onTabChange }: HeroProps) {
 
   return (
     <section ref={containerRef} className="relative h-[110vh] w-full flex items-center justify-center overflow-hidden bg-bg">
-      {/* ─── Cinematic Background (Depth Shift) ─── */}
+      {/* ─── Cinematic Video / Image Background ─── */}
       <motion.div 
-        style={{ scale: heroScale, filter: `blur(0px)` }}
+        style={{ scale: heroScale }}
         className="absolute inset-0 z-0"
       >
-        <motion.div style={{ filter: `blur(0px)` }} className="relative w-full h-full">
-          <Image
-            src="/media/optimized/hero-wallpaper-0.jpg"
-            alt="Sugi Sushi Hero Wallpaper"
-            fill
-            priority
-            className="object-cover brightness-[0.35] scale-[1.05] transition-opacity duration-1000"
-          />
-        </motion.div>
+        {/* Fallback image always present */}
+        <Image
+          src="/media/optimized/hero-wallpaper-0.jpg"
+          alt="Sugi Sushi — Japanese Dining Experience"
+          fill
+          priority
+          className={`object-cover brightness-[0.3] scale-[1.05] transition-opacity duration-[2s] ${videoLoaded ? 'opacity-0' : 'opacity-100'}`}
+        />
         
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-bg" />
+        {/* Video background */}
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          onLoadedData={() => setVideoLoaded(true)}
+          className={`video-bg brightness-[0.3] transition-opacity duration-[2s] ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
+          poster="/media/optimized/hero-wallpaper-0.jpg"
+        >
+          <source src="/videos/sushi-hero.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Gradient overlays for depth */}
+        <motion.div 
+          style={{ opacity: overlayOpacity }}
+          className="absolute inset-0 bg-black" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-bg" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30" />
       </motion.div>
 
-      {/* ─── Global Cursor Interaction (Identity Hook) ─── */}
+      {/* ─── Ambient Gold Light ─── */}
+      <div className="absolute inset-0 z-[1] pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[40vh] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.04),transparent_70%)]" />
+      </div>
+
+      {/* ─── Custom Cursor (Desktop) ─── */}
       <motion.div 
-        className="fixed w-12 h-12 border border-gold/40 rounded-full z-[150] pointer-events-none mix-blend-difference hidden lg:flex items-center justify-center"
-        animate={{ x: mousePos.x - 24, y: mousePos.y - 24 }}
-        transition={{ type: 'spring', damping: 20, stiffness: 250, mass: 0.5 }}
+        className="fixed w-10 h-10 border border-gold/30 rounded-full z-[150] pointer-events-none mix-blend-difference hidden lg:flex items-center justify-center"
+        animate={{ x: mousePos.x - 20, y: mousePos.y - 20 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300, mass: 0.4 }}
       >
-        <div className="w-1 h-1 bg-gold rounded-full" />
+        <motion.div 
+          className="w-1 h-1 bg-gold rounded-full"
+          animate={{ scale: [1, 1.5, 1] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        />
       </motion.div>
 
-      {/* ─── Luxury Presentation ─── */}
+      {/* ─── Hero Content ─── */}
       <motion.div
         style={{ y: contentY, opacity: contentOpacity }}
         className="relative z-20 flex flex-col items-center text-center px-6"
       >
+        {/* Micro-label */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, delay: 0.5 }}
-          className="mb-12"
+          initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 1.2, delay: 0.8, ease: [0.19, 1, 0.22, 1] }}
+          className="mb-10"
         >
-          <span className="text-mono text-gold tracking-[0.8em]">Perfection in Motion</span>
+          <span className="text-mono text-gold/70 tracking-[0.6em] text-[9px]">Perfection in Motion</span>
         </motion.div>
 
+        {/* Main Title */}
         <motion.h1
-          initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
+          initial={{ opacity: 0, scale: 0.92, filter: 'blur(30px)' }}
           animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 2, delay: 0.8, ease: [0.19, 1, 0.22, 1] }}
-          className="text-display liquid-gold mb-12 drop-shadow-2xl select-none"
+          transition={{ duration: 2.5, delay: 1.1, ease: [0.19, 1, 0.22, 1] }}
+          className="text-display liquid-gold mb-10 drop-shadow-2xl select-none"
         >
-          SUGI SUSHI
+          SUGI
         </motion.h1>
 
+        {/* Subtitle with decorative lines */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.4 }}
-          transition={{ duration: 2, delay: 1.5 }}
-          className="flex items-center gap-12"
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, delay: 1.8 }}
+          className="flex items-center gap-6 md:gap-10 mb-6"
         >
-          <div className="h-px w-24 bg-gradient-to-r from-transparent to-white/40" />
-          <p className="text-h3 text-white italic max-w-2xl font-serif">
-            Traditional Soul, Modern Vision.
+          <motion.div 
+            initial={{ width: 0 }} 
+            animate={{ width: '3rem' }} 
+            transition={{ duration: 1.5, delay: 2.2 }}
+            className="h-px bg-gradient-to-r from-transparent to-gold/40" 
+          />
+          <p className="text-white/50 text-lg md:text-xl font-serif italic tracking-wide">
+            Traditional Soul, Modern Vision
           </p>
-          <div className="h-px w-24 bg-gradient-to-l from-transparent to-white/40" />
+          <motion.div 
+            initial={{ width: 0 }} 
+            animate={{ width: '3rem' }} 
+            transition={{ duration: 1.5, delay: 2.2 }}
+            className="h-px bg-gradient-to-l from-transparent to-gold/40" 
+          />
         </motion.div>
 
+        {/* CTA Button */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.8 }}
-          className="mt-16"
+          transition={{ duration: 1.2, delay: 2.4, ease: [0.19, 1, 0.22, 1] }}
+          className="mt-12"
         >
           <button 
             onClick={() => onTabChange('menu')}
-            className="group relative px-12 py-5 overflow-hidden rounded-full border border-gold/40 bg-black/20 backdrop-blur-md transition-all duration-700 hover:border-gold"
+            className="group relative px-10 py-4 md:px-14 md:py-5 overflow-hidden rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-xl transition-all duration-700 hover:border-gold/40 hover:shadow-[0_0_40px_rgba(212,175,55,0.1)]"
           >
-            <div className="absolute inset-0 bg-gold/10 translate-y-full group-hover:translate-y-0 transition-transform duration-700" />
-            <span className="relative text-white text-[12px] uppercase tracking-[0.5em] font-bold group-hover:text-gold transition-colors">
+            <div className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+            <span className="relative text-white/80 text-[11px] uppercase tracking-[0.5em] font-bold group-hover:text-gold transition-colors duration-500">
               Explore the Menu
             </span>
           </button>
         </motion.div>
       </motion.div>
 
-      {/* ─── Discovery Prompt ─── */}
+      {/* ─── Scroll Prompt ─── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 3, duration: 2 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-6"
+        transition={{ delay: 3.5, duration: 2 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4"
       >
-        <span className="text-mono text-[8px] opacity-20">Scroll to Immersion</span>
-        <div className="w-px h-24 bg-gradient-to-b from-gold/40 to-transparent" />
+        <span className="text-mono text-[7px] text-white/20 tracking-[0.3em]">Scroll</span>
+        <motion.div 
+          animate={{ height: ['16px', '32px', '16px'], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          className="w-px bg-gradient-to-b from-gold/40 to-transparent"
+        />
       </motion.div>
+
+      {/* ─── Decorative Corner Accents ─── */}
+      <div className="absolute top-8 left-8 w-12 h-12 border-l border-t border-white/[0.04] z-20 pointer-events-none hidden md:block" />
+      <div className="absolute top-8 right-8 w-12 h-12 border-r border-t border-white/[0.04] z-20 pointer-events-none hidden md:block" />
+      <div className="absolute bottom-8 left-8 w-12 h-12 border-l border-b border-white/[0.04] z-20 pointer-events-none hidden md:block" />
+      <div className="absolute bottom-8 right-8 w-12 h-12 border-r border-b border-white/[0.04] z-20 pointer-events-none hidden md:block" />
     </section>
   );
 }
