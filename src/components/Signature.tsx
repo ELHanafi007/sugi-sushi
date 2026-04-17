@@ -55,24 +55,24 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
           transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
         >
           <div className="flex items-center gap-6 mb-8">
-            <span className="text-mono text-gold px-6 py-1.5 rounded-full border border-gold/20 bg-gold/5">
+            <span className="text-mono text-gold px-6 py-2 rounded-full border border-gold/30 bg-gold/10 backdrop-blur-md shadow-[0_0_20px_rgba(226,183,20,0.2)]">
               Masterpiece 01
             </span>
-            <div className="h-px w-12 bg-gold/40" />
-            <span className="text-mono !text-white/40">Signature</span>
+            <div className="h-px w-16 bg-gradient-to-r from-gold/40 to-transparent" />
+            <span className="text-mono !text-white/40 tracking-[0.4em]">Signature</span>
           </div>
           
-          <h3 className="text-display text-white mb-8 tracking-tighter">
+          <h3 className="text-display text-white mb-8 tracking-tighter leading-none group-hover:text-gold transition-colors duration-1000">
             {dish.name}
           </h3>
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
-            <p className="text-h3 text-white/60 max-w-2xl italic">
+            <p className="text-2xl text-white/60 max-w-2xl italic font-serif leading-relaxed">
               &quot;{dish.description}&quot;
             </p>
             
-            <div className="flex items-baseline gap-4">
-              <span className="text-h2 text-gold font-light">{dish.price}</span>
+            <div className="flex items-baseline gap-4 bg-black/40 backdrop-blur-md px-8 py-4 rounded-3xl border border-white/5">
+              <span className="text-4xl text-gold font-serif font-light tracking-tighter">{dish.price}</span>
               <span className="text-mono text-gold/40">SR</span>
             </div>
           </div>

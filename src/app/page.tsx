@@ -115,7 +115,7 @@ export default function Home() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
           >
-            <StrictMenu />
+            <StrictMenu onTabChange={setActiveTab} />
           </motion.div>
         )}
 

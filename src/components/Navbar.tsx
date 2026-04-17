@@ -46,20 +46,20 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
         </button>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center bg-white/[0.03] border border-white/5 rounded-full px-2 py-1 relative">
+        <nav className="hidden md:flex items-center bg-white/[0.03] border border-white/5 rounded-full px-1 py-1 relative">
           {/* Active Pill Indicator */}
           <motion.div
             className="absolute h-[80%] rounded-full bg-gold/10 border border-gold/20"
             initial={false}
             animate={{
-              width: activeTab === 'home' ? 0 : 'calc(33.33% - 8px)',
-              x: activeTab === 'menu' ? 4 : activeTab === 'reservations' ? '100%' : activeTab === 'location' ? '200%' : 0,
+              width: activeTab === 'home' || activeTab === 'gallery' ? 0 : 'calc(33.33% - 4px)',
+              x: activeTab === 'menu' ? 0 : activeTab === 'reservations' ? '100%' : activeTab === 'location' ? '200%' : 0,
               opacity: (activeTab === 'home' || activeTab === 'gallery') ? 0 : 1
             }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             style={{ 
               width: 'calc(33.33% - 4px)',
-              left: activeTab === 'menu' ? '4px' : activeTab === 'reservations' ? '4px' : '4px' // Logic handled by x
+              left: '4px'
             }}
           />
 
@@ -75,12 +75,6 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
             >
               <span className="relative">
                 {t(item.labelKey)}
-                {activeTab === item.id && (
-                  <motion.span 
-                    layoutId="navGlow"
-                    className="absolute -bottom-1 left-0 right-0 h-px bg-gold/50 shadow-[0_0_8px_gold]"
-                  />
-                )}
               </span>
             </button>
           ))}

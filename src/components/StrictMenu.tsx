@@ -61,58 +61,88 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
         <motion.div 
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="relative aspect-[4/5] rounded-[3rem] overflow-hidden mb-12 shadow-2xl"
+          transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+          className="relative aspect-[4/5] rounded-[3rem] overflow-hidden mb-12 shadow-[0_40px_100px_rgba(0,0,0,0.8)]"
         >
-          <img src={image} alt={name} className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <img src={image} alt={name} className="absolute inset-0 w-full h-full object-cover scale-105" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+          
           <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end">
-            <div className="flex gap-2">
-              <div className="w-8 h-1 rounded-full bg-white" />
-              <div className="w-2 h-1 rounded-full bg-white/30" />
-              <div className="w-2 h-1 rounded-full bg-white/30" />
+            <div className="flex gap-2.5">
+              <div className="w-10 h-1 rounded-full bg-gold shadow-[0_0_15px_rgba(226,183,20,0.8)]" />
+              <div className="w-2.5 h-1 rounded-full bg-white/20" />
+              <div className="w-2.5 h-1 rounded-full bg-white/20" />
             </div>
-            <span className="text-white/60 text-xs font-mono uppercase tracking-widest">Swipe for more</span>
+            <span className="text-white/40 text-[9px] font-mono uppercase tracking-[0.3em] bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/5">Visual Presentation</span>
           </div>
         </motion.div>
 
         {/* Info Section */}
-        <div className="space-y-8">
-          <div className="flex justify-between items-start gap-4">
-            <h2 className="text-4xl font-serif text-white tracking-tight">{name}</h2>
-            <span className="text-3xl text-gold font-serif whitespace-nowrap">{dish.price}</span>
+        <div className="space-y-12">
+          <div className="space-y-4">
+            <div className="flex justify-between items-baseline gap-6">
+              <h2 className="text-5xl font-serif text-white tracking-tight leading-tight">{name}</h2>
+              <div className="flex flex-col items-end">
+                <span className="text-3xl text-gold font-serif drop-shadow-[0_0_20px_rgba(226,183,20,0.3)]">{dish.price}</span>
+                <span className="text-white/20 text-[10px] uppercase tracking-widest mt-1">VAT Included</span>
+              </div>
+            </div>
+
+            <p className="text-2xl text-white/70 font-serif italic leading-relaxed max-w-xl">
+              &quot;{desc}&quot;
+            </p>
           </div>
 
-          <p className="text-xl text-white/60 font-serif italic leading-relaxed">
-            {desc}
-          </p>
-
-          {/* Tags / Badges */}
-          <div className="flex flex-wrap gap-3">
-            {dish.tags.map(tag => (
-              <span key={tag} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] text-white/40 uppercase tracking-widest">
-                {tag}
-              </span>
-            ))}
-            {dish.calories && (
-              <span className="px-4 py-1.5 rounded-full bg-gold/5 border border-gold/20 text-[10px] text-gold/60 uppercase tracking-widest">
-                🔥 {dish.calories}
-              </span>
-            )}
+          {/* Core Traits */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/5 space-y-2">
+              <span className="text-gold/40 text-[9px] uppercase tracking-[0.3em] font-bold block">Flavor Profile</span>
+              <p className="text-white text-sm font-serif">{dish.tags.includes('Spicy') ? 'Spicy & Vibrant' : 'Balanced & Umami'}</p>
+            </div>
+            <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/5 space-y-2">
+              <span className="text-gold/40 text-[9px] uppercase tracking-[0.3em] font-bold block">Chef Recommendation</span>
+              <p className="text-white text-sm font-serif">{dish.tags.includes('Signature') ? 'A House Special' : 'Seasonal Favorite'}</p>
+            </div>
           </div>
 
           {/* Details Tabs */}
-          <div className="pt-8 border-t border-white/5 space-y-8">
-            <div className="space-y-4">
-              <h4 className="text-gold text-[10px] uppercase tracking-[0.3em] font-bold">Ingredients & Allergens</h4>
-              <p className="text-white/40 text-sm leading-relaxed">
-                Premium selected {dish.category.toLowerCase()} ingredients. May contain: soy, nuts, gluten, or seafood. Please notify your server of any allergies.
+          <div className="pt-12 border-t border-white/5 space-y-10">
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-px bg-gold/30" />
+                <h4 className="text-gold text-[10px] uppercase tracking-[0.5em] font-bold">Provenance & Integrity</h4>
+              </div>
+              
+              <div className="flex flex-wrap gap-4">
+                {dish.tags.map(tag => (
+                  <span key={tag} className="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-[9px] text-white/50 uppercase tracking-[0.2em] font-bold">
+                    {tag}
+                  </span>
+                ))}
+                {dish.calories && (
+                  <span className="px-5 py-2 rounded-full bg-gold/10 border border-gold/20 text-[9px] text-gold uppercase tracking-[0.2em] font-bold">
+                    🔥 {dish.calories}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-white/40 text-sm leading-relaxed font-serif italic max-w-lg">
+                Sourced with respect for the ocean and the season. Prepared with the precision of a master&apos;s blade.
               </p>
-              <div className="flex gap-6 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
-                <span className="text-2xl" title="Gluten Free">🌾</span>
-                <span className="text-2xl" title="Nuts">🥜</span>
-                <span className="text-2xl" title="Shellfish">🦐</span>
-                <span className="text-2xl" title="Soy">🫘</span>
+              
+              <div className="flex gap-8 pt-4">
+                <div className="flex flex-col items-center gap-2 group cursor-help">
+                  <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-2xl group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-500">🌾</div>
+                  <span className="text-[8px] uppercase tracking-widest text-white/20 group-hover:text-white/40">Gluten</span>
+                </div>
+                <div className="flex flex-col items-center gap-2 group cursor-help">
+                  <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-2xl group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-500">🥜</div>
+                  <span className="text-[8px] uppercase tracking-widest text-white/20 group-hover:text-white/40">Nuts</span>
+                </div>
+                <div className="flex flex-col items-center gap-2 group cursor-help">
+                  <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-2xl group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-500">🦐</div>
+                  <span className="text-[8px] uppercase tracking-widest text-white/20 group-hover:text-white/40">Shellfish</span>
+                </div>
               </div>
             </div>
           </div>
@@ -122,7 +152,17 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
             <h4 className="text-white text-lg font-serif italic">{lang === 'ar' ? 'نقترح عليك تجربته مع...' : 'Recommended to pair with...'}</h4>
             <div className="grid grid-cols-1 gap-4">
               {recommendations.map(rec => (
-                <div key={rec.dish.id} className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-gold/[0.02] hover:border-gold/20 transition-all group">
+                <div 
+                  key={rec.dish.id} 
+                  onClick={() => {
+                    onClose();
+                    // Small timeout to allow the modal to close before reopening with the new dish
+                    setTimeout(() => {
+                      (window as any).dispatchDishSelect?.(rec.dish);
+                    }, 100);
+                  }}
+                  className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-gold/[0.02] hover:border-gold/20 transition-all group cursor-pointer"
+                >
                   <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-white/5">
                     <img 
                       src={rec.dish.image || CAT_IMAGES[rec.dish.category] || DEFAULT_IMAGE} 
@@ -130,13 +170,13 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h5 className="text-white font-serif truncate">{lang === 'ar' ? rec.dish.nameAr || rec.dish.name : rec.dish.name}</h5>
+                    <h5 className="text-white font-serif truncate group-hover:text-gold transition-colors">{lang === 'ar' ? rec.dish.nameAr || rec.dish.name : rec.dish.name}</h5>
                     <p className="text-gold/60 text-[10px] uppercase tracking-wider mt-0.5 line-clamp-1 italic">{rec.reason}</p>
                     <span className="text-white/40 text-xs mt-1 block">{rec.dish.price}</span>
                   </div>
-                  <button className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black transition-colors">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-                  </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -150,12 +190,21 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
 /* ═══════════════════════════════════════════════════════
    STRICT MENU COMPONENT
    ═══════════════════════════════════════════════════════ */
-export default function StrictMenu() {
+export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) => void }) {
   const { lang, t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   
+  useEffect(() => {
+    (window as any).dispatchDishSelect = (dish: Dish) => {
+      setSelectedDish(dish);
+    };
+    return () => {
+      delete (window as any).dispatchDishSelect;
+    };
+  }, []);
+
   const filteredDishes = useMemo(() => {
     let dishes = menuData.filter(dish => dish.category === selectedCategory);
     
@@ -202,13 +251,16 @@ export default function StrictMenu() {
               }`} />
               
               <div className="absolute inset-0 p-4 flex flex-col justify-end items-center text-center">
-                <span className={`text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${
-                  selectedCategory === cat ? 'text-gold scale-110' : 'text-white/60'
+                <span className={`text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-500 font-mono ${
+                  selectedCategory === cat ? 'text-gold scale-110 drop-shadow-[0_0_10px_rgba(226,183,20,0.5)]' : 'text-white/40'
                 }`}>
                   {cat}
                 </span>
                 {selectedCategory === cat && (
-                  <motion.div layoutId="catActive" className="w-1 h-1 rounded-full bg-gold mt-2" />
+                  <motion.div 
+                    layoutId="catActive" 
+                    className="w-12 h-0.5 rounded-full bg-gold mt-2 shadow-[0_0_15px_rgba(226,183,20,0.8)]" 
+                  />
                 )}
               </div>
             </motion.button>
@@ -274,17 +326,20 @@ export default function StrictMenu() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
-                      <h4 className="text-white font-serif text-lg group-hover:text-gold transition-colors truncate">
+                      <h4 className="text-white font-serif text-lg group-hover:text-gold transition-all duration-500 truncate">
                         {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
                       </h4>
-                      <span className="text-gold font-serif ml-2">{dish.price}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-gold font-serif text-lg tracking-tight">{dish.price}</span>
+                        <div className="w-1 h-1 rounded-full bg-gold/0 group-hover:bg-gold transition-all duration-500 shadow-[0_0_10px_rgba(226,183,20,1)]" />
+                      </div>
                     </div>
-                    <p className="text-white/30 text-xs font-serif italic mt-1 line-clamp-1">
+                    <p className="text-white/30 text-[11px] font-serif italic mt-1 line-clamp-2 leading-relaxed group-hover:text-white/50 transition-colors">
                       {lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}
                     </p>
-                    <div className="flex gap-2 mt-2">
-                      {dish.tags.slice(0, 2).map(tag => (
-                        <span key={tag} className="text-[8px] uppercase tracking-tighter px-2 py-0.5 rounded-md bg-white/5 text-white/40">
+                    <div className="flex gap-2 mt-3">
+                      {dish.tags.slice(0, 3).map(tag => (
+                        <span key={tag} className="text-[8px] uppercase tracking-[0.2em] px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/40 group-hover:border-gold/20 group-hover:text-gold/60 transition-all">
                           {tag}
                         </span>
                       ))}
