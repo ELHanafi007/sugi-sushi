@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
@@ -46,8 +46,17 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
     return () => { document.body.style.overflow = ''; };
   }, []);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [dish.id]);
+
   return (
     <motion.div 
+      ref={scrollRef}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -159,10 +168,7 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
                     <motion.div 
                       key={rec.dish.id}
                       onClick={() => {
-                        onClose();
-                        setTimeout(() => {
-                          (window as any).dispatchDishSelect?.(rec.dish);
-                        }, 150);
+                        (window as any).dispatchDishSelect?.(rec.dish);
                       }}
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
