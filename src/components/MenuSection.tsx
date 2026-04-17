@@ -528,39 +528,3 @@ export default function MenuSection() {
     </div>
   );
 }
-ssName="flex flex-col items-center gap-2">
-            <span className="text-white/80 text-2xl font-serif font-light tracking-[0.7em]">SUGI SUSHI</span>
-            <span className="text-gold/25 text-[8px] font-mono uppercase tracking-[0.5em]">{t('footer.perfection')}</span>
-          </div>
-        </motion.div>
-
-        {/* Navigation Links */}
-        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-8 pt-12 border-t border-white/[0.04]">
-          <div className="flex gap-8 md:gap-12">
-            {['menu', 'story', 'contact'].map(item => (
-              <a 
-                key={item} 
-                href={`#${item}`} 
-                className="text-[10px] text-white/20 hover:text-gold transition-colors duration-500 uppercase tracking-widest font-mono"
-              >
-                {t(`nav.${item}`)}
-              </a>
-            ))}
-          </div>
-          <p className="text-[10px] text-white/10 uppercase tracking-widest font-mono">© 2026 SUGI • Riyadh</p>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-export default function MenuSection() {
-  return (
-    <div className="bg-bg relative">
-      <PhilosophySection />
-      <MenuExperience />
-      <ContactSection />
-      <Footer />
-    </div>
-  );
-}
