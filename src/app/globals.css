@@ -170,16 +170,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Desktop custom cursor */
-@media (pointer: fine) and (min-width: 1024px) {
-  body {
-    cursor: none;
-  }
-  a, button {
-    cursor: none;
-  }
-}
-
 /* ─── Selection ─── */
 ::selection {
   background: rgba(212, 175, 55, 0.25);

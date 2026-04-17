@@ -57,7 +57,7 @@ export default function GalleryPage() {
               transition={{ duration: 1.2, delay: img.delay, ease: [0.19, 1, 0.22, 1] }}
               onMouseEnter={() => setHoveredIdx(idx)}
               onMouseLeave={() => setHoveredIdx(null)}
-              className={`relative w-full rounded-2xl overflow-hidden card-glass group cursor-none break-inside-avoid shadow-2xl ${img.aspect}`}
+              className={`relative w-full rounded-2xl overflow-hidden card-glass group break-inside-avoid shadow-2xl ${img.aspect}`}
             >
               <Image
                 src={img.src}

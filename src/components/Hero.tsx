@@ -17,7 +17,6 @@ interface HeroProps {
 }
 
 export default function Hero({ onTabChange }: HeroProps) {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [videoLoaded, setVideoLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -32,12 +31,6 @@ export default function Hero({ onTabChange }: HeroProps) {
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -120]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.3, 0.8]);
-
-  useEffect(() => {
-    const handleMouse = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
-    window.addEventListener('mousemove', handleMouse);
-    return () => window.removeEventListener('mousemove', handleMouse);
-  }, []);
 
   return (
     <section ref={containerRef} className="relative h-[110vh] w-full flex items-center justify-center overflow-hidden bg-bg">
@@ -82,19 +75,6 @@ export default function Hero({ onTabChange }: HeroProps) {
       <div className="absolute inset-0 z-[1] pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[40vh] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.04),transparent_70%)]" />
       </div>
-
-      {/* ─── Custom Cursor (Desktop) ─── */}
-      <motion.div 
-        className="fixed w-10 h-10 border border-gold/30 rounded-full z-[150] pointer-events-none mix-blend-difference hidden lg:flex items-center justify-center"
-        animate={{ x: mousePos.x - 20, y: mousePos.y - 20 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 300, mass: 0.4 }}
-      >
-        <motion.div 
-          className="w-1 h-1 bg-gold rounded-full"
-          animate={{ scale: [1, 1.5, 1] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </motion.div>
 
       {/* ─── Hero Content ─── */}
       <motion.div
