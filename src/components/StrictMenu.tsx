@@ -31,7 +31,7 @@ const DEFAULT_IMAGE = '/media/optimized/hero-wallpaper-alt-0.jpg';
    DISH MODAL
    ═══════════════════════════════════════════════════════ */
 function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
   const image = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
