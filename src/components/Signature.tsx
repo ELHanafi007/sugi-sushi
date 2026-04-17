@@ -1,16 +1,15 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useState, useRef } from 'react';
 import { menuData, Dish } from '@/data/menuData';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
 /**
- * SIGNATURE SELECTION — Editorial Showcase
+ * SIGNATURE SELECTION — Editorial Showcase (Masterpiece Edition)
  * 
- * Cinematic focus-pull interaction on featured dishes.
- * Uses actual brochure images instead of missing hero-wallpaper-alt images.
+ * Cinematic focus-pull interaction and 3D depth orchestration.
  */
 
 const DISH_IMAGES = [
@@ -22,24 +21,43 @@ const DISH_IMAGES = [
 const FeaturedDish = ({ dish }: { dish: Dish }) => {
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(y, [-200, 200], [5, -5]), { stiffness: 100, damping: 30 });
+  const rotateY = useSpring(useTransform(x, [-200, 200], [-5, 5]), { stiffness: 100, damping: 30 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    x.set(e.clientX - centerX);
+    y.set(e.clientY - centerY);
+  };
 
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.98 }}
-      whileInView={{ opacity: 1, scale: 1 }}
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
+      transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="relative w-full h-[65vh] md:h-[80vh] rounded-[2rem] md:rounded-[3rem] overflow-hidden group shadow-2xl"
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+      className="relative w-full h-[70vh] md:h-[90vh] rounded-[3rem] overflow-hidden group shadow-[0_50px_100px_rgba(0,0,0,0.6)] luxury-card"
     >
-      {/* Background with Focus Pull */}
+      {/* Background with Cinematic Depth */}
       <motion.div 
         animate={{ 
-          scale: isHovered ? 1.06 : 1,
-          filter: isHovered ? 'blur(3px) brightness(0.7)' : 'blur(0px) brightness(0.8)'
+          scale: isHovered ? 1.1 : 1,
+          filter: isHovered ? 'blur(2px) brightness(0.6)' : 'blur(0px) brightness(0.7)'
         }}
-        transition={{ duration: 1.8, ease: [0.19, 1, 0.22, 1] }}
+        transition={{ duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
         className="absolute inset-0"
       >
         <Image
@@ -47,61 +65,62 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
           alt={dish.name}
           fill
           className="object-cover"
+          priority
         />
       </motion.div>
       
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-90" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-bg/80" />
       
-      {/* Hover Gold Glow */}
-      <AnimatePresence>
-        {isHovered && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.06 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="absolute inset-0 bg-gold"
-          />
-        )}
-      </AnimatePresence>
+      {/* Light Sweep Effect */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{ x: isHovered ? '200%' : '-100%' }}
+          transition={{ duration: 1.5, ease: "circIn" }}
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent skew-x-12 translate-x-[-100%]"
+        />
+      </div>
 
-      {/* Content */}
-      <div className="absolute inset-0 p-6 md:p-16 lg:p-20 flex flex-col justify-end">
+      {/* Content Orchestration */}
+      <div className="absolute inset-0 p-8 md:p-24 lg:p-32 flex flex-col justify-end">
         <motion.div
-          animate={{ y: isHovered ? -8 : 0 }}
-          transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+          animate={{ z: isHovered ? 50 : 0, y: isHovered ? -10 : 0 }}
+          style={{ transformStyle: "preserve-3d" }}
+          transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
         >
-          {/* Badge Row */}
-          <div className="flex items-center gap-4 mb-6">
-            <span className="mono-tag !text-gold !bg-gold/10 !border-gold/20 shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+          <div className="flex items-center gap-6 mb-10">
+            <span className="mono-tag !border-gold/30 !text-gold/80 !bg-gold/5 shadow-[0_0_40px_rgba(212,175,55,0.1)]">
               {t('signature.badge')}
             </span>
-            <div className="h-px w-10 bg-gradient-to-r from-gold/30 to-transparent" />
-            <span className="text-mono !text-white/30 tracking-[0.4em] text-[8px] uppercase">{t('signature.sig')}</span>
+            <motion.div 
+              initial={{ width: 0 }}
+              whileInView={{ width: 60 }}
+              className="h-[1px] bg-gradient-to-r from-gold/50 to-transparent" 
+            />
           </div>
           
-          {/* Title */}
-          <h3 className="text-4xl md:text-6xl lg:text-7xl text-white font-serif font-light mb-6 tracking-tight leading-none group-hover:text-gold transition-colors duration-1000">
+          <h3 className="text-display liquid-gold mb-10 !text-5xl md:!text-8xl tracking-tightest leading-none">
             {dish.name}
           </h3>
           
-          {/* Description & Price */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <p className="text-base md:text-lg text-white/50 max-w-xl italic font-serif leading-relaxed">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
+            <p className="text-xl md:text-2xl text-white/40 max-w-2xl italic font-serif leading-relaxed font-light">
               &quot;{dish.description}&quot;
             </p>
             
-            <div className="flex items-baseline gap-3 bg-black/40 backdrop-blur-xl px-6 py-3 rounded-2xl border border-white/[0.06] flex-shrink-0">
-              <span className="text-3xl text-gold font-serif font-light tracking-tight">{dish.price}</span>
-              <span className="text-mono text-gold/30 text-[8px]">{t('common.sr')}</span>
+            <div className="flex flex-col items-end gap-4">
+              <span className="text-mono text-white/20 tracking-[1em] text-[10px]">{t('signature.sig')}</span>
+              <div className="flex items-baseline gap-4 bg-white/[0.02] border border-white/5 backdrop-blur-2xl px-10 py-5 rounded-full group-hover:border-gold/30 transition-colors duration-700">
+                <span className="text-4xl text-gold font-serif font-light">{dish.price}</span>
+                <span className="text-mono text-gold/40 text-[10px]">{t('common.sr')}</span>
+              </div>
             </div>
           </div>
         </motion.div>
       </div>
 
-      {/* Hover Frame */}
-      <div className="absolute inset-0 border border-white/0 group-hover:border-white/[0.06] transition-colors duration-1000 pointer-events-none rounded-[2rem] md:rounded-[3rem]" />
+      {/* Internal Frame */}
+      <div className="absolute inset-10 border border-white/0 group-hover:border-white/[0.03] transition-all duration-1000 pointer-events-none rounded-[2rem]" />
     </motion.div>
   );
 };
@@ -110,12 +129,12 @@ const SecondaryDish = ({ dish, idx }: { dish: Dish, idx: number }) => {
   const { t } = useLanguage();
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ delay: 0.2 + idx * 0.15, duration: 2, ease: [0.19, 1, 0.22, 1] }}
-      className={`relative rounded-[2rem] overflow-hidden group shadow-xl ${
-        idx === 0 ? 'aspect-[4/5]' : 'aspect-square lg:mt-24'
+      transition={{ delay: 0.2 + idx * 0.2, duration: 2, ease: [0.19, 1, 0.22, 1] }}
+      className={`relative rounded-[3rem] overflow-hidden group luxury-card ${
+        idx === 0 ? 'aspect-[4/5]' : 'aspect-square lg:mt-32'
       }`}
     >
       <div className="absolute inset-0 overflow-hidden">
@@ -123,25 +142,21 @@ const SecondaryDish = ({ dish, idx }: { dish: Dish, idx: number }) => {
           src={DISH_IMAGES[idx + 1] || DISH_IMAGES[0]}
           alt={dish.name}
           fill
-          className="object-cover transition-transform duration-[6s] ease-out group-hover:scale-110"
+          className="object-cover transition-transform duration-[8s] ease-out group-hover:scale-110 saturate-[1.1]"
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-1000" />
+      <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-1000" />
       
-      <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-end">
+      <div className="absolute inset-0 p-10 md:p-14 flex flex-col justify-end">
         <motion.div
-          whileHover={{ y: -5 }}
-          transition={{ duration: 0.8 }}
+          whileHover={{ y: -10 }}
+          transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
         >
-          <span className="text-mono text-gold/40 mb-3 block text-[8px] tracking-[0.5em] uppercase">{t('signature.curated')}</span>
-          <h4 className="text-2xl md:text-3xl text-white font-serif font-light mb-3 leading-none group-hover:text-gold transition-colors duration-700">{dish.name}</h4>
+          <span className="text-mono text-gold/30 mb-4 block text-[10px] tracking-[0.8em] font-black">{t('signature.curated')}</span>
+          <h4 className="text-3xl md:text-5xl text-white font-serif font-light mb-6 leading-tight group-hover:text-gold transition-colors duration-1000">{dish.name}</h4>
           <div className="flex items-center justify-between">
-            <span className="text-white/30 font-serif italic">{dish.price} {t('common.sr')}</span>
-            <motion.div 
-              className="w-2 h-2 rounded-full bg-gold/10 group-hover:bg-gold transition-all duration-700"
-              animate={{ boxShadow: ['0 0 0px rgba(212,175,55,0)', '0 0 12px rgba(212,175,55,0.5)', '0 0 0px rgba(212,175,55,0)'] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            />
+            <span className="text-white/20 font-serif italic text-lg">{dish.price} {t('common.sr')}</span>
+            <div className="w-3 h-3 rounded-full bg-gold/5 group-hover:bg-gold/40 transition-all duration-1000 shadow-[0_0_20px_rgba(212,175,55,0)] group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
           </div>
         </motion.div>
       </div>
@@ -158,61 +173,70 @@ export default function Signature() {
   return (
     <section className="w-full section-padding bg-bg relative overflow-hidden">
       {/* Background Ambience */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gold/[0.008] to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-[1000px] bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.02),transparent_70%)] pointer-events-none" />
 
       <div className="container-luxury relative z-10">
-        {/* Header */}
-        <div className="mb-24 md:mb-32 lg:mb-40 flex flex-col lg:flex-row items-start lg:items-end justify-between gap-8 lg:gap-12">
-          <div className="max-w-3xl">
-            <motion.span 
-              initial={{ opacity: 0, x: -20 }}
+        {/* Header Orchestration */}
+        <div className="mb-32 md:mb-48 flex flex-col lg:flex-row items-start lg:items-end justify-between gap-12 lg:gap-20">
+          <div className="max-w-4xl">
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="text-mono text-gold/30 mb-6 block text-[9px] tracking-[0.6em]"
+              className="flex items-center gap-6 mb-8"
             >
-              {t('signature.label')}
-            </motion.span>
+              <div className="w-12 h-[1px] bg-gold/40" />
+              <span className="text-mono text-gold/30 text-[10px] tracking-[1em] font-black uppercase">
+                {t('signature.label')}
+              </span>
+            </motion.div>
             <motion.h2 
-              initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+              initial={{ opacity: 0, y: 50, filter: 'blur(15px)' }}
               whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               viewport={{ once: true }}
-              transition={{ delay: 0.15, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-              className="text-h1 text-white italic"
+              transition={{ delay: 0.2, duration: 2, ease: [0.19, 1, 0.22, 1] }}
+              className="text-h1 text-white italic leading-tight"
             >
-              {t('signature.title1')} <span className="text-gold">{t('signature.title2')}</span>
+              {t('signature.title1')} <span className="shimmer-gold !font-black not-italic">{t('signature.title2')}</span>
             </motion.h2>
           </div>
-          <div className="h-px flex-1 bg-white/[0.04] mb-6 hidden lg:block mx-8" />
+          
           <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.4, duration: 1 }}
-            className="flex flex-col items-end gap-2 mb-6"
+            transition={{ delay: 0.5, duration: 1.5 }}
+            className="flex flex-col items-center lg:items-end gap-4"
           >
-            <span className="text-gold/80 text-4xl font-serif">匠</span>
-            <span className="text-mono text-white/15 text-[8px] tracking-[0.4em] uppercase">{t('signature.collection')}</span>
+            <span className="text-gold/60 text-6xl md:text-8xl font-serif font-thin">匠</span>
+            <span className="text-mono text-white/10 text-[10px] tracking-[0.8em] font-black uppercase">{t('signature.collection')}</span>
           </motion.div>
         </div>
 
-        {/* Showcase */}
-        <div className="flex flex-col gap-24 md:gap-32 lg:gap-40">
+        {/* The Showcase */}
+        <div className="flex flex-col gap-32 md:gap-56 lg:gap-72">
           <FeaturedDish dish={featured} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 xl:gap-32 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 md:gap-32 lg:gap-48 items-start">
             {secondary.map((dish, idx) => (
               <SecondaryDish key={dish.id} dish={dish} idx={idx} />
             ))}
           </div>
         </div>
 
-        {/* Transition */}
-        <div className="mt-32 md:mt-48 flex flex-col items-center gap-8">
-           <div className="w-px h-24 bg-gradient-to-b from-gold/20 to-transparent" />
+        {/* The Climax Trigger */}
+        <div className="mt-48 md:mt-72 flex flex-col items-center gap-12">
+           <div className="relative w-px h-40 bg-white/[0.05] overflow-hidden">
+             <motion.div 
+              animate={{ y: ['-100%', '300%'] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent via-gold/40 to-transparent"
+             />
+           </div>
            <motion.p 
-            animate={{ opacity: [0.08, 0.25, 0.08] }}
-            transition={{ duration: 4, repeat: Infinity }}
-            className="text-mono text-white/15 tracking-[1.5em] text-[8px]"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-mono text-white/10 tracking-[2em] text-[10px] uppercase font-black"
            >
             {t('signature.climax')}
            </motion.p>

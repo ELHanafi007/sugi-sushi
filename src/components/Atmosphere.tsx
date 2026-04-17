@@ -1,30 +1,34 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { useRef, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 
 /**
- * ATMOSPHERE — Cinematic Pause
+ * ATMOSPHERE — Cinematic Pause (Masterpiece Edition)
  * 
  * A breathing space that shifts focus from branding to the dining essence.
- * Features floating particles and a slow-reveal quote.
+ * Features:
+ * - Mouse-driven ambient spotlight
+ * - Enhanced floating particle field
+ * - Parallax Kanji depth shift
  */
 
 const FloatingParticle = ({ delay, x, size }: { delay: number; x: string; size: number }) => (
   <motion.div
-    className="absolute rounded-full bg-gold/20"
+    className="absolute rounded-full bg-gold/30"
     style={{ left: x, bottom: '-10px', width: size, height: size }}
     animate={{
-      y: [0, -800],
-      opacity: [0, 0.6, 0.6, 0],
-      scale: [1, 0.5],
+      y: [0, -1000],
+      opacity: [0, 0.8, 0.8, 0],
+      scale: [1, 0.4],
+      x: [0, Math.random() * 100 - 50, 0],
     }}
     transition={{
-      duration: 12 + Math.random() * 8,
+      duration: 15 + Math.random() * 10,
       delay,
       repeat: Infinity,
-      ease: "linear",
+      ease: "easeInOut",
     }}
   />
 );
@@ -32,122 +36,141 @@ const FloatingParticle = ({ delay, x, size }: { delay: number; x: string; size: 
 export default function Atmosphere() {
   const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Smooth springs for the spotlight
+  const spotlightX = useSpring(mouseX, { stiffness: 50, damping: 20 });
+  const spotlightY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [120, -120]);
-  const opacity = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0, 1, 1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.96, 1, 1.04]);
-  const lineWidth = useTransform(scrollYProgress, [0.2, 0.5], ['0%', '100%']);
+  const y = useTransform(scrollYProgress, [0, 1], [150, -150]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const kanjiScale = useTransform(scrollYProgress, [0, 1], [0.9, 1.1]);
+  const lineWidth = useTransform(scrollYProgress, [0.15, 0.45], ['0px', '180px']);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
 
   return (
     <section 
       ref={containerRef}
-      className="relative w-full h-[85vh] flex items-center justify-center bg-bg overflow-hidden"
+      onMouseMove={handleMouseMove}
+      className="relative w-full h-[100vh] flex items-center justify-center bg-bg overflow-hidden cursor-none"
     >
-      {/* Background Kanji — Ultra-subtle */}
+      {/* ─── Mouse-Reactive Spotlight ─── */}
       <motion.div 
-        style={{ scale }}
-        className="absolute inset-0 z-0 flex items-center justify-center opacity-[0.015] select-none pointer-events-none"
+        style={{ 
+          left: spotlightX, 
+          top: spotlightY,
+          transform: 'translate(-50%, -50%)'
+        }}
+        className="absolute w-[80vw] h-[80vw] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.06),transparent_70%)] pointer-events-none z-0"
+      />
+
+      {/* Background Kanji — Ultra-subtle Parallax */}
+      <motion.div 
+        style={{ scale: kanjiScale }}
+        className="absolute inset-0 z-0 flex items-center justify-center opacity-[0.025] select-none pointer-events-none"
       >
-        <span className="text-[45vw] font-serif leading-none">粋</span>
+        <span className="text-[50vw] font-serif leading-none tracking-tighter">粋</span>
       </motion.div>
 
-      {/* Ambient Light Rays */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70vw] h-[50vh] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.03),transparent_60%)]" />
-        <div className="absolute bottom-0 left-0 w-full h-[30vh] bg-gradient-to-t from-bg to-transparent" />
+      {/* Floating Particle Field */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+        {[...Array(12)].map((_, i) => (
+          <FloatingParticle 
+            key={i} 
+            delay={i * 1.2} 
+            x={(Math.random() * 100) + "%"} 
+            size={Math.random() * 2 + 1} 
+          />
+        ))}
       </div>
 
-      {/* Floating Particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <FloatingParticle delay={0} x="15%" size={2} />
-        <FloatingParticle delay={2} x="30%" size={1.5} />
-        <FloatingParticle delay={4} x="55%" size={2} />
-        <FloatingParticle delay={1} x="70%" size={1} />
-        <FloatingParticle delay={6} x="85%" size={1.5} />
-        <FloatingParticle delay={3} x="42%" size={1} />
-        <FloatingParticle delay={5} x="8%" size={2} />
-        <FloatingParticle delay={7} x="92%" size={1.5} />
-      </div>
-
-      {/* Content */}
+      {/* Content Orchestration */}
       <motion.div 
         style={{ y, opacity }}
-        className="relative z-10 container-luxury text-center"
+        className="relative z-20 container-luxury text-center"
       >
-        <div className="flex flex-col items-center gap-12 md:gap-16">
-          {/* Expanding line */}
+        <div className="flex flex-col items-center gap-16">
+          {/* Animated Focal Line */}
           <motion.div
             style={{ width: lineWidth }}
-            className="h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent max-w-[6rem]"
+            className="h-[1px] bg-gradient-to-r from-transparent via-gold/40 to-transparent"
           />
           
-          {/* Label */}
-          <motion.span 
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="text-gold/30 text-[9px] uppercase tracking-[1.2em] font-bold font-mono block"
+          {/* Section Metadata */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5 }}
+            className="flex flex-col items-center gap-4"
           >
-            {t('atmosphere.label')}
-          </motion.span>
+            <span className="text-gold/40 text-[10px] uppercase tracking-[1.5em] font-black font-mono">
+              {t('atmosphere.label')}
+            </span>
+          </motion.div>
           
-          {/* Quote */}
-          <div className="max-w-4xl mx-auto">
+          {/* The Core Quote */}
+          <div className="max-w-5xl mx-auto px-4">
             <motion.h2 
-              initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
+              initial={{ opacity: 0, y: 60, filter: 'blur(15px)' }}
               whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
-              className="text-white/90 text-3xl md:text-6xl lg:text-7xl font-serif font-light leading-[1.15] tracking-tight italic"
+              transition={{ duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
+              className="text-white/95 text-4xl md:text-7xl lg:text-8xl font-serif font-light leading-[1.1] tracking-tight italic"
               dangerouslySetInnerHTML={{ __html: t('atmosphere.quote') }}
             />
           </div>
 
-          {/* Breathing dot separator */}
+          {/* Infinity Pulse Separator */}
           <motion.div 
-            className="flex flex-col items-center gap-4 mt-8"
+            className="flex flex-col items-center gap-6 mt-12"
           >
             <motion.div 
               animate={{ 
-                opacity: [0.2, 0.6, 0.2],
-                scale: [1, 1.3, 1],
+                scale: [1, 1.5, 1],
+                opacity: [0.3, 0.7, 0.3],
                 boxShadow: [
-                  '0 0 4px rgba(212,175,55,0.1)',
-                  '0 0 16px rgba(212,175,55,0.4)',
-                  '0 0 4px rgba(212,175,55,0.1)',
+                  '0 0 10px rgba(212,175,55,0.2)',
+                  '0 0 30px rgba(212,175,55,0.6)',
+                  '0 0 10px rgba(212,175,55,0.2)',
                 ]
               }}
-              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1.5 h-1.5 rounded-full bg-gold/30"
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="w-2 h-2 rounded-full bg-gold/50"
             />
-            <div className="w-px h-16 bg-gradient-to-b from-gold/20 to-transparent" />
+            <div className="w-[1px] h-24 bg-gradient-to-b from-gold/30 to-transparent" />
           </motion.div>
         </div>
       </motion.div>
 
-      {/* Side Text Accents */}
+      {/* Perimeter Vertical Accents */}
       <motion.div 
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 0.06 }}
-        viewport={{ once: true }}
+        initial={{ opacity: 0, x: -20 }}
+        whileInView={{ opacity: 0.08, x: 0 }}
         transition={{ duration: 2, delay: 0.5 }}
-        className="absolute bottom-16 left-8 hidden lg:block"
+        className="absolute bottom-24 left-12 hidden lg:block"
       >
-        <span className="text-white font-mono text-[9px] tracking-[0.6em] vertical-text uppercase">{t('atmosphere.silence')}</span>
+        <span className="text-white font-mono text-[10px] tracking-[1em] vertical-text uppercase">{t('atmosphere.silence')}</span>
       </motion.div>
       <motion.div 
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 0.06 }}
-        viewport={{ once: true }}
+        initial={{ opacity: 0, x: 20 }}
+        whileInView={{ opacity: 0.08, x: 0 }}
         transition={{ duration: 2, delay: 0.8 }}
-        className="absolute top-16 right-8 hidden lg:block"
+        className="absolute top-24 right-12 hidden lg:block"
       >
-        <span className="text-white font-mono text-[9px] tracking-[0.6em] vertical-text uppercase">{t('atmosphere.motion')}</span>
+        <span className="text-white font-mono text-[10px] tracking-[1em] vertical-text uppercase">{t('atmosphere.motion')}</span>
       </motion.div>
     </section>
   );

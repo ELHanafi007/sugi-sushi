@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 
 /* ─── Kanji per category ─── */
@@ -65,25 +65,21 @@ const CHAPTERS = [
   }
 ];
 
-/* ─── Category Images (using existing brochure assets) ─── */
 const CAT_IMAGES: Record<string, string> = {
-  'Salads': '/media/optimized/brochure-1.jpg',
-  'Soups': '/media/optimized/brochure-2.jpg',
-  'Starters': '/media/optimized/brochure-3.jpg',
-  'Wok, Noodles & Rice': '/media/optimized/brochure-4.jpg',
-  'Tempura': '/media/optimized/brochure-5.jpg',
-  'Sugi Dishes': '/media/optimized/brochure-6.jpg',
-  'Sashimi': '/media/optimized/brochure-7.jpg',
-  'Tataki': '/media/optimized/brochure-8.jpg',
-  'Ceviche': '/media/optimized/brochure-9.jpg',
-  'Nigiri': '/media/optimized/brochure-10.jpg',
+  'Salads': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80',
+  'Soups': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1200&q=80',
+  'Starters': 'https://images.unsplash.com/photo-1541014741259-df549fa9ba6f?auto=format&fit=crop&w=1200&q=80',
+  'Wok, Noodles & Rice': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1200&q=80',
+  'Tempura': 'https://images.unsplash.com/photo-1569050278883-d5c58c39bb7a?auto=format&fit=crop&w=1200&q=80',
+  'Sugi Dishes': 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80',
+  'Sashimi': 'https://images.unsplash.com/photo-1534422298391-e4f8c170db0a?auto=format&fit=crop&w=1200&q=80',
+  'Tataki': 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=1200&q=80',
+  'Ceviche': 'https://images.unsplash.com/photo-1534604973900-c41ab4c5e636?auto=format&fit=crop&w=1200&q=80',
+  'Nigiri': 'https://images.unsplash.com/photo-1583623025817-d180a2221d0a?auto=format&fit=crop&w=1200&q=80',
 };
-const DEFAULT_IMAGE = '/media/optimized/hero-wallpaper-alt-0.jpg';
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
 
-/* ═══════════════════════════════════════════════════════
-   EDITORIAL DISH COMPONENTS
-   ═══════════════════════════════════════════════════════ */
-
+/* ─── Featured Dish Card (Masterpiece Edition) ─── */
 const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => {
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
@@ -91,29 +87,57 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
 
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.98 }}
-      whileInView={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
-      className="relative w-full h-[55vh] md:h-[65vh] rounded-[2rem] overflow-hidden group shadow-2xl"
+      className="relative w-full h-[60vh] md:h-[75vh] rounded-[3rem] overflow-hidden group shadow-[0_40px_80px_rgba(0,0,0,0.5)] luxury-card"
     >
-      <Image
-        src={imageUrl}
-        alt={name}
-        fill
-        className="object-cover transition-transform duration-[6s] group-hover:scale-105 brightness-[0.6]"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+      <div className="absolute inset-0 overflow-hidden">
+        <Image
+          src={imageUrl}
+          alt={name}
+          fill
+          className="object-cover transition-transform duration-[8s] group-hover:scale-110 brightness-[0.4] saturate-[1.2]"
+        />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-black/20" />
       
-      <div className="absolute inset-0 p-6 md:p-12 lg:p-16 flex flex-col justify-end">
-        <div className="max-w-2xl">
-          <span className="mono-tag !text-gold mb-4 !bg-gold/10 !border-gold/20 inline-flex text-[8px]">Featured Selection</span>
-          <h3 className="text-white text-3xl md:text-5xl font-serif font-light mb-4 tracking-tight group-hover:text-gold transition-colors duration-700">{name}</h3>
-          <p className="text-white/50 text-sm md:text-base font-serif italic mb-6 line-clamp-2">&quot;{desc}&quot;</p>
-          <div className="flex items-center gap-4">
-            <span className="text-gold text-xl font-serif">{dish.price}</span>
-            <div className="h-px w-8 bg-white/10" />
-            <span className="text-white/20 text-[9px] uppercase tracking-widest font-mono">{dish.category}</span>
+      {/* Light Sweep */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          initial={{ x: '-100%' }}
+          whileHover={{ x: '100%' }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent skew-x-12"
+        />
+      </div>
+
+      <div className="absolute inset-0 p-8 md:p-20 flex flex-col justify-end">
+        <div className="max-w-3xl">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-4 mb-8"
+          >
+            <span className="mono-tag !text-gold/80 !bg-gold/5 !border-gold/20 font-black">Featured Selection</span>
+            <div className="h-px w-12 bg-gold/20" />
+          </motion.div>
+          
+          <h3 className="text-display liquid-gold mb-8 !text-4xl md:!text-7xl tracking-tightest leading-none">
+            {name}
+          </h3>
+          <p className="text-white/40 text-lg md:text-2xl font-serif italic mb-10 line-clamp-3 leading-relaxed">
+            &quot;{desc}&quot;
+          </p>
+          
+          <div className="flex items-center gap-8">
+            <div className="flex items-baseline gap-3">
+              <span className="text-4xl text-gold font-serif">{dish.price}</span>
+              <span className="text-mono text-gold/30 text-[10px]">SR</span>
+            </div>
+            <div className="h-10 w-px bg-white/5" />
+            <span className="text-mono text-white/10 text-[10px] tracking-[0.5em] font-black">{dish.category}</span>
           </div>
         </div>
       </div>
@@ -121,157 +145,174 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
   );
 };
 
+/* ─── Secondary Dish Card (Masterpiece Edition) ─── */
 const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: number }) => {
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const imageUrl = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      transition={{ delay: 0.15 * idx, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-      className={`relative rounded-[1.5rem] overflow-hidden group shadow-xl ${
-        idx === 0 ? 'aspect-[4/5]' : 'aspect-square mt-8'
+      transition={{ delay: 0.2 * idx, duration: 2, ease: [0.19, 1, 0.22, 1] }}
+      className={`relative rounded-[2.5rem] overflow-hidden group luxury-card ${
+        idx === 0 ? 'aspect-[4/5]' : 'aspect-square lg:mt-20'
       }`}
     >
-      <Image
-        src={imageUrl}
-        alt={name}
-        fill
-        className="object-cover transition-transform duration-[4s] group-hover:scale-110 brightness-[0.5]"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+      <div className="absolute inset-0 overflow-hidden">
+        <Image
+          src={imageUrl}
+          alt={name}
+          fill
+          className="object-cover transition-transform duration-[6s] group-hover:scale-110 brightness-[0.5]"
+        />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-transparent to-transparent" />
       
-      <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end">
-        <h4 className="text-white text-xl md:text-2xl font-serif font-light mb-2 group-hover:text-gold transition-colors duration-500">{name}</h4>
+      <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-end">
+        <h4 className="text-white text-2xl md:text-4xl font-serif font-light mb-6 leading-tight group-hover:text-gold transition-colors duration-1000">{name}</h4>
         <div className="flex justify-between items-center">
-          <span className="text-gold/50 text-sm font-serif">{dish.price}</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-gold/10 group-hover:bg-gold transition-colors duration-500" />
+          <div className="flex items-baseline gap-2">
+            <span className="text-gold/60 text-2xl font-serif">{dish.price}</span>
+            <span className="text-mono text-gold/20 text-[8px]">SR</span>
+          </div>
+          <div className="w-2.5 h-2.5 rounded-full bg-gold/5 group-hover:bg-gold/40 transition-all duration-1000" />
         </div>
       </div>
     </motion.div>
   );
 };
 
-/* ═══════════════════════════════════════════════════════
-   STORY / PHILOSOPHY SECTION
-   ═══════════════════════════════════════════════════════ */
 function PhilosophySection() {
   const { t } = useLanguage();
   return (
     <section className="w-full section-padding relative bg-bg overflow-hidden">
-      {/* Subtle top border */}
-      <div className="divider-gold mb-32" />
+      <div className="divider-gold opacity-30 mb-48" />
       
       <div className="container-luxury">
-        <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-          <motion.span 
-            initial={{ opacity: 0, y: 10 }}
+        <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="section-label mb-10 tracking-[0.8em]"
+            className="flex flex-col items-center gap-10"
           >
-            {t('story.label')}
-          </motion.span>
+            <span className="section-label tracking-[1.5em] font-black">{t('story.label')}</span>
+            <div className="w-px h-12 bg-gold/30" />
+          </motion.div>
           
           <motion.h2 
-            initial={{ opacity: 0, y: 30, filter: 'blur(6px)' }}
+            initial={{ opacity: 0, y: 50, filter: 'blur(20px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-            className="text-white text-3xl md:text-6xl lg:text-7xl font-serif font-light mb-16 tracking-tight leading-tight italic"
+            transition={{ delay: 0.3, duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
+            className="text-white text-4xl md:text-7xl lg:text-8xl font-serif font-light mb-24 tracking-tightest leading-tight italic"
           >
             {t('story.title')}
           </motion.h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 text-left">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-24 text-left items-start">
             <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="text-white/50 text-base md:text-lg font-serif italic leading-relaxed"
+              transition={{ delay: 0.5, duration: 1.5 }}
+              className="text-white/50 text-xl md:text-3xl font-serif italic leading-[1.6] font-light"
             >
               {t('story.p1')}
             </motion.p>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5 }}
-              className="text-white/30 text-sm md:text-base leading-relaxed"
-            >
-              {t('story.p2')}
-            </motion.p>
+            <div className="flex flex-col gap-10">
+              <motion.p 
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.7, duration: 1.5 }}
+                className="text-white/30 text-base md:text-xl leading-relaxed"
+              >
+                {t('story.p2')}
+              </motion.p>
+              <div className="h-[1px] w-40 bg-white/5" />
+            </div>
           </div>
           
-          <div className="mt-20 w-px h-20 bg-gradient-to-b from-gold/20 to-transparent" />
+          <div className="mt-40 relative w-px h-32 bg-white/[0.05] overflow-hidden">
+            <motion.div 
+              animate={{ y: ['-100%', '300%'] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent via-gold/30 to-transparent"
+            />
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   MENU EXPERIENCE
-   ═══════════════════════════════════════════════════════ */
 function MenuExperience() {
   const { t, lang } = useLanguage();
   const [activeChapter, setActiveChapter] = useState(CHAPTERS[0].id);
 
   return (
-    <section id="menu" className="w-full py-24 md:py-32 bg-bg relative">
+    <section id="menu" className="w-full py-32 md:py-56 bg-bg relative">
       <div className="container-luxury">
-        {/* Header */}
-        <div className="mb-24 md:mb-32 text-center lg:text-left">
-          <span className="section-label">{t('menu.label')}</span>
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mt-6">
+        {/* Header Orchestration */}
+        <div className="mb-32 md:mb-56 text-center lg:text-left">
+          <div className="flex items-center gap-6 mb-12 justify-center lg:justify-start">
+            <span className="section-label !opacity-60">{t('menu.label')}</span>
+            <div className="h-[1px] w-24 bg-white/5 hidden md:block" />
+          </div>
+          
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-16">
             <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -50, filter: 'blur(20px)' }}
+              whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
               viewport={{ once: true }}
-              className="text-white text-5xl md:text-8xl lg:text-9xl font-serif font-light tracking-tighter leading-none italic"
+              className="text-white text-6xl md:text-9xl lg:text-[11rem] font-serif font-light tracking-tighter leading-none italic"
             >
-              The <span className="text-gold">Experience.</span>
+              The <span className="text-gold shimmer-gold not-italic !font-black">Experience.</span>
             </motion.h2>
             
-            {/* Chapter Navigation */}
-            <div className="flex gap-3 md:gap-6 overflow-x-auto no-scrollbar pb-4 -mx-6 px-6 lg:mx-0 lg:px-0">
+            {/* Chapter Navigation — Editorial Sidebar style */}
+            <div className="flex lg:flex-col gap-6 md:gap-8 overflow-x-auto no-scrollbar pb-6 -mx-6 px-6 lg:mx-0 lg:px-0 lg:pb-0 items-center lg:items-end">
               {CHAPTERS.map((chap) => (
                 <button
                   key={chap.id}
                   onClick={() => setActiveChapter(chap.id)}
-                  className={`relative group flex flex-col items-center gap-1.5 min-w-fit px-3 py-2 rounded-xl transition-all duration-500 ${
-                    activeChapter === chap.id 
-                      ? 'opacity-100 bg-gold/[0.06] border border-gold/15' 
-                      : 'opacity-30 hover:opacity-50 border border-transparent'
+                  className={`relative group flex items-center gap-6 min-w-fit transition-all duration-700 ${
+                    activeChapter === chap.id ? 'opacity-100' : 'opacity-20 hover:opacity-50'
                   }`}
                 >
-                  <span className={`font-serif text-xl transition-all duration-500 ${
-                    activeChapter === chap.id ? 'text-gold' : 'text-white/60'
-                  }`}>{chap.kanji}</span>
-                  <span className={`text-[9px] uppercase tracking-[0.15em] font-medium whitespace-nowrap font-mono ${
-                    activeChapter === chap.id ? 'text-gold/80' : 'text-white/40'
-                  }`}>
-                    {lang === 'ar' ? chap.titleAr : chap.title}
-                  </span>
+                  <div className="flex flex-col items-center lg:items-end">
+                    <span className="text-mono text-[9px] tracking-[0.4em] font-black uppercase text-gold/60 mb-1">
+                      {lang === 'ar' ? chap.titleAr : chap.title}
+                    </span>
+                    <span className="font-serif text-3xl md:text-5xl text-white font-thin">
+                      {chap.kanji}
+                    </span>
+                  </div>
+                  {activeChapter === chap.id && (
+                    <motion.div 
+                      layoutId="active-chap"
+                      className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_15px_rgba(212,175,55,1)] hidden lg:block"
+                    />
+                  )}
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Chapter Content */}
+        {/* Dynamic Chapter Reveal */}
         <AnimatePresence mode="wait">
           {CHAPTERS.map((chap) => chap.id === activeChapter && (
             <motion.div
               key={chap.id}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
-              className="space-y-24 md:space-y-32"
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+              className="space-y-40 md:space-y-72"
             >
               {chap.cats.map((catName) => {
                 const dishes = menuData.filter(d => d.category === catName);
@@ -283,52 +324,59 @@ function MenuExperience() {
 
                 return (
                   <div key={catName} className="relative">
-                    {/* Category Header */}
-                    <div className="flex items-center gap-6 mb-12 md:mb-16">
-                      <span className="text-gold/30 font-serif text-4xl md:text-5xl">{KANJI[catName]}</span>
-                      <h3 className="text-white/50 text-xl md:text-2xl font-serif font-light tracking-widest uppercase">
-                        {t(`menu.cat.${catName}`)}
-                      </h3>
-                      <div className="flex-1 h-px bg-white/[0.04]" />
-                      <span className="text-white/15 text-[9px] font-mono uppercase tracking-widest hidden md:block">
-                        {dishes.length} items
-                      </span>
+                    {/* Category Editorial Header */}
+                    <div className="flex flex-col md:flex-row md:items-end gap-8 mb-20 md:mb-32">
+                      <div className="flex items-center gap-8">
+                        <span className="text-gold/60 font-serif text-6xl md:text-8xl font-thin leading-none">{KANJI[catName]}</span>
+                        <div className="flex flex-col">
+                          <span className="text-mono text-gold/30 text-[10px] tracking-[0.8em] font-black mb-2 uppercase">Category</span>
+                          <h3 className="text-white/90 text-3xl md:text-6xl font-serif font-light tracking-tight italic">
+                            {t(`menu.cat.${catName}`)}
+                          </h3>
+                        </div>
+                      </div>
+                      <div className="flex-1 h-[1px] bg-white/[0.04] mb-4 hidden md:block" />
+                      <div className="flex flex-col items-end gap-2 mb-2">
+                         <span className="text-mono text-white/10 text-[9px] uppercase tracking-widest font-black">
+                           {dishes.length} Selected Items
+                         </span>
+                         <div className="w-12 h-px bg-gold/20" />
+                      </div>
                     </div>
 
-                    <div className="flex flex-col gap-10 md:gap-20">
+                    <div className="flex flex-col gap-24 md:gap-40">
                       <FeaturedDishCard dish={featured} lang={lang} />
                       
                       {secondary.length > 0 && (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-start">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-start">
                           {secondary.map((s, i) => (
                             <SecondaryDishCard key={s.id} dish={s} lang={lang} idx={i} />
                           ))}
                         </div>
                       )}
 
-                      {/* Remaining items — editorial list */}
+                      {/* Remaining items — Editorial typography list */}
                       {others.length > 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-6 pt-12 border-t border-white/[0.04]">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-24 gap-y-12 pt-20 border-t border-white/[0.03]">
                           {others.map((dish, idx) => (
                             <motion.div 
                               key={dish.id} 
-                              className="flex justify-between items-baseline group py-2"
-                              initial={{ opacity: 0, y: 10 }}
+                              className="flex flex-col group py-4 relative"
+                              initial={{ opacity: 0, y: 20 }}
                               whileInView={{ opacity: 1, y: 0 }}
                               viewport={{ once: true }}
-                              transition={{ delay: idx * 0.03 }}
-                              whileHover={{ x: 6 }}
+                              transition={{ delay: idx * 0.05 }}
                             >
-                              <div className="flex flex-col gap-0.5 min-w-0">
-                                <span className="text-white/70 font-serif text-base group-hover:text-gold transition-colors duration-500 truncate">
+                              <div className="flex justify-between items-baseline mb-2">
+                                <span className="text-white/80 font-serif text-xl md:text-2xl group-hover:text-gold transition-colors duration-700">
                                   {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
                                 </span>
-                                <span className="text-white/20 text-[10px] italic font-serif truncate max-w-[180px]">
-                                  {lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}
-                                </span>
+                                <span className="text-gold/40 font-serif text-lg group-hover:text-gold transition-colors duration-700">{dish.price}</span>
                               </div>
-                              <div className="flex-1 border-b border-dotted border-white/[0.04] mx-3 mb-1.5 min-w-[20px]" />
-                              <span className="text-gold/40 font-serif text-sm group-hover:text-gold transition-colors duration-500 flex-shrink-0">{dish.price}</span>
+                              <p className="text-white/20 text-xs md:text-sm italic font-serif leading-relaxed line-clamp-1 group-hover:text-white/40 transition-colors duration-700">
+                                {lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}
+                              </p>
+                              <div className="absolute bottom-0 left-0 w-0 h-px bg-gold/20 group-hover:w-full transition-all duration-1000" />
                             </motion.div>
                           ))}
                         </div>
@@ -345,32 +393,29 @@ function MenuExperience() {
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   CONTACT SECTION
-   ═══════════════════════════════════════════════════════ */
 function ContactSection() {
   const { t } = useLanguage();
   return (
     <section id="contact" className="w-full section-padding relative bg-bg overflow-hidden">
-      <div className="divider-gold mb-32" />
+      <div className="divider-gold opacity-30 mb-56" />
       
       <div className="container-luxury relative z-10">
-        {/* Ambient background */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[40vh] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.02),transparent_60%)] pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[50vh] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
         
-        <div className="max-w-5xl mx-auto text-center">
+        <div className="max-w-6xl mx-auto text-center">
           <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
+            initial={{ opacity: 0, y: 30 }} 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="flex flex-col items-center gap-10 mb-32"
           >
-            <span className="section-label mb-6 block tracking-[0.8em]">{t('contact.label')}</span>
-            <h2 className="text-white text-4xl md:text-7xl lg:text-8xl font-serif font-light mb-24 md:mb-32 tracking-tighter leading-none italic">
-              Experience the <span className="text-gold">Art of Motion.</span>
+            <span className="section-label tracking-[1em] font-black">{t('contact.label')}</span>
+            <h2 className="text-white text-5xl md:text-8xl lg:text-9xl font-serif font-light tracking-tightest leading-none italic">
+              Experience the <span className="text-gold shimmer-gold not-italic !font-black">Art of Motion.</span>
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-24">
             {[
               { label: t('contact.visit'), content: t('contact.location'), sub: "Riyadh, KSA", icon: "📍" },
               { label: t('contact.opening'), content: t('contact.hours'), sub: "7 Days a Week", icon: "🕐" },
@@ -378,34 +423,35 @@ function ContactSection() {
             ].map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.15 * i, duration: 1 }}
-                className="card-glass rounded-2xl p-8 flex flex-col items-center gap-5"
+                transition={{ delay: 0.2 * i, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+                className="luxury-card rounded-[2.5rem] p-12 flex flex-col items-center gap-8 relative overflow-hidden group"
               >
-                <span className="text-2xl">{item.icon}</span>
+                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity duration-1000 text-6xl">
+                  {item.icon}
+                </div>
                 <div>
-                  <h4 className="text-gold/40 text-[9px] uppercase tracking-[0.4em] font-mono font-bold mb-3">{item.label}</h4>
-                  <p className="text-white text-lg font-serif font-light mb-1">{item.content}</p>
-                  <span className="text-white/15 text-[9px] uppercase tracking-widest font-mono">{item.sub}</span>
+                  <h4 className="text-gold/60 text-[10px] uppercase tracking-[0.5em] font-black font-mono mb-6">{item.label}</h4>
+                  <p className="text-white text-2xl md:text-3xl font-serif font-light mb-3">{item.content}</p>
+                  <span className="text-white/10 text-[10px] uppercase tracking-[0.5em] font-black font-mono">{item.sub}</span>
                 </div>
               </motion.div>
             ))}
           </div>
 
           <motion.div 
-            className="mt-24 md:mt-32" 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            className="mt-40 md:mt-56" 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
             <a 
               href="tel:+966" 
-              className="group relative inline-flex items-center gap-4 px-12 md:px-16 py-5 md:py-6 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl overflow-hidden transition-all duration-700 hover:border-gold/30 hover:shadow-[0_0_40px_rgba(212,175,55,0.08)]"
+              className="cta-btn group px-20 py-8"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-              <span className="relative text-white text-[11px] uppercase tracking-[0.5em] font-bold group-hover:text-gold transition-colors duration-500">
+              <span className="relative text-white text-[11px] uppercase tracking-[0.6em] font-black group-hover:text-gold group-hover:tracking-[0.8em] transition-all duration-700">
                 {t('contact.cta')}
               </span>
             </a>
@@ -416,29 +462,73 @@ function ContactSection() {
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   FOOTER
-   ═══════════════════════════════════════════════════════ */
 function Footer() {
   const { t } = useLanguage();
   return (
-    <footer className="w-full pt-32 pb-28 bg-bg relative overflow-hidden">
+    <footer className="w-full pt-48 pb-32 bg-bg relative overflow-hidden">
       <div className="container-luxury flex flex-col items-center">
-        {/* Brand Mark */}
+        {/* Cinematic Brand Mark */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="flex flex-col items-center gap-8 mb-24"
+          className="flex flex-col items-center gap-12 mb-32"
         >
           <motion.div 
-            className="relative w-24 h-24 opacity-80 mix-blend-screen"
-            animate={{ filter: ['drop-shadow(0 0 8px rgba(212,175,55,0.1))', 'drop-shadow(0 0 20px rgba(212,175,55,0.3))', 'drop-shadow(0 0 8px rgba(212,175,55,0.1))'] }}
-            transition={{ duration: 4, repeat: Infinity }}
+            className="relative w-32 h-32 mix-blend-screen opacity-90"
+            animate={{ 
+              filter: [
+                'drop-shadow(0 0 10px rgba(212,175,55,0.2))', 
+                'drop-shadow(0 0 30px rgba(212,175,55,0.5))', 
+                'drop-shadow(0 0 10px rgba(212,175,55,0.2))'
+              ],
+              scale: [1, 1.05, 1]
+            }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           >
             <Image src="/media/optimized/brand-logo.png" alt="Sugi Logo" fill className="object-contain" />
           </motion.div>
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-4">
+            <h2 className="text-white text-3xl md:text-5xl font-serif font-light tracking-[0.8em] leading-none uppercase">SUGI SUSHI</h2>
+            <div className="h-[1px] w-48 bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+            <span className="text-gold/30 text-[9px] font-mono uppercase tracking-[0.6em] font-black">{t('footer.perfection')}</span>
+          </div>
+        </motion.div>
+
+        {/* Navigation & Legal Links */}
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-12 pt-16 border-t border-white/[0.03]">
+          <div className="flex gap-12 md:gap-20">
+            {['menu', 'story', 'contact'].map(item => (
+              <a 
+                key={item} 
+                href={`#${item}`} 
+                className="text-[10px] text-white/20 hover:text-gold transition-all duration-500 uppercase tracking-[0.4em] font-black font-mono"
+              >
+                {t(`nav.${item}`)}
+              </a>
+            ))}
+          </div>
+          <div className="flex flex-col items-center md:items-end gap-2">
+            <p className="text-[10px] text-white/10 uppercase tracking-[0.6em] font-black font-mono">© 2026 SUGI EXPERIENCE • RIYADH</p>
+            <span className="text-[8px] text-white/5 uppercase tracking-[0.4em] font-mono">Crafted with Perfection</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export default function MenuSection() {
+  return (
+    <div className="bg-bg relative">
+      <PhilosophySection />
+      <MenuExperience />
+      <ContactSection />
+      <Footer />
+    </div>
+  );
+}
+ssName="flex flex-col items-center gap-2">
             <span className="text-white/80 text-2xl font-serif font-light tracking-[0.7em]">SUGI SUSHI</span>
             <span className="text-gold/25 text-[8px] font-mono uppercase tracking-[0.5em]">{t('footer.perfection')}</span>
           </div>
