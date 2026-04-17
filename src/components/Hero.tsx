@@ -25,7 +25,7 @@ export default function Hero({ onTabChange }: HeroProps) {
   });
 
   // Cinematic Parallax & Focus Shift
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
@@ -39,20 +39,20 @@ export default function Hero({ onTabChange }: HeroProps) {
     <section ref={containerRef} className="relative h-[110vh] w-full flex items-center justify-center overflow-hidden bg-bg">
       {/* ─── Cinematic Background (Depth Shift) ─── */}
       <motion.div 
-        style={{ scale: videoScale, filter: `blur(0px)` }}
+        style={{ scale: heroScale, filter: `blur(0px)` }}
         className="absolute inset-0 z-0"
       >
         <motion.div style={{ filter: `blur(0px)` }} className="relative w-full h-full">
           <Image
-            src="/media/optimized/hero-wallpaper-alt-4.jpg"
+            src="/media/optimized/hero-wallpaper-0.jpg"
             alt="Sugi Sushi Hero Wallpaper"
             fill
             priority
-            className="object-cover grayscale-[0.2] brightness-[0.6] scale-[1.05]"
+            className="object-cover brightness-[0.35] scale-[1.05] transition-opacity duration-1000"
           />
         </motion.div>
         
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-bg" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-bg" />
       </motion.div>
 
       {/* ─── Global Cursor Interaction (Identity Hook) ─── */}
