@@ -431,13 +431,13 @@ function Footer() {
           viewport={{ once: true }}
           className="flex flex-col items-center gap-8 mb-24"
         >
-          <motion.span 
-            className="text-gold/80 text-7xl font-serif"
+          <motion.div 
+            className="relative w-24 h-24 opacity-80 mix-blend-screen"
             animate={{ filter: ['drop-shadow(0 0 8px rgba(212,175,55,0.1))', 'drop-shadow(0 0 20px rgba(212,175,55,0.3))', 'drop-shadow(0 0 8px rgba(212,175,55,0.1))'] }}
             transition={{ duration: 4, repeat: Infinity }}
           >
-            杉
-          </motion.span>
+            <Image src="/media/optimized/brand-logo.png" alt="Sugi Logo" fill className="object-contain" />
+          </motion.div>
           <div className="flex flex-col items-center gap-2">
             <span className="text-white/80 text-2xl font-serif font-light tracking-[0.7em]">SUGI SUSHI</span>
             <span className="text-gold/25 text-[8px] font-mono uppercase tracking-[0.5em]">{t('footer.perfection')}</span>

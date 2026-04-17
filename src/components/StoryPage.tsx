@@ -23,7 +23,7 @@ export default function StoryPage() {
       {/* Cinematic Background Elements */}
       <motion.div style={{ scale, opacity }} className="absolute inset-0 pointer-events-none z-0">
         <Image
-          src="/media/optimized/hero-wallpaper-alt-0.jpg"
+          src="https://images.unsplash.com/photo-1580828369019-2238b909ca8c?auto=format&fit=crop&w=1600&q=80"
           alt="Chef Background"
           fill
           className="object-cover opacity-[0.15] contrast-125 grayscale"
@@ -47,9 +47,9 @@ export default function StoryPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
           >
-            <span className="mono-tag text-gold mb-10 tracking-[0.8em]">Heritage</span>
+            <span className="mono-tag text-gold mb-10 tracking-[0.8em] uppercase">{t('story.label')}</span>
             <h1 className="text-display text-white mb-10 drop-shadow-2xl">
-              THE <span className="text-gold italic">SOUL</span> <br /> OF SUGI
+              {t('story.hero1')} <span className="text-gold italic">{t('story.hero2')}</span> <br /> {t('story.hero3')}
             </h1>
             <div className="w-px h-24 bg-gradient-to-b from-gold/40 to-transparent mx-auto" />
           </motion.div>
@@ -91,7 +91,9 @@ export default function StoryPage() {
               {t('story.p2')}
             </p>
             <div className="pt-8 flex items-center gap-6">
-              <span className="text-gold/80 font-serif text-3xl italic">杉</span>
+              <div className="relative w-12 h-12 opacity-80 mix-blend-screen">
+                <Image src="/media/optimized/brand-logo.png" alt="Sugi Logo" fill className="object-contain" />
+              </div>
               <div className="h-px w-16 bg-gold/20" />
               <span className="text-white/30 text-[10px] uppercase tracking-widest font-mono">
                 {t('story.sig')}
@@ -110,9 +112,9 @@ export default function StoryPage() {
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.05),transparent_60%)] pointer-events-none" />
           <h3 className="text-2xl md:text-4xl text-white/90 font-serif font-light italic leading-relaxed">
-            &quot;True luxury is not found in excess, but in the masterful execution of the essential.&quot;
+            {t('story.quote')}
           </h3>
-          <span className="block mt-8 text-gold/50 text-[10px] uppercase tracking-[0.5em] font-mono">The Sugi Philosophy</span>
+          <span className="block mt-8 text-gold/50 text-[10px] uppercase tracking-[0.5em] font-mono">{t('story.phil')}</span>
         </motion.div>
       </div>
     </div>

@@ -3,19 +3,21 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const IMAGES = [
-  { src: '/media/optimized/brochure-3.jpg', aspect: 'aspect-[4/5]', delay: 0.1 },
-  { src: '/media/optimized/enseigne-1.jpg', aspect: 'aspect-[16/9]', delay: 0.2 },
-  { src: '/media/optimized/brochure-5.jpg', aspect: 'aspect-square', delay: 0.3 },
-  { src: '/media/optimized/brochure-7.jpg', aspect: 'aspect-[3/4]', delay: 0.15 },
+  { src: 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-[4/5]', delay: 0.1 },
+  { src: 'https://images.unsplash.com/photo-1580828369019-2238b909ca8c?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-[16/9]', delay: 0.2 },
+  { src: 'https://images.unsplash.com/photo-1558985250-27a406d64cb3?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-square', delay: 0.3 },
+  { src: 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-[3/4]', delay: 0.15 },
   { src: '/media/optimized/brochure-1.jpg', aspect: 'aspect-[4/5]', delay: 0.25 },
-  { src: '/media/optimized/brochure-9.jpg', aspect: 'aspect-square', delay: 0.35 },
-  { src: '/media/optimized/brochure-8.jpg', aspect: 'aspect-[16/9]', delay: 0.2 },
+  { src: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-square', delay: 0.35 },
+  { src: 'https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-[16/9]', delay: 0.2 },
   { src: '/media/optimized/brochure-10.jpg', aspect: 'aspect-[4/5]', delay: 0.3 },
 ];
 
 export default function GalleryPage() {
+  const { t } = useLanguage();
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   return (
@@ -28,9 +30,9 @@ export default function GalleryPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
           >
-            <span className="section-label mb-4 tracking-[0.8em]">Visual Journey</span>
+            <span className="section-label mb-4 tracking-[0.8em] uppercase">{t('gallery.label')}</span>
             <h1 className="text-5xl md:text-7xl text-white font-serif font-light leading-none">
-              The <span className="text-gold italic">Gallery</span>
+              {t('gallery.title1')} <span className="text-gold italic">{t('gallery.title2')}</span>
             </h1>
           </motion.div>
           
@@ -40,9 +42,9 @@ export default function GalleryPage() {
             transition={{ duration: 1, delay: 0.3 }}
             className="flex items-center gap-4 text-white/30"
           >
-            <span className="text-[10px] uppercase font-mono tracking-[0.4em]">Atmosphere</span>
+            <span className="text-[10px] uppercase font-mono tracking-[0.4em]">{t('gallery.tag1')}</span>
             <div className="w-1 h-1 rounded-full bg-gold/50" />
-            <span className="text-[10px] uppercase font-mono tracking-[0.4em]">Cuisine</span>
+            <span className="text-[10px] uppercase font-mono tracking-[0.4em]">{t('gallery.tag2')}</span>
           </motion.div>
         </div>
 
@@ -76,7 +78,7 @@ export default function GalleryPage() {
               
               {/* Hover Cursor Hint */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                <span className="mono-tag !bg-white/5 !border-white/10 !text-white/60">View</span>
+                <span className="mono-tag !bg-white/5 !border-white/10 !text-white/60">{t('gallery.view')}</span>
               </div>
             </motion.div>
           ))}

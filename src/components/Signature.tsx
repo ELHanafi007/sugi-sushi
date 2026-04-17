@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { menuData, Dish } from '@/data/menuData';
 import Image from 'next/image';
+import { useLanguage } from '@/context/LanguageContext';
 
 /**
  * SIGNATURE SELECTION — Editorial Showcase
@@ -13,12 +14,13 @@ import Image from 'next/image';
  */
 
 const DISH_IMAGES = [
-  '/media/optimized/brochure-3.jpg',
-  '/media/optimized/brochure-5.jpg',
-  '/media/optimized/brochure-7.jpg',
+  'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=1600&q=80',
+  'https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=1600&q=80',
 ];
 
 const FeaturedDish = ({ dish }: { dish: Dish }) => {
+  const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -73,10 +75,10 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
           {/* Badge Row */}
           <div className="flex items-center gap-4 mb-6">
             <span className="mono-tag !text-gold !bg-gold/10 !border-gold/20 shadow-[0_0_20px_rgba(212,175,55,0.15)]">
-              Masterpiece 01
+              {t('signature.badge')}
             </span>
             <div className="h-px w-10 bg-gradient-to-r from-gold/30 to-transparent" />
-            <span className="text-mono !text-white/30 tracking-[0.4em] text-[8px]">Signature</span>
+            <span className="text-mono !text-white/30 tracking-[0.4em] text-[8px] uppercase">{t('signature.sig')}</span>
           </div>
           
           {/* Title */}
@@ -92,7 +94,7 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
             
             <div className="flex items-baseline gap-3 bg-black/40 backdrop-blur-xl px-6 py-3 rounded-2xl border border-white/[0.06] flex-shrink-0">
               <span className="text-3xl text-gold font-serif font-light tracking-tight">{dish.price}</span>
-              <span className="text-mono text-gold/30 text-[8px]">SR</span>
+              <span className="text-mono text-gold/30 text-[8px]">{t('common.sr')}</span>
             </div>
           </div>
         </motion.div>
@@ -105,6 +107,7 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
 };
 
 const SecondaryDish = ({ dish, idx }: { dish: Dish, idx: number }) => {
+  const { t } = useLanguage();
   return (
     <motion.div 
       initial={{ opacity: 0, y: 40 }}
@@ -130,10 +133,10 @@ const SecondaryDish = ({ dish, idx }: { dish: Dish, idx: number }) => {
           whileHover={{ y: -5 }}
           transition={{ duration: 0.8 }}
         >
-          <span className="text-mono text-gold/40 mb-3 block text-[8px] tracking-[0.5em]">Curated</span>
+          <span className="text-mono text-gold/40 mb-3 block text-[8px] tracking-[0.5em] uppercase">{t('signature.curated')}</span>
           <h4 className="text-2xl md:text-3xl text-white font-serif font-light mb-3 leading-none group-hover:text-gold transition-colors duration-700">{dish.name}</h4>
           <div className="flex items-center justify-between">
-            <span className="text-white/30 font-serif italic">{dish.price} SR</span>
+            <span className="text-white/30 font-serif italic">{dish.price} {t('common.sr')}</span>
             <motion.div 
               className="w-2 h-2 rounded-full bg-gold/10 group-hover:bg-gold transition-all duration-700"
               animate={{ boxShadow: ['0 0 0px rgba(212,175,55,0)', '0 0 12px rgba(212,175,55,0.5)', '0 0 0px rgba(212,175,55,0)'] }}
@@ -147,6 +150,7 @@ const SecondaryDish = ({ dish, idx }: { dish: Dish, idx: number }) => {
 };
 
 export default function Signature() {
+  const { t } = useLanguage();
   const signatures = menuData.filter(d => d.tags.includes('Signature')).slice(0, 3);
   const featured = signatures[0];
   const secondary = signatures.slice(1);
@@ -166,7 +170,7 @@ export default function Signature() {
               viewport={{ once: true }}
               className="text-mono text-gold/30 mb-6 block text-[9px] tracking-[0.6em]"
             >
-              The Selection
+              {t('signature.label')}
             </motion.span>
             <motion.h2 
               initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
@@ -175,7 +179,7 @@ export default function Signature() {
               transition={{ delay: 0.15, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
               className="text-h1 text-white italic"
             >
-              Signature <span className="text-gold">Art.</span>
+              {t('signature.title1')} <span className="text-gold">{t('signature.title2')}</span>
             </motion.h2>
           </div>
           <div className="h-px flex-1 bg-white/[0.04] mb-6 hidden lg:block mx-8" />
@@ -187,7 +191,7 @@ export default function Signature() {
             className="flex flex-col items-end gap-2 mb-6"
           >
             <span className="text-gold/80 text-4xl font-serif">匠</span>
-            <span className="text-mono text-white/15 text-[8px] tracking-[0.4em]">Collection</span>
+            <span className="text-mono text-white/15 text-[8px] tracking-[0.4em] uppercase">{t('signature.collection')}</span>
           </motion.div>
         </div>
 
@@ -210,7 +214,7 @@ export default function Signature() {
             transition={{ duration: 4, repeat: Infinity }}
             className="text-mono text-white/15 tracking-[1.5em] text-[8px]"
            >
-            THE CLIMAX
+            {t('signature.climax')}
            </motion.p>
         </div>
       </div>

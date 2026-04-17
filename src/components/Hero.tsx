@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { NavTab } from './BottomNav';
+import { useLanguage } from '@/context/LanguageContext';
 
 /**
  * SUGI SUSHI — Cinematic Hero
@@ -17,6 +18,7 @@ interface HeroProps {
 }
 
 export default function Hero({ onTabChange }: HeroProps) {
+  const { t, lang } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -37,14 +39,13 @@ export default function Hero({ onTabChange }: HeroProps) {
         style={{ scale: heroScale }}
         className="absolute inset-0 z-0"
       >
-        {/* Enhanced Static Wallpaper */}
         <motion.div
           animate={{ scale: [1, 1.08] }}
           transition={{ duration: 25, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
           className="absolute inset-0 w-full h-full"
         >
           <Image
-            src="/media/optimized/hero-wallpaper-0.jpg"
+            src="https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1600&q=80"
             alt="Sugi Sushi — Japanese Dining Experience"
             fill
             priority
@@ -78,7 +79,9 @@ export default function Hero({ onTabChange }: HeroProps) {
           transition={{ duration: 1.2, delay: 0.8, ease: [0.19, 1, 0.22, 1] }}
           className="mb-10"
         >
-          <span className="text-mono text-gold/70 tracking-[0.6em] text-[9px]">Perfection in Motion</span>
+          <span className="text-mono text-gold/70 tracking-[0.6em] text-[9px] uppercase">
+            {t('hero.micro')}
+          </span>
         </motion.div>
 
         {/* Main Title */}
@@ -88,7 +91,7 @@ export default function Hero({ onTabChange }: HeroProps) {
           transition={{ duration: 2.5, delay: 1.1, ease: [0.19, 1, 0.22, 1] }}
           className="text-display liquid-gold mb-10 drop-shadow-2xl select-none"
         >
-          SUGI
+          {t('hero.title')}
         </motion.h1>
 
         {/* Subtitle with decorative lines */}
@@ -105,7 +108,7 @@ export default function Hero({ onTabChange }: HeroProps) {
             className="h-px bg-gradient-to-r from-transparent to-gold/40" 
           />
           <p className="text-white/50 text-lg md:text-xl font-serif italic tracking-wide">
-            Traditional Soul, Modern Vision
+            {t('hero.subtitle')}
           </p>
           <motion.div 
             initial={{ width: 0 }} 
@@ -128,7 +131,7 @@ export default function Hero({ onTabChange }: HeroProps) {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
             <span className="relative text-white/80 text-[11px] uppercase tracking-[0.5em] font-bold group-hover:text-gold transition-colors duration-500">
-              Explore the Menu
+              {t('hero.cta')}
             </span>
           </button>
         </motion.div>
@@ -141,7 +144,7 @@ export default function Hero({ onTabChange }: HeroProps) {
         transition={{ delay: 3.5, duration: 2 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4"
       >
-        <span className="text-mono text-[7px] text-white/20 tracking-[0.3em]">Scroll</span>
+        <span className="text-mono text-[7px] text-white/20 tracking-[0.3em] uppercase">{t('hero.scroll')}</span>
         <motion.div 
           animate={{ height: ['16px', '32px', '16px'], opacity: [0.2, 0.5, 0.2] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}

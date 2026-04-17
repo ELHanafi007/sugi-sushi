@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import Image from 'next/image';
+import { useLanguage } from '@/context/LanguageContext';
 
 /**
  * CHEF ARTISTRY — Emotional Peak
@@ -12,6 +13,7 @@ import Image from 'next/image';
  */
 
 export default function ChefArtistry() {
+  const { t, lang } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -34,7 +36,7 @@ export default function ChefArtistry() {
         className="absolute inset-0 z-0"
       >
         <Image
-          src="/media/optimized/hero-wallpaper-alt-0.jpg"
+          src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1600&q=80"
           alt="Chef crafting sushi with precision"
           fill
           className="object-cover opacity-50 contrast-110 saturate-[0.7]"
@@ -60,7 +62,7 @@ export default function ChefArtistry() {
                 transition={{ duration: 1.2 }}
                 className="text-mono text-gold/50 mb-10 block tracking-[0.8em] text-[8px]"
               >
-                The Hand of the Master
+                {t('artistry.label')}
               </motion.span>
 
               {/* Title */}
@@ -71,9 +73,9 @@ export default function ChefArtistry() {
                 transition={{ duration: 2, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
                 className="text-display text-white mb-14 drop-shadow-2xl"
               >
-                PRECISION <br className="hidden md:block" /> 
+                {t('artistry.title1')} <br className="hidden md:block" /> 
                 <span className="shimmer-gold italic font-light text-[0.6em]">&</span>{' '}
-                <span className="text-gold">SOUL</span>
+                <span className="text-gold">{t('artistry.title2')}</span>
               </motion.h2>
               
               {/* Quote */}
@@ -85,9 +87,7 @@ export default function ChefArtistry() {
                 className="flex flex-col items-center gap-8"
               >
                 <div className="w-px h-20 bg-gradient-to-b from-gold/30 via-gold/10 to-transparent" />
-                <p className="text-lg md:text-xl lg:text-2xl text-white/35 max-w-2xl font-serif italic leading-relaxed">
-                  &quot;In the silence of the kitchen, every cut is a conversation between the ocean and the blade.&quot;
-                </p>
+                <p className="text-lg md:text-xl lg:text-2xl text-white/35 max-w-2xl font-serif italic leading-relaxed" dangerouslySetInnerHTML={{ __html: t('artistry.quote') }} />
               </motion.div>
             </motion.div>
           </div>
@@ -102,7 +102,7 @@ export default function ChefArtistry() {
         transition={{ duration: 2 }}
         className="absolute top-1/2 left-8 -translate-y-1/2 hidden lg:block"
       >
-        <span className="text-mono vertical-text text-white tracking-[1em] text-[8px]">ARTISTRY</span>
+        <span className="text-mono vertical-text text-white tracking-[1em] text-[8px] uppercase">{t('artistry.side1')}</span>
       </motion.div>
       <motion.div 
         initial={{ opacity: 0 }}
@@ -111,7 +111,7 @@ export default function ChefArtistry() {
         transition={{ duration: 2, delay: 0.3 }}
         className="absolute top-1/2 right-8 -translate-y-1/2 hidden lg:block"
       >
-        <span className="text-mono vertical-text text-white tracking-[1em] text-[8px]">CRAFTSMANSHIP</span>
+        <span className="text-mono vertical-text text-white tracking-[1em] text-[8px] uppercase">{t('artistry.side2')}</span>
       </motion.div>
       
       {/* Cinematic Frame */}

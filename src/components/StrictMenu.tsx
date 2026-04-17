@@ -103,7 +103,7 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
               <h2 className="text-3xl md:text-4xl font-serif text-white tracking-tight leading-tight">{name}</h2>
               <div className="flex flex-col items-end flex-shrink-0">
                 <span className="text-2xl text-gold font-serif">{dish.price}</span>
-                <span className="text-white/15 text-[9px] uppercase tracking-widest mt-0.5 font-mono">VAT Incl.</span>
+                <span className="text-white/15 text-[9px] uppercase tracking-widest mt-0.5 font-mono">{t('strict.vat')}</span>
               </div>
             </div>
 
@@ -114,12 +114,12 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
             {/* Info Cards */}
             <div className="grid grid-cols-2 gap-3">
               <div className="card-glass rounded-xl p-5 space-y-2">
-                <span className="text-gold/30 text-[8px] uppercase tracking-[0.3em] font-mono font-bold block">Flavor</span>
-                <p className="text-white/80 text-sm font-serif">{dish.tags.includes('Spicy') ? 'Spicy & Vibrant' : 'Balanced & Umami'}</p>
+                <span className="text-gold/30 text-[8px] uppercase tracking-[0.3em] font-mono font-bold block">{t('strict.flavor')}</span>
+                <p className="text-white/80 text-sm font-serif">{dish.tags.includes('Spicy') ? t('strict.spicy') : t('strict.umami')}</p>
               </div>
               <div className="card-glass rounded-xl p-5 space-y-2">
-                <span className="text-gold/30 text-[8px] uppercase tracking-[0.3em] font-mono font-bold block">Chef Note</span>
-                <p className="text-white/80 text-sm font-serif">{dish.tags.includes('Signature') ? 'House Special' : 'Seasonal Pick'}</p>
+                <span className="text-gold/30 text-[8px] uppercase tracking-[0.3em] font-mono font-bold block">{t('strict.note')}</span>
+                <p className="text-white/80 text-sm font-serif">{dish.tags.includes('Signature') ? t('strict.special') : t('strict.seasonal')}</p>
               </div>
             </div>
 
@@ -127,7 +127,7 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
             <div className="pt-6 border-t border-white/[0.04] space-y-5">
               <div className="flex items-center gap-3">
                 <div className="w-6 h-px bg-gold/20" />
-                <h4 className="text-gold/40 text-[9px] uppercase tracking-[0.4em] font-mono font-bold">Details</h4>
+                <h4 className="text-gold/40 text-[9px] uppercase tracking-[0.4em] font-mono font-bold">{t('strict.details')}</h4>
               </div>
               
               <div className="flex flex-wrap gap-2">
@@ -144,7 +144,7 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
               </div>
 
               <p className="text-white/25 text-sm leading-relaxed font-serif italic">
-                Sourced with respect for the ocean and the season. Prepared with the precision of a master&apos;s blade.
+                {t('strict.sourced')}
               </p>
             </div>
 
@@ -152,7 +152,7 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
             {recommendations.length > 0 && (
               <div className="pt-8 space-y-5">
                 <h4 className="text-white/70 text-base font-serif italic">
-                  {lang === 'ar' ? 'نقترح عليك تجربته مع...' : 'Pairs beautifully with...'}
+                  {t('strict.pairs')}
                 </h4>
                 <div className="grid grid-cols-1 gap-3">
                   {recommendations.map(rec => (
@@ -243,10 +243,10 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
           animate={{ opacity: 1, y: 0 }}
           className="text-white text-3xl font-serif font-light mb-1"
         >
-          Menu
+          {t('menu.title')}
         </motion.h1>
         <span className="text-white/15 text-[9px] font-mono uppercase tracking-[0.4em]">
-          {menuData.length} Items • {CATEGORIES.length} Categories
+          {menuData.length} {t('menu.items')} • {CATEGORIES.length} {t('strict.categories')}
         </span>
       </div>
 

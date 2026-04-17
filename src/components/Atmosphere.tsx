@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 /**
  * ATMOSPHERE — Cinematic Pause
@@ -29,6 +30,7 @@ const FloatingParticle = ({ delay, x, size }: { delay: number; x: string; size: 
 );
 
 export default function Atmosphere() {
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -91,7 +93,7 @@ export default function Atmosphere() {
             transition={{ duration: 1 }}
             className="text-gold/30 text-[9px] uppercase tracking-[1.2em] font-bold font-mono block"
           >
-            The Atmosphere
+            {t('atmosphere.label')}
           </motion.span>
           
           {/* Quote */}
@@ -102,12 +104,8 @@ export default function Atmosphere() {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
               className="text-white/90 text-3xl md:text-6xl lg:text-7xl font-serif font-light leading-[1.15] tracking-tight italic"
-            >
-              &quot;A sanctuary where{' '}
-              <span className="text-gold">time slows</span>,{' '}
-              and every flavor tells a story of{' '}
-              <span className="text-gold/80">tradition</span>.&quot;
-            </motion.h2>
+              dangerouslySetInnerHTML={{ __html: t('atmosphere.quote') }}
+            />
           </div>
 
           {/* Breathing dot separator */}
@@ -140,7 +138,7 @@ export default function Atmosphere() {
         transition={{ duration: 2, delay: 0.5 }}
         className="absolute bottom-16 left-8 hidden lg:block"
       >
-        <span className="text-white font-mono text-[9px] tracking-[0.6em] vertical-text uppercase">Silence</span>
+        <span className="text-white font-mono text-[9px] tracking-[0.6em] vertical-text uppercase">{t('atmosphere.silence')}</span>
       </motion.div>
       <motion.div 
         initial={{ opacity: 0 }}
@@ -149,7 +147,7 @@ export default function Atmosphere() {
         transition={{ duration: 2, delay: 0.8 }}
         className="absolute top-16 right-8 hidden lg:block"
       >
-        <span className="text-white font-mono text-[9px] tracking-[0.6em] vertical-text uppercase">Motion</span>
+        <span className="text-white font-mono text-[9px] tracking-[0.6em] vertical-text uppercase">{t('atmosphere.motion')}</span>
       </motion.div>
     </section>
   );

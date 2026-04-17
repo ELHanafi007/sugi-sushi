@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
     qualities: [75, 80, 90],
     dangerouslyAllowSVG: false,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
   },
   compress: true,
   poweredByHeader: false,

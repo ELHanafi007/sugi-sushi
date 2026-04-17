@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 import { NavTab } from './BottomNav';
 
@@ -47,13 +48,13 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
           onClick={() => { onTabChange('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           className="flex items-center gap-3 group"
         >
-          <motion.span 
-            className="text-2xl font-serif text-gold"
-            whileHover={{ scale: 1.15, rotate: 5 }}
+          <motion.div 
+            className="relative w-7 h-7 md:w-8 md:h-8 opacity-90 mix-blend-screen"
+            whileHover={{ scale: 1.1 }}
             transition={{ type: 'spring', stiffness: 400, damping: 15 }}
           >
-            杉
-          </motion.span>
+            <Image src="/media/optimized/brand-logo.png" alt="Sugi Logo" fill className="object-contain" />
+          </motion.div>
           <div className="hidden sm:flex flex-col">
             <span className="text-white text-[10px] md:text-[11px] font-serif tracking-[0.5em] leading-none">SUGI</span>
             <span className="text-white/20 text-[7px] tracking-[0.3em] font-mono uppercase leading-none mt-0.5">Sushi</span>
