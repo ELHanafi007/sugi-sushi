@@ -17,9 +17,7 @@ interface HeroProps {
 }
 
 export default function Hero({ onTabChange }: HeroProps) {
-  const [videoLoaded, setVideoLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -39,28 +37,20 @@ export default function Hero({ onTabChange }: HeroProps) {
         style={{ scale: heroScale }}
         className="absolute inset-0 z-0"
       >
-        {/* Fallback image always present */}
-        <Image
-          src="/media/optimized/hero-wallpaper-0.jpg"
-          alt="Sugi Sushi — Japanese Dining Experience"
-          fill
-          priority
-          className={`object-cover brightness-[0.3] scale-[1.05] transition-opacity duration-[2s] ${videoLoaded ? 'opacity-0' : 'opacity-100'}`}
-        />
-        
-        {/* Video background */}
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          onLoadedData={() => setVideoLoaded(true)}
-          className={`video-bg brightness-[0.3] transition-opacity duration-[2s] ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
-          poster="/media/optimized/hero-wallpaper-0.jpg"
+        {/* Enhanced Static Wallpaper */}
+        <motion.div
+          animate={{ scale: [1, 1.08] }}
+          transition={{ duration: 25, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
+          className="absolute inset-0 w-full h-full"
         >
-          <source src="/videos/sushi-hero.mp4" type="video/mp4" />
-        </video>
+          <Image
+            src="/media/optimized/hero-wallpaper-0.jpg"
+            alt="Sugi Sushi — Japanese Dining Experience"
+            fill
+            priority
+            className="object-cover brightness-[0.35] contrast-125 saturate-110"
+          />
+        </motion.div>
         
         {/* Gradient overlays for depth */}
         <motion.div 
