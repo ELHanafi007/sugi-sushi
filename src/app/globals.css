@@ -105,7 +105,8 @@
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent);
   border: var(--white-border);
   box-shadow: var(--elev-1);
-  transition: all 0.8s var(--ease-expo);
+  transition: all 0.4s var(--ease-expo);
+  will-change: transform, opacity;
 }
 
 .luxury-card:hover {
@@ -128,7 +129,7 @@
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(6px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
@@ -149,7 +150,7 @@
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.01);
-  backdrop-filter: blur(24px);
+  backdrop-filter: blur(12px);
   transition: all 0.9s var(--ease-expo);
   cursor: pointer;
   position: relative;
@@ -196,6 +197,10 @@ body {
   color: #fff;
   font-family: var(--font-serif);
   overflow-x: hidden;
+  will-change: transform;
+  content-visibility: auto;
+  will-change: transform;
+  content-visibility: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;

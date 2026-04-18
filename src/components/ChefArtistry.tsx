@@ -116,7 +116,7 @@ export default function ChefArtistry() {
 
       {/* ─── Ambient Particles ─── */}
       <div className="absolute inset-0 pointer-events-none z-[1] opacity-20">
-        {[...Array(8)].map((_, i) => (
+        {[...Array(4)].map((_, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, x: Math.random() * 100 + "%", y: "100%" }}

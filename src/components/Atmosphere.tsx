@@ -87,7 +87,7 @@ export default function Atmosphere() {
 
       {/* Floating Particle Field */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
-        {[...Array(12)].map((_, i) => (
+        {[...Array(6)].map((_, i) => (
           <FloatingParticle 
             key={i} 
             delay={i * 1.2} 
