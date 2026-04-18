@@ -1,17 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Atmosphere from '@/components/Atmosphere';
 import ChefArtistry from '@/components/ChefArtistry';
 import Signature from '@/components/Signature';
-import MenuSection from '@/components/MenuSection';
-import BottomNav, { NavTab } from '@/components/BottomNav';
-import StrictMenu from '@/components/StrictMenu';
-import StoryPage from '@/components/StoryPage';
-import ReservationPage from '@/components/ReservationPage';
-import LocationPage from '@/components/LocationPage';
+
+const MenuSection = dynamic(() => import('@/components/MenuSection'), { ssr: false });
+const StrictMenu = dynamic(() => import('@/components/StrictMenu'), { ssr: false });
+const StoryPage = dynamic(() => import('@/components/StoryPage'), { ssr: false });
+const ReservationPage = dynamic(() => import('@/components/ReservationPage'), { ssr: false });
+const LocationPage = dynamic(() => import('@/components/LocationPage'), { ssr: false });
+const BottomNav = dynamic(() => import('@/components/BottomNav'), { ssr: false });
+
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
 /**
@@ -19,7 +22,7 @@ import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
  */
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const [activeTab, setActiveTab] = useState<any>('home');
   const [isLetterbox, setIsLetterbox] = useState(false);
   const { scrollYProgress } = useScroll();
   

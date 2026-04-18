@@ -69,6 +69,7 @@ function DishModal({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
       className="fixed inset-0 z-[300] bg-black/98 backdrop-blur-3xl overflow-y-auto no-scrollbar"
+      style={{ willChange: "opacity" }}
       onClick={onClose}
     >
       <div className="min-h-screen" onClick={e => e.stopPropagation()}>
@@ -97,7 +98,14 @@ function DishModal({
             transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
             className="relative aspect-[3/4] rounded-[3.5rem] overflow-hidden mb-12 shadow-[0_50px_100px_rgba(0,0,0,0.8)] luxury-card"
           >
-            <Image src={image} alt={name} fill className="object-cover transition-transform duration-[10s] hover:scale-110" priority />
+            <Image 
+              src={image} 
+              alt={name} 
+              fill 
+              sizes="(max-width: 768px) 100vw, 800px"
+              className="object-cover transition-transform duration-[10s] hover:scale-110" 
+              priority 
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-90" />
             
             {/* Focal Light */}
@@ -303,6 +311,7 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
                   src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
                   alt={cat}
                   fill
+                  sizes="128px"
                   className={`object-cover transition-all duration-1000 ${
                     isActive ? 'scale-110 brightness-[0.4] saturate-[1.5]' : 'brightness-[0.25] group-hover:brightness-[0.4]'
                   }`}
@@ -377,7 +386,14 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
                   className="group relative flex items-center gap-5 p-4 rounded-3xl luxury-card cursor-pointer overflow-hidden"
                 >
                   <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
-                    <Image src={dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE} alt={dish.name} width={80} height={80} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                    <Image 
+                      src={dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE} 
+                      alt={dish.name} 
+                      width={80} 
+                      height={80} 
+                      sizes="80px"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
+                    />
                   </div>
 
                   <div className="flex-1 min-w-0">

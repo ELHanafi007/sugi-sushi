@@ -90,7 +90,8 @@ export default function Hero({ onTabChange }: HeroProps) {
           y: contentY, 
           rotateX, 
           rotateY,
-          transformStyle: "preserve-3d"
+          transformStyle: "preserve-3d",
+          willChange: "transform"
         }}
         className="relative z-20 flex flex-col items-center text-center px-6"
       >
@@ -119,6 +120,7 @@ export default function Hero({ onTabChange }: HeroProps) {
                 ease: [0.19, 1, 0.22, 1] 
               }}
               className="inline-block"
+              style={{ willChange: "transform, opacity, filter" }}
             >
               {char === " " ? "\u00A0" : char}
             </motion.span>
@@ -131,6 +133,7 @@ export default function Hero({ onTabChange }: HeroProps) {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 2.5, delay: 1.8 }}
           className="flex flex-col items-center gap-8 mb-12"
+          style={{ willChange: "transform, opacity" }}
         >
           <p className="text-white/40 text-lg md:text-2xl font-serif italic tracking-wider max-w-2xl">
             {t('hero.subtitle')}
@@ -148,6 +151,7 @@ export default function Hero({ onTabChange }: HeroProps) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.5, delay: 2.5, ease: [0.19, 1, 0.22, 1] }}
+          style={{ willChange: "transform, opacity" }}
         >
           <button 
             onClick={() => onTabChange('menu')}
@@ -174,13 +178,14 @@ export default function Hero({ onTabChange }: HeroProps) {
             animate={{ y: ['-100%', '200%'] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent via-gold/50 to-transparent"
+            style={{ willChange: "transform" }}
           />
         </div>
       </motion.div>
 
-      {/* ─── Ambient Particles ─── */}
+      {/* ─── Ambient Particles — Reduced for Performance ─── */}
       <div className="absolute inset-0 z-[1] pointer-events-none opacity-40">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(3)].map((_, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, x: Math.random() * 100 + "%", y: "100%" }}
@@ -190,12 +195,13 @@ export default function Hero({ onTabChange }: HeroProps) {
               x: (Math.random() * 100) + (Math.random() * 10 - 5) + "%"
             }}
             transition={{ 
-              duration: 10 + Math.random() * 10, 
+              duration: 12 + Math.random() * 8, 
               delay: Math.random() * 5, 
               repeat: Infinity, 
               ease: "linear" 
             }}
             className="absolute w-1 h-1 bg-gold/30 rounded-full blur-[1px]"
+            style={{ willChange: "transform, opacity" }}
           />
         ))}
       </div>

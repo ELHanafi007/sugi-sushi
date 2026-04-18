@@ -39,6 +39,7 @@ export default function StoryPage() {
           src="https://images.unsplash.com/photo-1580828369019-2238b909ca8c?auto=format&fit=crop&w=1600&q=80"
           alt="Story Background"
           fill
+          sizes="100vw"
           className="object-cover grayscale contrast-125"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-bg via-transparent to-bg" />
@@ -93,6 +94,7 @@ export default function StoryPage() {
               src="/media/optimized/brochure-6.jpg"
               alt="The Craft"
               fill
+              sizes="(max-width: 1024px) 100vw, 600px"
               className="object-cover transition-transform duration-[4s] group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-bg/60 via-transparent to-transparent" />
@@ -133,7 +135,7 @@ export default function StoryPage() {
                 whileHover={{ rotate: 10, scale: 1.1 }}
                 className="relative w-16 h-16 opacity-90 mix-blend-screen"
               >
-                <Image src="/media/optimized/brand-logo.png" alt="Sugi" fill className="object-contain" />
+              <Image src="/media/optimized/brand-logo.png" alt="Sugi" fill sizes="64px" className="object-contain" />
               </motion.div>
               <div className="h-[1px] w-24 bg-white/5" />
               <div className="flex flex-col">

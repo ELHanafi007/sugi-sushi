@@ -91,6 +91,7 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
+      style={{ willChange: "transform, opacity" }}
       className="relative w-full h-[60vh] md:h-[75vh] rounded-[3rem] overflow-hidden group shadow-[0_40px_80px_rgba(0,0,0,0.5)] luxury-card"
     >
       <div className="absolute inset-0 overflow-hidden">
@@ -98,6 +99,7 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
           src={imageUrl}
           alt={name}
           fill
+          sizes="(max-width: 1024px) 100vw, 1200px"
           className="object-cover transition-transform duration-[8s] group-hover:scale-110 brightness-[0.4] saturate-[1.2]"
         />
       </div>
@@ -156,6 +158,7 @@ const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar';
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ delay: 0.2 * idx, duration: 2, ease: [0.19, 1, 0.22, 1] }}
+      style={{ willChange: "transform, opacity" }}
       className={`relative rounded-[2.5rem] overflow-hidden group luxury-card ${
         idx === 0 ? 'aspect-[4/5]' : 'aspect-square lg:mt-20'
       }`}
@@ -165,6 +168,7 @@ const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar';
           src={imageUrl}
           alt={name}
           fill
+          sizes="(max-width: 768px) 100vw, 500px"
           className="object-cover transition-transform duration-[6s] group-hover:scale-110 brightness-[0.5]"
         />
       </div>
