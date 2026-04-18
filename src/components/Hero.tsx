@@ -71,7 +71,7 @@ export default function Hero({ onTabChange }: HeroProps) {
           className="absolute inset-0 w-full h-full"
         >
           <Image
-            src="https://images.unsplash.com/photo-1578469550956-0e16b69c6a3d?auto=format&fit=crop&w=1600&q=80"
+            src="/media/optimized/hero-wallpaper-alt-0.jpg"
             alt="Sugi Sushi"
             fill
             priority
