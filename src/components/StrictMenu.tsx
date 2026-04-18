@@ -204,31 +204,69 @@ function DishModal({
               </div>
             </div>
 
-            {/* ─── Cross-Category Discovery ─── */}
-            <div className="pt-16 space-y-8">
-              <div className="flex items-center justify-between">
-                 <h4 className="text-white/60 text-xl font-serif italic">{lang === 'ar' ? 'استكشف فئات أخرى' : 'Explore Other Categories'}</h4>
+            {/* ─── Cross-Category Discovery: Two-Row Slider ─── */}
+            <div className="pt-16 space-y-10 overflow-hidden -mx-6">
+              <div className="px-6 flex items-center justify-between">
+                 <h4 className="text-white/60 text-xl font-serif italic">{lang === 'ar' ? 'استكشف المزيد' : 'Explore Collections'}</h4>
                  <div className="h-px flex-1 bg-white/5 mx-6" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                {CATEGORIES.filter(c => c !== dish.category).slice(0, 4).map((cat) => (
-                  <motion.button
-                    key={cat}
-                    onClick={() => { onCategorySelect(cat); onClose(); }}
-                    whileHover={{ scale: 1.02 }}
-                    className="relative aspect-[16/9] rounded-2xl overflow-hidden group luxury-card"
-                  >
-                    <Image 
-                      src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
-                      alt={cat} 
-                      fill 
-                      className="object-cover brightness-50 group-hover:scale-110 transition-transform duration-1000" 
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center p-4">
-                      <span className="text-white text-[10px] font-black uppercase tracking-widest text-center">{cat}</span>
-                    </div>
-                  </motion.button>
-                ))}
+
+              <div className="space-y-6">
+                {/* Row 1 */}
+                <motion.div 
+                  className="flex gap-4 px-6 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing"
+                  drag="x"
+                  dragConstraints={{ right: 0, left: -1000 }} // Approximate constraint, will be responsive
+                >
+                  {CATEGORIES.slice(0, Math.ceil(CATEGORIES.length / 2)).map((cat) => (
+                    <motion.button
+                      key={cat}
+                      onClick={() => { onCategorySelect(cat); onClose(); }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="relative flex-shrink-0 w-48 aspect-[16/10] rounded-2xl overflow-hidden group luxury-card border border-white/5"
+                    >
+                      <Image 
+                        src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
+                        alt={cat} 
+                        fill 
+                        sizes="200px"
+                        className="object-cover brightness-[0.4] group-hover:scale-110 transition-transform duration-1000" 
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center p-4">
+                        <span className="text-white text-[9px] font-black uppercase tracking-widest text-center leading-tight">{cat}</span>
+                      </div>
+                    </motion.button>
+                  ))}
+                </motion.div>
+
+                {/* Row 2 */}
+                <motion.div 
+                  className="flex gap-4 px-6 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing ml-12"
+                  drag="x"
+                  dragConstraints={{ right: 0, left: -1000 }}
+                >
+                  {CATEGORIES.slice(Math.ceil(CATEGORIES.length / 2)).map((cat) => (
+                    <motion.button
+                      key={cat}
+                      onClick={() => { onCategorySelect(cat); onClose(); }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="relative flex-shrink-0 w-48 aspect-[16/10] rounded-2xl overflow-hidden group luxury-card border border-white/5"
+                    >
+                      <Image 
+                        src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
+                        alt={cat} 
+                        fill 
+                        sizes="200px"
+                        className="object-cover brightness-[0.4] group-hover:scale-110 transition-transform duration-1000" 
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center p-4">
+                        <span className="text-white text-[9px] font-black uppercase tracking-widest text-center leading-tight">{cat}</span>
+                      </div>
+                    </motion.button>
+                  ))}
+                </motion.div>
               </div>
             </div>
           </motion.div>
