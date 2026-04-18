@@ -107,7 +107,6 @@ export default function Hero({ onTabChange }: HeroProps) {
           </span>
           <div className="w-12 h-px bg-gold/20" />
         </motion.div>
-        </motion.div>
 
         {/* Main Title - Split Text Reveal */}
         <h1 className="text-display liquid-gold mb-8 drop-shadow-[0_20px_50px_rgba(212,175,55,0.2)] select-none flex overflow-hidden">
