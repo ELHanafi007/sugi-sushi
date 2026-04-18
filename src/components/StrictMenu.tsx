@@ -28,7 +28,17 @@ const CAT_IMAGES: Record<string, string> = {
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
 
 /* ─── Dish Modal (Masterpiece Edition) ─── */
-function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
+function DishModal({ 
+  dish, 
+  onClose, 
+  onDishSelect, 
+  onCategorySelect 
+}: { 
+  dish: Dish; 
+  onClose: () => void;
+  onDishSelect: (dish: Dish) => void;
+  onCategorySelect: (cat: string) => void;
+}) {
   const { lang, t } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
@@ -162,7 +172,7 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
                   .map((item) => (
                     <motion.div 
                       key={item.id}
-                      onClick={() => setSelectedDish(item)}
+                      onClick={() => onDishSelect(item)}
                       whileHover={{ x: 10, backgroundColor: 'rgba(255,255,255,0.02)' }}
                       className="flex items-center gap-5 p-4 rounded-3xl luxury-card cursor-pointer group transition-all duration-700"
                     >
@@ -196,7 +206,7 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
                 {CATEGORIES.filter(c => c !== dish.category).slice(0, 4).map((cat) => (
                   <motion.button
                     key={cat}
-                    onClick={() => { setSelectedCategory(cat); setSelectedDish(null); }}
+                    onClick={() => { onCategorySelect(cat); onClose(); }}
                     whileHover={{ scale: 1.02 }}
                     className="relative aspect-[16/9] rounded-2xl overflow-hidden group luxury-card"
                   >
@@ -400,7 +410,14 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
       </div>
 
       <AnimatePresence>
-        {selectedDish && <DishModal dish={selectedDish} onClose={() => setSelectedDish(null)} />}
+        {selectedDish && (
+          <DishModal 
+            dish={selectedDish} 
+            onClose={() => setSelectedDish(null)} 
+            onDishSelect={setSelectedDish}
+            onCategorySelect={setSelectedCategory}
+          />
+        )}
       </AnimatePresence>
     </div>
   );
