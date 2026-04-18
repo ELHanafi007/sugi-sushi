@@ -95,20 +95,27 @@ export default function Hero({ onTabChange }: HeroProps) {
         }}
         className="relative z-20 flex flex-col items-center text-center px-6"
       >
-        {/* Micro-label with character tracking animation */}
+        {/* Cinematic Welcome: The First Impression */}
         <motion.div
-          initial={{ opacity: 0, letterSpacing: '2em', y: 20 }}
-          animate={{ opacity: 1, letterSpacing: '0.8em', y: 0 }}
+          initial={{ opacity: 0, scale: 0.8, filter: 'blur(20px)' }}
+          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
           transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
-          className="mb-8 flex flex-col items-center gap-4"
+          className="mb-12 flex flex-col items-center gap-6"
         >
-          <span className="text-mono text-gold/60 text-[8px] md:text-[10px] uppercase font-bold tracking-[0.8em]">
+          <motion.span 
+            className="text-mono text-gold text-[10px] md:text-[14px] uppercase font-black tracking-[1.2em] shimmer-gold"
+          >
             {lang === 'ar' ? 'سوجي سوشي يرحب بكم' : 'Sugi Sushi Welcomes You'}
-          </span>
-          <div className="w-12 h-px bg-gold/20" />
+          </motion.span>
+          <motion.div 
+            initial={{ width: 0 }}
+            animate={{ width: '200px' }}
+            transition={{ delay: 1, duration: 2, ease: "circOut" }}
+            className="h-[1px] bg-gradient-to-r from-transparent via-gold/50 to-transparent" 
+          />
         </motion.div>
 
-        {/* Main Title - Split Text Reveal */}
+        {/* Main Title - Split Text Reveal (Delayed for Welcome) */}
         <h1 className="text-display liquid-gold mb-8 drop-shadow-[0_20px_50px_rgba(212,175,55,0.2)] select-none flex overflow-hidden">
           {letters.map((char, i) => (
             <motion.span
@@ -117,7 +124,7 @@ export default function Hero({ onTabChange }: HeroProps) {
               animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
               transition={{ 
                 duration: 1.5, 
-                delay: 0.5 + (i * 0.08), 
+                delay: 1.5 + (i * 0.08), 
                 ease: [0.19, 1, 0.22, 1] 
               }}
               className="inline-block"
@@ -132,7 +139,7 @@ export default function Hero({ onTabChange }: HeroProps) {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 2.5, delay: 1.8 }}
+          transition={{ duration: 2.5, delay: 2.8 }}
           className="flex flex-col items-center gap-8 mb-12"
           style={{ willChange: "transform, opacity" }}
         >
@@ -142,7 +149,7 @@ export default function Hero({ onTabChange }: HeroProps) {
           <motion.div 
             initial={{ width: 0 }} 
             animate={{ width: '120px' }} 
-            transition={{ duration: 2, delay: 2.2, ease: "circOut" }}
+            transition={{ duration: 2, delay: 3.2, ease: "circOut" }}
             className="h-[1px] bg-gradient-to-r from-transparent via-gold/40 to-transparent" 
           />
         </motion.div>
@@ -151,7 +158,7 @@ export default function Hero({ onTabChange }: HeroProps) {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, delay: 2.5, ease: [0.19, 1, 0.22, 1] }}
+          transition={{ duration: 1.5, delay: 3.5, ease: [0.19, 1, 0.22, 1] }}
           style={{ willChange: "transform, opacity" }}
         >
           <button 

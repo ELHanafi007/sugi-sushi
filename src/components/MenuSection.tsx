@@ -348,43 +348,49 @@ function MenuExperience() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-24 md:gap-40">
-                      <FeaturedDishCard dish={featured} lang={lang} />
-                      
-                      {secondary.length > 0 && (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-start">
-                          {secondary.map((s, i) => (
-                            <SecondaryDishCard key={s.id} dish={s} lang={lang} idx={i} />
-                          ))}
-                        </div>
-                      )}
+                    {/* Grid of Two for Efficiency */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 items-stretch">
+                      {/* Left Column: Featured and some secondary */}
+                      <div className="flex flex-col gap-12 md:gap-20">
+                        <FeaturedDishCard dish={featured} lang={lang} />
+                        {secondary.slice(0, 1).map((s, i) => (
+                          <SecondaryDishCard key={s.id} dish={s} lang={lang} idx={i} />
+                        ))}
+                      </div>
 
-                      {/* Remaining items — Editorial typography list */}
-                      {others.length > 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-24 gap-y-12 pt-20 border-t border-white/[0.03]">
-                          {others.map((dish, idx) => (
-                            <motion.div 
-                              key={dish.id} 
-                              className="flex flex-col group py-4 relative"
-                              initial={{ opacity: 0, y: 20 }}
-                              whileInView={{ opacity: 1, y: 0 }}
-                              viewport={{ once: true }}
-                              transition={{ delay: idx * 0.05 }}
-                            >
-                              <div className="flex justify-between items-baseline mb-2">
-                                <span className="text-white/80 font-serif text-xl md:text-2xl group-hover:text-gold transition-colors duration-700">
-                                  {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
-                                </span>
-                                <span className="text-gold/40 font-serif text-lg group-hover:text-gold transition-colors duration-700">{dish.price}</span>
-                              </div>
-                              <p className="text-white/20 text-xs md:text-sm italic font-serif leading-relaxed line-clamp-1 group-hover:text-white/40 transition-colors duration-700">
-                                {lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}
-                              </p>
-                              <div className="absolute bottom-0 left-0 w-0 h-px bg-gold/20 group-hover:w-full transition-all duration-1000" />
-                            </motion.div>
-                          ))}
-                        </div>
-                      )}
+                      {/* Right Column: Other secondary and others */}
+                      <div className="flex flex-col gap-12 md:gap-20">
+                        {secondary.slice(1).map((s, i) => (
+                          <SecondaryDishCard key={s.id} dish={s} lang={lang} idx={i + 1} />
+                        ))}
+                        
+                        {/* Remaining items — Editorial typography list */}
+                        {others.length > 0 && (
+                          <div className="flex flex-col gap-6 pt-10 border-t border-white/[0.03]">
+                            {others.map((dish, idx) => (
+                              <motion.div 
+                                key={dish.id} 
+                                className="flex flex-col group py-3 relative"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.05 }}
+                              >
+                                <div className="flex justify-between items-baseline mb-1">
+                                  <span className="text-white/80 font-serif text-lg md:text-xl group-hover:text-gold transition-colors duration-700">
+                                    {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
+                                  </span>
+                                  <span className="text-gold/40 font-serif text-base group-hover:text-gold transition-colors duration-700">{dish.price}</span>
+                                </div>
+                                <p className="text-white/20 text-[10px] md:text-xs italic font-serif leading-relaxed line-clamp-1 group-hover:text-white/40 transition-colors duration-700">
+                                  {lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}
+                                </p>
+                                <div className="absolute bottom-0 left-0 w-0 h-px bg-gold/20 group-hover:w-full transition-all duration-1000" />
+                              </motion.div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );

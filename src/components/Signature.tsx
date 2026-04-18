@@ -49,7 +49,7 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      className="relative w-full h-[70vh] md:h-[90vh] rounded-[3rem] overflow-hidden group shadow-[0_50px_100px_rgba(0,0,0,0.6)] luxury-card"
+      className="relative w-full h-[50vh] md:h-[70vh] rounded-[3rem] overflow-hidden group shadow-[0_50px_100px_rgba(0,0,0,0.6)] luxury-card"
     >
       {/* Background with Cinematic Depth */}
       <motion.div 
@@ -134,7 +134,7 @@ const SecondaryDish = ({ dish, idx }: { dish: Dish, idx: number }) => {
       viewport={{ once: true, margin: "-50px" }}
       transition={{ delay: 0.2 + idx * 0.2, duration: 2, ease: [0.19, 1, 0.22, 1] }}
       className={`relative rounded-[3rem] overflow-hidden group luxury-card ${
-        idx === 0 ? 'aspect-[4/5]' : 'aspect-square lg:mt-32'
+        idx === 0 ? 'aspect-[4/3]' : 'aspect-square lg:mt-12'
       }`}
     >
       <div className="absolute inset-0 overflow-hidden">
@@ -213,11 +213,12 @@ export default function Signature() {
           </motion.div>
         </div>
 
-        {/* The Showcase */}
-        <div className="flex flex-col gap-32 md:gap-56 lg:gap-72">
-          <FeaturedDish dish={featured} />
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 md:gap-32 lg:gap-48 items-start">
+        {/* The Showcase — Grid of Two for Efficiency */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-stretch">
+          <div className="lg:col-span-1 h-full">
+            <FeaturedDish dish={featured} />
+          </div>
+          <div className="lg:col-span-1 flex flex-col gap-12 lg:gap-20">
             {secondary.map((dish, idx) => (
               <SecondaryDish key={dish.id} dish={dish} idx={idx} />
             ))}
