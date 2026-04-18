@@ -100,11 +100,13 @@ export default function Hero({ onTabChange }: HeroProps) {
           initial={{ opacity: 0, letterSpacing: '2em', y: 20 }}
           animate={{ opacity: 1, letterSpacing: '0.8em', y: 0 }}
           transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
-          className="mb-8"
+          className="mb-8 flex flex-col items-center gap-4"
         >
-          <span className="text-mono text-gold/60 text-[8px] uppercase font-bold">
-            {t('hero.micro')}
+          <span className="text-mono text-gold/60 text-[8px] md:text-[10px] uppercase font-bold tracking-[0.8em]">
+            {lang === 'ar' ? 'سوجي سوشي يرحب بكم' : 'Sugi Sushi Welcomes You'}
           </span>
+          <div className="w-12 h-px bg-gold/20" />
+        </motion.div>
         </motion.div>
 
         {/* Main Title - Split Text Reveal */}
