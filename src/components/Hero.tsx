@@ -71,11 +71,11 @@ export default function Hero({ onTabChange }: HeroProps) {
           className="absolute inset-0 w-full h-full"
         >
           <Image
-            src="https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1600&q=80"
+            src="https://images.unsplash.com/photo-1578469550956-0e16b69c6a3d?auto=format&fit=crop&w=1600&q=80"
             alt="Sugi Sushi"
             fill
             priority
-            className="object-cover brightness-[0.3] contrast-[1.15] saturate-[1.2]"
+            className="object-cover brightness-[0.4] contrast-[1.1] saturate-[1.3]"
           />
         </motion.div>
         

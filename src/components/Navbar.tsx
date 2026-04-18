@@ -37,7 +37,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
 
   const navItems: { id: NavTab; labelKey: string }[] = [
     { id: 'menu', labelKey: 'nav.menu' },
-    { id: 'reservations', labelKey: 'nav.story' },
+    { id: 'reservations', labelKey: 'nav.reservations' },
     { id: 'location', labelKey: 'nav.contact' },
   ];
 

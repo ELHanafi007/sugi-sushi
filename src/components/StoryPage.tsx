@@ -152,7 +152,7 @@ export default function StoryPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
-          className="text-center max-w-5xl mx-auto py-32 border-y border-white/[0.04] relative rounded-[4rem] overflow-hidden bg-white/[0.01]"
+          className="text-center max-w-5xl mx-auto py-32 border-y border-white/[0.04] relative rounded-[4rem] overflow-hidden bg-white/[0.01] mb-48"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.04),transparent_70%)] pointer-events-none" />
           
@@ -168,6 +168,46 @@ export default function StoryPage() {
             <div className="w-8 h-[1px] bg-gold/40" />
           </div>
         </motion.div>
+
+        {/* ─── Merged Gallery Section ─── */}
+        <div className="space-y-32">
+          <div className="flex flex-col items-center text-center">
+            <div className="flex items-center gap-4 mb-8">
+               <div className="w-10 h-[1px] bg-gold/30" />
+               <span className="text-mono text-gold/40 text-[10px] tracking-[0.8em] uppercase font-black">{t('gallery.label')}</span>
+               <div className="w-10 h-[1px] bg-gold/30" />
+            </div>
+            <h2 className="text-5xl md:text-8xl text-white font-serif font-light italic">Visual <span className="text-gold shimmer-gold">Archive.</span></h2>
+          </div>
+
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+            {[
+              { src: 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-[4/5]', delay: 0.1 },
+              { src: 'https://images.unsplash.com/photo-1580828369019-2238b909ca8c?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-[16/9]', delay: 0.2 },
+              { src: 'https://images.unsplash.com/photo-1558985250-27a406d64cb3?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-square', delay: 0.3 },
+              { src: 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-[3/4]', delay: 0.15 },
+              { src: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-[4/5]', delay: 0.25 },
+              { src: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=1600&q=80', aspect: 'aspect-square', delay: 0.35 },
+            ].map((img, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.5, delay: img.delay }}
+                className={`relative w-full rounded-[2.5rem] overflow-hidden luxury-card group break-inside-avoid shadow-[0_30px_60px_rgba(0,0,0,0.5)] ${img.aspect}`}
+              >
+                <Image
+                  src={img.src}
+                  alt={`Gallery ${idx}`}
+                  fill
+                  className="object-cover transition-transform duration-[4s] group-hover:scale-110 brightness-[0.6]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

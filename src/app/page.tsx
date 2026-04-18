@@ -10,7 +10,7 @@ import MenuSection from '@/components/MenuSection';
 import BottomNav, { NavTab } from '@/components/BottomNav';
 import StrictMenu from '@/components/StrictMenu';
 import StoryPage from '@/components/StoryPage';
-import GalleryPage from '@/components/GalleryPage';
+import ReservationPage from '@/components/ReservationPage';
 import LocationPage from '@/components/LocationPage';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
@@ -114,7 +114,12 @@ export default function Home() {
             {/* Scene 4: Emotional Peak */}
             <ChefArtistry />
 
-            {/* Scene 5: Full Experience */}
+            {/* Scene 5: The Story & Gallery */}
+            <div className="relative z-10 bg-bg">
+              <StoryPage />
+            </div>
+
+            {/* Scene 6: Full Experience */}
             <div className="relative z-10 bg-bg">
               <MenuSection />
             </div>
@@ -141,21 +146,10 @@ export default function Home() {
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
           >
-            <StoryPage />
+            <ReservationPage />
           </motion.div>
         )}
 
-        {activeTab === 'gallery' && (
-          <motion.div 
-            key="gallery"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-          >
-            <GalleryPage />
-          </motion.div>
-        )}
 
         {activeTab === 'location' && (
           <motion.div 

@@ -13,7 +13,7 @@ interface Ctx {
 const D: Record<Lang, Record<string, string>> = {
   en: {
     'nav.menu': 'Menu',
-    'nav.story': 'Story',
+    'nav.reservations': 'Reservation',
     'nav.contact': 'Contact',
     'nav.cuisine': 'Japanese Cuisine',
     'hero.brand': 'SUGI SUSHI',
@@ -160,7 +160,7 @@ const D: Record<Lang, Record<string, string>> = {
   },
   ar: {
     'nav.menu': 'القائمة',
-    'nav.story': 'قصتنا',
+    'nav.reservations': 'الحجز',
     'nav.contact': 'تواصل',
     'nav.cuisine': 'المطبخ الياباني',
     'hero.brand': 'سوجي سوشي',

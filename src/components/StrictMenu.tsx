@@ -149,45 +149,70 @@ function DishModal({ dish, onClose }: { dish: Dish; onClose: () => void }) {
               </p>
             </div>
 
-            {/* Orchestrated Recommendations */}
-            {recommendations.length > 0 && (
-              <div className="pt-16 space-y-8">
-                <div className="flex items-center gap-4">
-                   <h4 className="text-white/60 text-xl font-serif italic">{t('strict.pairs')}</h4>
-                   <div className="flex-1 h-px bg-white/5" />
-                </div>
-                <div className="grid grid-cols-1 gap-4">
-                  {recommendations.map((rec, i) => (
+            {/* ─── Same Category Exploration ─── */}
+            <div className="pt-16 space-y-8">
+              <div className="flex items-center justify-between">
+                 <h4 className="text-white/60 text-xl font-serif italic">{lang === 'ar' ? 'المزيد من ' + dish.category : 'More from ' + dish.category}</h4>
+                 <div className="h-px flex-1 bg-white/5 mx-6" />
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                {menuData
+                  .filter(d => d.category === dish.category && d.id !== dish.id)
+                  .slice(0, 3)
+                  .map((item) => (
                     <motion.div 
-                      key={rec.dish.id}
-                      onClick={() => (window as any).dispatchDishSelect?.(rec.dish)}
+                      key={item.id}
+                      onClick={() => setSelectedDish(item)}
                       whileHover={{ x: 10, backgroundColor: 'rgba(255,255,255,0.02)' }}
-                      whileTap={{ scale: 0.98 }}
-                      className="flex items-center gap-5 p-5 rounded-3xl luxury-card cursor-pointer group transition-all duration-700"
+                      className="flex items-center gap-5 p-4 rounded-3xl luxury-card cursor-pointer group transition-all duration-700"
                     >
-                      <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
+                      <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
                         <Image 
-                          src={rec.dish.image || CAT_IMAGES[rec.dish.category] || DEFAULT_IMAGE}
-                          alt={rec.dish.name}
-                          width={80}
-                          height={80}
+                          src={item.image || CAT_IMAGES[item.category] || DEFAULT_IMAGE}
+                          alt={item.name}
+                          width={64}
+                          height={64}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
                         />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h5 className="text-white/80 font-serif text-lg group-hover:text-gold transition-colors duration-500">
-                          {lang === 'ar' ? rec.dish.nameAr || rec.dish.name : rec.dish.name}
+                      <div className="flex-1">
+                        <h5 className="text-white/80 font-serif text-lg group-hover:text-gold transition-colors">
+                          {lang === 'ar' ? item.nameAr || item.name : item.name}
                         </h5>
-                        <p className="text-gold/30 text-[10px] uppercase tracking-wider mt-1 italic font-mono font-black">{rec.reason}</p>
-                      </div>
-                      <div className="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center text-white/20 group-hover:border-gold/30 group-hover:text-gold transition-all duration-700">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                        <p className="text-gold/30 text-[9px] uppercase tracking-widest mt-1 font-mono">{item.price} SR</p>
                       </div>
                     </motion.div>
                   ))}
-                </div>
               </div>
-            )}
+            </div>
+
+            {/* ─── Cross-Category Discovery ─── */}
+            <div className="pt-16 space-y-8">
+              <div className="flex items-center justify-between">
+                 <h4 className="text-white/60 text-xl font-serif italic">{lang === 'ar' ? 'استكشف فئات أخرى' : 'Explore Other Categories'}</h4>
+                 <div className="h-px flex-1 bg-white/5 mx-6" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {CATEGORIES.filter(c => c !== dish.category).slice(0, 4).map((cat) => (
+                  <motion.button
+                    key={cat}
+                    onClick={() => { setSelectedCategory(cat); setSelectedDish(null); }}
+                    whileHover={{ scale: 1.02 }}
+                    className="relative aspect-[16/9] rounded-2xl overflow-hidden group luxury-card"
+                  >
+                    <Image 
+                      src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
+                      alt={cat} 
+                      fill 
+                      className="object-cover brightness-50 group-hover:scale-110 transition-transform duration-1000" 
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center p-4">
+                      <span className="text-white text-[10px] font-black uppercase tracking-widest text-center">{cat}</span>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
