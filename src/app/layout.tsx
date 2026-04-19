@@ -1,9 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
-import dynamic from 'next/dynamic';
-
-const BottomNav = dynamic(() => import('@/components/BottomNav'), { ssr: false });
+import BottomNavWrapper from "@/components/BottomNavWrapper";
 
 export const metadata: Metadata = {
   title: "SUGI — Kinetic Dining",
@@ -40,7 +38,7 @@ export default function RootLayout({
       <body className="antialiased select-none">
         <LanguageProvider>
           {children}
-          <BottomNav />
+          <BottomNavWrapper />
         </LanguageProvider>
         {/* Film Grain — single instance, always on top */}
         <div className="noise-overlay" aria-hidden="true" />
