@@ -66,7 +66,7 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
             </button>
           );
         })}
-      </motion.div>
+      </div>
     </div>
   );
 }
