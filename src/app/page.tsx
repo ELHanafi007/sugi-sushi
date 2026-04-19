@@ -13,7 +13,6 @@ const StrictMenu = dynamic(() => import('@/components/StrictMenu'), { ssr: false
 const StoryPage = dynamic(() => import('@/components/StoryPage'), { ssr: false });
 const ReservationPage = dynamic(() => import('@/components/ReservationPage'), { ssr: false });
 const LocationPage = dynamic(() => import('@/components/LocationPage'), { ssr: false });
-const BottomNav = dynamic(() => import('@/components/BottomNav'), { ssr: false });
 
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
@@ -180,8 +179,6 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <BottomNav />
 
       {/* Ambient spotlight */}
       <div className="ambient-spotlight" />
