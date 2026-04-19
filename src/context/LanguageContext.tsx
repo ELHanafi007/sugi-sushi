@@ -121,6 +121,8 @@ const D: Record<Lang, Record<string, string>> = {
     'strict.umami': 'Balanced & Umami',
     'strict.special': 'House Special',
     'strict.seasonal': 'Seasonal Pick',
+    'strict.recommendations': "Chef's Recommendations",
+    'strict.pairs_vibe': 'Dynamic Pairs',
     'strict.sourced': 'Sourced with respect for the ocean and the season. Prepared with the precision of a master\'s blade.',
     'strict.pairs': 'Pairs beautifully with...',
     
@@ -268,6 +270,8 @@ const D: Record<Lang, Record<string, string>> = {
     'strict.umami': 'متوازن بنكهة الأومامي',
     'strict.special': 'طبق مميز',
     'strict.seasonal': 'اختيار موسمي',
+    'strict.recommendations': 'توصيات الشيف',
+    'strict.pairs_vibe': 'تناغم النكهات',
     'strict.sourced': 'مستورد باحترام للمحيط والموسم. مُعد بدقة نصل الحرفي الماهر.',
     'strict.pairs': 'يتناغم بشكل رائع مع...',
     

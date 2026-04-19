@@ -112,7 +112,7 @@ export default function Home() {
             <Atmosphere />
 
             {/* Scene 3: Curated Selection */}
-            <Signature />
+            <Signature onTabChange={setActiveTab} />
 
             {/* Scene 4: Emotional Peak */}
             <ChefArtistry />

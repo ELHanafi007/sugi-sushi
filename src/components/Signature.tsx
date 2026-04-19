@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { menuData, Dish } from '@/data/menuData';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
@@ -18,7 +18,7 @@ const DISH_IMAGES = [
   'https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=1600&q=80',
 ];
 
-const FeaturedDish = ({ dish }: { dish: Dish }) => {
+const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: string) => void }) => {
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -38,11 +38,24 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
     y.set(e.clientY - centerY);
   };
 
+  const handleDishClick = () => {
+    if (onTabChange) {
+      onTabChange('menu');
+      setTimeout(() => {
+        if ((window as any).dispatchDishSelect) {
+          (window as any).dispatchDishSelect(dish);
+        }
+      }, 300);
+    }
+  };
+
   return (
     <motion.div 
       ref={cardRef}
       onMouseMove={handleMouseMove}
+      onClick={handleDishClick}
       initial={{ opacity: 0, y: 100 }}
+...
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
@@ -125,15 +138,28 @@ const FeaturedDish = ({ dish }: { dish: Dish }) => {
   );
 };
 
-const SecondaryDish = ({ dish, idx }: { dish: Dish, idx: number }) => {
+const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, onTabChange?: (tab: string) => void }) => {
   const { t } = useLanguage();
+
+  const handleDishClick = () => {
+    if (onTabChange) {
+      onTabChange('menu');
+      setTimeout(() => {
+        if ((window as any).dispatchDishSelect) {
+          (window as any).dispatchDishSelect(dish);
+        }
+      }, 300);
+    }
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ delay: 0.2 + idx * 0.2, duration: 2, ease: [0.19, 1, 0.22, 1] }}
-      className={`relative rounded-[3rem] overflow-hidden group luxury-card ${
+      onClick={handleDishClick}
+      className={`relative rounded-[3rem] overflow-hidden group luxury-card cursor-pointer ${
         idx === 0 ? 'aspect-[4/3]' : 'aspect-square lg:mt-12'
       }`}
     >
@@ -164,9 +190,14 @@ const SecondaryDish = ({ dish, idx }: { dish: Dish, idx: number }) => {
   );
 };
 
-export default function Signature() {
+export default function Signature({ onTabChange }: { onTabChange?: (tab: string) => void }) {
   const { t } = useLanguage();
-  const signatures = menuData.filter(d => d.tags.includes('Signature')).slice(0, 3);
+  const signatures = useMemo(() => {
+    return [...menuData]
+      .filter(d => d.tags.includes('Signature'))
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+  }, []);
   const featured = signatures[0];
   const secondary = signatures.slice(1);
 
@@ -216,11 +247,11 @@ export default function Signature() {
         {/* The Showcase — Grid of Two for Efficiency */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-stretch">
           <div className="lg:col-span-1 h-full">
-            <FeaturedDish dish={featured} />
+            <FeaturedDish dish={featured} onTabChange={onTabChange} />
           </div>
           <div className="lg:col-span-1 flex flex-col gap-12 lg:gap-20">
             {secondary.map((dish, idx) => (
-              <SecondaryDish key={dish.id} dish={dish} idx={idx} />
+              <SecondaryDish key={dish.id} dish={dish} idx={idx} onTabChange={onTabChange} />
             ))}
           </div>
         </div>

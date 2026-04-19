@@ -167,6 +167,52 @@ function DishModal({
               </p>
             </div>
 
+            {/* ─── Chef's Curated Recommendations ─── */}
+            <div className="pt-16 space-y-10">
+              <div className="flex items-center justify-between">
+                 <h4 className="text-white/60 text-xl font-serif italic">{t('strict.recommendations')}</h4>
+                 <div className="h-px flex-1 bg-white/5 mx-6" />
+                 <span className="text-gold/40 text-[9px] uppercase tracking-widest font-mono">{t('strict.pairs_vibe')}</span>
+              </div>
+              <div className="grid grid-cols-1 gap-5">
+                {recommendations.map(({ dish: item, reason }) => (
+                  <motion.div 
+                    key={item.id}
+                    onClick={() => onDishSelect(item)}
+                    whileHover={{ x: 10, backgroundColor: 'rgba(255,255,255,0.02)' }}
+                    className="flex flex-col p-8 rounded-[2.5rem] luxury-card cursor-pointer group transition-all duration-700 relative overflow-hidden"
+                  >
+                    <div className="flex items-center gap-6 mb-6">
+                      <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
+                        <Image 
+                          src={item.image || CAT_IMAGES[item.category] || DEFAULT_IMAGE}
+                          alt={item.name}
+                          width={80}
+                          height={80}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-baseline mb-2">
+                          <h5 className="text-white/80 font-serif text-xl group-hover:text-gold transition-colors duration-500">
+                            {lang === 'ar' ? item.nameAr || item.name : item.name}
+                          </h5>
+                          <span className="text-gold/40 font-serif text-lg">{item.price} SR</span>
+                        </div>
+                        <p className="text-white/20 text-[11px] font-serif italic line-clamp-1">{lang === 'ar' ? item.descriptionAr || item.description : item.description}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 pt-5 border-t border-white/[0.03]">
+                       <div className="w-2 h-2 rounded-full bg-gold/40 animate-pulse" />
+                       <p className="text-white/40 text-[11px] font-serif italic leading-relaxed">
+                        {reason}
+                       </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
             {/* ─── Same Category Exploration ─── */}
             <div className="pt-16 space-y-8">
               <div className="flex items-center justify-between">
@@ -282,6 +328,7 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   
   useEffect(() => {
     (window as any).dispatchDishSelect = (dish: Dish) => setSelectedDish(dish);
@@ -289,12 +336,26 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
   }, []);
 
   const filteredDishes = useMemo(() => {
-    let dishes = menuData.filter(dish => dish.category === selectedCategory);
+    let dishes = menuData;
+    
+    // Only filter by category if no search query
+    if (!searchQuery) {
+      dishes = dishes.filter(dish => dish.category === selectedCategory);
+    } else {
+      const query = searchQuery.toLowerCase();
+      dishes = dishes.filter(dish => 
+        dish.name.toLowerCase().includes(query) || 
+        (dish.nameAr && dish.nameAr.includes(query)) ||
+        dish.description.toLowerCase().includes(query) ||
+        (dish.descriptionAr && dish.descriptionAr.includes(query))
+      );
+    }
+
     if (activeFilters.length > 0) {
       dishes = dishes.filter(dish => activeFilters.every(filter => dish.tags.includes(filter)));
     }
     return dishes;
-  }, [selectedCategory, activeFilters]);
+  }, [selectedCategory, activeFilters, searchQuery]);
 
   const toggleFilter = (filter: string) => {
     setActiveFilters(prev => prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]);
@@ -326,6 +387,37 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
            </span>
            <div className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_10px_rgba(212,175,55,1)]" />
         </div>
+      </div>
+
+      {/* Cinematic Search Orchestration */}
+      <div className="px-8 mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="relative group max-w-xl"
+        >
+          <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gold/40 group-focus-within:text-gold transition-colors duration-500">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+            </svg>
+          </div>
+          <input
+            type="text"
+            placeholder={t('menu.search')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-white/[0.02] border border-white/5 rounded-2xl py-5 pl-16 pr-6 text-white text-sm font-serif italic placeholder:text-white/10 focus:outline-none focus:border-gold/30 focus:bg-white/[0.04] transition-all duration-700 shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery('')}
+              className="absolute inset-y-0 right-6 flex items-center text-white/20 hover:text-white transition-colors"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          )}
+        </motion.div>
       </div>
 
       {/* High-End Category Slider */}
@@ -456,7 +548,15 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
               ))
             ) : (
               <div className="py-32 text-center">
-                 <p className="text-white/20 font-serif italic text-xl">No selections found.</p>
+                 <p className="text-white/20 font-serif italic text-xl">{t('menu.no_results')}</p>
+                 {searchQuery && (
+                   <button 
+                     onClick={() => setSearchQuery('')}
+                     className="mt-6 text-gold/60 text-[10px] uppercase tracking-[0.4em] font-black border-b border-gold/20 pb-1"
+                   >
+                     {t('strict.clear')}
+                   </button>
+                 )}
               </div>
             )}
           </motion.div>
