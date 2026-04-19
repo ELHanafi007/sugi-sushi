@@ -197,10 +197,6 @@ body {
   color: #fff;
   font-family: var(--font-serif);
   overflow-x: hidden;
-  will-change: transform;
-  content-visibility: auto;
-  will-change: transform;
-  content-visibility: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
