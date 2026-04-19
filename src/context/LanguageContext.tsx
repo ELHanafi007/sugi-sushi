@@ -12,6 +12,7 @@ interface Ctx {
 
 const D: Record<Lang, Record<string, string>> = {
   en: {
+    'nav.home': 'Home',
     'nav.menu': 'Menu',
     'nav.reservations': 'Reservation',
     'nav.contact': 'Contact',
@@ -161,6 +162,7 @@ const D: Record<Lang, Record<string, string>> = {
     'loc.hero2': ' US',
   },
   ar: {
+    'nav.home': 'الرئيسية',
     'nav.menu': 'القائمة',
     'nav.reservations': 'الحجز',
     'nav.contact': 'تواصل',
