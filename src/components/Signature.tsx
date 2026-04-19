@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { useState, useRef, useMemo } from 'react';
 import { menuData, Dish } from '@/data/menuData';
 import Image from 'next/image';
-import { useLanguage } from '@/context/LanguageContext';
+import { useLanguage, NavTab } from '@/context/LanguageContext';
 
 /**
  * SIGNATURE SELECTION — Editorial Showcase (Masterpiece Edition)
@@ -18,7 +18,7 @@ const DISH_IMAGES = [
   'https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=1600&q=80',
 ];
 
-const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: string) => void }) => {
+const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: NavTab) => void }) => {
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -137,7 +137,7 @@ const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: s
   );
 };
 
-const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, onTabChange?: (tab: string) => void }) => {
+const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, onTabChange?: (tab: NavTab) => void }) => {
   const { t } = useLanguage();
 
   const handleDishClick = () => {
@@ -189,7 +189,7 @@ const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, on
   );
 };
 
-export default function Signature({ onTabChange }: { onTabChange?: (tab: string) => void }) {
+export default function Signature({ onTabChange }: { onTabChange?: (tab: NavTab) => void }) {
   const { t } = useLanguage();
   const signatures = useMemo(() => {
     return [...menuData]
