@@ -56,122 +56,124 @@ export default function Home() {
   }, [activeTab]);
 
   return (
-    <main className={`relative min-h-screen bg-bg overflow-x-hidden ${isLetterbox ? 'letterbox-active' : ''}`}>
-      {/* Cinematic Shutter — Appears on tab change */}
-      <AnimatePresence>
-        <motion.div 
-          key={activeTab + "-shutter"}
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 0 }}
-          transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-          className="fixed inset-0 z-[500] bg-black pointer-events-none"
-        />
-      </AnimatePresence>
+    <>
+      <main className={`relative min-h-screen bg-bg overflow-x-hidden ${isLetterbox ? 'letterbox-active' : ''}`}>
+        {/* Cinematic Shutter — Appears on tab change */}
+        <AnimatePresence>
+          <motion.div 
+            key={activeTab + "-shutter"}
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+            className="fixed inset-0 z-[500] bg-black pointer-events-none"
+          />
+        </AnimatePresence>
 
-      {/* Letterbox Bars */}
-      <div className="letterbox-bar top" />
-      <div className="letterbox-bar bottom" />
+        {/* Letterbox Bars */}
+        <div className="letterbox-bar top" />
+        <div className="letterbox-bar bottom" />
 
-      {/* Progress Bar */}
-      {activeTab === 'home' && (
-        <motion.div 
-          className="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-gold/20 via-gold/50 to-gold/20 z-[110] origin-left"
-          style={{ scaleX }}
-        />
-      )}
-
-      {/* Navigation */}
-      <Navbar onTabChange={setActiveTab} activeTab={activeTab} />
-
-      {/* Page Content */}
-      <AnimatePresence mode="wait">
+        {/* Progress Bar */}
         {activeTab === 'home' && (
           <motion.div 
-            key="home"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col"
-          >
-            {/* Scene 1: Cinematic Opening */}
-            <Hero onTabChange={setActiveTab} />
-
-            {/* Cinematic Divider */}
-            <div className="h-40 md:h-56 flex items-center justify-center">
-              <motion.div 
-                initial={{ height: 0 }}
-                whileInView={{ height: '100%' }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.5 }}
-                className="w-px bg-gradient-to-b from-transparent via-gold/20 to-transparent max-h-full" 
-              />
-            </div>
-
-            {/* Scene 2: Atmospheric Pause */}
-            <Atmosphere />
-
-            {/* Scene 3: Curated Selection */}
-            <Signature onTabChange={setActiveTab} />
-
-            {/* Scene 4: Emotional Peak */}
-            <ChefArtistry />
-
-            {/* Scene 5: The Story & Gallery */}
-            <div className="relative z-10 bg-bg">
-              <StoryPage />
-            </div>
-
-            {/* Scene 6: Full Experience */}
-            <div className="relative z-10 bg-bg">
-              <MenuSection />
-            </div>
-          </motion.div>
+            className="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-gold/20 via-gold/50 to-gold/20 z-[110] origin-left"
+            style={{ scaleX }}
+          />
         )}
 
-        {activeTab === 'menu' && (
-          <motion.div 
-            key="menu"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
-          >
-            <StrictMenu onTabChange={setActiveTab} />
-          </motion.div>
-        )}
+        {/* Navigation */}
+        <Navbar onTabChange={setActiveTab} activeTab={activeTab} />
 
-        {activeTab === 'reservations' && (
-          <motion.div 
-            key="reservations"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-          >
-            <ReservationPage />
-          </motion.div>
-        )}
+        {/* Page Content */}
+        <AnimatePresence mode="wait">
+          {activeTab === 'home' && (
+            <motion.div 
+              key="home"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col"
+            >
+              {/* Scene 1: Cinematic Opening */}
+              <Hero onTabChange={setActiveTab} />
+
+              {/* Cinematic Divider */}
+              <div className="h-40 md:h-56 flex items-center justify-center">
+                <motion.div 
+                  initial={{ height: 0 }}
+                  whileInView={{ height: '100%' }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.5 }}
+                  className="w-px bg-gradient-to-b from-transparent via-gold/20 to-transparent max-h-full" 
+                />
+              </div>
+
+              {/* Scene 2: Atmospheric Pause */}
+              <Atmosphere />
+
+              {/* Scene 3: Curated Selection */}
+              <Signature onTabChange={setActiveTab} />
+
+              {/* Scene 4: Emotional Peak */}
+              <ChefArtistry />
+
+              {/* Scene 5: The Story & Gallery */}
+              <div className="relative z-10 bg-bg">
+                <StoryPage />
+              </div>
+
+              {/* Scene 6: Full Experience */}
+              <div className="relative z-10 bg-bg">
+                <MenuSection />
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'menu' && (
+            <motion.div 
+              key="menu"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
+            >
+              <StrictMenu onTabChange={setActiveTab} />
+            </motion.div>
+          )}
+
+          {activeTab === 'reservations' && (
+            <motion.div 
+              key="reservations"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+            >
+              <ReservationPage />
+            </motion.div>
+          )}
 
 
-        {activeTab === 'location' && (
-          <motion.div 
-            key="location"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-          >
-            <LocationPage />
-          </motion.div>
-        )}
-      </AnimatePresence>
+          {activeTab === 'location' && (
+            <motion.div 
+              key="location"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+            >
+              <LocationPage />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      {/* Bottom Navigation */}
+        {/* Ambient spotlight */}
+        <div className="ambient-spotlight" />
+      </main>
+      
+      {/* Bottom Navigation — Moved OUTSIDE main to fix viewport-relative positioning */}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
-
-      {/* Ambient spotlight */}
-      <div className="ambient-spotlight" />
-    </main>
+    </>
   );
 }

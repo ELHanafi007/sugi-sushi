@@ -22,13 +22,8 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const { t } = useLanguage();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[1100] px-6 pb-6 pt-4 pointer-events-none flex justify-center">
-      <motion.div 
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-        className="w-full max-w-2xl bg-black/80 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] h-20 md:h-24 pointer-events-auto shadow-[0_50px_100px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.05)_inset] flex items-center justify-around px-4 relative overflow-hidden"
-      >
+    <div className="fixed bottom-10 left-0 right-0 z-[10000] px-6 pointer-events-none flex justify-center">
+      <div className="w-full max-w-2xl bg-black/80 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] h-20 md:h-24 pointer-events-auto shadow-[0_50px_100px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.05)_inset] flex items-center justify-around px-4 relative overflow-hidden">
         {/* Floating Masterpiece Indicator */}
         <motion.div
           layoutId="bottomNavIndicator"
