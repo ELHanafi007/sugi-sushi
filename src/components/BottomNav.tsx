@@ -21,7 +21,7 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const { t } = useLanguage();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[1100] px-6 pb-12 pt-4 pointer-events-none flex justify-center">
+    <div className="fixed bottom-0 left-0 right-0 z-[1100] px-6 pb-6 pt-4 pointer-events-none flex justify-center">
       <motion.div 
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

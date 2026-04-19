@@ -316,20 +316,25 @@ const D: Record<Lang, Record<string, string>> = {
 const Ctx = createContext<Ctx | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Lang>(() => {
-    if (typeof window !== 'undefined') {
-      const s = localStorage.getItem('sugi-lang');
-      if (s === 'ar' || s === 'en') return s;
-      if (navigator.language?.startsWith('ar')) return 'ar';
-    }
-    return 'en';
-  });
+  const [lang, setLang] = useState<Lang>('en');
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
+    const s = localStorage.getItem('sugi-lang');
+    if (s === 'ar' || s === 'en') {
+      setLang(s as Lang);
+    } else if (navigator.language?.startsWith('ar')) {
+      setLang('ar');
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isInitialized) return;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
     try { localStorage.setItem('sugi-lang', lang); } catch {}
-  }, [lang]);
+  }, [lang, isInitialized]);
 
   const t = useCallback((k: string) => D[lang][k] || k, [lang]);
 
