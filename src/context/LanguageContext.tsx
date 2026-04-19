@@ -126,6 +126,8 @@ const D: Record<Lang, Record<string, string>> = {
     'strict.pairs_vibe': 'Dynamic Pairs',
     'strict.sourced': 'Sourced with respect for the ocean and the season. Prepared with the precision of a master\'s blade.',
     'strict.pairs': 'Pairs beautifully with...',
+    'strict.allergens': 'Allergens',
+    'strict.no_allergens': 'No common allergens',
     
     'gallery.label': 'Visual Journey',
     'gallery.title1': 'The',
@@ -276,6 +278,8 @@ const D: Record<Lang, Record<string, string>> = {
     'strict.pairs_vibe': 'تناغم النكهات',
     'strict.sourced': 'مستورد باحترام للمحيط والموسم. مُعد بدقة نصل الحرفي الماهر.',
     'strict.pairs': 'يتناغم بشكل رائع مع...',
+    'strict.allergens': 'مسببات الحساسية',
+    'strict.no_allergens': 'لا توجد مسببات حساسية شائعة',
     
     'gallery.label': 'رحلة بصرية',
     'gallery.title1': 'المعرض',

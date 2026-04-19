@@ -9,6 +9,7 @@ export interface Dish {
   calories?: string;
   tags: string[];
   image?: string;
+  allergens?: string[];
 }
 
 export const CATEGORIES = [
@@ -51,6 +52,7 @@ export const menuData: Dish[] = [
     category: 'Salads',
     calories: '50 cal',
     tags: ['Signature', 'Seafood'],
+    allergens: ['Shellfish', 'Nuts'],
   },
   {
     id: 'salad-002',
@@ -62,6 +64,7 @@ export const menuData: Dish[] = [
     category: 'Salads',
     calories: '60 cal',
     tags: ['Best Seller', 'Seafood'],
+    allergens: ['Shellfish', 'Egg'],
   },
   {
     id: 'salad-003',
@@ -73,6 +76,7 @@ export const menuData: Dish[] = [
     category: 'Salads',
     calories: '60 cal',
     tags: ['Classic'],
+    allergens: ['Soy', 'Gluten'],
   },
   {
     id: 'salad-004',
@@ -84,6 +88,7 @@ export const menuData: Dish[] = [
     category: 'Salads',
     calories: '140 cal',
     tags: ['Signature', 'Seafood', 'Chef\'s Choice'],
+    allergens: ['Shellfish', 'Fish'],
   },
   {
     id: 'salad-005',
@@ -95,6 +100,7 @@ export const menuData: Dish[] = [
     category: 'Salads',
     calories: '70 cal',
     tags: ['Vegetarian', 'Healthy'],
+    allergens: ['Sesame'],
   },
 
   // Soups
@@ -108,6 +114,7 @@ export const menuData: Dish[] = [
     category: 'Soups',
     calories: '35 cal',
     tags: ['Classic', 'Vegetarian'],
+    allergens: ['Soy'],
   },
   {
     id: 'soup-002',
@@ -119,6 +126,7 @@ export const menuData: Dish[] = [
     category: 'Soups',
     calories: '80 cal',
     tags: ['Spicy', 'Seafood'],
+    allergens: ['Shellfish'],
   },
   {
     id: 'soup-003',
@@ -130,6 +138,7 @@ export const menuData: Dish[] = [
     category: 'Soups',
     calories: '150 cal',
     tags: ['Premium', 'Seafood', 'Chef\'s Choice'],
+    allergens: ['Shellfish', 'Fish', 'Gluten'],
   },
 
   // Starters
@@ -143,6 +152,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '140 cal',
     tags: ['Best Seller', 'Seafood'],
+    allergens: ['Shellfish', 'Gluten', 'Soy'],
   },
   {
     id: 'starter-002',
@@ -154,6 +164,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '120 cal',
     tags: ['Classic'],
+    allergens: ['Gluten', 'Soy'],
   },
   {
     id: 'starter-003',
@@ -165,6 +176,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '140 cal',
     tags: ['Signature'],
+    allergens: ['Gluten', 'Soy'],
   },
   {
     id: 'starter-004',
@@ -175,6 +187,7 @@ export const menuData: Dish[] = [
     price: '',
     category: 'Starters',
     tags: ['Spicy', 'Seafood', 'New'],
+    allergens: ['Shellfish', 'Egg', 'Gluten'],
   },
   {
     id: 'starter-005',
@@ -186,6 +199,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '200 cal',
     tags: ['Classic'],
+    allergens: ['Gluten', 'Shellfish'],
   },
   {
     id: 'starter-006',
@@ -197,6 +211,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '200 cal',
     tags: ['Seafood'],
+    allergens: ['Gluten', 'Shellfish'],
   },
   {
     id: 'starter-007',
@@ -208,6 +223,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '200 cal',
     tags: ['Signature', 'Spicy', 'Best Seller'],
+    allergens: ['Shellfish', 'Egg', 'Gluten'],
   },
   {
     id: 'starter-008',
@@ -218,6 +234,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '650 cal',
     tags: ['Vegetarian', 'Classic'],
+    allergens: ['Soy'],
   },
   {
     id: 'starter-009',
@@ -228,6 +245,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '660 cal',
     tags: ['Spicy', 'Vegetarian'],
+    allergens: ['Soy'],
   },
 
   // Wok, Noodles & Rice
@@ -240,6 +258,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '300 cal',
     tags: ['Vegetarian'],
+    allergens: ['Gluten', 'Soy'],
   },
   {
     id: 'wok-002',
@@ -250,6 +269,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '510 cal',
     tags: ['Classic'],
+    allergens: ['Gluten', 'Soy'],
   },
   {
     id: 'wok-003',
@@ -260,6 +280,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '430 cal',
     tags: ['Best Seller'],
+    allergens: ['Gluten', 'Soy'],
   },
   {
     id: 'wok-004',
@@ -270,6 +291,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '420 cal',
     tags: ['Seafood'],
+    allergens: ['Gluten', 'Soy', 'Shellfish'],
   },
   {
     id: 'wok-005',
@@ -280,6 +302,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '300 cal',
     tags: ['Vegetarian'],
+    allergens: ['Egg', 'Soy'],
   },
   {
     id: 'wok-006',
@@ -290,6 +313,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '360 cal',
     tags: ['Classic'],
+    allergens: ['Egg', 'Soy'],
   },
   {
     id: 'wok-007',
@@ -300,6 +324,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '370 cal',
     tags: ['Seafood'],
+    allergens: ['Egg', 'Soy', 'Shellfish'],
   },
   {
     id: 'wok-008',
@@ -310,6 +335,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '350 cal',
     tags: ['Best Seller'],
+    allergens: ['Egg', 'Soy'],
   },
   {
     id: 'wok-009',
@@ -320,6 +346,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '320 cal',
     tags: ['Premium', 'Seafood'],
+    allergens: ['Fish', 'Soy'],
   },
   {
     id: 'wok-010',
@@ -330,6 +357,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '410 cal',
     tags: ['Classic'],
+    allergens: ['Soy'],
   },
   {
     id: 'wok-011',
@@ -340,6 +368,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '350 cal',
     tags: ['Seafood'],
+    allergens: ['Shellfish', 'Soy'],
   },
   {
     id: 'wok-012',
@@ -350,6 +379,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '450 cal',
     tags: ['Best Seller'],
+    allergens: ['Soy'],
   },
 
   // Tempura
@@ -362,6 +392,7 @@ export const menuData: Dish[] = [
     category: 'Tempura',
     calories: '320 cal',
     tags: ['Best Seller', 'Seafood'],
+    allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
     id: 'tempura-002',
@@ -372,6 +403,7 @@ export const menuData: Dish[] = [
     price: '',
     category: 'Tempura',
     tags: ['New'],
+    allergens: ['Gluten', 'Egg'],
   },
 
   // Sugi Dishes
@@ -385,6 +417,7 @@ export const menuData: Dish[] = [
     category: 'Sugi Dishes',
     calories: '350 cal',
     tags: ['Signature', 'Best Seller'],
+    allergens: ['Soy', 'Gluten'],
   },
   {
     id: 'sugi-002',
@@ -396,6 +429,7 @@ export const menuData: Dish[] = [
     category: 'Sugi Dishes',
     calories: '400 cal',
     tags: ['Premium', 'Chef\'s Choice'],
+    allergens: ['Soy', 'Gluten'],
   },
   {
     id: 'sugi-003',
@@ -407,6 +441,7 @@ export const menuData: Dish[] = [
     category: 'Sugi Dishes',
     calories: '240 cal',
     tags: ['Signature', 'Seafood', 'Chef\'s Choice'],
+    allergens: ['Fish', 'Soy'],
   },
   {
     id: 'sugi-004',
@@ -418,6 +453,7 @@ export const menuData: Dish[] = [
     category: 'Sugi Dishes',
     calories: '350 cal',
     tags: ['Best Seller'],
+    allergens: ['Gluten', 'Egg', 'Soy'],
   },
   {
     id: 'sugi-005',
@@ -429,6 +465,7 @@ export const menuData: Dish[] = [
     category: 'Sugi Dishes',
     calories: '450 cal',
     tags: ['Signature', 'Spicy'],
+    allergens: ['Peanuts', 'Soy'],
   },
   {
     id: 'sugi-006',
@@ -438,6 +475,7 @@ export const menuData: Dish[] = [
     price: '',
     category: 'Sugi Dishes',
     tags: ['Spicy', 'Seafood', 'New'],
+    allergens: ['Shellfish', 'Peanuts', 'Soy'],
   },
 
   // Sashimi
@@ -450,6 +488,7 @@ export const menuData: Dish[] = [
     category: 'Sashimi',
     calories: '130 cal',
     tags: ['Classic', 'Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'sashimi-002',
@@ -460,6 +499,7 @@ export const menuData: Dish[] = [
     category: 'Sashimi',
     calories: '120 cal',
     tags: ['Premium', 'Seafood'],
+    allergens: ['Fish'],
   },
 
   // Tataki
@@ -472,6 +512,7 @@ export const menuData: Dish[] = [
     category: 'Tataki',
     calories: '120 cal',
     tags: ['Signature', 'Seafood'],
+    allergens: ['Fish', 'Soy'],
   },
   {
     id: 'tataki-002',
@@ -482,6 +523,7 @@ export const menuData: Dish[] = [
     category: 'Tataki',
     calories: '120 cal',
     tags: ['Premium', 'Seafood'],
+    allergens: ['Fish', 'Soy'],
   },
 
   // Ceviche
@@ -494,6 +536,7 @@ export const menuData: Dish[] = [
     category: 'Ceviche',
     calories: '210 cal',
     tags: ['Signature', 'Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'ceviche-002',
@@ -504,6 +547,7 @@ export const menuData: Dish[] = [
     category: 'Ceviche',
     calories: '180 cal',
     tags: ['Premium', 'Seafood'],
+    allergens: ['Fish'],
   },
 
   // Nigiri
@@ -516,6 +560,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '110 cal',
     tags: ['Classic', 'Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'nigiri-002',
@@ -526,6 +571,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '110 cal',
     tags: ['Signature', 'Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'nigiri-003',
@@ -536,6 +582,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '90 cal',
     tags: ['Classic', 'Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'nigiri-004',
@@ -546,6 +593,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '80 cal',
     tags: ['Classic', 'Seafood'],
+    allergens: ['Shellfish'],
   },
   {
     id: 'nigiri-005',
@@ -556,6 +604,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '80 cal',
     tags: ['Seafood'],
+    allergens: ['Shellfish'],
   },
   {
     id: 'nigiri-006',
@@ -566,6 +615,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '130 cal',
     tags: ['Premium', 'Seafood'],
+    allergens: ['Fish', 'Soy'],
   },
 
   // Gunkan
@@ -578,6 +628,7 @@ export const menuData: Dish[] = [
     category: 'Gunkan',
     calories: '140 cal',
     tags: ['Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'gunkan-002',
@@ -588,6 +639,7 @@ export const menuData: Dish[] = [
     category: 'Gunkan',
     calories: '90 cal',
     tags: ['Seafood'],
+    allergens: ['Fish'],
   },
 
   // Temaki
@@ -601,6 +653,7 @@ export const menuData: Dish[] = [
     category: 'Temaki',
     calories: '110 cal',
     tags: ['Classic'],
+    allergens: ['Shellfish'],
   },
   {
     id: 'temaki-002',
@@ -612,6 +665,7 @@ export const menuData: Dish[] = [
     category: 'Temaki',
     calories: '210 cal',
     tags: ['Best Seller', 'Seafood'],
+    allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
     id: 'temaki-003',
@@ -623,6 +677,7 @@ export const menuData: Dish[] = [
     category: 'Temaki',
     calories: '170 cal',
     tags: ['Signature', 'Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'temaki-004',
@@ -634,6 +689,7 @@ export const menuData: Dish[] = [
     category: 'Temaki',
     calories: '150 cal',
     tags: ['Premium', 'Seafood'],
+    allergens: ['Shellfish', 'Egg'],
   },
 
   // Maki Rolls
@@ -646,6 +702,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '140 cal',
     tags: ['Classic', 'Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'maki-002',
@@ -656,6 +713,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '150 cal',
     tags: ['Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'maki-003',
@@ -666,6 +724,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '260 cal',
     tags: ['Best Seller', 'Seafood'],
+    allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
     id: 'maki-004',
@@ -676,6 +735,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '100 cal',
     tags: ['Vegetarian', 'Classic'],
+    allergens: [],
   },
   {
     id: 'maki-005',
@@ -686,6 +746,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '120 cal',
     tags: ['Seafood'],
+    allergens: ['Shellfish'],
   },
   {
     id: 'maki-006',
@@ -696,6 +757,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '130 cal',
     tags: ['Seafood'],
+    allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
     id: 'maki-007',
@@ -706,6 +768,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '130 cal',
     tags: ['Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'maki-008',
@@ -716,6 +779,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '140 cal',
     tags: ['Seafood'],
+    allergens: ['Fish'],
   },
   {
     id: 'maki-009',
@@ -726,6 +790,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '120 cal',
     tags: ['Vegetarian'],
+    allergens: [],
   },
 
   // Aromaki Rolls
@@ -739,6 +804,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Rolls',
     calories: '170 cal',
     tags: ['Signature', 'Best Seller', 'Seafood'],
+    allergens: ['Fish', 'Dairy', 'Shellfish'],
   },
   {
     id: 'aromaki-002',
@@ -750,6 +816,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Rolls',
     calories: '250 cal',
     tags: ['Signature', 'Seafood'],
+    allergens: ['Shellfish', 'Fish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
     id: 'aromaki-003',
@@ -761,6 +828,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Rolls',
     calories: '120 cal',
     tags: ['Premium', 'Chef\'s Choice', 'Seafood'],
+    allergens: ['Fish', 'Shellfish', 'Dairy'],
   },
   {
     id: 'aromaki-004',
@@ -772,6 +840,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Rolls',
     calories: '150 cal',
     tags: ['Vegetarian'],
+    allergens: [],
   },
 
   // Aromaki Fried
@@ -785,6 +854,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Fried',
     calories: '210 cal',
     tags: ['Signature', 'Seafood'],
+    allergens: ['Shellfish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
     id: 'aromaki-fried-002',
@@ -796,6 +866,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Fried',
     calories: '180 cal',
     tags: ['Signature', 'Seafood'],
+    allergens: ['Fish', 'Dairy', 'Shellfish', 'Gluten', 'Egg'],
   },
   {
     id: 'aromaki-fried-003',
@@ -807,6 +878,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Fried',
     calories: '170 cal',
     tags: ['Best Seller', 'Seafood'],
+    allergens: ['Shellfish', 'Fish', 'Dairy', 'Gluten', 'Egg'],
   },
 
   // California Rolls
@@ -819,6 +891,7 @@ export const menuData: Dish[] = [
     price: '24 SR',
     category: 'California Rolls',
     tags: ['Seafood'],
+    allergens: ['Shellfish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
     id: 'california-002',
@@ -829,6 +902,7 @@ export const menuData: Dish[] = [
     price: '22 SR',
     category: 'California Rolls',
     tags: ['Seafood'],
+    allergens: ['Fish', 'Sesame'],
   },
   {
     id: 'california-003',
@@ -840,6 +914,7 @@ export const menuData: Dish[] = [
     category: 'California Rolls',
     calories: '190 cal',
     tags: ['Premium', 'Seafood'],
+    allergens: ['Shellfish', 'Dairy'],
   },
   {
     id: 'california-004',
@@ -851,6 +926,7 @@ export const menuData: Dish[] = [
     category: 'California Rolls',
     calories: '400 cal',
     tags: ['Best Seller', 'Seafood'],
+    allergens: ['Fish', 'Dairy'],
   },
 
   // Special Rolls
@@ -864,6 +940,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '190 cal',
     tags: ['Signature', 'Chef\'s Choice', 'Seafood'],
+    allergens: ['Shellfish', 'Dairy'],
   },
   {
     id: 'special-002',
@@ -875,6 +952,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '300 cal',
     tags: ['Signature', 'Seafood'],
+    allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
     id: 'special-003',
@@ -886,6 +964,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '240 cal',
     tags: ['Best Seller', 'Seafood'],
+    allergens: ['Shellfish', 'Gluten', 'Egg', 'Fish'],
   },
   {
     id: 'special-004',
@@ -897,6 +976,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '340 cal',
     tags: ['Signature', 'Spicy', 'Best Seller'],
+    allergens: ['Shellfish', 'Gluten', 'Egg', 'Fish'],
   },
   {
     id: 'special-005',
@@ -908,6 +988,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '320 cal',
     tags: ['Classic'],
+    allergens: ['Soy', 'Gluten'],
   },
   {
     id: 'special-006',
@@ -919,6 +1000,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '310 cal',
     tags: ['Spicy', 'Best Seller', 'Seafood'],
+    allergens: ['Shellfish', 'Egg', 'Gluten'],
   },
   {
     id: 'special-007',
@@ -929,6 +1011,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '280 cal',
     tags: ['Spicy', 'Seafood'],
+    allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
     id: 'special-008',
@@ -939,6 +1022,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '200 cal',
     tags: ['Seafood'],
+    allergens: ['Fish', 'Dairy'],
   },
   {
     id: 'special-009',
@@ -950,6 +1034,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '140 cal',
     tags: ['Vegetarian'],
+    allergens: [],
   },
   {
     id: 'special-010',
@@ -961,6 +1046,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '210 cal',
     tags: ['Classic'],
+    allergens: ['Gluten', 'Egg'],
   },
   {
     id: 'special-011',
@@ -972,6 +1058,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '350 cal',
     tags: ['Spicy', 'Signature', 'Seafood'],
+    allergens: ['Fish', 'Gluten', 'Soy'],
   },
   {
     id: 'special-012',
@@ -982,6 +1069,7 @@ export const menuData: Dish[] = [
     price: '',
     category: 'Special Rolls',
     tags: ['Spicy', 'Seafood', 'New'],
+    allergens: ['Shellfish', 'Dairy'],
   },
   {
     id: 'special-013',
@@ -992,6 +1080,7 @@ export const menuData: Dish[] = [
     price: '49 SR',
     category: 'Special Rolls',
     tags: ['Premium', 'Chef\'s Choice', 'Seafood'],
+    allergens: ['Shellfish', 'Fish'],
   },
   {
     id: 'special-014',
@@ -1002,6 +1091,7 @@ export const menuData: Dish[] = [
     price: '39 SR',
     category: 'Special Rolls',
     tags: ['Premium', 'Chef\'s Choice', 'Seafood'],
+    allergens: ['Fish', 'Dairy'],
   },
 
   // Fried Rolls
@@ -1013,6 +1103,7 @@ export const menuData: Dish[] = [
     category: 'Fried Rolls',
     calories: '280 cal',
     tags: ['Signature', 'Seafood'],
+    allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
     id: 'fried-002',
@@ -1024,6 +1115,7 @@ export const menuData: Dish[] = [
     category: 'Fried Rolls',
     calories: '260 cal',
     tags: ['Best Seller', 'Seafood'],
+    allergens: ['Shellfish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
     id: 'fried-003',
@@ -1035,6 +1127,7 @@ export const menuData: Dish[] = [
     category: 'Fried Rolls',
     calories: '250 cal',
     tags: ['Signature', 'Seafood', 'Chef\'s Choice'],
+    allergens: ['Shellfish', 'Fish', 'Gluten', 'Egg', 'Soy'],
   },
   {
     id: 'fried-004',
@@ -1045,6 +1138,7 @@ export const menuData: Dish[] = [
     price: '',
     category: 'Fried Rolls',
     tags: ['Seafood', 'New'],
+    allergens: ['Fish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
     id: 'fried-005',
@@ -1056,6 +1150,7 @@ export const menuData: Dish[] = [
     category: 'Fried Rolls',
     calories: '220 cal',
     tags: ['Best Seller', 'Seafood'],
+    allergens: ['Fish', 'Dairy', 'Shellfish', 'Gluten', 'Egg'],
   },
   {
     id: 'fried-006',
@@ -1065,6 +1160,7 @@ export const menuData: Dish[] = [
     category: 'Fried Rolls',
     calories: '220 cal',
     tags: ['Seafood', 'New'],
+    allergens: ['Shellfish', 'Dairy', 'Gluten', 'Egg'],
   },
 
   // Boxes
@@ -1076,6 +1172,7 @@ export const menuData: Dish[] = [
     price: '91 SR',
     category: 'Boxes',
     tags: ['Signature', 'Seafood', 'Best Seller'],
+    allergens: ['Fish', 'Shellfish', 'Soy'],
   },
   {
     id: 'box-002',
@@ -1086,6 +1183,7 @@ export const menuData: Dish[] = [
     category: 'Boxes',
     calories: '550 cal',
     tags: ['Premium', 'Seafood'],
+    allergens: ['Fish', 'Shellfish'],
   },
   {
     id: 'box-003',
@@ -1096,6 +1194,7 @@ export const menuData: Dish[] = [
     category: 'Boxes',
     calories: '490 cal',
     tags: ['Signature', 'Seafood', 'Best Seller'],
+    allergens: ['Fish'],
   },
   {
     id: 'box-004',
@@ -1106,6 +1205,7 @@ export const menuData: Dish[] = [
     category: 'Boxes',
     calories: '605 cal',
     tags: ['Signature', 'Chef\'s Choice', 'Best Seller'],
+    allergens: ['Fish', 'Shellfish', 'Gluten', 'Egg', 'Soy', 'Dairy'],
   },
   {
     id: 'box-005',
@@ -1116,6 +1216,7 @@ export const menuData: Dish[] = [
     category: 'Boxes',
     calories: '780 cal',
     tags: ['Best Seller'],
+    allergens: ['Shellfish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
     id: 'box-006',
@@ -1126,6 +1227,7 @@ export const menuData: Dish[] = [
     category: 'Boxes',
     calories: '370 cal',
     tags: ['Seafood'],
+    allergens: ['Fish', 'Shellfish', 'Gluten', 'Egg', 'Dairy'],
   },
 
   // Sugi Boat
@@ -1137,6 +1239,7 @@ export const menuData: Dish[] = [
     price: '257 SR',
     category: 'Sugi Boat',
     tags: ['Premium', 'Chef\'s Choice', 'Sharing'],
+    allergens: ['Fish', 'Shellfish', 'Gluten', 'Egg', 'Soy', 'Dairy'],
   },
   {
     id: 'boat-002',
@@ -1146,6 +1249,7 @@ export const menuData: Dish[] = [
     price: '318 SR',
     category: 'Sugi Boat',
     tags: ['Premium', 'Chef\'s Choice', 'Sharing'],
+    allergens: ['Fish', 'Shellfish', 'Gluten', 'Egg', 'Soy', 'Dairy'],
   },
   {
     id: 'boat-003',
@@ -1155,6 +1259,7 @@ export const menuData: Dish[] = [
     price: '516 SR',
     category: 'Sugi Boat',
     tags: ['Premium', 'Chef\'s Choice', 'Sharing'],
+    allergens: ['Fish', 'Shellfish', 'Gluten', 'Egg', 'Soy', 'Dairy'],
   },
 
   // Cold Drinks
@@ -1166,6 +1271,7 @@ export const menuData: Dish[] = [
     price: '5 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    allergens: [],
   },
   {
     id: 'cold-drink-002',
@@ -1175,6 +1281,7 @@ export const menuData: Dish[] = [
     price: '5 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    allergens: [],
   },
   {
     id: 'cold-drink-003',
@@ -1184,6 +1291,7 @@ export const menuData: Dish[] = [
     price: '5 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    allergens: [],
   },
   {
     id: 'cold-drink-004',
@@ -1193,6 +1301,7 @@ export const menuData: Dish[] = [
     price: '5 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    allergens: [],
   },
   {
     id: 'cold-drink-005',
@@ -1202,6 +1311,7 @@ export const menuData: Dish[] = [
     price: '5 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    allergens: [],
   },
   {
     id: 'cold-drink-006',
@@ -1211,6 +1321,7 @@ export const menuData: Dish[] = [
     price: '4 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    allergens: [],
   },
   {
     id: 'cold-drink-007',
@@ -1220,6 +1331,7 @@ export const menuData: Dish[] = [
     price: '8 SR',
     category: 'Cold Drinks',
     tags: ['Premium'],
+    allergens: [],
   },
   {
     id: 'cold-drink-008',
@@ -1228,6 +1340,7 @@ export const menuData: Dish[] = [
     price: '8 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    allergens: [],
   },
 
   // Fresh Juices
@@ -1240,6 +1353,7 @@ export const menuData: Dish[] = [
     category: 'Fresh Juices',
     calories: '120 cal',
     tags: ['Classic', 'Fresh'],
+    allergens: [],
   },
   {
     id: 'juice-002',
@@ -1249,6 +1363,7 @@ export const menuData: Dish[] = [
     category: 'Fresh Juices',
     calories: '40 cal',
     tags: ['Fresh', 'Healthy'],
+    allergens: [],
   },
   {
     id: 'juice-003',
@@ -1258,6 +1373,7 @@ export const menuData: Dish[] = [
     category: 'Fresh Juices',
     calories: '120 cal',
     tags: ['Fresh', 'Signature'],
+    allergens: [],
   },
   {
     id: 'juice-004',
@@ -1267,6 +1383,7 @@ export const menuData: Dish[] = [
     category: 'Fresh Juices',
     calories: '110 cal',
     tags: ['Fresh', 'Signature'],
+    allergens: [],
   },
   {
     id: 'juice-005',
@@ -1276,6 +1393,7 @@ export const menuData: Dish[] = [
     category: 'Fresh Juices',
     calories: '80 cal',
     tags: ['Fresh', 'Signature'],
+    allergens: [],
   },
   {
     id: 'juice-006',
@@ -1284,6 +1402,7 @@ export const menuData: Dish[] = [
     price: '28 SR',
     category: 'Fresh Juices',
     tags: ['Premium', 'Signature'],
+    allergens: [],
   },
 
   // Hot Drinks
@@ -1296,6 +1415,7 @@ export const menuData: Dish[] = [
     category: 'Hot Drinks',
     calories: '0 cal',
     tags: ['Classic'],
+    allergens: [],
   },
   {
     id: 'hot-drink-002',
@@ -1306,6 +1426,7 @@ export const menuData: Dish[] = [
     category: 'Hot Drinks',
     calories: '40 cal',
     tags: ['Classic'],
+    allergens: [],
   },
 
   // Desserts
@@ -1319,6 +1440,7 @@ export const menuData: Dish[] = [
     category: 'Desserts',
     calories: '156 cal',
     tags: ['Signature', 'Best Seller'],
+    allergens: ['Dairy', 'Soy'],
   },
   {
     id: 'dessert-002',
@@ -1329,6 +1451,7 @@ export const menuData: Dish[] = [
     category: 'Desserts',
     calories: '110 cal',
     tags: ['Classic'],
+    allergens: ['Dairy', 'Nuts'],
   },
   {
     id: 'dessert-003',
@@ -1339,6 +1462,7 @@ export const menuData: Dish[] = [
     category: 'Desserts',
     calories: '420 cal',
     tags: ['Best Seller'],
+    allergens: ['Dairy', 'Gluten', 'Egg'],
   },
   {
     id: 'dessert-004',
@@ -1349,6 +1473,7 @@ export const menuData: Dish[] = [
     category: 'Desserts',
     calories: '230 cal',
     tags: ['Signature', 'Chef\'s Choice'],
+    allergens: ['Dairy', 'Gluten', 'Egg'],
   },
 
   // Extra Sauces
@@ -1360,6 +1485,7 @@ export const menuData: Dish[] = [
     price: '1 SR',
     category: 'Extra Sauces',
     tags: ['Classic'],
+    allergens: ['Soy', 'Gluten'],
   },
   {
     id: 'sauce-002',
@@ -1369,6 +1495,7 @@ export const menuData: Dish[] = [
     price: '1 SR',
     category: 'Extra Sauces',
     tags: ['Healthy'],
+    allergens: ['Soy', 'Gluten'],
   },
   {
     id: 'sauce-003',
@@ -1378,6 +1505,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Classic'],
+    allergens: ['Soy', 'Gluten'],
   },
   {
     id: 'sauce-004',
@@ -1387,6 +1515,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Spicy', 'Signature'],
+    allergens: ['Egg', 'Gluten'],
   },
   {
     id: 'sauce-005',
@@ -1396,6 +1525,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Spicy'],
+    allergens: ['Egg'],
   },
   {
     id: 'sauce-006',
@@ -1405,6 +1535,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Classic'],
+    allergens: [],
   },
   {
     id: 'sauce-007',
@@ -1414,6 +1545,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Classic'],
+    allergens: [],
   },
   {
     id: 'sauce-008',
@@ -1423,5 +1555,6 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Spicy'],
+    allergens: [],
   },
 ];

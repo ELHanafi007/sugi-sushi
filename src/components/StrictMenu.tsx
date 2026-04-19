@@ -48,6 +48,21 @@ function DishModal({
     return getDynamicRecommendations(dish, menuData, lang as 'en' | 'ar');
   }, [dish, lang]);
 
+  const mapAllergen = (a: string) => {
+    const map: Record<string, { en: string, ar: string }> = {
+      'Shellfish': { en: 'Shellfish', ar: 'محار' },
+      'Nuts': { en: 'Nuts', ar: 'مكسرات' },
+      'Soy': { en: 'Soy', ar: 'صويا' },
+      'Gluten': { en: 'Gluten', ar: 'غلوتين' },
+      'Egg': { en: 'Egg', ar: 'بيض' },
+      'Fish': { en: 'Fish', ar: 'سمك' },
+      'Dairy': { en: 'Dairy', ar: 'ألبان' },
+      'Sesame': { en: 'Sesame', ar: 'سمسم' },
+      'Peanuts': { en: 'Peanuts', ar: 'فول سوداني' },
+    };
+    return map[a] ? (lang === 'ar' ? map[a].ar : map[a].en) : a;
+  };
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
@@ -148,23 +163,45 @@ function DishModal({
             </div>
 
             {/* The Source */}
-            <div className="pt-12 border-t border-white/[0.03] space-y-8">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-[1px] bg-gold/20" />
-                <h4 className="text-gold/30 text-[10px] uppercase tracking-[0.6em] font-black font-mono">{t('strict.details')}</h4>
-              </div>
-              
-              <div className="flex flex-wrap gap-3">
-                {dish.tags.map(tag => (
-                  <span key={tag} className="px-6 py-2 rounded-full bg-white/[0.02] border border-white/[0.05] text-[10px] text-white/30 uppercase tracking-[0.2em] font-black font-mono">
-                    {tag}
-                  </span>
-                ))}
+            <div className="pt-12 border-t border-white/[0.03] space-y-12">
+              {/* Allergens Orchestration */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-6">
+                  <div className="w-16 h-[1px] bg-gold/20" />
+                  <h4 className="text-gold/30 text-[10px] uppercase tracking-[0.6em] font-black font-mono">{t('strict.allergens')}</h4>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {dish.allergens && dish.allergens.length > 0 ? (
+                    dish.allergens.map(allergen => (
+                      <span key={allergen} className="px-5 py-2 rounded-xl bg-red-500/5 border border-red-500/10 text-[9px] text-red-400/60 uppercase tracking-[0.2em] font-black font-mono flex items-center gap-2">
+                        <span className="w-1 h-1 rounded-full bg-red-400/40" />
+                        {mapAllergen(allergen)}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-white/10 text-[10px] font-serif italic">{t('strict.no_allergens')}</span>
+                  )}
+                </div>
               </div>
 
-              <p className="text-white/20 text-base leading-relaxed font-serif italic font-light">
-                {t('strict.sourced')}
-              </p>
+              <div className="space-y-8">
+                <div className="flex items-center gap-6">
+                  <div className="w-16 h-[1px] bg-gold/20" />
+                  <h4 className="text-gold/30 text-[10px] uppercase tracking-[0.6em] font-black font-mono">{t('strict.details')}</h4>
+                </div>
+                
+                <div className="flex flex-wrap gap-3">
+                  {dish.tags.map(tag => (
+                    <span key={tag} className="px-6 py-2 rounded-full bg-white/[0.02] border border-white/[0.05] text-[10px] text-white/30 uppercase tracking-[0.2em] font-black font-mono">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <p className="text-white/20 text-base leading-relaxed font-serif italic font-light">
+                  {t('strict.sourced')}
+                </p>
+              </div>
             </div>
 
             {/* ─── Chef's Curated Recommendations ─── */}
