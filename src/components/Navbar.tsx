@@ -27,7 +27,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   
   const navWidth = useTransform(scrollY, [0, 150], ['100%', '94%']);
   const navY = useTransform(scrollY, [0, 150], [0, 20]);
-  const containerOpacity = useTransform(scrollY, [0, 100], [0.8, 1]);
+  const containerOpacity = useTransform(scrollY, [0, 100], [1, 1]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
