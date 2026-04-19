@@ -3,8 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { useLanguage } from '@/context/LanguageContext';
-import { NavTab } from './BottomNav';
+import { useLanguage, NavTab } from '@/context/LanguageContext';
 
 interface NavbarProps {
   onTabChange: (tab: NavTab) => void;

@@ -15,19 +15,24 @@ export default function BottomNav() {
   const { t, activeTab, setActiveTab } = useLanguage();
 
   return (
-    <div className="fixed bottom-10 left-0 right-0 z-[10000] px-6 pointer-events-none flex justify-center">
-      <div className="w-full max-w-2xl bg-black/80 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] h-20 md:h-24 pointer-events-auto shadow-[0_50px_100px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.05)_inset] flex items-center justify-around px-4 relative overflow-hidden">
+    <motion.div 
+      initial={{ y: 100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 1, ease: [0.19, 1, 0.22, 1], delay: 0.5 }}
+      className="fixed bottom-8 left-0 right-0 z-[10000] px-6 pointer-events-none flex justify-center"
+    >
+      <div className="w-full max-w-2xl bg-black/90 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] h-20 md:h-22 pointer-events-auto shadow-[0_50px_100px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.05)_inset] flex items-center justify-around px-4 relative overflow-hidden">
         {/* Floating Masterpiece Indicator */}
         <motion.div
           layoutId="bottomNavIndicator"
           className="absolute h-14 md:h-16 bg-gold/[0.08] border border-gold/20 rounded-3xl shadow-[0_0_40px_rgba(212,175,55,0.15)]"
           initial={false}
           animate={{
-            width: `calc(${100 / TABS.length}% - 16px)`,
-            x: `calc(${TABS.findIndex(t => t.id === activeTab) * 100}% + 8px)`,
+            width: `calc(${100 / TABS.length}% - 12px)`,
+            x: `calc(${TABS.findIndex(t => t.id === activeTab) * 100}% + 6px)`,
           }}
-          transition={{ type: "spring", stiffness: 350, damping: 30 }}
-          style={{ width: `calc(100% / ${TABS.length} - 16px)`, left: 0 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          style={{ left: 0 }}
         />
 
         {TABS.map((tab) => {
@@ -60,6 +65,6 @@ export default function BottomNav() {
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }

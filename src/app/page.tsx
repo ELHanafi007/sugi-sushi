@@ -167,7 +167,21 @@ export default function Home() {
             <LocationPage />
           </motion.div>
         )}
+
+        {activeTab === 'gallery' && (
+          <motion.div 
+            key="gallery"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <StoryPage />
+          </motion.div>
+        )}
       </AnimatePresence>
+
+      <BottomNav />
 
       {/* Ambient spotlight */}
       <div className="ambient-spotlight" />
