@@ -49,7 +49,7 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const { lang } = useLanguage();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[200] px-4 pb-6 pt-2 pointer-events-none md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-[200] px-4 pb-6 pt-2 pointer-events-none">
       <motion.div 
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
