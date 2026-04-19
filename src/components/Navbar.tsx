@@ -44,10 +44,10 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   return (
     <motion.header
       style={{ width: navWidth, y: navY, opacity: containerOpacity }}
-      className="fixed top-0 left-1/2 -translate-x-1/2 z-[100] h-24 md:h-36 flex items-center justify-center pointer-events-none"
+      className="fixed top-0 left-1/2 -translate-x-1/2 z-[100] h-32 md:h-48 flex items-center justify-center pointer-events-none"
     >
       <motion.div 
-        className={`w-full max-w-7xl h-20 md:h-24 rounded-[2.5rem] flex items-center justify-between px-6 md:px-10 pointer-events-auto transition-all duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] ${
+        className={`w-full max-w-7xl h-24 md:h-36 rounded-[2.5rem] flex items-center justify-between px-6 md:px-10 pointer-events-auto transition-all duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] ${
           isScrolled 
             ? 'bg-black/40 backdrop-blur-3xl border border-white/[0.08] shadow-[0_30px_60px_rgba(0,0,0,0.4)]' 
             : 'bg-transparent border border-transparent'
@@ -88,7 +88,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
             onClick={() => { onTabChange('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className="relative group transition-transform duration-500 hover:scale-105 active:scale-95"
           >
-            <div className="relative w-40 h-10 md:w-56 md:h-14">
+            <div className="relative w-80 h-20 md:w-[28rem] md:h-28">
               <Image 
                 src="/media/logo.png" 
                 alt="Sugi Sushi Logo" 
