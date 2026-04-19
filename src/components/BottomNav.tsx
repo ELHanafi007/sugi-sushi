@@ -3,36 +3,70 @@
 import { motion } from 'framer-motion';
 import { useLanguage, NavTab } from '@/context/LanguageContext';
 
-const TABS: { id: NavTab; labelKey: string; kanji: string }[] = [
-  { id: 'home', labelKey: 'nav.home', kanji: '家' },
-  { id: 'menu', labelKey: 'nav.menu', kanji: '菜' },
-  { id: 'reservations', labelKey: 'nav.reservations', kanji: '席' },
-  { id: 'gallery', labelKey: 'nav.gallery', kanji: '画' },
-  { id: 'location', labelKey: 'nav.contact', kanji: '位' },
+const TABS: { id: NavTab; labelKey: string; kanji: string; icon: string }[] = [
+  { id: 'home',         labelKey: 'nav.home',         kanji: '家', icon: '⌂' },
+  { id: 'menu',         labelKey: 'nav.menu',         kanji: '菜', icon: '◈' },
+  { id: 'reservations', labelKey: 'nav.reservations', kanji: '席', icon: '⊞' },
+  { id: 'gallery',      labelKey: 'nav.gallery',      kanji: '画', icon: '⊟' },
+  { id: 'location',     labelKey: 'nav.contact',      kanji: '位', icon: '⊕' },
 ];
 
 export default function BottomNav() {
   const { t, activeTab, setActiveTab } = useLanguage();
+  const activeIndex = TABS.findIndex(tab => tab.id === activeTab);
 
   return (
-    <motion.div 
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 1, ease: [0.19, 1, 0.22, 1], delay: 0.5 }}
-      className="fixed bottom-8 left-0 right-0 z-[10000] px-6 pointer-events-none flex justify-center"
+    <div
+      style={{
+        position: 'fixed',
+        bottom: '24px',
+        left: 0,
+        right: 0,
+        zIndex: 99999,
+        display: 'flex',
+        justifyContent: 'center',
+        padding: '0 16px',
+        pointerEvents: 'none',
+      }}
     >
-      <div className="w-full max-w-2xl bg-black/90 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] h-20 md:h-22 pointer-events-auto shadow-[0_50px_100px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.05)_inset] flex items-center justify-around px-4 relative overflow-hidden">
-        {/* Floating Masterpiece Indicator */}
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '520px',
+          height: '72px',
+          background: 'rgba(5, 5, 5, 0.92)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '36px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          padding: '0 8px',
+          position: 'relative',
+          overflow: 'hidden',
+          pointerEvents: 'auto',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05) inset',
+        }}
+      >
+        {/* Sliding active pill */}
         <motion.div
-          layoutId="bottomNavIndicator"
-          className="absolute h-14 md:h-16 bg-gold/[0.08] border border-gold/20 rounded-3xl shadow-[0_0_40px_rgba(212,175,55,0.15)]"
-          initial={false}
           animate={{
-            width: `calc(${100 / TABS.length}% - 12px)`,
-            x: `calc(${TABS.findIndex(t => t.id === activeTab) * 100}% + 6px)`,
+            x: `calc(${activeIndex * 100}% + ${activeIndex * 4}px)`,
+            width: `calc(${100 / TABS.length}% - 8px)`,
           }}
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          style={{ left: 0 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+          style={{
+            position: 'absolute',
+            left: '4px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            height: '52px',
+            background: 'rgba(212, 175, 55, 0.08)',
+            border: '1px solid rgba(212, 175, 55, 0.2)',
+            borderRadius: '28px',
+            boxShadow: '0 0 20px rgba(212,175,55,0.1)',
+          }}
         />
 
         {TABS.map((tab) => {
@@ -42,29 +76,53 @@ export default function BottomNav() {
               key={tab.id}
               onClick={() => {
                 setActiveTab(tab.id);
-                if (tab.id === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`relative flex flex-col items-center justify-center flex-1 h-full transition-all duration-700 outline-none z-10 group`}
+              style={{
+                flex: 1,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '3px',
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                position: 'relative',
+                zIndex: 10,
+                outline: 'none',
+                transition: 'opacity 0.3s ease',
+              }}
             >
-              <div className="flex flex-col items-center gap-1">
-                <span className={`font-serif text-xl md:text-2xl transition-all duration-700 ${isActive ? 'text-gold' : 'text-white/20 group-hover:text-white/40'}`}>
-                  {tab.kanji}
-                </span>
-                <span className={`text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-700 font-mono ${isActive ? 'text-gold' : 'text-white/10 group-hover:text-white/30'}`}>
-                  {t(tab.labelKey)}
-                </span>
-              </div>
-              
-              {isActive && (
-                <motion.div 
-                  layoutId="bottomNavGlow"
-                  className="absolute inset-0 bg-gold/5 blur-xl -z-10" 
-                />
-              )}
+              <span
+                style={{
+                  fontFamily: '"Shippori Mincho", serif',
+                  fontSize: '20px',
+                  lineHeight: 1,
+                  color: isActive ? '#d4af37' : 'rgba(255,255,255,0.3)',
+                  transition: 'color 0.4s ease',
+                }}
+              >
+                {tab.kanji}
+              </span>
+              <span
+                style={{
+                  fontFamily: '"Space Mono", monospace',
+                  fontSize: '8px',
+                  fontWeight: 700,
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
+                  color: isActive ? '#d4af37' : 'rgba(255,255,255,0.2)',
+                  transition: 'color 0.4s ease',
+                }}
+              >
+                {t(tab.labelKey)}
+              </span>
             </button>
           );
         })}
       </div>
-    </motion.div>
+    </div>
   );
 }
