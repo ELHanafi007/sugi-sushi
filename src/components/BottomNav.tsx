@@ -14,6 +14,7 @@ const TABS: { id: NavTab; labelKey: string; kanji: string }[] = [
   { id: 'home', labelKey: 'nav.home', kanji: '家' },
   { id: 'menu', labelKey: 'nav.menu', kanji: '菜' },
   { id: 'reservations', labelKey: 'nav.reservations', kanji: '席' },
+  { id: 'gallery', labelKey: 'nav.gallery', kanji: '画' },
   { id: 'location', labelKey: 'nav.contact', kanji: '位' },
 ];
 
