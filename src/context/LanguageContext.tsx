@@ -3,11 +3,14 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 type Lang = 'en' | 'ar';
+export type NavTab = 'home' | 'menu' | 'reservations' | 'gallery' | 'location';
 
 interface Ctx {
   lang: Lang;
   setLang: (l: Lang) => void;
   t: (k: string) => string;
+  activeTab: NavTab;
+  setActiveTab: (t: NavTab) => void;
 }
 
 const D: Record<Lang, Record<string, string>> = {
@@ -324,6 +327,7 @@ const Ctx = createContext<Ctx | undefined>(undefined);
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLang] = useState<Lang>('en');
   const [isInitialized, setIsInitialized] = useState(false);
+  const [activeTab, setActiveTab] = useState<NavTab>('home');
 
   useEffect(() => {
     const s = localStorage.getItem('sugi-lang');
@@ -345,7 +349,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const t = useCallback((k: string) => D[lang][k] || k, [lang]);
 
   return (
-    <Ctx.Provider value={{ lang, setLang, t }}>
+    <Ctx.Provider value={{ lang, setLang, t, activeTab, setActiveTab }}>
       {children}
     </Ctx.Provider>
   );

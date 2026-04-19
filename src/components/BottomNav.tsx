@@ -1,14 +1,7 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage } from '@/context/LanguageContext';
-
-export type NavTab = 'home' | 'menu' | 'reservations' | 'gallery' | 'location';
-
-interface BottomNavProps {
-  activeTab: NavTab;
-  onTabChange: (tab: NavTab) => void;
-}
+import { motion } from 'framer-motion';
+import { useLanguage, NavTab } from '@/context/LanguageContext';
 
 const TABS: { id: NavTab; labelKey: string; kanji: string }[] = [
   { id: 'home', labelKey: 'nav.home', kanji: '家' },
@@ -18,8 +11,8 @@ const TABS: { id: NavTab; labelKey: string; kanji: string }[] = [
   { id: 'location', labelKey: 'nav.contact', kanji: '位' },
 ];
 
-export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
-  const { t } = useLanguage();
+export default function BottomNav() {
+  const { t, activeTab, setActiveTab } = useLanguage();
 
   return (
     <div className="fixed bottom-10 left-0 right-0 z-[10000] px-6 pointer-events-none flex justify-center">
@@ -43,7 +36,7 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
             <button
               key={tab.id}
               onClick={() => {
-                onTabChange(tab.id);
+                setActiveTab(tab.id);
                 if (tab.id === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className={`relative flex flex-col items-center justify-center flex-1 h-full transition-all duration-700 outline-none z-10 group`}
