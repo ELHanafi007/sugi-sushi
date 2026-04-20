@@ -87,7 +87,7 @@ export default function Hero({ onTabChange }: HeroProps) {
         className="relative z-20 flex flex-col items-center text-center px-6"
       >
         {/* Placeholder for the Morphing Logo (Calculated in Navbar) */}
-        <div className="h-[25vh] mb-12 flex flex-col items-center justify-center">
+        <div className="h-[42vh] mb-16 flex flex-col items-center justify-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}

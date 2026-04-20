@@ -33,7 +33,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
 
   // Logo Transformations
   const logoY = useTransform(smoothProgress, [0, 1], ["32vh", "0vh"]);
-  const logoScale = useTransform(smoothProgress, [0, 1], [1.8, 1]);
+  const logoScale = useTransform(smoothProgress, [0, 1], [3.2, 1]);
   
   // Nav Items & Background Opacity
   const navItemsOpacity = useTransform(smoothProgress, [0.7, 1], [0, 1]);
@@ -114,12 +114,12 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
               onClick={() => { onTabChange('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="relative transition-transform duration-500 hover:scale-105 active:scale-95"
             >
-              <div className="relative w-[180px] h-[40px] xs:w-[220px] xs:h-[48px] md:w-[480px] md:h-[100px]">
+              <div className="relative w-[220px] h-[50px] xs:w-[280px] xs:h-[60px] md:w-[600px] md:h-[140px]">
                 <Image 
                   src="/media/logo.png" 
                   alt="Sugi Sushi Logo" 
                   fill 
-                  className="object-contain brightness-125 contrast-110 drop-shadow-[0_0_30px_rgba(212,175,55,0.4)]" 
+                  className="object-contain brightness-150 contrast-125 drop-shadow-[0_0_50px_rgba(212,175,55,0.6)]" 
                   priority 
                 />
               </div>
