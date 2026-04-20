@@ -158,7 +158,7 @@ export default function Atmosphere() {
       {/* Perimeter Vertical Accents */}
       <motion.div 
         initial={{ opacity: 0, x: -20 }}
-        whileInView={{ opacity: 0.08, x: 0 }}
+        whileInView={{ opacity: 0.25, x: 0 }}
         transition={{ duration: 2, delay: 0.5 }}
         className="absolute bottom-24 left-12 hidden lg:block"
       >
@@ -166,7 +166,7 @@ export default function Atmosphere() {
       </motion.div>
       <motion.div 
         initial={{ opacity: 0, x: 20 }}
-        whileInView={{ opacity: 0.08, x: 0 }}
+        whileInView={{ opacity: 0.25, x: 0 }}
         transition={{ duration: 2, delay: 0.8 }}
         className="absolute top-24 right-12 hidden lg:block"
       >

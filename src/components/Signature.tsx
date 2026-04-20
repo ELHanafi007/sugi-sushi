@@ -116,12 +116,12 @@ const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: N
           </h3>
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
-            <p className="text-xl md:text-2xl text-white/40 max-w-2xl italic font-serif leading-relaxed font-light">
+            <p className="text-xl md:text-2xl text-white/65 max-w-2xl italic font-serif leading-relaxed font-light">
               &quot;{dish.description}&quot;
             </p>
             
             <div className="flex flex-col items-end gap-4">
-              <span className="text-mono text-white/20 tracking-[1em] text-[10px]">{t('signature.sig')}</span>
+              <span className="text-mono text-white/45 tracking-[1em] text-[10px]">{t('signature.sig')}</span>
               <div className="flex items-baseline gap-4 bg-white/[0.02] border border-white/5 backdrop-blur-2xl px-10 py-5 rounded-full group-hover:border-gold/30 transition-colors duration-700">
                 <span className="text-4xl text-gold font-serif font-light">{dish.price}</span>
                 <span className="text-mono text-gold/40 text-[10px]">{t('common.sr')}</span>
@@ -180,7 +180,7 @@ const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, on
           <span className="text-mono text-gold/30 mb-4 block text-[10px] tracking-[0.8em] font-black">{t('signature.curated')}</span>
           <h4 className="text-3xl md:text-5xl text-white font-serif font-light mb-6 leading-tight group-hover:text-gold transition-colors duration-1000">{dish.name}</h4>
           <div className="flex items-center justify-between">
-            <span className="text-white/20 font-serif italic text-lg">{dish.price} {t('common.sr')}</span>
+            <span className="text-white/45 font-serif italic text-lg">{dish.price} {t('common.sr')}</span>
             <div className="w-3 h-3 rounded-full bg-gold/5 group-hover:bg-gold/40 transition-all duration-1000 shadow-[0_0_20px_rgba(212,175,55,0)] group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
           </div>
         </motion.div>
@@ -216,7 +216,7 @@ export default function Signature({ onTabChange }: { onTabChange?: (tab: NavTab)
               className="flex items-center gap-6 mb-8"
             >
               <div className="w-12 h-[1px] bg-gold/40" />
-              <span className="text-mono text-gold/30 text-[10px] tracking-[1em] font-black uppercase">
+              <span className="text-mono text-gold/65 text-[10px] tracking-[1em] font-black uppercase">
                 {t('signature.label')}
               </span>
             </motion.div>
@@ -239,7 +239,7 @@ export default function Signature({ onTabChange }: { onTabChange?: (tab: NavTab)
             className="flex flex-col items-center lg:items-end gap-4"
           >
             <span className="text-gold/60 text-6xl md:text-8xl font-serif font-thin">匠</span>
-            <span className="text-mono text-white/10 text-[10px] tracking-[0.8em] font-black uppercase">{t('signature.collection')}</span>
+            <span className="text-mono text-white/35 text-[10px] tracking-[0.8em] font-black uppercase">{t('signature.collection')}</span>
           </motion.div>
         </div>
 

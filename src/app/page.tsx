@@ -57,7 +57,7 @@ export default function Home() {
   }, [activeTab]);
 
   return (
-    <main className={`relative min-h-screen bg-bg overflow-x-hidden ${isLetterbox ? 'letterbox-active' : ''}`}>
+    <main className={`relative min-h-screen bg-bg overflow-x-hidden pb-[104px] ${isLetterbox ? 'letterbox-active' : ''}`}>
       {/* Cinematic Shutter — Appears on tab change */}
       <AnimatePresence>
         <motion.div 

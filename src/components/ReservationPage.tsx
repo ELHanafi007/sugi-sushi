@@ -26,7 +26,7 @@ export default function ReservationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg relative pt-32 pb-60 overflow-hidden">
+    <div className="min-h-screen bg-bg relative pt-56 pb-[120px] overflow-hidden">
       {/* ─── Background Orchestration ─── */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <Image
@@ -61,7 +61,7 @@ export default function ReservationPage() {
             >
               Secure Your <span className="text-gold shimmer-gold">Table.</span>
             </motion.h1>
-            <p className="text-white/40 text-lg md:text-xl font-serif italic max-w-2xl mx-auto">
+            <p className="text-white/65 text-lg md:text-xl font-serif italic max-w-2xl mx-auto">
               Experience the perfect harmony of tradition and innovation. Join us for an unforgettable culinary journey.
             </p>
           </div>
@@ -77,12 +77,12 @@ export default function ReservationPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               {/* Name */}
               <div className="space-y-4">
-                <label className="text-mono text-gold/40 text-[10px] uppercase tracking-[0.4em] block">{lang === 'ar' ? 'الاسم' : 'Name'}</label>
+                <label className="text-mono text-gold/60 text-[10px] uppercase tracking-[0.4em] block">{lang === 'ar' ? 'الاسم' : 'Name'}</label>
                 <div className="relative group">
                   <input 
                     type="text" 
                     required
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-5 text-white font-serif italic outline-none focus:border-gold/40 focus:bg-white/[0.05] transition-all duration-500"
+                    className="w-full bg-white/[0.04] border border-white/15 rounded-2xl px-6 py-5 text-white font-serif italic outline-none focus:border-gold/50 focus:bg-white/[0.07] transition-all duration-500 placeholder:text-white/30"
                     placeholder={lang === 'ar' ? 'اسمك الكريم' : 'Your Name'}
                     value={formData.name}
                     onChange={e => setFormData({...formData, name: e.target.value})}

@@ -29,7 +29,7 @@ export default function StoryPage() {
   const textBlur = useTransform(springScroll, [0, 0.2, 0.8, 1], [0, 0, 0, 10]);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-bg relative pt-32 pb-60 overflow-hidden">
+    <div ref={containerRef} className="min-h-screen bg-bg relative pt-56 pb-[120px] overflow-hidden">
       {/* ─── Cinematic Background Canvas ─── */}
       <motion.div 
         style={{ scale: scaleImage, opacity: 0.1 }} 
@@ -63,7 +63,7 @@ export default function StoryPage() {
           >
             <div className="flex items-center justify-center gap-6 mb-12">
                <div className="w-12 h-px bg-gold/30" />
-               <span className="text-mono text-gold/40 text-[10px] tracking-[1em] uppercase font-black">{t('story.label')}</span>
+               <span className="text-mono text-gold/65 text-[10px] tracking-[1em] uppercase font-black">{t('story.label')}</span>
                <div className="w-12 h-px bg-gold/30" />
             </div>
             
@@ -122,10 +122,10 @@ export default function StoryPage() {
             </h2>
             
             <div className="space-y-10 border-l border-white/5 pl-10">
-              <p className="text-white/50 text-xl font-serif italic leading-relaxed">
+              <p className="text-white/75 text-xl font-serif italic leading-relaxed">
                 {t('story.p1')}
               </p>
-              <p className="text-white/20 text-lg leading-relaxed font-light">
+              <p className="text-white/45 text-lg leading-relaxed font-light">
                 {t('story.p2')}
               </p>
             </div>
@@ -133,7 +133,7 @@ export default function StoryPage() {
             <div className="pt-12 flex items-center gap-10">
               <motion.div 
                 whileHover={{ rotate: 10, scale: 1.1 }}
-                className="relative w-16 h-16 opacity-90 mix-blend-screen"
+                className="relative w-48 h-48 opacity-90 mix-blend-screen"
               >
               <Image src="/media/optimized/brand-logo.png" alt="Sugi" fill sizes="64px" className="object-contain" />
               </motion.div>
@@ -176,7 +176,7 @@ export default function StoryPage() {
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4 mb-8">
                <div className="w-10 h-[1px] bg-gold/30" />
-               <span className="text-mono text-gold/40 text-[10px] tracking-[0.8em] uppercase font-black">{t('gallery.label')}</span>
+               <span className="text-mono text-gold/65 text-[10px] tracking-[0.8em] uppercase font-black">{t('gallery.label')}</span>
                <div className="w-10 h-[1px] bg-gold/30" />
             </div>
             <h2 className="text-5xl md:text-8xl text-white font-serif font-light italic">Visual <span className="text-gold shimmer-gold">Archive.</span></h2>

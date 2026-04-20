@@ -399,7 +399,7 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
   };
 
   return (
-    <div className="min-h-screen bg-bg pt-24 pb-48">
+    <div className="min-h-screen bg-bg pt-48 pb-[120px]">
       {/* Header Orchestration */}
       <div className="px-8 mb-12">
         <motion.div 
@@ -550,7 +550,7 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
                   whileTap={{ scale: 0.98 }}
-                  className="group relative flex items-center gap-5 p-4 rounded-3xl luxury-card cursor-pointer overflow-hidden"
+                  className="group relative flex items-center gap-5 p-5 rounded-3xl luxury-card cursor-pointer overflow-hidden"
                 >
                   <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
                     <Image 
@@ -565,10 +565,10 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
 
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-baseline mb-1">
-                      <h4 className="text-white/90 font-serif text-xl group-hover:text-gold transition-colors duration-500 truncate">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h4>
-                      <span className="text-gold/60 font-serif text-xl flex-shrink-0">{dish.price}</span>
+                      <h4 className="text-white font-serif text-xl group-hover:text-gold transition-colors duration-500 truncate">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h4>
+                      <span className="text-gold font-serif text-xl flex-shrink-0 font-medium">{dish.price} SR</span>
                     </div>
-                    <p className="text-white/20 text-xs font-serif italic line-clamp-1 group-hover:text-white/40 transition-colors duration-500">{lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}</p>
+                    <p className="text-white/45 text-xs font-serif italic line-clamp-1 group-hover:text-white/65 transition-colors duration-500">{lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}</p>
                     <div className="flex gap-2 mt-3">
                       {dish.tags.slice(0, 2).map(tag => (
                         <span key={tag} className="text-[8px] uppercase tracking-widest px-3 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05] text-white/20 font-black font-mono">

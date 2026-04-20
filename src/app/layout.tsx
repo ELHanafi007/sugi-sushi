@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#050505",
+  themeColor: "#060608",
 };
 
 export default function RootLayout({
@@ -38,9 +38,11 @@ export default function RootLayout({
       <body className="antialiased select-none">
         <LanguageProvider>
           {children}
+          {/* Bottom nav inside provider so it has lang context */}
           <BottomNavWrapper />
         </LanguageProvider>
-        {/* Film Grain — single instance, always on top */}
+
+        {/* Film Grain — low z, pointer-events none */}
         <div className="noise-overlay" aria-hidden="true" />
       </body>
     </html>

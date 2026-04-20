@@ -17,7 +17,7 @@ export default function LocationPage() {
   const { t, lang } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-bg pt-40 pb-60 relative overflow-hidden">
+    <div className="min-h-screen bg-bg pt-64 pb-[120px] relative overflow-hidden">
       {/* ─── Cinematic Background Canvas ─── */}
       <div className="absolute top-0 right-0 w-full md:w-2/3 h-[70vh] md:h-screen pointer-events-none z-0">
         <Image
@@ -50,7 +50,7 @@ export default function LocationPage() {
             <span className="text-gold shimmer-gold italic font-light">{t('loc.hero2')}</span>
           </h1>
           
-          <p className="text-white/40 text-xl md:text-2xl font-serif italic leading-relaxed font-light max-w-2xl">
+          <p className="text-white/65 text-xl md:text-2xl font-serif italic leading-relaxed font-light max-w-2xl">
             {t('loc.desc')}
           </p>
         </motion.div>
@@ -68,8 +68,8 @@ export default function LocationPage() {
               <div className="w-14 h-14 rounded-2xl bg-gold/[0.05] border border-gold/10 flex items-center justify-center text-gold mb-10 group-hover:scale-110 group-hover:bg-gold/10 transition-all duration-700 shadow-[0_0_20px_rgba(212,175,55,0.05)]">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
               </div>
-              <h3 className="text-gold/40 text-[9px] uppercase tracking-[0.5em] font-black font-mono mb-6">{t('loc.label')}</h3>
-              <p className="text-white/80 text-3xl font-serif font-light leading-tight mb-4 italic">
+              <h3 className="text-gold/60 text-[9px] uppercase tracking-[0.5em] font-black font-mono mb-6">{t('loc.label')}</h3>
+              <p className="text-white text-3xl font-serif font-light leading-tight mb-4 italic">
                 {t('loc.address')}
               </p>
               <p className="text-white/20 text-[10px] font-mono tracking-[0.3em] font-black uppercase">{t('loc.city')}</p>
@@ -97,12 +97,12 @@ export default function LocationPage() {
               <h3 className="text-gold/40 text-[9px] uppercase tracking-[0.5em] font-black font-mono mb-8">{t('contact.opening')}</h3>
               <div className="space-y-6">
                 <div className="flex justify-between items-end border-b border-white/[0.03] pb-4 group-hover:border-gold/10 transition-colors">
-                  <span className="text-white/60 font-serif text-xl italic">{t('loc.mon_thu')}</span>
-                  <span className="text-gold/50 font-mono text-xs font-black">{t('loc.t1')}</span>
+                  <span className="text-white/80 font-serif text-xl italic">{t('loc.mon_thu')}</span>
+                  <span className="text-gold/75 font-mono text-xs font-black">{t('loc.t1')}</span>
                 </div>
                 <div className="flex justify-between items-end border-b border-white/[0.03] pb-4 group-hover:border-gold/10 transition-colors">
-                  <span className="text-white/60 font-serif text-xl italic">{t('loc.fri_sat')}</span>
-                  <span className="text-gold/50 font-mono text-xs font-black">{t('loc.t2')}</span>
+                  <span className="text-white/80 font-serif text-xl italic">{t('loc.fri_sat')}</span>
+                  <span className="text-gold/75 font-mono text-xs font-black">{t('loc.t2')}</span>
                 </div>
                 <div className="flex justify-between items-end pt-2">
                   <span className="text-white/20 font-serif text-xl italic">{t('loc.sun')}</span>
@@ -126,7 +126,7 @@ export default function LocationPage() {
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
               </div>
               <h3 className="text-gold/40 text-[9px] uppercase tracking-[0.5em] font-black font-mono mb-6">{t('contact.reservation')}</h3>
-              <p className="text-white/40 font-serif italic mb-8 leading-relaxed font-light">
+              <p className="text-white/65 font-serif italic mb-8 leading-relaxed font-light">
                 {t('loc.res_desc')}
               </p>
               <p className="text-white text-4xl md:text-5xl font-serif font-light tracking-tightest group-hover:text-gold transition-colors duration-700">

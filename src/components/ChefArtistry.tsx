@@ -108,7 +108,7 @@ export default function ChefArtistry() {
                   className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent via-gold/40 to-transparent"
                 />
               </div>
-              <p className="text-2xl md:text-4xl text-white/40 max-w-4xl font-serif italic leading-[1.5] font-light" dangerouslySetInnerHTML={{ __html: t('artistry.quote') }} />
+              <p className="text-2xl md:text-4xl text-white/65 max-w-4xl font-serif italic leading-[1.5] font-light" dangerouslySetInnerHTML={{ __html: t('artistry.quote') }} />
             </motion.div>
           </motion.div>
         </div>

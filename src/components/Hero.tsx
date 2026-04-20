@@ -1,33 +1,29 @@
 'use client';
 
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
 import { NavTab } from './BottomNav';
 import { useLanguage } from '@/context/LanguageContext';
-
-/**
- * SUGI SUSHI — Cinematic Hero (Masterpiece Edition)
- * 
- * Enhanced with:
- * - Split-text letter-by-letter reveal
- * - Mouse-driven 3D tilt interaction
- * - Multi-layered parallax depth shift
- */
 
 interface HeroProps {
   onTabChange: (tab: NavTab) => void;
 }
 
+/**
+ * SUGI SUSHI — Cinematic Hero (Transition Edition)
+ * 
+ * This version is optimized for the Logo-to-Nav morphing transition.
+ * The central text is removed to let the brand mark take center stage.
+ */
+
 export default function Hero({ onTabChange }: HeroProps) {
   const { t, lang } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Mouse position for tilt
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  // Smooth springs for tilt
   const rotateX = useSpring(useTransform(y, [-300, 300], [5, -5]), { stiffness: 100, damping: 30 });
   const rotateY = useSpring(useTransform(x, [-300, 300], [-5, 5]), { stiffness: 100, damping: 30 });
 
@@ -36,7 +32,6 @@ export default function Hero({ onTabChange }: HeroProps) {
     offset: ["start start", "end start"]
   });
 
-  // Parallax & Cinematic Scales
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.25]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -150]);
@@ -50,9 +45,6 @@ export default function Hero({ onTabChange }: HeroProps) {
     x.set(e.clientX - centerX);
     y.set(e.clientY - centerY);
   };
-
-  const titleText = t('hero.title') || "SUGI";
-  const letters = titleText.split("");
 
   return (
     <section 
@@ -75,16 +67,15 @@ export default function Hero({ onTabChange }: HeroProps) {
             alt="Sugi Sushi"
             fill
             priority
-            className="object-cover brightness-[0.4] contrast-[1.1] saturate-[1.3]"
+            className="object-cover brightness-[0.3] contrast-[1.1] saturate-[1.3]"
           />
         </motion.div>
         
-        {/* Deep Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-bg" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
       </motion.div>
 
-      {/* ─── Content Stage with 3D Tilt ─── */}
+      {/* ─── Content Stage ─── */}
       <motion.div
         style={{ 
           y: contentY, 
@@ -95,70 +86,27 @@ export default function Hero({ onTabChange }: HeroProps) {
         }}
         className="relative z-20 flex flex-col items-center text-center px-6"
       >
-        {/* Cinematic Welcome: The First Impression */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, filter: 'blur(20px)' }}
-          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
-          className="mb-12 flex flex-col items-center gap-6"
-        >
-          <motion.span 
-            className="text-mono text-gold text-[10px] md:text-[14px] uppercase font-black tracking-[1.2em] shimmer-gold"
+        {/* Placeholder for the Morphing Logo (Calculated in Navbar) */}
+        <div className="h-[25vh] mb-12 flex flex-col items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 2, delay: 0.5 }}
+            className="flex flex-col items-center gap-4"
           >
-            {lang === 'ar' ? 'سوجي سوشي يرحب بكم' : 'Sugi Sushi Welcomes You'}
-          </motion.span>
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={{ width: '200px' }}
-            transition={{ delay: 1, duration: 2, ease: "circOut" }}
-            className="h-[1px] bg-gradient-to-r from-transparent via-gold/50 to-transparent" 
-          />
-        </motion.div>
-
-        {/* Main Title - Split Text Reveal (Delayed for Welcome) */}
-        <h1 className="text-display liquid-gold mb-8 drop-shadow-[0_20px_50px_rgba(212,175,55,0.2)] select-none flex overflow-hidden">
-          {letters.map((char, i) => (
-            <motion.span
-              key={i}
-              initial={{ y: "100%", opacity: 0, filter: 'blur(20px)' }}
-              animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
-              transition={{ 
-                duration: 1.5, 
-                delay: 1.5 + (i * 0.08), 
-                ease: [0.19, 1, 0.22, 1] 
-              }}
-              className="inline-block"
-              style={{ willChange: "transform, opacity, filter" }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </motion.span>
-          ))}
-        </h1>
-
-        {/* Subtitle with focal point line */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 2.5, delay: 2.8 }}
-          className="flex flex-col items-center gap-8 mb-12"
-          style={{ willChange: "transform, opacity" }}
-        >
-          <p className="text-white/40 text-lg md:text-2xl font-serif italic tracking-wider max-w-2xl">
-            {t('hero.subtitle')}
-          </p>
-          <motion.div 
-            initial={{ width: 0 }} 
-            animate={{ width: '120px' }} 
-            transition={{ duration: 2, delay: 3.2, ease: "circOut" }}
-            className="h-[1px] bg-gradient-to-r from-transparent via-gold/40 to-transparent" 
-          />
-        </motion.div>
+            <div className="w-12 h-px bg-gold/30" />
+            <span className="text-mono text-gold/40 text-[10px] tracking-[1.5em] uppercase font-black">
+              {lang === 'ar' ? 'سوجي سوشي' : 'Sugi Sushi'}
+            </span>
+            <div className="w-12 h-px bg-gold/30" />
+          </motion.div>
+        </div>
 
         {/* High-End CTA Button */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, delay: 3.5, ease: [0.19, 1, 0.22, 1] }}
+          transition={{ duration: 1.5, delay: 1, ease: [0.19, 1, 0.22, 1] }}
           style={{ willChange: "transform, opacity" }}
         >
           <button 
@@ -173,46 +121,22 @@ export default function Hero({ onTabChange }: HeroProps) {
         </motion.div>
       </motion.div>
 
-      {/* ─── Scroll Orchestrator ─── */}
+      {/* ─── Scroll Indicator ─── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 3.5, duration: 2 }}
+        transition={{ delay: 2, duration: 2 }}
         className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-6"
       >
-        <span className="text-mono text-[8px] text-white/20 tracking-[0.4em] uppercase">{t('hero.scroll')}</span>
+        <span className="text-mono text-[8px] text-white/45 tracking-[0.4em] uppercase">{t('hero.scroll')}</span>
         <div className="relative w-[1px] h-20 bg-white/5 overflow-hidden">
           <motion.div 
             animate={{ y: ['-100%', '200%'] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent via-gold/50 to-transparent"
-            style={{ willChange: "transform" }}
           />
         </div>
       </motion.div>
-
-      {/* ─── Ambient Particles — Reduced for Performance ─── */}
-      <div className="absolute inset-0 z-[1] pointer-events-none opacity-40">
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: Math.random() * 100 + "%", y: "100%" }}
-            animate={{ 
-              opacity: [0, 0.5, 0], 
-              y: ["100%", "0%"],
-              x: (Math.random() * 100) + (Math.random() * 10 - 5) + "%"
-            }}
-            transition={{ 
-              duration: 12 + Math.random() * 8, 
-              delay: Math.random() * 5, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
-            className="absolute w-1 h-1 bg-gold/30 rounded-full blur-[1px]"
-            style={{ willChange: "transform, opacity" }}
-          />
-        ))}
-      </div>
     </section>
   );
 }

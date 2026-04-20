@@ -129,7 +129,7 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
           <h3 className="text-display liquid-gold mb-8 !text-4xl md:!text-7xl tracking-tightest leading-none">
             {name}
           </h3>
-          <p className="text-white/40 text-lg md:text-2xl font-serif italic mb-10 line-clamp-3 leading-relaxed">
+          <p className="text-white/65 text-lg md:text-2xl font-serif italic mb-10 line-clamp-3 leading-relaxed">
             &quot;{desc}&quot;
           </p>
           
@@ -139,7 +139,7 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
               <span className="text-mono text-gold/30 text-[10px]">SR</span>
             </div>
             <div className="h-10 w-px bg-white/5" />
-            <span className="text-mono text-white/10 text-[10px] tracking-[0.5em] font-black">{dish.category}</span>
+            <span className="text-mono text-white/35 text-[10px] tracking-[0.5em] font-black">{dish.category}</span>
           </div>
         </div>
       </div>
@@ -232,7 +232,7 @@ function PhilosophySection() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.7, duration: 1.5 }}
-                className="text-white/30 text-base md:text-xl leading-relaxed"
+                className="text-white/55 text-base md:text-xl leading-relaxed"
               >
                 {t('story.p2')}
               </motion.p>
@@ -380,9 +380,9 @@ function MenuExperience() {
                                   <span className="text-white/80 font-serif text-lg md:text-xl group-hover:text-gold transition-colors duration-700">
                                     {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
                                   </span>
-                                  <span className="text-gold/40 font-serif text-base group-hover:text-gold transition-colors duration-700">{dish.price}</span>
+                                  <span className="text-gold/65 font-serif text-base group-hover:text-gold transition-colors duration-700">{dish.price}</span>
                                 </div>
-                                <p className="text-white/20 text-[10px] md:text-xs italic font-serif leading-relaxed line-clamp-1 group-hover:text-white/40 transition-colors duration-700">
+                                <p className="text-white/45 text-[10px] md:text-xs italic font-serif leading-relaxed line-clamp-1 group-hover:text-white/65 transition-colors duration-700">
                                   {lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}
                                 </p>
                                 <div className="absolute bottom-0 left-0 w-0 h-px bg-gold/20 group-hover:w-full transition-all duration-1000" />
@@ -445,7 +445,7 @@ function ContactSection() {
                 <div>
                   <h4 className="text-gold/60 text-[10px] uppercase tracking-[0.5em] font-black font-mono mb-6">{item.label}</h4>
                   <p className="text-white text-2xl md:text-3xl font-serif font-light mb-3">{item.content}</p>
-                  <span className="text-white/10 text-[10px] uppercase tracking-[0.5em] font-black font-mono">{item.sub}</span>
+                  <span className="text-white/35 text-[10px] uppercase tracking-[0.5em] font-black font-mono">{item.sub}</span>
                 </div>
               </motion.div>
             ))}
@@ -485,7 +485,7 @@ function Footer() {
           className="flex flex-col items-center gap-12 mb-32"
         >
           <motion.div 
-            className="relative w-32 h-32 mix-blend-screen opacity-90"
+            className="relative w-96 h-96 mix-blend-screen opacity-90"
             animate={{ 
               filter: [
                 'drop-shadow(0 0 10px rgba(212,175,55,0.2))', 
@@ -519,8 +519,8 @@ function Footer() {
             ))}
           </div>
           <div className="flex flex-col items-center md:items-end gap-2">
-            <p className="text-[10px] text-white/10 uppercase tracking-[0.6em] font-black font-mono">© 2026 SUGI EXPERIENCE • RIYADH</p>
-            <span className="text-[8px] text-white/5 uppercase tracking-[0.4em] font-mono">Crafted with Perfection</span>
+            <p className="text-[10px] text-white/35 uppercase tracking-[0.6em] font-black font-mono">© 2026 SUGI EXPERIENCE • RIYADH</p>
+            <span className="text-[8px] text-white/25 uppercase tracking-[0.4em] font-mono">Crafted with Perfection</span>
           </div>
         </div>
       </div>
