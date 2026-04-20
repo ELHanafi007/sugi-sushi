@@ -3,8 +3,7 @@
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { useRef } from 'react';
 import Image from 'next/image';
-import { NavTab } from './BottomNav';
-import { useLanguage } from '@/context/LanguageContext';
+import { useLanguage, NavTab } from '@/context/LanguageContext';
 
 interface HeroProps {
   onTabChange: (tab: NavTab) => void;
