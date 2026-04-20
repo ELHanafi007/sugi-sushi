@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { menuData, Dish } from '@/data/menuData';
 import Image from 'next/image';
 import { useLanguage, NavTab } from '@/context/LanguageContext';
