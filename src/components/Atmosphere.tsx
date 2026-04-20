@@ -91,8 +91,8 @@ export default function Atmosphere() {
           <FloatingParticle 
             key={i} 
             delay={i * 1.2} 
-            x={(Math.random() * 100) + "%"} 
-            size={Math.random() * 2 + 1} 
+            x={(i * 17) + "%"} // Stable position for initial render
+            size={2} // Stable size for initial render
           />
         ))}
       </div>

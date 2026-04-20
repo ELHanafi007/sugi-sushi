@@ -1,5 +1,7 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Home, Briefcase, Calendar, Shield, Settings } from 'lucide-react';
+'use client';
+
+import React, { useState, useRef, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type IconComponentType = React.ElementType<{ className?: string }>;
 export interface InteractiveMenuItem {
@@ -14,57 +16,16 @@ export interface InteractiveMenuProps {
   onItemClick?: (index: number) => void;
 }
 
-const defaultItems: InteractiveMenuItem[] = [
-    { label: 'home', icon: Home },
-    { label: 'strategy', icon: Briefcase },
-    { label: 'period', icon: Calendar },
-    { label: 'security', icon: Shield },
-    { label: 'settings', icon: Settings },
-];
-
 const defaultAccentColor = 'var(--component-active-color-default)';
 
 const InteractiveMenu: React.FC<InteractiveMenuProps> = ({ items, accentColor, activeIndex: externalActiveIndex, onItemClick }) => {
 
   const finalItems = useMemo(() => {
-     const isValid = items && Array.isArray(items) && items.length >= 2 && items.length <= 5;
-     if (!isValid) {
-        console.warn("InteractiveMenu: 'items' prop is invalid or missing. Using default items.", items);
-        return defaultItems;
-     }
-     return items;
+     return items || [];
   }, [items]);
 
   const [internalActiveIndex, setInternalActiveIndex] = useState(0);
   const activeIndex = externalActiveIndex !== undefined ? externalActiveIndex : internalActiveIndex;
-
-  useEffect(() => {
-      if (activeIndex >= finalItems.length) {
-          if (externalActiveIndex === undefined) setInternalActiveIndex(0);
-      }
-  }, [finalItems, activeIndex, externalActiveIndex]);
-
-  const textRefs = useRef<(HTMLElement | null)[]>([]);
-  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  useEffect(() => {
-    const setLineWidth = () => {
-      const activeItemElement = itemRefs.current[activeIndex];
-      const activeTextElement = textRefs.current[activeIndex];
-
-      if (activeItemElement && activeTextElement) {
-        const textWidth = activeTextElement.offsetWidth;
-        activeItemElement.style.setProperty('--lineWidth', `${textWidth}px`);
-      }
-    };
-
-    setLineWidth();
-
-    window.addEventListener('resize', setLineWidth);
-    return () => {
-      window.removeEventListener('resize', setLineWidth);
-    };
-  }, [activeIndex, finalItems]);
 
   const handleItemClick = (index: number) => {
     if (onItemClick) {
@@ -87,9 +48,6 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({ items, accentColor, a
     >
       {finalItems.map((item, index) => {
         const isActive = index === activeIndex;
-        const isTextActive = isActive;
-
-
         const IconComponent = item.icon;
 
         return (
@@ -97,18 +55,36 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({ items, accentColor, a
             key={item.label}
             className={`menu__item ${isActive ? 'active' : ''}`}
             onClick={() => handleItemClick(index)}
-            ref={(el) => (itemRefs.current[index] = el)}
-            style={{ '--lineWidth': '0px' } as React.CSSProperties} 
+            style={{ willChange: 'transform, opacity' }}
           >
-            <div className="menu__icon">
-              <IconComponent className="icon" />
+            <div className="menu__icon relative">
+              <IconComponent 
+                className={`icon transition-all duration-300 ${isActive ? 'text-gold scale-110' : 'text-white/20'}`} 
+              />
             </div>
-            <strong
-              className={`menu__text ${isTextActive ? 'active' : ''}`}
-              ref={(el) => (textRefs.current[index] = el)}
-            >
-              {item.label}
-            </strong>
+
+            <AnimatePresence>
+              {isActive && (
+                <motion.strong
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ type: 'spring', stiffness: 800, damping: 35 }}
+                  className="menu__text text-gold !block !opacity-100 !w-auto"
+                >
+                  {item.label}
+                </motion.strong>
+              )}
+            </AnimatePresence>
+
+            {/* Faster Active Indicator (Background only) */}
+            {isActive && (
+              <motion.div 
+                layoutId="activePill"
+                transition={{ type: 'spring', stiffness: 800, damping: 40 }}
+                className="absolute inset-0 bg-gold/10 rounded-full -z-10"
+              />
+            )}
           </button>
         );
       })}

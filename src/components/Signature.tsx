@@ -191,13 +191,20 @@ const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, on
 
 export default function Signature({ onTabChange }: { onTabChange?: (tab: NavTab) => void }) {
   const { t } = useLanguage();
-  const signatures = useMemo(() => {
-    return [...menuData]
-      .filter(d => d.tags.includes('Signature'))
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
   }, []);
-  const featured = signatures[0];
+
+  const signatures = useMemo(() => {
+    const base = menuData.filter(d => d.tags.includes('Signature'));
+    // Return stable slice during SSR, shuffle only on Client
+    if (!isMounted) return base.slice(0, 3);
+    return [...base].sort(() => Math.random() - 0.5).slice(0, 3);
+  }, [isMounted]);
+
+  const featured = signatures[0] || menuData[0];
   const secondary = signatures.slice(1);
 
   return (

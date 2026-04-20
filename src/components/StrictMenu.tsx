@@ -373,25 +373,32 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
   }, []);
 
   const filteredDishes = useMemo(() => {
-    let dishes = menuData;
+    const query = searchQuery.toLowerCase().trim();
     
-    // Only filter by category if no search query
-    if (!searchQuery) {
-      dishes = dishes.filter(dish => dish.category === selectedCategory);
-    } else {
-      const query = searchQuery.toLowerCase();
-      dishes = dishes.filter(dish => 
-        dish.name.toLowerCase().includes(query) || 
-        (dish.nameAr && dish.nameAr.includes(query)) ||
-        dish.description.toLowerCase().includes(query) ||
-        (dish.descriptionAr && dish.descriptionAr.includes(query))
-      );
+    if (!query) {
+      // Standard Category Mode
+      let dishes = menuData.filter(dish => dish.category === selectedCategory);
+      if (activeFilters.length > 0) {
+        dishes = dishes.filter(dish => activeFilters.every(filter => dish.tags.includes(filter)));
+      }
+      return dishes;
     }
 
-    if (activeFilters.length > 0) {
-      dishes = dishes.filter(dish => activeFilters.every(filter => dish.tags.includes(filter)));
-    }
-    return dishes;
+    // Dynamic Search Mode (Global across all categories)
+    return menuData.filter(dish => {
+      const nameMatch = dish.name.toLowerCase().includes(query) || (dish.nameAr && dish.nameAr.includes(query));
+      const descMatch = dish.description.toLowerCase().includes(query) || (dish.descriptionAr && dish.descriptionAr.includes(query));
+      const tagMatch = dish.tags.some(tag => tag.toLowerCase().includes(query));
+      const categoryMatch = dish.category.toLowerCase().includes(query);
+      
+      const basicMatches = nameMatch || descMatch || tagMatch || categoryMatch;
+      
+      // If filters are active, they must also match
+      if (activeFilters.length > 0) {
+        return basicMatches && activeFilters.every(filter => dish.tags.includes(filter));
+      }
+      return basicMatches;
+    });
   }, [selectedCategory, activeFilters, searchQuery]);
 
   const toggleFilter = (filter: string) => {
@@ -504,7 +511,20 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
       {/* Filter Orchestration */}
       <div className="px-8 space-y-8">
         <div className="flex justify-between items-center">
-          <h3 className="text-white text-3xl font-serif italic font-light">{selectedCategory}</h3>
+          <AnimatePresence mode="wait">
+            <motion.h3 
+              key={searchQuery ? 'search' : selectedCategory}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="text-white text-3xl font-serif italic font-light"
+            >
+              {searchQuery 
+                ? (lang === 'ar' ? 'نتائج البحث' : 'Search Results') 
+                : selectedCategory
+              }
+            </motion.h3>
+          </AnimatePresence>
           <div className="h-[1px] flex-1 bg-white/5 mx-6" />
           <span className="text-mono text-white/10 text-[10px] font-black">{filteredDishes.length} SELECTIONS</span>
         </div>
