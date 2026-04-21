@@ -14,6 +14,7 @@ const StoryPage = dynamic(() => import('@/components/StoryPage'), { ssr: false }
 const ReservationPage = dynamic(() => import('@/components/ReservationPage'), { ssr: false });
 const LocationPage = dynamic(() => import('@/components/LocationPage'), { ssr: false });
 const KineticGallery = dynamic(() => import('@/components/KineticGallery'), { ssr: false });
+const ZoomExperience = dynamic(() => import('@/components/ZoomExperience'), { ssr: false });
 
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
@@ -120,6 +121,9 @@ export default function Home() {
 
             {/* Scene 4: Emotional Peak */}
             <ChefArtistry />
+
+            {/* Scene 4.5: Visual Symphony (Zoom Parallax) */}
+            <ZoomExperience />
 
             {/* Scene 5: The Story */}
             <div className="relative z-10 bg-bg">
