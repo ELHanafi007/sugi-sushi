@@ -272,7 +272,7 @@ function MenuExperience() {
                   }`}
                 >
                   <div className="flex flex-col items-center lg:items-end">
-                    <span className="text-mono text-[9px] tracking-[0.4em] font-black uppercase text-gold/60 mb-1">
+                    <span className="text-mono text-[11px] md:text-xs tracking-[0.4em] font-black uppercase text-gold/60 mb-1">
                       {t(chap.titleKey)}
                     </span>
                     <span className="font-serif text-3xl md:text-5xl text-white font-thin">
@@ -315,7 +315,7 @@ function MenuExperience() {
                       <div className="flex items-center gap-8">
                         <span className="text-gold/60 font-serif text-6xl md:text-8xl font-thin leading-none">{KANJI[catName]}</span>
                         <div className="flex flex-col">
-                          <span className="text-mono text-gold/30 text-[10px] tracking-[0.8em] font-black mb-2 uppercase">{t('menu.cat_label')}</span>
+                          <span className="text-mono text-gold/40 text-[11px] tracking-[0.6em] font-black mb-2 uppercase">{t('menu.cat_label')}</span>
                           <h3 className="text-white/90 text-3xl md:text-6xl font-serif font-light tracking-tight italic">
                             {t(`menu.cat.${catName}`)}
                           </h3>

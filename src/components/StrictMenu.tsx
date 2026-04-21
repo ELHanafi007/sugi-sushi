@@ -100,7 +100,7 @@ function DishModal({
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m15 18-6-6 6-6"/></svg>
           </motion.button>
           <div className="flex flex-col items-center">
-             <span className="text-mono text-gold/30 text-[9px] uppercase tracking-[0.5em] font-black">{t(`menu.cat.${dish.category}`)}</span>
+             <span className="text-gold/60 text-xs md:text-sm uppercase tracking-[0.2em] font-black font-mono">{t(`menu.cat.${dish.category}`)}</span>
              <div className="w-12 h-[1px] bg-gold/20 mt-2" />
           </div>
           <div className="w-12" />
@@ -261,7 +261,7 @@ function DishModal({
                         className="object-cover brightness-[0.4] group-hover:scale-110 transition-transform duration-1000" 
                       />
                       <div className="absolute inset-0 flex items-center justify-center p-4">
-                        <span className="text-white text-[9px] font-black uppercase tracking-widest text-center leading-tight">{cat}</span>
+                        <span className="text-white text-xs md:text-sm font-serif italic text-center leading-tight">{cat}</span>
                       </div>
                     </motion.button>
                   ))}
@@ -289,7 +289,7 @@ function DishModal({
                         className="object-cover brightness-[0.4] group-hover:scale-110 transition-transform duration-1000" 
                       />
                       <div className="absolute inset-0 flex items-center justify-center p-4">
-                        <span className="text-white text-[9px] font-black uppercase tracking-widest text-center leading-tight">{cat}</span>
+                        <span className="text-white text-xs md:text-sm font-serif italic text-center leading-tight">{cat}</span>
                       </div>
                     </motion.button>
                   ))}
@@ -448,8 +448,8 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
                 <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
                 
                 <div className="absolute inset-0 p-5 flex flex-col justify-end items-center text-center">
-                  <span className={`text-[9px] font-black uppercase tracking-[0.3em] transition-all duration-700 font-mono leading-tight ${
-                    isActive ? 'text-gold' : 'text-white/20'
+                  <span className={`text-sm md:text-lg font-serif italic transition-all duration-700 leading-tight ${
+                    isActive ? 'text-gold' : 'text-white/60'
                   }`}>
                     {t(`menu.cat.${cat}`)}
                   </span>
