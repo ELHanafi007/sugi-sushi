@@ -85,41 +85,94 @@ export default function Hero({ onTabChange }: HeroProps) {
         }}
         className="relative z-20 flex flex-col items-center text-center px-6"
       >
-        {/* Masterpiece Morphing Logo Stage */}
+        {/* Masterpiece Text Brand Mark */}
         <div className="h-[45vh] mb-20 flex flex-col items-center justify-center relative">
-          {/* Ambient Glow behind logo */}
+          {/* Ambient Glow */}
           <motion.div 
             animate={{ 
               scale: [1, 1.2, 1],
-              opacity: [0.1, 0.2, 0.1]
+              opacity: [0.1, 0.25, 0.1]
             }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.15),transparent_70%)] blur-3xl pointer-events-none"
+            className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.18),transparent_70%)] blur-3xl pointer-events-none"
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, filter: 'blur(20px)' }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            transition={{ duration: 2.5, delay: 0.5, ease: [0.19, 1, 0.22, 1] }}
-            className="flex flex-col items-center gap-6"
+            initial={{ opacity: 0, y: 30, filter: 'blur(20px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 2.5, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
+            className="flex flex-col items-center gap-8"
           >
-            <div className="flex items-center gap-10">
+            {/* EST Badge */}
+            <div className="flex items-center gap-8">
               <div className="w-16 h-px bg-gradient-to-r from-transparent to-gold/30" />
-              <span className="text-mono text-gold/50 text-[10px] tracking-[1.5em] uppercase font-black">
+              <span className="text-mono text-gold/50 text-[9px] tracking-[1.5em] uppercase font-black">
                 {t('hero.est')}
               </span>
               <div className="w-16 h-px bg-gradient-to-l from-transparent to-gold/30" />
             </div>
-            
-            {/* Japanese Subtext */}
-            <motion.span 
+
+            {/* Tripartite Brand Mark */}
+            <div className="flex items-center gap-6 md:gap-8">
+              {/* SUGI — Latin */}
+              <motion.span
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+                className="shimmer-gold text-[clamp(2.8rem,10vw,7rem)] font-serif font-black tracking-[0.15em] leading-none select-none"
+                style={{ fontFamily: "'Playfair Display', serif" }}
+              >
+                SUGI
+              </motion.span>
+
+              {/* Divider */}
+              <motion.div
+                initial={{ scaleY: 0, opacity: 0 }}
+                animate={{ scaleY: 1, opacity: 1 }}
+                transition={{ delay: 1.2, duration: 1.2 }}
+                className="w-[1px] h-16 md:h-20 bg-gradient-to-b from-transparent via-gold/40 to-transparent"
+              />
+
+              {/* 杉 — Kanji */}
+              <motion.span
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+                className="text-[clamp(2rem,7vw,5rem)] text-gold/70 leading-none select-none"
+                style={{ fontFamily: "'Noto Serif JP', serif" }}
+              >
+                杉
+              </motion.span>
+
+              {/* Divider */}
+              <motion.div
+                initial={{ scaleY: 0, opacity: 0 }}
+                animate={{ scaleY: 1, opacity: 1 }}
+                transition={{ delay: 1.2, duration: 1.2 }}
+                className="w-[1px] h-16 md:h-20 bg-gradient-to-b from-transparent via-gold/40 to-transparent"
+              />
+
+              {/* سوجي — Arabic */}
+              <motion.span
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+                className="text-[clamp(2rem,7vw,5rem)] text-gold/70 leading-none select-none"
+                style={{ fontFamily: "'Noto Sans Arabic', sans-serif" }}
+              >
+                سوجي
+              </motion.span>
+            </div>
+
+            {/* Tagline */}
+            <motion.p
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.1 }}
-              transition={{ delay: 2, duration: 2 }}
-              className="text-white text-[15vw] md:text-[12vh] font-serif absolute -z-10 select-none pointer-events-none tracking-[0.2em] left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 whitespace-nowrap opacity-5"
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.8, duration: 2 }}
+              className="text-white/25 text-[10px] md:text-xs uppercase tracking-[0.6em] font-mono font-black"
             >
-              杉寿司
-            </motion.span>
+              Japanese Cuisine · Casablanca
+            </motion.p>
           </motion.div>
         </div>
 
@@ -136,7 +189,7 @@ export default function Hero({ onTabChange }: HeroProps) {
           >
             <div className="relative flex flex-col items-center">
               <span className="text-white/90 text-[11px] uppercase tracking-[0.8em] font-black group-hover:text-gold group-hover:tracking-[1em] transition-all duration-1000">
-                {t('hero.cta')}
+                Check the Menu
               </span>
               <motion.div 
                 className="h-px w-0 bg-gold mt-4 group-hover:w-full transition-all duration-1000" 

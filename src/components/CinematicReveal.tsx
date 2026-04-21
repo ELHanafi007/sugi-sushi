@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 /**
  * CINEMATIC REVEAL — The Masterpiece Entry
@@ -9,6 +10,7 @@ import { useState, useEffect } from 'react';
  * Orchestrates the initial brand entry with high-end motion and depth.
  */
 export default function CinematicReveal({ children }: { children: React.ReactNode }) {
+  const { t } = useLanguage();
   const [isRevealed, setIsRevealed] = useState(false);
   const [isExited, setIsExited] = useState(false);
 
@@ -71,7 +73,7 @@ export default function CinematicReveal({ children }: { children: React.ReactNod
                   <h1 className="text-white text-3xl md:text-5xl font-serif font-light tracking-[1em] uppercase leading-none shimmer-gold">
                     SUGI
                   </h1>
-                  <span className="text-gold/40 text-[9px] font-mono tracking-[0.8em] uppercase mt-4">Kinetic Experience</span>
+                  <span className="text-gold/40 text-[9px] font-mono tracking-[0.8em] uppercase mt-4">{t('reveal.sub')}</span>
                 </motion.div>
 
                 <motion.div 

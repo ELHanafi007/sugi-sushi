@@ -143,7 +143,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
             <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
               <span className="text-[10px] uppercase text-white/50 font-mono">
-                {lang === 'ar' ? 'مفتوح' : 'Open'}
+                {t('contact.status')}
               </span>
             </div>
 

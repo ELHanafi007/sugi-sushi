@@ -107,26 +107,6 @@ function DishModal({
         </div>
 
         <div className="max-w-2xl mx-auto px-6 pb-40">
-          {/* Cinematic Hero */}
-          <motion.div 
-            initial={{ y: 50, opacity: 0, scale: 0.95 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-            className="relative w-full h-[45vh] md:h-[60vh] rounded-[2.5rem] overflow-hidden mb-10 shadow-[0_50px_100px_rgba(0,0,0,0.8)] luxury-card"
-          >
-            <div className="w-full h-full">
-               <img 
-                 src={image} 
-                 alt={name}
-                 loading="eager"
-                 className="w-full h-full object-cover transition-transform duration-[10s] hover:scale-110"
-               />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-90" />
-            
-            {/* Focal Light */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,black_100%)] opacity-40" />
-          </motion.div>
 
           {/* Editorial Content */}
           <motion.div 
@@ -192,16 +172,17 @@ function DishModal({
               </div>
             </div>
 
-            {/* ─── Same Category Exploration ─── */}
+            {/* ─── More from This Category ─── */}
             <div className="pt-16 space-y-8">
               <div className="flex items-center justify-between">
-                 <h4 className="text-white/60 text-xl font-serif italic">{lang === 'ar' ? 'المزيد من ' + dish.category : 'More from ' + dish.category}</h4>
+                 <h4 className="text-white/60 text-xl font-serif italic">{t('strict.more_from')} {t(`menu.cat.${dish.category}`)}</h4>
                  <div className="h-px flex-1 bg-white/5 mx-6" />
+                 <span className="text-gold/40 text-[9px] uppercase tracking-widest font-mono">{menuData.filter(d => d.category === dish.category && d.id !== dish.id).length} {t('menu.selections')}</span>
               </div>
               <div className="grid grid-cols-1 gap-4">
                 {menuData
                   .filter(d => d.category === dish.category && d.id !== dish.id)
-                  .slice(0, 3)
+                  .slice(0, 6)
                   .map((item) => (
                     <motion.div 
                       key={item.id}
@@ -222,56 +203,14 @@ function DishModal({
                         <h5 className="text-white/80 font-serif text-lg group-hover:text-gold transition-colors">
                           {lang === 'ar' ? item.nameAr || item.name : item.name}
                         </h5>
+                        <p className="text-white/20 text-[11px] font-serif italic line-clamp-1 mt-1">{lang === 'ar' ? item.descriptionAr || item.description : item.description}</p>
                         <p className="text-gold/30 text-[9px] uppercase tracking-widest mt-1 font-mono">{item.price}</p>
+                      </div>
+                      <div className="w-8 h-8 rounded-full border border-white/5 flex items-center justify-center text-white/10 group-hover:border-gold/30 group-hover:text-gold transition-all duration-700">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m9 18 6-6-6-6"/></svg>
                       </div>
                     </motion.div>
                   ))}
-              </div>
-            </div>
-
-            {/* ─── Chef's Curated Recommendations ─── */}
-            <div className="pt-16 space-y-10">
-              <div className="flex items-center justify-between">
-                 <h4 className="text-white/60 text-xl font-serif italic">{t('strict.recommendations')}</h4>
-                 <div className="h-px flex-1 bg-white/5 mx-6" />
-                 <span className="text-gold/40 text-[9px] uppercase tracking-widest font-mono">{t('strict.pairs_vibe')}</span>
-              </div>
-              <div className="grid grid-cols-1 gap-5">
-                {recommendations.map(({ dish: item, reason }) => (
-                  <motion.div 
-                    key={item.id}
-                    onClick={() => onDishSelect(item)}
-                    whileHover={{ x: 10, backgroundColor: 'rgba(255,255,255,0.02)' }}
-                    className="flex flex-col p-8 rounded-[2.5rem] luxury-card cursor-pointer group transition-all duration-700 relative overflow-hidden"
-                  >
-                    <div className="flex items-center gap-6 mb-6">
-                      <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
-                        <Image 
-                          src={item.image || CAT_IMAGES[item.category] || DEFAULT_IMAGE}
-                          alt={item.name}
-                          width={80}
-                          height={80}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-baseline mb-2">
-                          <h5 className="text-white/80 font-serif text-xl group-hover:text-gold transition-colors duration-500">
-                            {lang === 'ar' ? item.nameAr || item.name : item.name}
-                          </h5>
-                          <span className="text-gold/40 font-serif text-lg">{item.price}</span>
-                        </div>
-                        <p className="text-white/20 text-[11px] font-serif italic line-clamp-1">{lang === 'ar' ? item.descriptionAr || item.description : item.description}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 pt-5 border-t border-white/[0.03]">
-                       <div className="w-2 h-2 rounded-full bg-gold/40 animate-pulse" />
-                       <p className="text-white/40 text-[11px] font-serif italic leading-relaxed">
-                        {reason}
-                       </p>
-                    </div>
-                  </motion.div>
-                ))}
               </div>
             </div>
 
@@ -513,31 +452,30 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
       {/* Filter Orchestration */}
       <div className="px-8 space-y-8">
         <div className="flex justify-between items-center">
-          <AnimatePresence mode="wait">
-            <motion.h3 
-              key={searchQuery ? 'search' : selectedCategory}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="text-white text-3xl font-serif italic font-light"
-            >
-              {searchQuery 
-                ? (lang === 'ar' ? 'نتائج البحث' : 'Search Results') 
-                : selectedCategory
-              }
-            </motion.h3>
-          </AnimatePresence>
-          <div className="h-[1px] flex-1 bg-white/5 mx-6" />
-          <span className="text-mono text-white/10 text-[10px] font-black">{filteredDishes.length} {t('menu.selections')}</span>
+        <AnimatePresence mode="wait">
+          <motion.h3 
+            key={searchQuery ? 'search' : selectedCategory}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="text-white text-3xl font-serif italic font-light"
+          >
+            {searchQuery 
+              ? t('strict.results')
+              : t(`menu.cat.${selectedCategory}`)
+            }
+          </motion.h3>
+        </AnimatePresence>
+        <div className="h-[1px] flex-1 bg-white/5 mx-6" />
+        <span className="text-mono text-white/10 text-[10px] font-black">{filteredDishes.length} {t('menu.selections')}</span>
         </div>
 
         <div className="flex flex-wrap gap-3">
-          {[
-            { id: 'Vegetarian', label: lang === 'ar' ? 'نباتي' : 'Vegetarian', icon: '🍃' },
-            { id: 'Spicy', label: lang === 'ar' ? 'حار' : 'Spicy', icon: '🌶️' },
-            { id: 'Best Seller', label: lang === 'ar' ? 'الأكثر مبيعاً' : 'Best Seller', icon: '⭐' },
-          ].map((filter) => (
-            <motion.button
+        {[
+          { id: 'Vegetarian', label: t('filter.vegetarian'), icon: '🍃' },
+          { id: 'Spicy', label: t('filter.spicy'), icon: '🌶️' },
+          { id: 'Best Seller', label: t('filter.bestseller'), icon: '⭐' },
+        ].map((filter) => (            <motion.button
               key={filter.id}
               onClick={() => toggleFilter(filter.id)}
               whileTap={{ scale: 0.95 }}

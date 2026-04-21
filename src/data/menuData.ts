@@ -470,6 +470,7 @@ export const menuData: Dish[] = [
   {
     id: 'sugi-006',
     name: 'SHRIMP SATEE',
+    nameAr: 'ساتي جمبري',
     description: 'Shrimp served with SATEE sauce & selection of vegetables & rice',
     descriptionAr: 'روبيان ممزوجة بصوص ساتي الخاص و تشكيلة من الخضروات و ارز',
     price: '',
@@ -1005,6 +1006,7 @@ export const menuData: Dish[] = [
   {
     id: 'special-007',
     name: 'Fire Crunchy roll',
+    nameAr: 'فاير كرانشي رول',
     description: 'Crab & shrimp tempura, avocado, spicy sauce',
     descriptionAr: 'كراب و جمبري تمبورا, افوكادو, سبايسي صوص',
     price: '29 SR',
@@ -1016,6 +1018,7 @@ export const menuData: Dish[] = [
   {
     id: 'special-008',
     name: 'TUNA ROLL',
+    nameAr: 'تونا رول',
     description: 'Red tuna, cucumber, cheese',
     descriptionAr: 'تونا حمراء, خيار, جبنة',
     price: '29 SR',
@@ -1098,6 +1101,7 @@ export const menuData: Dish[] = [
   {
     id: 'fried-001',
     name: 'shataki fondu',
+    nameAr: 'شاتاكي فوندو',
     description: 'Shrimp TEMPURA, tobico, mashroom shataki, avocado',
     price: '29 SR',
     category: 'Fried Rolls',
@@ -1155,6 +1159,7 @@ export const menuData: Dish[] = [
   {
     id: 'fried-006',
     name: 'SHRIMP bebe roll',
+    nameAr: 'جمبري بيبي رول',
     description: 'Shrimp tempura, cheese, tobico, CRAB, AVOCADO',
     price: '',
     category: 'Fried Rolls',
@@ -1236,6 +1241,7 @@ export const menuData: Dish[] = [
     name: 'MINI BOAT 42 PCS',
     nameAr: 'سفينة ميني',
     description: 'Sugi Mini Boat platter - 42 pieces',
+    descriptionAr: 'بلاتر سفينة سوجي ميني - ٤٢ قطعة',
     price: '257 SR',
     category: 'Sugi Boat',
     tags: ['Premium', 'Chef\'s Choice', 'Sharing'],
@@ -1246,6 +1252,7 @@ export const menuData: Dish[] = [
     name: 'SMALL BOAT Platter 52 PCS',
     nameAr: 'سفينة صغيرة 52 قطع',
     description: 'Sugi Small Boat platter - 52 pieces',
+    descriptionAr: 'بلاتر سفينة سوجي صغيرة - ٥٢ قطعة',
     price: '318 SR',
     category: 'Sugi Boat',
     tags: ['Premium', 'Chef\'s Choice', 'Sharing'],
@@ -1256,6 +1263,7 @@ export const menuData: Dish[] = [
     name: 'MEDUIM BOAT 85 PCS',
     nameAr: '85 قطعة',
     description: 'Sugi Medium Boat platter - 85 pieces',
+    descriptionAr: 'بلاتر سفينة سوجي متوسطة - ٨٥ قطعة',
     price: '516 SR',
     category: 'Sugi Boat',
     tags: ['Premium', 'Chef\'s Choice', 'Sharing'],
@@ -1336,6 +1344,7 @@ export const menuData: Dish[] = [
   {
     id: 'cold-drink-008',
     name: 'Sparkling Water',
+    nameAr: 'مياه فوارة',
     description: 'Sparkling mineral water',
     price: '8 SR',
     category: 'Cold Drinks',
@@ -1358,6 +1367,7 @@ export const menuData: Dish[] = [
   {
     id: 'juice-002',
     name: 'Lemon Ginger',
+    nameAr: 'ليمون زنجبيل',
     description: 'Fresh lemon ginger juice',
     price: '18 SR',
     category: 'Fresh Juices',
@@ -1368,6 +1378,7 @@ export const menuData: Dish[] = [
   {
     id: 'juice-003',
     name: 'Mojito Mint',
+    nameAr: 'موهيتو نعناع',
     description: 'Fresh mojito mint juice',
     price: '19 SR',
     category: 'Fresh Juices',
@@ -1378,6 +1389,7 @@ export const menuData: Dish[] = [
   {
     id: 'juice-004',
     name: 'Mojito Strawberry',
+    nameAr: 'موهيتو فراولة',
     description: 'Fresh mojito strawberry juice',
     price: '19 SR',
     category: 'Fresh Juices',
@@ -1388,6 +1400,7 @@ export const menuData: Dish[] = [
   {
     id: 'juice-005',
     name: 'Mojito Berry',
+    nameAr: 'موهيتو توت',
     description: 'Fresh mojito berry juice',
     price: '19 SR',
     category: 'Fresh Juices',
@@ -1398,6 +1411,7 @@ export const menuData: Dish[] = [
   {
     id: 'juice-006',
     name: 'Saudi Champagne',
+    nameAr: 'سعودي شامبين',
     description: 'Saudi Champagne special drink',
     price: '28 SR',
     category: 'Fresh Juices',
@@ -1530,7 +1544,7 @@ export const menuData: Dish[] = [
   {
     id: 'sauce-006',
     name: 'GINGER SUSHI',
-    nameAr: 'زنجبيل',
+    nameAr: 'زنجبيل سوجي',
     description: 'Pickled ginger for sushi',
     price: '2 SR',
     category: 'Extra Sauces',
@@ -1540,7 +1554,7 @@ export const menuData: Dish[] = [
   {
     id: 'sauce-007',
     name: 'SWEET SOUR SAUCE',
-    nameAr: 'حلو حامض صوص',
+    nameAr: 'صوص حلو وحامض',
     description: 'Sweet and sour sauce',
     price: '2 SR',
     category: 'Extra Sauces',
@@ -1550,7 +1564,7 @@ export const menuData: Dish[] = [
   {
     id: 'sauce-008',
     name: 'SPICY SAUCE',
-    nameAr: 'سبايسي صوص',
+    nameAr: 'صوص حار',
     description: 'Spicy sauce',
     price: '2 SR',
     category: 'Extra Sauces',

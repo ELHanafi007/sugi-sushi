@@ -115,7 +115,7 @@ export default function StoryPage() {
             className={`space-y-12 ${lang === 'ar' ? 'text-right' : 'text-left'}`}
           >
             <div className="inline-block px-6 py-2 rounded-full border border-gold/20 bg-gold/[0.03]">
-               <span className="text-mono text-gold text-[8px] tracking-[0.4em] font-black uppercase">Our Philosophy</span>
+               <span className="text-mono text-gold text-[8px] tracking-[0.4em] font-black uppercase">{t('story.phil')}</span>
             </div>
             
             <h2 className="text-4xl md:text-6xl text-white font-serif font-light leading-tight italic">
@@ -143,7 +143,7 @@ export default function StoryPage() {
                 <span className="text-white/40 text-[10px] uppercase tracking-[0.5em] font-black font-mono">
                   {t('story.sig')}
                 </span>
-                <span className="text-gold/30 text-[8px] uppercase tracking-widest font-mono mt-2">Executive Chef Selection</span>
+                <span className="text-gold/30 text-[8px] uppercase tracking-widest font-mono mt-2">{t('story.exec_chef')}</span>
               </div>
             </div>
           </motion.div>

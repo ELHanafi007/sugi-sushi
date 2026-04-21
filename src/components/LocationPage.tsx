@@ -82,7 +82,7 @@ export default function LocationPage() {
               whileHover={{ x: 12, color: '#d4af37' }}
               className="text-left text-gold/30 text-[10px] uppercase font-black font-mono tracking-[0.5em] mt-12 transition-all flex items-center gap-6 group/btn"
             >
-              Explore Map <div className="w-12 h-[1px] bg-gold/20 group-hover/btn:w-20 transition-all duration-700" />
+              {t('loc.map')} <div className="w-12 h-[1px] bg-gold/20 group-hover/btn:w-20 transition-all duration-700" />
             </motion.button>
           </motion.div>
 
@@ -102,14 +102,14 @@ export default function LocationPage() {
                 <div className="flex justify-between items-end border-b border-white/5 pb-6 group-hover:border-gold/20 transition-all duration-700">
                   <div className="flex flex-col gap-1">
                     <span className="text-white text-2xl font-serif italic">{t('loc.mon_thu')}</span>
-                    <span className="text-white/10 text-[8px] uppercase tracking-widest font-mono">Weekdays</span>
+                    <span className="text-white/10 text-[8px] uppercase tracking-widest font-mono">{t('loc.weekdays')}</span>
                   </div>
                   <span className="text-gold shimmer-gold font-mono text-sm font-black">{t('loc.t1')}</span>
                 </div>
                 <div className="flex justify-between items-end border-b border-white/5 pb-6 group-hover:border-gold/20 transition-all duration-700">
                   <div className="flex flex-col gap-1">
                     <span className="text-white text-2xl font-serif italic">{t('loc.fri_sat')}</span>
-                    <span className="text-white/10 text-[8px] uppercase tracking-widest font-mono">Weekend Excellence</span>
+                    <span className="text-white/10 text-[8px] uppercase tracking-widest font-mono">{t('loc.weekend')}</span>
                   </div>
                   <span className="text-gold shimmer-gold font-mono text-sm font-black">{t('loc.t2')}</span>
                 </div>
@@ -139,7 +139,7 @@ export default function LocationPage() {
                 {t('loc.res_desc')}
               </p>
               <div className="space-y-2">
-                <p className="text-white/20 text-[9px] font-mono tracking-[0.4em] uppercase font-black">Direct Concierge</p>
+                <p className="text-white/20 text-[9px] font-mono tracking-[0.4em] uppercase font-black">{t('loc.concierge')}</p>
                 <p className="text-white text-5xl md:text-6xl font-serif font-light tracking-tightest group-hover:text-gold transition-colors duration-1000">
                   +966 <span className="text-[0.7em] shimmer-gold">55 000 0000</span>
                 </p>
