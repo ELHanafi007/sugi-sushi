@@ -6,7 +6,10 @@ import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
 /**
- * KINETIC GALLERY — Cinematic Visual Archive
+ * KINETIC GALLERY — Cinematic Visual Archive (Forced Horizontal Edition)
+ * 
+ * This version uses a sticky container pattern to force the user to experience 
+ * the horizontal scroll before moving to the next section.
  */
 
 interface GalleryItemProps {
@@ -30,13 +33,9 @@ function GalleryItem({ item, index, scrollProgress, totalItems }: GalleryItemPro
   const springX = useSpring(mouseX, { stiffness: 60, damping: 20 });
   const springY = useSpring(mouseY, { stiffness: 60, damping: 20 });
 
-  const xOffset = useTransform(scrollProgress, [0, 1], [0, -200 * item.parallax + '%']);
+  // Subtle parallax effect for individual items
+  const itemParallax = useTransform(scrollProgress, [0, 1], [50 * item.parallax, -50 * item.parallax]);
   
-  const start = index / totalItems;
-  const end = (index + 1) / totalItems;
-  const rotate = useTransform(scrollProgress, [start, end], [5, -5]);
-  const scale = useTransform(scrollProgress, [start - 0.1, start, end, end + 0.1], [0.9, 1, 1, 0.9]);
-
   const handleMouseMove = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left - rect.width / 2) / 15;
@@ -53,16 +52,14 @@ function GalleryItem({ item, index, scrollProgress, totalItems }: GalleryItemPro
   return (
     <motion.div
       style={{ 
-        x: xOffset,
-        rotateZ: rotate,
-        scale,
+        y: itemParallax,
         rotateX: springY,
         rotateY: springX,
         perspective: 1000
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`relative flex-shrink-0 w-[320px] md:w-[500px] lg:w-[700px] ${item.aspect} rounded-[2.5rem] overflow-hidden group luxury-card shadow-2xl transition-shadow duration-500 hover:shadow-gold/10`}
+      className={`relative flex-shrink-0 w-[85vw] md:w-[60vw] lg:w-[45vw] ${item.aspect} rounded-[2.5rem] overflow-hidden group luxury-card shadow-2xl transition-shadow duration-500 hover:shadow-gold/10`}
     >
       <Image
         src={item.src}
@@ -108,6 +105,7 @@ function GalleryItem({ item, index, scrollProgress, totalItems }: GalleryItemPro
 
 export default function KineticGallery() {
   const { t, lang } = useLanguage();
+  const targetRef = useRef<HTMLDivElement>(null);
 
   const galleryItems = [
     {
@@ -160,122 +158,125 @@ export default function KineticGallery() {
     }
   ];
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+  });
+
+  // Calculate total width of horizontal scroll
+  // We want to scroll from x: 0 to x: -[total width of items - viewport width]
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-80%"]);
+  const xSpring = useSpring(x, { stiffness: 50, damping: 30, mass: 0.5 });
+
   const mX = useMotionValue(0);
   const mY = useMotionValue(0);
   const spotlightX = useSpring(mX, { stiffness: 50, damping: 20 });
   const spotlightY = useSpring(mY, { stiffness: 50, damping: 20 });
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  const xTranslation = useTransform(scrollYProgress, [0, 1], ["30%", "-50%"]);
-  const springTranslation = useSpring(xTranslation, { stiffness: 30, damping: 25 });
-
   const handleGlobalMouseMove = (e: React.MouseEvent) => {
-    const rect = containerRef.current?.getBoundingClientRect();
+    const rect = targetRef.current?.getBoundingClientRect();
     if (!rect) return;
     mX.set(e.clientX - rect.left);
     mY.set(e.clientY - rect.top);
   };
 
   return (
-    <section 
-      ref={containerRef} 
-      onMouseMove={handleGlobalMouseMove}
-      className="relative w-full py-40 overflow-hidden bg-bg"
-    >
-      <motion.div 
-        style={{ 
-          left: spotlightX, 
-          top: spotlightY,
-          transform: 'translate(-50%, -50%)'
-        }}
-        className="absolute w-[100vw] h-[100vw] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05),transparent_70%)] pointer-events-none z-0"
-      />
-
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
-        <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-gold/10 to-transparent" />
-        <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-gold/10 to-transparent" />
-      </div>
-
-      <div className="container-luxury relative z-10 mb-32">
-        <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-12">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.5 }}
-          >
-            <div className="flex items-center gap-4 mb-8 justify-center md:justify-start">
-               <div className="w-12 h-[1px] bg-gold/40" />
-               <span className="text-mono text-gold text-[10px] tracking-[1em] uppercase font-black">{t('gallery.label')}</span>
-            </div>
-            <h2 className="text-6xl md:text-9xl text-white font-serif font-light italic leading-none">
-              Visual <br />
-              <span className="text-gold shimmer-gold ml-[0.5em]">Archive.</span>
-            </h2>
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.5, delay: 0.3 }}
-            className={`max-w-md ${lang === 'ar' ? 'text-right' : 'text-left'} border-l border-gold/20 pl-8 py-2`}
-          >
-            <p className="text-white/50 text-base font-serif italic leading-relaxed">
-              {t('gallery.description')}
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      <div className="relative z-10 flex items-center h-[600px] md:h-[900px] overflow-visible">
+    <section ref={targetRef} className="relative h-[400vh] bg-bg">
+      <div className="sticky top-0 h-screen flex items-center overflow-hidden" onMouseMove={handleGlobalMouseMove}>
+        
+        {/* Cinematic Backdrop Overlay */}
         <motion.div 
-          style={{ x: springTranslation }}
-          className="flex gap-16 md:gap-32 px-[15vw]"
-        >
-          {galleryItems.map((item, idx) => (
-            <GalleryItem 
-              key={item.id} 
-              item={item} 
-              index={idx} 
-              scrollProgress={scrollYProgress}
-              totalItems={galleryItems.length}
-            />
-          ))}
-        </motion.div>
-      </div>
-
-      <div className="absolute top-1/2 left-12 -translate-y-1/2 hidden xl:flex flex-col items-center gap-12 opacity-30">
-        <div className="w-px h-32 bg-gradient-to-b from-transparent to-gold/50" />
-        <span className="text-mono text-gold text-[10px] tracking-[1.5em] vertical-text uppercase">KINETIC</span>
-        <div className="w-px h-32 bg-gradient-to-t from-transparent to-gold/50" />
-      </div>
-
-      <motion.div 
-        style={{ y: useTransform(scrollYProgress, [0, 1], [200, -200]), x: '-10%' }}
-        className="absolute bottom-0 left-0 text-[20vw] font-serif text-white/[0.015] pointer-events-none select-none z-0 leading-none"
-      >
-        SUGI
-      </motion.div>
-      
-      <motion.div 
-        style={{ y: useTransform(scrollYProgress, [0, 1], [-200, 200]), x: '10%' }}
-        className="absolute top-0 right-0 text-[20vw] font-serif text-white/[0.015] pointer-events-none select-none z-0 leading-none"
-      >
-        魂
-      </motion.div>
-
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
-        <span className="text-white/20 text-[8px] uppercase tracking-[0.5em] font-mono">Scroll to Traverse</span>
-        <motion.div 
-          animate={{ x: [-20, 20, -20] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="w-12 h-[1px] bg-white/10"
+          style={{ 
+            left: spotlightX, 
+            top: spotlightY,
+            transform: 'translate(-50%, -50%)'
+          }}
+          className="absolute w-[100vw] h-[100vw] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05),transparent_70%)] pointer-events-none z-0"
         />
+
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
+          <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-gold/10 to-transparent" />
+          <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-gold/10 to-transparent" />
+        </div>
+
+        {/* Content Container */}
+        <div className="flex flex-col h-full w-full justify-center">
+          
+          {/* Header (Moves vertically slightly) */}
+          <motion.div 
+            style={{ opacity: useTransform(scrollYProgress, [0, 0.1], [1, 0]) }}
+            className="container-luxury mb-12 absolute top-24 left-0 right-0 z-20"
+          >
+            <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-12">
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.5 }}
+              >
+                <div className="flex items-center gap-4 mb-4 justify-center md:justify-start">
+                  <div className="w-12 h-[1px] bg-gold/40" />
+                  <span className="text-mono text-gold text-[10px] tracking-[1em] uppercase font-black">{t('gallery.label')}</span>
+                </div>
+                <h2 className="text-4xl md:text-8xl text-white font-serif font-light italic leading-none">
+                  Visual <br />
+                  <span className="text-gold shimmer-gold ml-[0.5em]">Archive.</span>
+                </h2>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Horizontal Track */}
+          <div className="relative flex items-center">
+            <motion.div 
+              style={{ x: xSpring }} 
+              className="flex gap-16 md:gap-32 px-[10vw]"
+            >
+              {galleryItems.map((item, idx) => (
+                <GalleryItem 
+                  key={item.id} 
+                  item={item} 
+                  index={idx} 
+                  scrollProgress={scrollYProgress}
+                  totalItems={galleryItems.length}
+                />
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Bottom Controls / Progress */}
+          <div className="container-luxury absolute bottom-12 left-0 right-0 z-20 flex justify-between items-end">
+            <div className="hidden xl:flex flex-col gap-4">
+              <span className="text-mono text-gold text-[10px] tracking-[1.5em] uppercase opacity-30">KINETIC</span>
+              <div className="w-px h-16 bg-gradient-to-t from-gold/50 to-transparent" />
+            </div>
+
+            <div className="flex flex-col items-center gap-4">
+              <span className="text-white/20 text-[8px] uppercase tracking-[0.5em] font-mono">
+                {scrollYProgress.get() > 0.9 ? 'Experience Complete' : 'Scroll to Traverse'}
+              </span>
+              <div className="w-64 h-[1px] bg-white/5 relative overflow-hidden">
+                <motion.div 
+                  style={{ scaleX: scrollYProgress }}
+                  className="absolute inset-0 bg-gold origin-left"
+                />
+              </div>
+            </div>
+
+            <div className="text-right">
+               <span className="text-mono text-white/10 text-[10px] tracking-[1em] uppercase">Archive No. 24</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Ambient Big Text Background */}
+        <motion.div 
+          style={{ 
+            x: useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]),
+            opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0.015, 0.03, 0.015]) 
+          }}
+          className="absolute bottom-0 left-0 text-[30vw] font-serif text-white pointer-events-none select-none z-0 leading-none"
+        >
+          SUGI SUSHI 魂
+        </motion.div>
       </div>
     </section>
   );
