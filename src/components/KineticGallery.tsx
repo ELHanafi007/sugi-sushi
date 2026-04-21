@@ -158,14 +158,16 @@ export default function KineticGallery() {
     }
   ];
 
+  const targetRef = useRef<HTMLDivElement>(null);
+
   const { scrollYProgress } = useScroll({
     target: targetRef,
   });
 
-  // Calculate total width of horizontal scroll
-  // We want to scroll from x: 0 to x: -[total width of items - viewport width]
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-80%"]);
-  const xSpring = useSpring(x, { stiffness: 50, damping: 30, mass: 0.5 });
+  // Calculate horizontal scroll distance based on content
+  // We go from x: 0% to a value that moves the entire track past the viewport
+  const x = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "-100%"]);
+  const xSpring = useSpring(x, { stiffness: 40, damping: 25, mass: 0.5 });
 
   const mX = useMotionValue(0);
   const mY = useMotionValue(0);
@@ -180,7 +182,7 @@ export default function KineticGallery() {
   };
 
   return (
-    <section ref={targetRef} className="relative h-[400vh] bg-bg">
+    <section ref={targetRef} className="relative h-[600vh] bg-bg z-[50]">
       <div className="sticky top-0 h-screen flex items-center overflow-hidden" onMouseMove={handleGlobalMouseMove}>
         
         {/* Cinematic Backdrop Overlay */}
@@ -190,7 +192,15 @@ export default function KineticGallery() {
             top: spotlightY,
             transform: 'translate(-50%, -50%)'
           }}
-          className="absolute w-[100vw] h-[100vw] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05),transparent_70%)] pointer-events-none z-0"
+          className="absolute w-[100vw] h-[100vw] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.06),transparent_70%)] pointer-events-none z-0"
+        />
+
+        {/* Cinematic Focusing Mask */}
+        <motion.div 
+          style={{ 
+            opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]) 
+          }}
+          className="absolute inset-0 z-[5] pointer-events-none shadow-[inset_0_0_200px_rgba(0,0,0,0.8)]"
         />
 
         <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
@@ -201,9 +211,12 @@ export default function KineticGallery() {
         {/* Content Container */}
         <div className="flex flex-col h-full w-full justify-center">
           
-          {/* Header (Moves vertically slightly) */}
+          {/* Header (Fades early) */}
           <motion.div 
-            style={{ opacity: useTransform(scrollYProgress, [0, 0.1], [1, 0]) }}
+            style={{ 
+              opacity: useTransform(scrollYProgress, [0, 0.08], [1, 0]),
+              y: useTransform(scrollYProgress, [0, 0.08], [0, -50])
+            }}
             className="container-luxury mb-12 absolute top-24 left-0 right-0 z-20"
           >
             <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-12">
@@ -228,7 +241,7 @@ export default function KineticGallery() {
           <div className="relative flex items-center">
             <motion.div 
               style={{ x: xSpring }} 
-              className="flex gap-16 md:gap-32 px-[10vw]"
+              className="flex gap-24 md:gap-48 px-[20vw]"
             >
               {galleryItems.map((item, idx) => (
                 <GalleryItem 
@@ -244,16 +257,22 @@ export default function KineticGallery() {
 
           {/* Bottom Controls / Progress */}
           <div className="container-luxury absolute bottom-12 left-0 right-0 z-20 flex justify-between items-end">
-            <div className="hidden xl:flex flex-col gap-4">
-              <span className="text-mono text-gold text-[10px] tracking-[1.5em] uppercase opacity-30">KINETIC</span>
+            <motion.div 
+              style={{ opacity: useTransform(scrollYProgress, [0, 0.1], [0.3, 1]) }}
+              className="hidden xl:flex flex-col gap-4"
+            >
+              <span className="text-mono text-gold text-[10px] tracking-[1.5em] uppercase">KINETIC</span>
               <div className="w-px h-16 bg-gradient-to-t from-gold/50 to-transparent" />
-            </div>
+            </motion.div>
 
             <div className="flex flex-col items-center gap-4">
-              <span className="text-white/20 text-[8px] uppercase tracking-[0.5em] font-mono">
-                {scrollYProgress.get() > 0.9 ? 'Experience Complete' : 'Scroll to Traverse'}
-              </span>
-              <div className="w-64 h-[1px] bg-white/5 relative overflow-hidden">
+              <motion.span 
+                style={{ opacity: useTransform(scrollYProgress, [0.1, 0.9], [0.5, 1]) }}
+                className="text-white/40 text-[8px] uppercase tracking-[0.5em] font-mono"
+              >
+                {scrollYProgress.get() > 0.95 ? 'Archive Exploration Complete' : 'Scroll to Traverse the Archive'}
+              </motion.span>
+              <div className="w-80 h-[1px] bg-white/5 relative overflow-hidden">
                 <motion.div 
                   style={{ scaleX: scrollYProgress }}
                   className="absolute inset-0 bg-gold origin-left"
@@ -270,14 +289,15 @@ export default function KineticGallery() {
         {/* Ambient Big Text Background */}
         <motion.div 
           style={{ 
-            x: useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]),
-            opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0.015, 0.03, 0.015]) 
+            x: useTransform(scrollYProgress, [0, 1], ["20%", "-60%"]),
+            opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0.01, 0.03, 0.01]) 
           }}
-          className="absolute bottom-0 left-0 text-[30vw] font-serif text-white pointer-events-none select-none z-0 leading-none"
+          className="absolute bottom-0 left-0 text-[35vw] font-serif text-white pointer-events-none select-none z-0 leading-none"
         >
           SUGI SUSHI 魂
         </motion.div>
       </div>
     </section>
+
   );
 }

@@ -172,8 +172,6 @@ export default function StoryPage() {
           </div>
         </motion.div>
 
-        {/* ─── Merged Gallery Section ─── */}
-        <KineticGallery />
       </div>
     </div>
   );

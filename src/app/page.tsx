@@ -13,6 +13,7 @@ const StrictMenu = dynamic(() => import('@/components/StrictMenu'), { ssr: false
 const StoryPage = dynamic(() => import('@/components/StoryPage'), { ssr: false });
 const ReservationPage = dynamic(() => import('@/components/ReservationPage'), { ssr: false });
 const LocationPage = dynamic(() => import('@/components/LocationPage'), { ssr: false });
+const KineticGallery = dynamic(() => import('@/components/KineticGallery'), { ssr: false });
 
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
@@ -120,13 +121,16 @@ export default function Home() {
             {/* Scene 4: Emotional Peak */}
             <ChefArtistry />
 
-            {/* Scene 5: The Story & Gallery */}
+            {/* Scene 5: The Story */}
             <div className="relative z-10 bg-bg">
               <StoryPage />
             </div>
 
+            {/* Scene 5.5: The Visual Archive (Forced Horizontal) */}
+            <KineticGallery />
+
             {/* Scene 6: Full Experience */}
-            <div className="relative z-10 bg-bg">
+            <div className="relative z-10 bg-bg pt-20">
               <MenuSection />
             </div>
           </motion.div>
