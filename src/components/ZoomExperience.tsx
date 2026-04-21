@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import Lenis from 'lenis';
 import { ZoomParallax } from "@/components/ui/zoom-parallax";
 import { useLanguage } from '@/context/LanguageContext';
+import { motion } from 'framer-motion';
 
 export default function ZoomExperience() {
     const { t } = useLanguage();
