@@ -171,7 +171,7 @@ export default function Hero({ onTabChange }: HeroProps) {
               transition={{ delay: 1.8, duration: 2 }}
               className="text-white/25 text-[10px] md:text-xs uppercase tracking-[0.6em] font-mono font-black"
             >
-              Japanese Cuisine · Casablanca
+              Japanese Cuisine · Riyadh
             </motion.p>
           </motion.div>
         </div>

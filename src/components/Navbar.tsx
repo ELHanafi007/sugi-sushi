@@ -43,6 +43,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   ========================== */
   const navOpacity = useTransform(progress, [0.5, 1], [0, 1]);
   const navHeight = useTransform(progress, [0, 1], [140, 80]);
+  const logoFadeScale = useTransform(progress, [0.5, 1], [0.85, 1]);
 
   const bgOpacity = useTransform(progress, [0, 1], [0.2, 0.85]);
 
@@ -107,8 +108,8 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
           <div className="flex-1 flex justify-center">
             <motion.div
               style={{
-                y: isHome ? logoY : 0,
-                scale: isHome ? logoScale : 1
+                opacity: isHome ? navOpacity : 1,
+                scale: isHome ? logoFadeScale : 1
               }}
               className="origin-center"
             >
@@ -119,15 +120,15 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                 }}
                 className="flex items-center gap-3 md:gap-6 transition-transform hover:scale-105 active:scale-95"
               >
-                <span className="text-white text-[20px] md:text-[44px] font-black tracking-tight">
+                <span className="text-white text-[18px] md:text-[22px] font-black tracking-tight">
                   SUGI
                 </span>
 
-                <span className="text-yellow-400 text-[26px] md:text-[52px]">
+                <span className="text-yellow-400 text-[22px] md:text-[26px]">
                   杉
                 </span>
 
-                <span className="text-white text-[20px] md:text-[44px] font-black opacity-90">
+                <span className="text-white text-[18px] md:text-[22px] font-black opacity-90">
                   سوجي
                 </span>
               </button>
