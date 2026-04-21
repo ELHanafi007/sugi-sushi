@@ -11,9 +11,11 @@ interface Image {
 interface ZoomParallaxProps {
 	/** Array of images to be displayed in the parallax effect max 7 images */
 	images: Image[];
+    /** Content to be displayed after the zoom effect completes */
+    children?: React.ReactNode;
 }
 
-export function ZoomParallax({ images }: ZoomParallaxProps) {
+export function ZoomParallax({ images, children }: ZoomParallaxProps) {
 	const container = useRef<HTMLDivElement>(null);
 	const { scrollYProgress } = useScroll({
 		target: container,
@@ -26,9 +28,9 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
 	const scale8 = useTransform(scrollYProgress, [0, 1], [1, 8]);
 	const scale9 = useTransform(scrollYProgress, [0, 1], [1, 9]);
 
-    // Fading out images as they zoom past to avoid blur blobs
+    // Precise opacity transitions to match the 'stuck' duration
     const opacityNormal = useTransform(scrollYProgress, [0, 0.7, 0.9], [1, 1, 0]);
-    const opacityMain = useTransform(scrollYProgress, [0, 0.9, 1], [1, 1, 1]);
+    const opacityMain = useTransform(scrollYProgress, [0, 0.8, 1], [1, 1, 1]);
 
 	const scales = [scale4, scale5, scale6, scale5, scale6, scale8, scale9];
 
@@ -57,14 +59,23 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
 					);
 				})}
 
-
                 {/* Final Cinematic Fade Transition */}
                 <motion.div 
-                    style={{ opacity: useTransform(scrollYProgress, [0.8, 1], [0, 1]) }}
+                    style={{ opacity: useTransform(scrollYProgress, [0.7, 1], [0, 1]) }}
                     className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent pointer-events-none z-10"
                 />
 			</div>
+
+            {/* Spacer to push landing content down until zoom is complete */}
+            <div className="h-[200vh] pointer-events-none" />
+
+            {/* Landing Content — This eliminates the 'Black Void' by filling the remaining space */}
+            <div className="relative z-20 bg-bg">
+                {children}
+            </div>
+
 		</div>
 	);
 }
+
 
