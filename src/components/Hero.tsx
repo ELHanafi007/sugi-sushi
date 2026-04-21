@@ -66,12 +66,12 @@ export default function Hero({ onTabChange }: HeroProps) {
             alt="Sugi Sushi"
             fill
             priority
-            className="object-cover brightness-[0.15] contrast-[1.2] saturate-[1.1]"
+            className="object-cover brightness-[0.35] contrast-[1.2] saturate-[1.1]"
           />
         </motion.div>
         
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-black/60 to-bg" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/20 to-bg" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
       </motion.div>
 
       {/* ─── Content Stage ─── */}
