@@ -122,9 +122,6 @@ export default function Home() {
             {/* Scene 4: Emotional Peak */}
             <ChefArtistry />
 
-            {/* Scene 4.5: Visual Symphony (Zoom Parallax) */}
-            <ZoomExperience />
-
             {/* Scene 5: The Story */}
             <div className="relative z-10 bg-bg">
               <StoryPage />
@@ -185,7 +182,7 @@ export default function Home() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <StoryPage />
+            <ZoomExperience />
           </motion.div>
         )}
       </AnimatePresence>
