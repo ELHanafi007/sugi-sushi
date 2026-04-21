@@ -11,11 +11,9 @@ interface Image {
 interface ZoomParallaxProps {
 	/** Array of images to be displayed in the parallax effect max 7 images */
 	images: Image[];
-    /** Content to be displayed after the zoom effect completes */
-    children?: React.ReactNode;
 }
 
-export function ZoomParallax({ images, children }: ZoomParallaxProps) {
+export function ZoomParallax({ images }: ZoomParallaxProps) {
 	const container = useRef<HTMLDivElement>(null);
 	const { scrollYProgress } = useScroll({
 		target: container,
@@ -28,10 +26,6 @@ export function ZoomParallax({ images, children }: ZoomParallaxProps) {
 	const scale8 = useTransform(scrollYProgress, [0, 1], [1, 8]);
 	const scale9 = useTransform(scrollYProgress, [0, 1], [1, 9]);
 
-    // Precise opacity transitions to match the 'stuck' duration
-    const opacityNormal = useTransform(scrollYProgress, [0, 0.7, 0.9], [1, 1, 0]);
-    const opacityMain = useTransform(scrollYProgress, [0, 0.8, 1], [1, 1, 1]);
-
 	const scales = [scaleCentral, scale5, scale6, scale5, scale6, scale8, scale9];
 
 	return (
@@ -39,12 +33,11 @@ export function ZoomParallax({ images, children }: ZoomParallaxProps) {
 			<div className="sticky top-0 h-screen overflow-hidden">
 				{images.map(({ src, alt }, index) => {
 					const scale = scales[index % scales.length];
-                    const opacity = index === 0 ? opacityMain : opacityNormal;
 
 					return (
 						<motion.div
 							key={index}
-							style={{ scale, opacity }}
+							style={{ scale }}
 							className={`absolute top-0 flex h-full w-full items-center justify-center ${index === 1 ? '[&>div]:!-top-[30vh] [&>div]:!left-[5vw] [&>div]:!h-[30vh] [&>div]:!w-[35vw]' : ''} ${index === 2 ? '[&>div]:!-top-[10vh] [&>div]:!-left-[25vw] [&>div]:!h-[45vh] [&>div]:!w-[20vw]' : ''} ${index === 3 ? '[&>div]:!left-[27.5vw] [&>div]:!h-[25vh] [&>div]:!w-[25vw]' : ''} ${index === 4 ? '[&>div]:!top-[27.5vh] [&>div]:!left-[5vw] [&>div]:!h-[25vh] [&>div]:!w-[20vw]' : ''} ${index === 5 ? '[&>div]:!top-[27.5vh] [&>div]:!-left-[22.5vw] [&>div]:!h-[25vh] [&>div]:!w-[30vw]' : ''} ${index === 6 ? '[&>div]:!top-[22.5vh] [&>div]:!left-[25vw] [&>div]:!h-[15vh] [&>div]:!w-[15vw]' : ''} `}
 						>
 							<div className="relative h-[25vh] w-[25vw] shadow-2xl overflow-hidden rounded-sm">
@@ -58,15 +51,6 @@ export function ZoomParallax({ images, children }: ZoomParallaxProps) {
 					);
 				})}
 			</div>
-
-            {/* Spacer to push landing content down until zoom is complete */}
-            <div className="h-[200vh] pointer-events-none" />
-
-            {/* Landing Content — This eliminates the 'Black Void' by filling the remaining space */}
-            <div className="relative z-20 bg-bg">
-                {children}
-            </div>
-
 		</div>
 	);
 }
