@@ -53,8 +53,9 @@ export default function ZoomExperience() {
 	];
 
 	return (
-		<section className="relative w-full bg-bg overflow-hidden py-40">
-			<div className="relative flex h-[40vh] flex-col items-center justify-center text-center px-4 mb-20">
+		<section className="relative w-full bg-bg overflow-hidden">
+			{/* Cinematic Intro */}
+			<div className="relative flex h-[60vh] flex-col items-center justify-center text-center px-4">
 				{/* Radial spotlight */}
 				<div
 					aria-hidden="true"
@@ -64,18 +65,87 @@ export default function ZoomExperience() {
 						'blur-[100px]',
 					)}
 				/>
-                <div className="flex items-center gap-4 mb-8 justify-center">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1.5 }}
+                    className="flex items-center gap-4 mb-8 justify-center"
+                >
                     <div className="w-12 h-[1px] bg-gold/40" />
                     <span className="text-mono text-gold text-[10px] tracking-[1em] uppercase font-black">Visual Symphony</span>
                     <div className="w-12 h-[1px] bg-gold/40" />
-                </div>
-				<h2 className="text-5xl md:text-8xl text-white font-serif italic font-light leading-none">
-					Dive into <br />
-					<span className="text-gold shimmer-gold">The Soul.</span>
-				</h2>
+                </motion.div>
+				<motion.h2 
+                    initial={{ opacity: 0, filter: 'blur(10px)' }}
+                    whileInView={{ opacity: 1, filter: 'blur(0px)' }}
+                    transition={{ duration: 2 }}
+                    className="text-6xl md:text-9xl text-white font-serif italic font-light leading-none"
+                >
+					The <br />
+					<span className="text-gold shimmer-gold">Soul.</span>
+				</motion.h2>
 			</div>
+
+            {/* The Zoom Parallax Core */}
 			<ZoomParallax images={images} />
+
+            {/* The Narrative Landing — Preventing the 'Black Void' */}
+            <div className="relative z-20 bg-bg pt-20 pb-40">
+                <div className="container-luxury">
+                    <div className="max-w-4xl mx-auto text-center space-y-16">
+                        <motion.div
+                            initial={{ opacity: 0, y: 50 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 1.5 }}
+                            className="space-y-8"
+                        >
+                            <h3 className="text-gold text-[11px] uppercase tracking-[0.8em] font-black font-mono">
+                                The Legacy of Flavor
+                            </h3>
+                            <h4 className="text-4xl md:text-7xl text-white font-serif italic font-light leading-tight">
+                                Where every grain of rice <br /> 
+                                <span className="opacity-50">tells a thousand-year story.</span>
+                            </h4>
+                        </motion.div>
+
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ duration: 2, delay: 0.5 }}
+                            className="w-px h-32 bg-gradient-to-b from-gold/50 to-transparent mx-auto" 
+                        />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left items-center">
+                            <motion.div
+                                initial={{ opacity: 0, x: -30 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 1.5 }}
+                            >
+                                <p className="text-white/70 text-lg md:text-xl font-serif italic leading-relaxed">
+                                    At Sugi Sushi, we believe that the true essence of Japanese cuisine lies in the pursuit of perfection within simplicity. Our gallery is a testament to the hands that craft, the sea that provides, and the fire that transforms.
+                                </p>
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, x: 30 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 1.5 }}
+                                className="space-y-6"
+                            >
+                                <p className="text-white/40 text-sm md:text-base font-light leading-relaxed">
+                                    From the precision of the sushi knife to the gentle steam of artisanal ramen, each image captures a moment of "Ichi-go Ichi-e"—the philosophy that this exact moment will never happen again.
+                                </p>
+                                <div className="flex items-center gap-6 pt-4">
+                                    <div className="h-px w-12 bg-gold/30" />
+                                    <span className="text-gold/50 text-[10px] uppercase font-mono tracking-widest font-black">Est. Riyadh 2024</span>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 			<div className="h-[20vh]"/>
 		</section>
 	);
 }
+
