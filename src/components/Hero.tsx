@@ -66,12 +66,12 @@ export default function Hero({ onTabChange }: HeroProps) {
             alt="Sugi Sushi"
             fill
             priority
-            className="object-cover brightness-[0.3] contrast-[1.1] saturate-[1.3]"
+            className="object-cover brightness-[0.15] contrast-[1.2] saturate-[1.1]"
           />
         </motion.div>
         
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-bg" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-black/60 to-bg" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/80" />
       </motion.div>
 
       {/* ─── Content Stage ─── */}
@@ -94,7 +94,7 @@ export default function Hero({ onTabChange }: HeroProps) {
               opacity: [0.1, 0.25, 0.1]
             }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.18),transparent_70%)] blur-3xl pointer-events-none"
+            className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent_70%)] blur-3xl pointer-events-none"
           />
 
           <motion.div
@@ -105,21 +105,21 @@ export default function Hero({ onTabChange }: HeroProps) {
           >
             {/* EST Badge */}
             <div className="flex items-center gap-8">
-              <div className="w-16 h-px bg-gradient-to-r from-transparent to-gold/30" />
-              <span className="text-mono text-gold/50 text-[9px] tracking-[1.5em] uppercase font-black">
+              <div className="w-16 h-px bg-gradient-to-r from-transparent to-white/30" />
+              <span className="text-mono text-white/50 text-[9px] tracking-[1.5em] uppercase font-black">
                 {t('hero.est')}
               </span>
-              <div className="w-16 h-px bg-gradient-to-l from-transparent to-gold/30" />
+              <div className="w-16 h-px bg-gradient-to-l from-transparent to-white/30" />
             </div>
 
             {/* Tripartite Brand Mark */}
             <div className="flex items-center gap-6 md:gap-8">
               {/* SUGI — Latin */}
               <motion.span
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, filter: 'blur(10px)', x: -20 }}
+                animate={{ opacity: 1, filter: 'blur(0px)', x: 0 }}
                 transition={{ delay: 0.8, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-                className="shimmer-gold text-[clamp(2.8rem,10vw,7rem)] font-serif font-black tracking-[0.15em] leading-none select-none"
+                className="text-white text-[clamp(2.8rem,10vw,7rem)] font-serif font-black tracking-[0.15em] leading-none select-none drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 SUGI
@@ -130,15 +130,15 @@ export default function Hero({ onTabChange }: HeroProps) {
                 initial={{ scaleY: 0, opacity: 0 }}
                 animate={{ scaleY: 1, opacity: 1 }}
                 transition={{ delay: 1.2, duration: 1.2 }}
-                className="w-[1px] h-16 md:h-20 bg-gradient-to-b from-transparent via-gold/40 to-transparent"
+                className="w-[1px] h-16 md:h-20 bg-gradient-to-b from-transparent via-white/30 to-transparent"
               />
 
               {/* 杉 — Kanji */}
               <motion.span
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, filter: 'blur(10px)', y: 10 }}
+                animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
                 transition={{ delay: 1, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-                className="text-[clamp(2rem,7vw,5rem)] text-gold/70 leading-none select-none"
+                className="text-[clamp(2rem,7vw,5rem)] text-white/90 leading-none select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
                 杉
@@ -149,15 +149,15 @@ export default function Hero({ onTabChange }: HeroProps) {
                 initial={{ scaleY: 0, opacity: 0 }}
                 animate={{ scaleY: 1, opacity: 1 }}
                 transition={{ delay: 1.2, duration: 1.2 }}
-                className="w-[1px] h-16 md:h-20 bg-gradient-to-b from-transparent via-gold/40 to-transparent"
+                className="w-[1px] h-16 md:h-20 bg-gradient-to-b from-transparent via-white/30 to-transparent"
               />
 
               {/* سوجي — Arabic */}
               <motion.span
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, filter: 'blur(10px)', x: 20 }}
+                animate={{ opacity: 1, filter: 'blur(0px)', x: 0 }}
                 transition={{ delay: 0.8, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-                className="text-[clamp(2rem,7vw,5rem)] text-gold/70 leading-none select-none"
+                className="text-[clamp(2rem,7vw,5rem)] text-white/90 leading-none select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
                 style={{ fontFamily: "'Noto Sans Arabic', sans-serif" }}
               >
                 سوجي
