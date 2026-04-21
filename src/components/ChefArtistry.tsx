@@ -1,7 +1,7 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { useRef } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -17,6 +17,9 @@ import { useLanguage } from '@/context/LanguageContext';
 
 export default function ChefArtistry() {
   const { t, lang } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -116,18 +119,18 @@ export default function ChefArtistry() {
 
       {/* ─── Ambient Particles ─── */}
       <div className="absolute inset-0 pointer-events-none z-[1] opacity-20">
-        {[...Array(4)].map((_, i) => (
+        {mounted && [...Array(4)].map((_, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, x: Math.random() * 100 + "%", y: "100%" }}
+            initial={{ opacity: 0, x: `${(i + 1) * 20}%`, y: "100%" }}
             animate={{ 
               opacity: [0, 0.4, 0], 
               y: ["100%", "0%"],
-              x: (Math.random() * 100) + (Math.random() * 10 - 5) + "%"
+              x: [`${(i + 1) * 20}%`, `${((i + 1) * 20) + (i % 2 === 0 ? 5 : -5)}%`]
             }}
             transition={{ 
-              duration: 15 + Math.random() * 10, 
-              delay: Math.random() * 5, 
+              duration: 15 + (i * 2), 
+              delay: i * 1.5, 
               repeat: Infinity, 
               ease: "linear" 
             }}

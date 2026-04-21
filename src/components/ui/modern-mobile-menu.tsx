@@ -42,52 +42,62 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({ items, accentColor, a
 
   return (
     <nav
-      className="menu"
+      className="menu !bg-black/60 !backdrop-blur-3xl !border-white/5 !shadow-[0_20px_50px_rgba(0,0,0,0.8)] !p-2"
       role="navigation"
       style={navStyle}
     >
-      {finalItems.map((item, index) => {
-        const isActive = index === activeIndex;
-        const IconComponent = item.icon;
+      <div className="flex items-center gap-1 relative">
+        {finalItems.map((item, index) => {
+          const isActive = index === activeIndex;
+          const IconComponent = item.icon;
 
-        return (
-          <button
-            key={item.label}
-            className={`menu__item ${isActive ? 'active' : ''}`}
-            onClick={() => handleItemClick(index)}
-            style={{ willChange: 'transform, opacity' }}
-          >
-            <div className="menu__icon relative">
-              <IconComponent 
-                className={`icon transition-all duration-300 ${isActive ? 'text-gold scale-110' : 'text-white/20'}`} 
-              />
-            </div>
-
-            <AnimatePresence>
+          return (
+            <button
+              key={item.label}
+              className="menu__item relative flex flex-col items-center justify-center py-4 px-6 md:px-8 group transition-all duration-700"
+              onClick={() => handleItemClick(index)}
+              style={{ willChange: 'transform, opacity' }}
+            >
+              {/* Active Indicator (Liquid Pill) */}
               {isActive && (
-                <motion.strong
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ type: 'spring', stiffness: 800, damping: 35 }}
-                  className="menu__text text-gold !block !opacity-100 !w-auto"
-                >
-                  {item.label}
-                </motion.strong>
+                <motion.div 
+                  layoutId="activeMasterPill"
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  className="absolute inset-0 bg-white/[0.03] border border-white/5 rounded-full -z-10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
+                />
               )}
-            </AnimatePresence>
 
-            {/* Faster Active Indicator (Background only) */}
-            {isActive && (
-              <motion.div 
-                layoutId="activePill"
-                transition={{ type: 'spring', stiffness: 800, damping: 40 }}
-                className="absolute inset-0 bg-gold/10 rounded-full -z-10"
-              />
-            )}
-          </button>
-        );
-      })}
+              <div className="menu__icon relative">
+                <IconComponent 
+                  className={`icon transition-all duration-700 ${isActive ? 'text-gold scale-125' : 'text-white/20 group-hover:text-white/40'}`} 
+                />
+                
+                {/* Glow Effect */}
+                {isActive && (
+                  <motion.div 
+                    layoutId="iconGlow"
+                    className="absolute inset-0 bg-gold/20 blur-xl rounded-full -z-10"
+                  />
+                )}
+              </div>
+
+              <AnimatePresence>
+                {isActive && (
+                  <motion.span
+                    initial={{ opacity: 0, y: 10, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, y: 5, filter: 'blur(10px)' }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    className="text-[8px] font-mono font-black uppercase tracking-[0.2em] text-gold mt-2 block"
+                  >
+                    {item.label}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
+          );
+        })}
+      </div>
     </nav>
   );
 };

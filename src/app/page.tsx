@@ -33,9 +33,11 @@ export default function Home() {
     restDelta: 0.001
   });
 
-  // Scroll to top on tab change
+  // Scroll to top on tab change and ensure body is unlocked
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.body.style.overflow = '';
+    document.body.style.pointerEvents = 'auto';
   }, [activeTab]);
 
   // Letterbox trigger based on scroll depth

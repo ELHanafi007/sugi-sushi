@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import BottomNavWrapper from "@/components/BottomNavWrapper";
+import CinematicReveal from "@/components/CinematicReveal";
 
 export const metadata: Metadata = {
   title: "SUGI — Kinetic Dining",
@@ -31,14 +32,15 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&family=Space+Mono:wght@400;700&family=Noto+Sans+Arabic:wght@400;500;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&family=Space+Mono:wght@400;700&family=Noto+Sans+Arabic:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Cinzel:wght@400..900&display=swap"
           rel="stylesheet"
         />
       </head>
       <body className="antialiased select-none">
         <LanguageProvider>
-          {children}
-          {/* Bottom nav inside provider so it has lang context */}
+          <CinematicReveal>
+            {children}
+          </CinematicReveal>
           <BottomNavWrapper />
         </LanguageProvider>
 

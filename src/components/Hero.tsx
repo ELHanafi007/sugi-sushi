@@ -85,37 +85,65 @@ export default function Hero({ onTabChange }: HeroProps) {
         }}
         className="relative z-20 flex flex-col items-center text-center px-6"
       >
-        {/* Placeholder for the Morphing Logo (Calculated in Navbar) */}
-        <div className="h-[42vh] mb-16 flex flex-col items-center justify-center">
+        {/* Masterpiece Morphing Logo Stage */}
+        <div className="h-[45vh] mb-20 flex flex-col items-center justify-center relative">
+          {/* Ambient Glow behind logo */}
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.1, 0.2, 0.1]
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.15),transparent_70%)] blur-3xl pointer-events-none"
+          />
+
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 2, delay: 0.5 }}
-            className="flex flex-col items-center gap-4"
+            initial={{ opacity: 0, scale: 0.8, filter: 'blur(20px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 2.5, delay: 0.5, ease: [0.19, 1, 0.22, 1] }}
+            className="flex flex-col items-center gap-6"
           >
-            <div className="w-12 h-px bg-gold/30" />
-            <span className="text-mono text-gold/40 text-[10px] tracking-[1.5em] uppercase font-black">
-              {lang === 'ar' ? 'سوجي سوشي' : 'Sugi Sushi'}
-            </span>
-            <div className="w-12 h-px bg-gold/30" />
+            <div className="flex items-center gap-10">
+              <div className="w-16 h-px bg-gradient-to-r from-transparent to-gold/30" />
+              <span className="text-mono text-gold/50 text-[10px] tracking-[1.5em] uppercase font-black">
+                {t('hero.est')}
+              </span>
+              <div className="w-16 h-px bg-gradient-to-l from-transparent to-gold/30" />
+            </div>
+            
+            {/* Japanese Subtext */}
+            <motion.span 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.1 }}
+              transition={{ delay: 2, duration: 2 }}
+              className="text-white text-[15vw] md:text-[12vh] font-serif absolute -z-10 select-none pointer-events-none tracking-[0.2em] left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 whitespace-nowrap opacity-5"
+            >
+              杉寿司
+            </motion.span>
           </motion.div>
         </div>
 
-        {/* High-End CTA Button */}
+        {/* Masterpiece CTA Button */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, delay: 1, ease: [0.19, 1, 0.22, 1] }}
+          transition={{ duration: 2, delay: 1.2, ease: [0.19, 1, 0.22, 1] }}
           style={{ willChange: "transform, opacity" }}
         >
           <button 
             onClick={() => onTabChange('menu')}
-            className="cta-btn group px-16 py-6"
+            className="cta-btn group px-20 py-8 shadow-2xl"
           >
-            <span className="relative text-white/90 text-[10px] uppercase tracking-[0.6em] font-black group-hover:text-gold group-hover:tracking-[0.8em] transition-all duration-700">
-              {t('hero.cta')}
-            </span>
-            <div className="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="relative flex flex-col items-center">
+              <span className="text-white/90 text-[11px] uppercase tracking-[0.8em] font-black group-hover:text-gold group-hover:tracking-[1em] transition-all duration-1000">
+                {t('hero.cta')}
+              </span>
+              <motion.div 
+                className="h-px w-0 bg-gold mt-4 group-hover:w-full transition-all duration-1000" 
+                layoutId="ctaUnderline"
+              />
+            </div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.1),transparent)] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
           </button>
         </motion.div>
       </motion.div>

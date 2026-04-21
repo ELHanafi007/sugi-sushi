@@ -65,7 +65,7 @@ export default function Atmosphere() {
     <section 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative w-full h-[100vh] flex items-center justify-center bg-bg overflow-hidden cursor-none"
+      className="relative w-full h-[100vh] flex items-center justify-center bg-bg overflow-hidden"
     >
       {/* ─── Mouse-Reactive Spotlight ─── */}
       <motion.div 

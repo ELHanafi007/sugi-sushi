@@ -68,19 +68,20 @@ const CHAPTERS = [
 const CAT_IMAGES: Record<string, string> = {
   'Salads': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80',
   'Soups': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1200&q=80',
-  'Starters': 'https://images.unsplash.com/photo-1541014741259-df549fa9ba6f?auto=format&fit=crop&w=1200&q=80',
+  'Starters': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80',
   'Wok, Noodles & Rice': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1200&q=80',
   'Tempura': 'https://images.unsplash.com/photo-1569050278883-d5c58c39bb7a?auto=format&fit=crop&w=1200&q=80',
   'Sugi Dishes': 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80',
-  'Sashimi': 'https://images.unsplash.com/photo-1534422298391-e4f8c170db0a?auto=format&fit=crop&w=1200&q=80',
+  'Sashimi': 'https://images.unsplash.com/photo-1534256958597-7feec80116e7?auto=format&fit=crop&w=1200&q=80',
   'Tataki': 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=1200&q=80',
   'Ceviche': 'https://images.unsplash.com/photo-1534604973900-c41ab4c5e636?auto=format&fit=crop&w=1200&q=80',
-  'Nigiri': 'https://images.unsplash.com/photo-1583623025817-d180a2221d0a?auto=format&fit=crop&w=1200&q=80',
+  'Nigiri': 'https://images.unsplash.com/photo-1611712142469-e39736310f21?auto=format&fit=crop&w=1200&q=80',
 };
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
 
 /* ─── Featured Dish Card (Masterpiece Edition) ─── */
 const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => {
+  const { t, setActiveTab, setPendingDish } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
   const imageUrl = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
@@ -92,7 +93,11 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
       style={{ willChange: "transform, opacity" }}
-      className="relative w-full h-[60vh] md:h-[75vh] rounded-[3rem] overflow-hidden group shadow-[0_40px_80px_rgba(0,0,0,0.5)] luxury-card"
+      className="relative w-full h-[60vh] md:h-[75vh] rounded-[3rem] overflow-hidden group shadow-[0_40px_80px_rgba(0,0,0,0.5)] luxury-card cursor-pointer"
+      onClick={() => {
+        setPendingDish(dish);
+        setActiveTab('menu');
+      }}
     >
       <div className="absolute inset-0 overflow-hidden">
         <Image
@@ -115,14 +120,14 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
         />
       </div>
 
-      <div className="absolute inset-0 p-8 md:p-20 flex flex-col justify-end">
+      <div className={`absolute inset-0 p-8 md:p-20 flex flex-col justify-end ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
         <div className="max-w-3xl">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             className="flex items-center gap-4 mb-8"
           >
-            <span className="mono-tag !text-gold/80 !bg-gold/5 !border-gold/20 font-black">Featured Selection</span>
+            <span className="mono-tag !text-gold/80 !bg-gold/5 !border-gold/20 font-black">{t('menu.featured')}</span>
             <div className="h-px w-12 bg-gold/20" />
           </motion.div>
           
@@ -136,7 +141,6 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
           <div className="flex items-center gap-8">
             <div className="flex items-baseline gap-3">
               <span className="text-4xl text-gold font-serif">{dish.price}</span>
-              <span className="text-mono text-gold/30 text-[10px]">SR</span>
             </div>
             <div className="h-10 w-px bg-white/5" />
             <span className="text-mono text-white/35 text-[10px] tracking-[0.5em] font-black">{dish.category}</span>
@@ -149,6 +153,7 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
 
 /* ─── Secondary Dish Card (Masterpiece Edition) ─── */
 const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: number }) => {
+  const { t } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const imageUrl = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
 
@@ -174,12 +179,11 @@ const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar';
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-transparent to-transparent" />
       
-      <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-end">
+      <div className={`absolute inset-0 p-8 md:p-12 flex flex-col justify-end ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
         <h4 className="text-white text-2xl md:text-4xl font-serif font-light mb-6 leading-tight group-hover:text-gold transition-colors duration-1000">{name}</h4>
         <div className="flex justify-between items-center">
           <div className="flex items-baseline gap-2">
             <span className="text-gold/60 text-2xl font-serif">{dish.price}</span>
-            <span className="text-mono text-gold/20 text-[8px]">SR</span>
           </div>
           <div className="w-2.5 h-2.5 rounded-full bg-gold/5 group-hover:bg-gold/40 transition-all duration-1000" />
         </div>
@@ -255,7 +259,7 @@ function PhilosophySection() {
 
 function MenuExperience() {
   const { t, lang } = useLanguage();
-  const [activeChapter, setActiveChapter] = useState(CHAPTERS[0].id);
+  const [activeChapter, setActiveChapter] = useState(CHAPTERS[2].id); // Start with Raw Art for home
 
   return (
     <section id="menu" className="w-full py-32 md:py-56 bg-bg relative">
@@ -274,7 +278,7 @@ function MenuExperience() {
               viewport={{ once: true }}
               className="text-white text-6xl md:text-9xl lg:text-[11rem] font-serif font-light tracking-tighter leading-none italic"
             >
-              The <span className="text-gold shimmer-gold not-italic !font-black">Experience.</span>
+              {t('menu.exp_title')}<span className="text-gold shimmer-gold not-italic !font-black">{t('menu.exp_span')}</span>
             </motion.h2>
             
             {/* Chapter Navigation — Editorial Sidebar style */}
@@ -309,14 +313,14 @@ function MenuExperience() {
 
         {/* Dynamic Chapter Reveal */}
         <AnimatePresence mode="wait">
-          {CHAPTERS.map((chap) => chap.id === activeChapter && (
+          {CHAPTERS.filter(c => c.id === activeChapter).map((chap) => (
             <motion.div
               key={chap.id}
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
               transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-              className="space-y-40 md:space-y-72"
+              className="space-y-20 md:space-y-72"
             >
               {chap.cats.map((catName) => {
                 const dishes = menuData.filter(d => d.category === catName);
@@ -329,11 +333,11 @@ function MenuExperience() {
                 return (
                   <div key={catName} className="relative">
                     {/* Category Editorial Header */}
-                    <div className="flex flex-col md:flex-row md:items-end gap-8 mb-20 md:mb-32">
+                    <div className="flex flex-col md:flex-row md:items-end gap-6 mb-12 md:mb-32">
                       <div className="flex items-center gap-8">
                         <span className="text-gold/60 font-serif text-6xl md:text-8xl font-thin leading-none">{KANJI[catName]}</span>
                         <div className="flex flex-col">
-                          <span className="text-mono text-gold/30 text-[10px] tracking-[0.8em] font-black mb-2 uppercase">Category</span>
+                          <span className="text-mono text-gold/30 text-[10px] tracking-[0.8em] font-black mb-2 uppercase">{t('menu.cat_label')}</span>
                           <h3 className="text-white/90 text-3xl md:text-6xl font-serif font-light tracking-tight italic">
                             {t(`menu.cat.${catName}`)}
                           </h3>
@@ -342,7 +346,7 @@ function MenuExperience() {
                       <div className="flex-1 h-[1px] bg-white/[0.04] mb-4 hidden md:block" />
                       <div className="flex flex-col items-end gap-2 mb-2">
                          <span className="text-mono text-white/10 text-[9px] uppercase tracking-widest font-black">
-                           {dishes.length} Selected Items
+                           {dishes.length} {t('menu.selected_count')}
                          </span>
                          <div className="w-12 h-px bg-gold/20" />
                       </div>
@@ -421,15 +425,15 @@ function ContactSection() {
           >
             <span className="section-label tracking-[1em] font-black">{t('contact.label')}</span>
             <h2 className="text-white text-5xl md:text-8xl lg:text-9xl font-serif font-light tracking-tightest leading-none italic">
-              Experience the <span className="text-gold shimmer-gold not-italic !font-black">Art of Motion.</span>
+              {t('contact.art_title')}<span className="text-gold shimmer-gold not-italic !font-black">{t('contact.art_span')}</span>
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-24">
             {[
-              { label: t('contact.visit'), content: t('contact.location'), sub: "Riyadh, KSA", icon: "📍" },
-              { label: t('contact.opening'), content: t('contact.hours'), sub: "7 Days a Week", icon: "🕐" },
-              { label: t('contact.reservation'), content: "+966 55 000 0000", sub: "Digital Booking", icon: "📞" }
+              { label: t('contact.visit'), content: t('contact.location'), sub: t('contact.visit_sub'), icon: "📍" },
+              { label: t('contact.opening'), content: t('contact.hours'), sub: t('contact.opening_sub'), icon: "🕐" },
+              { label: t('contact.reservation'), content: "+966 55 000 0000", sub: t('contact.reservation_sub'), icon: "📞" }
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -499,7 +503,7 @@ function Footer() {
             <Image src="/media/optimized/brand-logo.png" alt="Sugi Logo" fill className="object-contain" />
           </motion.div>
           <div className="flex flex-col items-center gap-4">
-            <h2 className="text-white text-3xl md:text-5xl font-serif font-light tracking-[0.8em] leading-none uppercase">SUGI SUSHI</h2>
+            <h2 className="text-white text-3xl md:text-5xl font-serif font-light tracking-[0.8em] leading-none uppercase">{t('footer.brand')}</h2>
             <div className="h-[1px] w-48 bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
             <span className="text-gold/30 text-[9px] font-mono uppercase tracking-[0.6em] font-black">{t('footer.perfection')}</span>
           </div>
@@ -519,8 +523,8 @@ function Footer() {
             ))}
           </div>
           <div className="flex flex-col items-center md:items-end gap-2">
-            <p className="text-[10px] text-white/35 uppercase tracking-[0.6em] font-black font-mono">© 2026 SUGI EXPERIENCE • RIYADH</p>
-            <span className="text-[8px] text-white/25 uppercase tracking-[0.4em] font-mono">Crafted with Perfection</span>
+            <p className="text-[10px] text-white/35 uppercase tracking-[0.6em] font-black font-mono">{t('footer.legal')}</p>
+            <span className="text-[8px] text-white/25 uppercase tracking-[0.4em] font-mono">{t('footer.crafted')}</span>
           </div>
         </div>
       </div>

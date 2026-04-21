@@ -19,7 +19,7 @@ const DISH_IMAGES = [
 ];
 
 const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: NavTab) => void }) => {
-  const { t } = useLanguage();
+  const { t, lang, setActiveTab, setPendingDish } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
@@ -39,14 +39,8 @@ const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: N
   };
 
   const handleDishClick = () => {
-    if (onTabChange) {
-      onTabChange('menu');
-      setTimeout(() => {
-        if ((window as any).dispatchDishSelect) {
-          (window as any).dispatchDishSelect(dish);
-        }
-      }, 300);
-    }
+    setPendingDish(dish);
+    setActiveTab('menu');
   };
 
   return (
@@ -94,7 +88,7 @@ const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: N
       </div>
 
       {/* Content Orchestration */}
-      <div className="absolute inset-0 p-8 md:p-24 lg:p-32 flex flex-col justify-end">
+      <div className={`absolute inset-0 p-8 md:p-24 lg:p-32 flex flex-col justify-end ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
         <motion.div
           animate={{ z: isHovered ? 50 : 0, y: isHovered ? -10 : 0 }}
           style={{ transformStyle: "preserve-3d" }}
@@ -112,19 +106,18 @@ const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: N
           </div>
           
           <h3 className="text-display liquid-gold mb-10 !text-5xl md:!text-8xl tracking-tightest leading-none">
-            {dish.name}
+            {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
           </h3>
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
             <p className="text-xl md:text-2xl text-white/65 max-w-2xl italic font-serif leading-relaxed font-light">
-              &quot;{dish.description}&quot;
+              &quot;{lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}&quot;
             </p>
             
             <div className="flex flex-col items-end gap-4">
               <span className="text-mono text-white/45 tracking-[1em] text-[10px]">{t('signature.sig')}</span>
               <div className="flex items-baseline gap-4 bg-white/[0.02] border border-white/5 backdrop-blur-2xl px-10 py-5 rounded-full group-hover:border-gold/30 transition-colors duration-700">
                 <span className="text-4xl text-gold font-serif font-light">{dish.price}</span>
-                <span className="text-mono text-gold/40 text-[10px]">{t('common.sr')}</span>
               </div>
             </div>
           </div>
@@ -138,7 +131,7 @@ const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: N
 };
 
 const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, onTabChange?: (tab: NavTab) => void }) => {
-  const { t } = useLanguage();
+  const { t, lang, setActiveTab, setPendingDish } = useLanguage();
 
   const handleDishClick = () => {
     if (onTabChange) {
@@ -172,15 +165,17 @@ const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, on
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-1000" />
       
-      <div className="absolute inset-0 p-10 md:p-14 flex flex-col justify-end">
+      <div className={`absolute inset-0 p-10 md:p-14 flex flex-col justify-end ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
         <motion.div
           whileHover={{ y: -10 }}
           transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
         >
-          <span className="text-mono text-gold/30 mb-4 block text-[10px] tracking-[0.8em] font-black">{t('signature.curated')}</span>
-          <h4 className="text-3xl md:text-5xl text-white font-serif font-light mb-6 leading-tight group-hover:text-gold transition-colors duration-1000">{dish.name}</h4>
+          <span className="mono-tag !text-gold/70 !bg-gold/5 !border-gold/10 mb-6 scale-90 origin-left">{t('signature.curated')}</span>
+          <h4 className="text-3xl md:text-5xl text-white font-serif font-light mb-6 leading-tight group-hover:text-gold transition-colors duration-1000">
+            {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
+          </h4>
           <div className="flex items-center justify-between">
-            <span className="text-white/45 font-serif italic text-lg">{dish.price} {t('common.sr')}</span>
+            <span className="text-white/45 font-serif italic text-lg">{dish.price}</span>
             <div className="w-3 h-3 rounded-full bg-gold/5 group-hover:bg-gold/40 transition-all duration-1000 shadow-[0_0_20px_rgba(212,175,55,0)] group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
           </div>
         </motion.div>
