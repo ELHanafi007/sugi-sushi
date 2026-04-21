@@ -104,57 +104,109 @@ function GalleryItem({ item, index, scrollProgress, totalItems }: GalleryItemPro
 }
 
 export default function KineticGallery() {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const targetRef = useRef<HTMLDivElement>(null);
 
   const galleryItems = [
     {
       id: 1,
-      src: 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1600&q=80',
-      title: t('gallery.item1.title'),
-      tag: t('gallery.item1.tag'),
-      aspect: 'aspect-[4/5]',
-      parallax: 0.2
+      src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=80',
+      title: 'The Sanctuary',
+      tag: 'INTERIOR',
+      aspect: 'aspect-[16/9]',
+      parallax: 0.15,
+      z: 50,
+      scale: 1.1
     },
     {
       id: 2,
-      src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=80',
-      title: t('gallery.item2.title'),
-      tag: t('gallery.item2.tag'),
-      aspect: 'aspect-[16/9]',
-      parallax: -0.1
+      src: 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1600&q=80',
+      title: 'Master\'s Focus',
+      tag: 'CRAFT',
+      aspect: 'aspect-[4/5]',
+      parallax: -0.2,
+      z: 20,
+      scale: 0.9
     },
     {
       id: 3,
-      src: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1600&q=80',
-      title: t('gallery.item3.title'),
-      tag: t('gallery.item3.tag'),
+      src: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1600&q=80',
+      title: 'Umami Symphony',
+      tag: 'NIGIRI',
       aspect: 'aspect-square',
-      parallax: 0.3
+      parallax: 0.3,
+      z: 80,
+      scale: 1.2
     },
     {
       id: 4,
-      src: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1600&q=80',
-      title: t('gallery.item4.title'),
-      tag: t('gallery.item4.tag'),
+      src: 'https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=1600&q=80',
+      title: 'The Steam',
+      tag: 'NOODLES',
       aspect: 'aspect-[3/4]',
-      parallax: 0.1
+      parallax: -0.1,
+      z: 30,
+      scale: 0.95
     },
     {
       id: 5,
-      src: 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=1600&q=80',
-      title: t('gallery.item5.title'),
-      tag: t('gallery.item5.tag'),
-      aspect: 'aspect-[4/5]',
-      parallax: -0.2
+      src: 'https://images.unsplash.com/photo-1534422298391-e4f8c170db76?auto=format&fit=crop&w=1600&q=80',
+      title: 'Temporal Grace',
+      tag: 'SETTING',
+      aspect: 'aspect-[16/9]',
+      parallax: 0.25,
+      z: 60,
+      scale: 1.05
     },
     {
       id: 6,
-      src: 'https://images.unsplash.com/photo-1558985250-27a406d64cb3?auto=format&fit=crop&w=1600&q=80',
-      title: t('gallery.item6.title'),
-      tag: t('gallery.item6.tag'),
+      src: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1600&q=80',
+      title: 'Raw Artistry',
+      tag: 'SASHIMI',
       aspect: 'aspect-square',
-      parallax: 0.4
+      parallax: -0.3,
+      z: 10,
+      scale: 0.85
+    },
+    {
+      id: 7,
+      src: 'https://images.unsplash.com/photo-1580828369019-2238b909ca8c?auto=format&fit=crop&w=1600&q=80',
+      title: 'Shadow & Light',
+      tag: 'ATMOSPHERE',
+      aspect: 'aspect-[4/5]',
+      parallax: 0.4,
+      z: 100,
+      scale: 1.3
+    },
+    {
+      id: 8,
+      src: 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=1600&q=80',
+      title: 'Ocean\'s Gift',
+      tag: 'COLLECTION',
+      aspect: 'aspect-[3/4]',
+      parallax: -0.15,
+      z: 40,
+      scale: 0.9
+    },
+    {
+      id: 9,
+      src: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=80',
+      title: 'Zen Passage',
+      tag: 'GARDEN',
+      aspect: 'aspect-[16/9]',
+      parallax: 0.2,
+      z: 70,
+      scale: 1.1
+    },
+    {
+      id: 10,
+      src: 'https://images.unsplash.com/photo-1590377435160-c335805f639a?auto=format&fit=crop&w=1600&q=80',
+      title: 'Liquid Gold',
+      tag: 'ELIXIR',
+      aspect: 'aspect-square',
+      parallax: -0.05,
+      z: 25,
+      scale: 0.95
     }
   ];
 
@@ -162,10 +214,8 @@ export default function KineticGallery() {
     target: targetRef,
   });
 
-  // Calculate horizontal scroll distance based on content
-  // We go from x: 0% to a value that moves the entire track past the viewport
-  const x = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "-100%"]);
-  const xSpring = useSpring(x, { stiffness: 40, damping: 25, mass: 0.5 });
+  const x = useTransform(scrollYProgress, [0.1, 0.95], ["0%", "-350%"]);
+  const xSpring = useSpring(x, { stiffness: 45, damping: 25, mass: 0.5 });
 
   const mX = useMotionValue(0);
   const mY = useMotionValue(0);
@@ -180,10 +230,9 @@ export default function KineticGallery() {
   };
 
   return (
-    <section ref={targetRef} className="relative h-[600vh] bg-bg z-[50]">
+    <section ref={targetRef} className="relative h-[800vh] bg-bg z-[50]">
       <div className="sticky top-0 h-screen flex items-center overflow-hidden" onMouseMove={handleGlobalMouseMove}>
         
-        {/* Cinematic Backdrop Overlay */}
         <motion.div 
           style={{ 
             left: spotlightX, 
@@ -193,10 +242,9 @@ export default function KineticGallery() {
           className="absolute w-[100vw] h-[100vw] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.06),transparent_70%)] pointer-events-none z-0"
         />
 
-        {/* Cinematic Focusing Mask */}
         <motion.div 
           style={{ 
-            opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]) 
+            opacity: useTransform(scrollYProgress, [0, 0.1, 0.95, 1], [0, 1, 1, 0]) 
           }}
           className="absolute inset-0 z-[5] pointer-events-none shadow-[inset_0_0_200px_rgba(0,0,0,0.8)]"
         />
@@ -206,14 +254,12 @@ export default function KineticGallery() {
           <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-gold/10 to-transparent" />
         </div>
 
-        {/* Content Container */}
         <div className="flex flex-col h-full w-full justify-center">
           
-          {/* Header (Fades early) */}
           <motion.div 
             style={{ 
-              opacity: useTransform(scrollYProgress, [0, 0.08], [1, 0]),
-              y: useTransform(scrollYProgress, [0, 0.08], [0, -50])
+              opacity: useTransform(scrollYProgress, [0, 0.05], [1, 0]),
+              y: useTransform(scrollYProgress, [0, 0.05], [0, -50])
             }}
             className="container-luxury mb-12 absolute top-24 left-0 right-0 z-20"
           >
@@ -235,31 +281,43 @@ export default function KineticGallery() {
             </div>
           </motion.div>
 
-          {/* Horizontal Track */}
           <div className="relative flex items-center">
             <motion.div 
               style={{ x: xSpring }} 
-              className="flex gap-24 md:gap-48 px-[20vw]"
+              className="flex gap-[10vw] px-[30vw] items-center"
             >
               {galleryItems.map((item, idx) => (
-                <GalleryItem 
-                  key={item.id} 
-                  item={item} 
-                  index={idx} 
-                  scrollProgress={scrollYProgress}
-                  totalItems={galleryItems.length}
-                />
+                <motion.div
+                  key={item.id}
+                  style={{
+                    y: useTransform(scrollYProgress, [0, 1], [100 * item.parallax, -100 * item.parallax]),
+                    // @ts-ignore
+                    z: item.z,
+                    // @ts-ignore
+                    scale: item.scale,
+                    marginLeft: idx % 2 === 0 ? '0' : '-5vw',
+                    // @ts-ignore
+                    zIndex: item.z
+                  }}
+                  className="flex-shrink-0"
+                >
+                  <GalleryItem 
+                    item={item} 
+                    index={idx} 
+                    scrollProgress={scrollYProgress}
+                    totalItems={galleryItems.length}
+                  />
+                </motion.div>
               ))}
             </motion.div>
           </div>
 
-          {/* Bottom Controls / Progress */}
           <div className="container-luxury absolute bottom-12 left-0 right-0 z-20 flex justify-between items-end">
             <motion.div 
               style={{ opacity: useTransform(scrollYProgress, [0, 0.1], [0.3, 1]) }}
               className="hidden xl:flex flex-col gap-4"
             >
-              <span className="text-mono text-gold text-[10px] tracking-[1.5em] uppercase">KINETIC</span>
+              <span className="text-mono text-gold text-[10px] tracking-[1.5em] uppercase">DEPTH ARCHIVE</span>
               <div className="w-px h-16 bg-gradient-to-t from-gold/50 to-transparent" />
             </motion.div>
 
@@ -268,7 +326,7 @@ export default function KineticGallery() {
                 style={{ opacity: useTransform(scrollYProgress, [0.1, 0.9], [0.5, 1]) }}
                 className="text-white/40 text-[8px] uppercase tracking-[0.5em] font-mono"
               >
-                {scrollYProgress.get() > 0.95 ? 'Archive Exploration Complete' : 'Scroll to Traverse the Archive'}
+                {scrollYProgress.get() > 0.95 ? 'Exploration Complete' : 'Traversing the Sensory Archive'}
               </motion.span>
               <div className="w-80 h-[1px] bg-white/5 relative overflow-hidden">
                 <motion.div 
@@ -279,15 +337,14 @@ export default function KineticGallery() {
             </div>
 
             <div className="text-right">
-               <span className="text-mono text-white/10 text-[10px] tracking-[1em] uppercase">Archive No. 24</span>
+               <span className="text-mono text-white/10 text-[10px] tracking-[1em] uppercase">Archive No. 24-02</span>
             </div>
           </div>
         </div>
 
-        {/* Ambient Big Text Background */}
         <motion.div 
           style={{ 
-            x: useTransform(scrollYProgress, [0, 1], ["20%", "-60%"]),
+            x: useTransform(scrollYProgress, [0, 1], ["40%", "-80%"]),
             opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0.01, 0.03, 0.01]) 
           }}
           className="absolute bottom-0 left-0 text-[35vw] font-serif text-white pointer-events-none select-none z-0 leading-none"
@@ -296,6 +353,5 @@ export default function KineticGallery() {
         </motion.div>
       </div>
     </section>
-
   );
 }
