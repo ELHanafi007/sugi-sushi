@@ -8,7 +8,18 @@ import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { getDynamicRecommendations } from '@/utils/recommendationEngine';
 import Image from 'next/image';
 
-/* ─── Category Imagery (Masterpiece Selection) ─── */
+const KANJI: Record<string, string> = {
+  'Salads': '菜', 'Soups': '汁', 'Starters': '前',
+  'Wok, Noodles & Rice': '炒', 'Tempura': '天', 'Sugi Dishes': '主',
+  'Sashimi': '刺', 'Tataki': '叩', 'Ceviche': '酢',
+  'Nigiri': '握', 'Gunkan': '軍', 'Temaki': '手',
+  'Maki Rolls': '巻', 'Aromaki Rolls': '香', 'Aromaki Fried': '揚',
+  'California Rolls': '加', 'Special Rolls': '特', 'Fried Rolls': '衣',
+  'Boxes': '箱', 'Sugi Boat': '舟',
+  'Cold Drinks': '冷', 'Fresh Juices': '搾', 'Hot Drinks': '温',
+  'Desserts': '甘', 'Extra Sauces': '醤',
+};
+
 const CAT_IMAGES: Record<string, string> = {
   'Salads': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80',
   'Soups': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1200&q=80',
@@ -442,21 +453,33 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
                   fill
                   sizes="150px"
                   className={`object-cover transition-all duration-1000 ${
-                    isActive ? 'scale-110 brightness-[0.4] saturate-[1.5]' : 'brightness-[0.2] group-hover:brightness-[0.3] group-hover:scale-105'
+                    isActive ? 'scale-110 brightness-[0.4] saturate-[1.5]' : 'brightness-[0.2] blur-[2px] group-hover:brightness-[0.3] group-hover:scale-105 group-hover:blur-0'
                   }`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
                 
                 <div className="absolute inset-0 p-5 flex flex-col justify-end items-center text-center">
-                  <span className={`text-sm md:text-lg font-serif italic transition-all duration-700 leading-tight ${
-                    isActive ? 'text-gold' : 'text-white/60'
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.span 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        className="text-gold/40 font-serif text-2xl mb-2"
+                      >
+                        {KANJI[cat]}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                  <span className={`text-lg md:text-3xl font-serif italic transition-all duration-700 leading-none ${
+                    isActive ? 'text-gold shimmer-gold' : 'text-white/60'
                   }`}>
                     {t(`menu.cat.${cat}`)}
                   </span>
                   {isActive && (
                     <motion.div 
                       layoutId="catLineMaster" 
-                      className="w-8 h-[1px] bg-gold mt-4 shadow-[0_0_15px_rgba(212,175,55,1)]" 
+                      className="w-12 h-[1px] bg-gold mt-4 shadow-[0_0_15px_rgba(212,175,55,1)]" 
                     />
                   )}
                 </div>
