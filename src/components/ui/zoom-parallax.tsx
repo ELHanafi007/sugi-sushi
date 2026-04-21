@@ -22,7 +22,7 @@ export function ZoomParallax({ images, children }: ZoomParallaxProps) {
 		offset: ['start start', 'end end'],
 	});
 
-	const scale4 = useTransform(scrollYProgress, [0, 1], [1, 4]);
+	const scaleCentral = useTransform(scrollYProgress, [0, 1], [1, 6]);
 	const scale5 = useTransform(scrollYProgress, [0, 1], [1, 5]);
 	const scale6 = useTransform(scrollYProgress, [0, 1], [1, 6]);
 	const scale8 = useTransform(scrollYProgress, [0, 1], [1, 8]);
@@ -32,7 +32,7 @@ export function ZoomParallax({ images, children }: ZoomParallaxProps) {
     const opacityNormal = useTransform(scrollYProgress, [0, 0.7, 0.9], [1, 1, 0]);
     const opacityMain = useTransform(scrollYProgress, [0, 0.8, 1], [1, 1, 1]);
 
-	const scales = [scale4, scale5, scale6, scale5, scale6, scale8, scale9];
+	const scales = [scaleCentral, scale5, scale6, scale5, scale6, scale8, scale9];
 
 	return (
 		<div ref={container} className="relative h-[300vh]">
@@ -53,17 +53,10 @@ export function ZoomParallax({ images, children }: ZoomParallaxProps) {
 									alt={alt || `Parallax image ${index + 1}`}
 									className="h-full w-full object-cover"
 								/>
-                                <div className="absolute inset-0 bg-black/10" />
 							</div>
 						</motion.div>
 					);
 				})}
-
-                {/* Final Cinematic Fade Transition */}
-                <motion.div 
-                    style={{ opacity: useTransform(scrollYProgress, [0.7, 1], [0, 1]) }}
-                    className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent pointer-events-none z-10"
-                />
 			</div>
 
             {/* Spacer to push landing content down until zoom is complete */}
