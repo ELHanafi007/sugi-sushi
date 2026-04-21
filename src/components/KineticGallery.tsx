@@ -158,8 +158,6 @@ export default function KineticGallery() {
     }
   ];
 
-  const targetRef = useRef<HTMLDivElement>(null);
-
   const { scrollYProgress } = useScroll({
     target: targetRef,
   });
