@@ -24,8 +24,8 @@ export default function ZoomExperience() {
 
 	const images = [
 		{
-			src: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=1280&h=720&fit=crop&q=80',
-			alt: 'Masterfully crafted Nigiri',
+			src: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=1280&h=720&fit=crop&q=80',
+			alt: 'Symmetry of Sushi',
 		},
 		{
 			src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1280&h=720&fit=crop&q=80',
@@ -36,8 +36,8 @@ export default function ZoomExperience() {
 			alt: 'Chef Artistry Close-up',
 		},
 		{
-			src: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=1280&h=720&fit=crop&q=80',
-			alt: 'Symmetry of Sushi',
+			src: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=1280&h=720&fit=crop&q=80',
+			alt: 'Masterfully crafted Nigiri',
 		},
 		{
 			src: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=800&h=800&fit=crop&q=80',
