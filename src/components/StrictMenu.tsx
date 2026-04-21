@@ -108,22 +108,39 @@ function DishModal({
 
         <div className="max-w-2xl mx-auto px-6 pb-40">
 
+          {/* Cinematic Hero Image */}
+          <motion.div
+            initial={{ y: 50, opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+            className="relative w-full h-[50vh] md:h-[65vh] rounded-[2.5rem] overflow-hidden mb-10 shadow-[0_50px_100px_rgba(0,0,0,0.8)] luxury-card"
+          >
+            <img
+              src={image}
+              alt={name}
+              loading="eager"
+              className="w-full h-full object-cover transition-transform duration-[10s] hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,black_100%)] opacity-30" />
+            {/* Dish name overlay at bottom of image */}
+            <div className="absolute bottom-0 left-0 right-0 p-8">
+              <span className="text-mono text-white/30 text-[9px] tracking-[0.8em] font-black uppercase block mb-2">{t('menu.featured')}</span>
+              <h2 className="text-4xl md:text-6xl font-serif text-white tracking-tightest leading-tight italic">{name}</h2>
+            </div>
+          </motion.div>
+
           {/* Editorial Content */}
-          <motion.div 
+          <motion.div
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 1 }}
             className="space-y-12"
           >
-            {/* Branding Row */}
-            <div className="flex justify-between items-end gap-6">
-               <div className="flex flex-col gap-2">
-                  <span className="text-mono text-white/20 text-[10px] tracking-[0.8em] font-black uppercase">{t('menu.featured')}</span>
-                  <h2 className="text-4xl md:text-6xl font-serif text-white tracking-tightest leading-tight italic">{name}</h2>
-               </div>
-              <div className="flex flex-col items-end">
-                <span className="text-4xl text-gold font-serif font-light">{dish.price}</span>
-              </div>
+            {/* Price + Description */}
+            <div className="flex justify-between items-center gap-6">
+              <span className="text-4xl text-gold font-serif font-light">{dish.price}</span>
+              <div className="h-px flex-1 bg-white/5" />
             </div>
 
             <p className="text-xl md:text-2xl text-white/40 font-serif italic leading-relaxed font-light">
