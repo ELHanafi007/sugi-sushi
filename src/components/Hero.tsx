@@ -119,7 +119,7 @@ export default function Hero({ onTabChange }: HeroProps) {
                 initial={{ opacity: 0, filter: 'blur(10px)', x: -20 }}
                 animate={{ opacity: 1, filter: 'blur(0px)', x: 0 }}
                 transition={{ delay: 0.8, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-                className="text-white text-[clamp(2.8rem,10vw,7rem)] font-serif font-black tracking-[0.15em] leading-none select-none drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                className="text-white text-[clamp(2rem,7vw,5rem)] font-serif font-black tracking-[0.15em] leading-none select-none drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 SUGI
@@ -136,9 +136,18 @@ export default function Hero({ onTabChange }: HeroProps) {
               {/* 杉 — Kanji */}
               <motion.span
                 initial={{ opacity: 0, filter: 'blur(10px)', y: 10 }}
-                animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-                transition={{ delay: 1, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-                className="text-[clamp(2rem,7vw,5rem)] text-white/90 leading-none select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                animate={{ 
+                  opacity: 1, 
+                  filter: 'blur(0px)', 
+                  y: 0,
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{ 
+                  opacity: { delay: 1, duration: 1.5 },
+                  y: { delay: 1, duration: 1.5 },
+                  scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="text-[clamp(2rem,7vw,5rem)] shimmer-gold leading-none select-none drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
                 杉
@@ -189,7 +198,7 @@ export default function Hero({ onTabChange }: HeroProps) {
           >
             <div className="relative flex flex-col items-center">
               <span className="text-white/90 text-[11px] uppercase tracking-[0.8em] font-black group-hover:text-gold group-hover:tracking-[1em] transition-all duration-1000">
-                Check the Menu
+                {t('hero.cta')}
               </span>
               <motion.div 
                 className="h-px w-0 bg-gold mt-4 group-hover:w-full transition-all duration-1000" 

@@ -26,7 +26,7 @@ const translations = {
 
     // Hero
     'hero.est': 'Established 2024',
-    'hero.cta': 'Explore the Menu',
+    'hero.cta': 'Our Menu',
     'hero.scroll': 'Scroll to Explore',
 
     // Atmosphere
@@ -224,7 +224,7 @@ const translations = {
 
     // Hero
     'hero.est': 'تأسست عام ٢٠٢٤',
-    'hero.cta': 'استكشف القائمة',
+    'hero.cta': 'قائمتنا',
     'hero.scroll': 'مرر للاستكشاف',
 
     // Atmosphere

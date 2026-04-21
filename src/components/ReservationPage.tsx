@@ -81,7 +81,7 @@ export default function ReservationPage() {
             <motion.h1
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-white text-5xl md:text-8xl font-serif font-light mb-12 italic"
+              className="text-white text-4xl md:text-8xl font-serif font-light mb-12 italic px-4"
             >
               {t('res.title_title')}
               <span className="shimmer-gold not-italic font-black">
@@ -90,21 +90,21 @@ export default function ReservationPage() {
             </motion.h1>
 
             {/* Step Indicator */}
-            <div className="flex justify-center items-center gap-4 md:gap-12">
+            <div className="flex justify-center items-center gap-2 md:gap-12 px-4">
               {[
                 { n: 1, label: t('res.details') },
                 { n: 2, label: t('res.timing') },
                 { n: 3, label: t('res.finalize') }
               ].map((s) => (
-                <div key={s.n} className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${
+                <div key={s.n} className="flex items-center gap-2 md:gap-3">
+                  <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[9px] md:text-[10px] font-black border transition-all duration-500 ${
                     step >= s.n ? 'bg-gold border-gold text-black' : 'border-white/10 text-white/30'
                   }`}>
-                    {step > s.n ? <CheckCircle2 size={14} /> : s.n}
+                    {step > s.n ? <CheckCircle2 size={12} className="md:size-[14px]" /> : s.n}
                   </div>
-                  <span className={`hidden md:block text-[10px] uppercase tracking-widest font-black ${
+                  <span className={`text-[8px] md:text-[10px] uppercase tracking-widest font-black ${
                     step >= s.n ? 'text-white' : 'text-white/20'
-                  }`}>
+                  } ${s.n === step ? 'block' : 'hidden md:block'}`}>
                     {s.label}
                   </span>
                 </div>
@@ -156,12 +156,12 @@ export default function ReservationPage() {
                       <label className="text-[10px] uppercase tracking-widest text-gold/60 font-black flex items-center gap-2">
                         <Users size={12} /> {t('res.guests')}
                       </label>
-                      <div className="flex items-center gap-6">
+                      <div className="flex flex-wrap items-center gap-3 md:gap-6">
                         {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
                           <button
                             key={n}
                             onClick={() => updateFormData('guests', n)}
-                            className={`w-12 h-12 rounded-xl border flex items-center justify-center font-mono text-sm transition-all duration-300 ${
+                            className={`w-10 h-10 md:w-12 md:h-12 rounded-xl border flex items-center justify-center font-mono text-xs md:text-sm transition-all duration-300 ${
                               formData.guests === n 
                                 ? 'bg-gold border-gold text-black' 
                                 : 'bg-white/5 border-white/10 text-white/40 hover:border-gold/30'
@@ -170,7 +170,7 @@ export default function ReservationPage() {
                             {n}
                           </button>
                         ))}
-                        <span className="text-white/20 text-[10px] uppercase tracking-tighter">Guests</span>
+                        <span className="text-white/20 text-[9px] md:text-[10px] uppercase tracking-tighter w-full md:w-auto mt-2 md:mt-0">Guests</span>
                       </div>
                     </div>
 
