@@ -239,9 +239,10 @@ function PhilosophySection() {
   );
 }
 
-function MenuExperience() {
+function MenuExperience({ initialMenuData }: { initialMenuData?: Dish[] }) {
   const { t, lang } = useLanguage();
   const [activeChapter, setActiveChapter] = useState(CHAPTERS[2].id);
+  const menuDataToUse = initialMenuData || menuData;
 
   return (
     <section id="menu" className="w-full py-32 md:py-56 bg-bg relative">
@@ -302,7 +303,7 @@ function MenuExperience() {
               className="space-y-20 md:space-y-72"
             >
               {chap.cats.map((catName) => {
-                const dishes = menuData.filter(d => d.category === catName);
+                const dishes = menuDataToUse.filter(d => d.category === catName);
                 if (dishes.length === 0) return null;
                 
                 const featured = dishes.find(d => d.tags.includes('Signature')) || dishes[0];
@@ -508,11 +509,11 @@ function Footer() {
   );
 }
 
-export default function MenuSection() {
+export default function MenuSection({ initialMenuData }: { initialMenuData?: Dish[] }) {
   return (
     <div className="bg-bg relative">
       <PhilosophySection />
-      <MenuExperience />
+      <MenuExperience initialMenuData={initialMenuData} />
       <ContactSection />
       <Footer />
     </div>

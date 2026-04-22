@@ -44,12 +44,16 @@ function DishModal({
   dish, 
   onClose, 
   onDishSelect, 
-  onCategorySelect 
+  onCategorySelect,
+  menuDataToUse,
+  categoriesToUse
 }: { 
   dish: Dish; 
   onClose: () => void;
   onDishSelect: (dish: Dish) => void;
   onCategorySelect: (cat: string) => void;
+  menuDataToUse: Dish[];
+  categoriesToUse: string[];
 }) {
   const { lang, t } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
@@ -57,8 +61,8 @@ function DishModal({
   const image = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
 
   const recommendations = useMemo(() => {
-    return getDynamicRecommendations(dish, menuData, lang as 'en' | 'ar');
-  }, [dish, lang]);
+    return getDynamicRecommendations(dish, menuDataToUse, lang as 'en' | 'ar');
+  }, [dish, lang, menuDataToUse]);
 
   const mapAllergen = (a: string) => {
     const map: Record<string, { en: string, ar: string }> = {
@@ -84,7 +88,7 @@ function DishModal({
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollRef.current.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [dish.id]);
 
@@ -205,10 +209,10 @@ function DishModal({
               <div className="flex items-center justify-between">
                  <h4 className="text-white/60 text-xl font-serif italic">{t('strict.more_from')} {t(`menu.cat.${dish.category}`)}</h4>
                  <div className="h-px flex-1 bg-white/5 mx-6" />
-                 <span className="text-gold/40 text-[9px] uppercase tracking-widest font-mono">{menuData.filter(d => d.category === dish.category && d.id !== dish.id).length} {t('menu.selections')}</span>
+                 <span className="text-gold/40 text-[9px] uppercase tracking-widest font-mono">{menuDataToUse.filter(d => d.category === dish.category && d.id !== dish.id).length} {t('menu.selections')}</span>
               </div>
               <div className="grid grid-cols-1 gap-4">
-                {menuData
+                {menuDataToUse
                   .filter(d => d.category === dish.category && d.id !== dish.id)
                   .slice(0, 6)
                   .map((item) => (
@@ -256,7 +260,7 @@ function DishModal({
                   drag="x"
                   dragConstraints={{ right: 0, left: -1000 }} // Approximate constraint, will be responsive
                 >
-                  {CATEGORIES.slice(0, Math.ceil(CATEGORIES.length / 2)).map((cat) => (
+                  {categoriesToUse.slice(0, Math.ceil(categoriesToUse.length / 2)).map((cat) => (
                     <motion.button
                       key={cat}
                       onClick={() => { onCategorySelect(cat); onClose(); }}
@@ -284,7 +288,7 @@ function DishModal({
                   drag="x"
                   dragConstraints={{ right: 0, left: -1000 }}
                 >
-                  {CATEGORIES.slice(Math.ceil(CATEGORIES.length / 2)).map((cat) => (
+                  {categoriesToUse.slice(Math.ceil(categoriesToUse.length / 2)).map((cat) => (
                     <motion.button
                       key={cat}
                       onClick={() => { onCategorySelect(cat); onClose(); }}
@@ -315,9 +319,22 @@ function DishModal({
 }
 
 /* ─── Strict Menu Orchestrator ─── */
-export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) => void }) {
+export default function StrictMenu({ 
+  onTabChange,
+  initialMenuData,
+  initialCategories
+}: { 
+  onTabChange?: (tab: any) => void;
+  initialMenuData?: Dish[];
+  initialCategories?: string[];
+}) {
   const { lang, t, pendingDish, setPendingDish } = useLanguage();
-  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
+  
+  // Use props if provided, otherwise fallback to static data
+  const menuDataToUse = initialMenuData || menuData;
+  const categoriesToUse = initialCategories || CATEGORIES;
+
+  const [selectedCategory, setSelectedCategory] = useState(categoriesToUse[0]);
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -346,7 +363,7 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
     
     if (!query) {
       // Standard Category Mode
-      let dishes = menuData.filter(dish => dish.category === selectedCategory);
+      let dishes = menuDataToUse.filter(dish => dish.category === selectedCategory);
       if (activeFilters.length > 0) {
         dishes = dishes.filter(dish => activeFilters.every(filter => dish.tags.includes(filter)));
       }
@@ -354,7 +371,7 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
     }
 
     // Dynamic Search Mode (Global across all categories)
-    return menuData.filter(dish => {
+    return menuDataToUse.filter(dish => {
       const nameMatch = dish.name.toLowerCase().includes(query) || (dish.nameAr && dish.nameAr.includes(query));
       const descMatch = dish.description.toLowerCase().includes(query) || (dish.descriptionAr && dish.descriptionAr.includes(query));
       const tagMatch = dish.tags.some(tag => tag.toLowerCase().includes(query));
@@ -368,7 +385,7 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
       }
       return basicMatches;
     });
-  }, [selectedCategory, activeFilters, searchQuery]);
+  }, [selectedCategory, activeFilters, searchQuery, menuDataToUse]);
 
   const toggleFilter = (filter: string) => {
     setActiveFilters(prev => prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]);
@@ -399,7 +416,7 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
             </motion.h1>
             <div className="flex items-center gap-4">
                <span className="text-white/15 text-[9px] font-mono uppercase tracking-[0.6em] font-black">
-                 {menuData.length} {t('menu.selected_count')}
+                 {menuDataToUse.length} {t('menu.selected_count')}
                </span>
                <div className="w-2 h-2 rounded-full bg-gold/40 animate-pulse shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
             </div>
@@ -433,7 +450,7 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
       {/* High-End Category Slider */}
       <div className="mb-24">
         <div className="flex gap-6 overflow-x-auto no-scrollbar px-8 pb-10">
-          {CATEGORIES.map((cat, idx) => {
+          {categoriesToUse.map((cat, idx) => {
             const isActive = selectedCategory === cat;
             return (
               <motion.button
@@ -634,6 +651,8 @@ export default function StrictMenu({ onTabChange }: { onTabChange?: (tab: any) =
             onClose={() => setSelectedDish(null)} 
             onDishSelect={setSelectedDish}
             onCategorySelect={setSelectedCategory}
+            menuDataToUse={menuDataToUse}
+            categoriesToUse={categoriesToUse}
           />
         )}
       </AnimatePresence>

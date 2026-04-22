@@ -43,6 +43,8 @@ const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: N
     setActiveTab('menu');
   };
 
+  const displayImage = dish.image || DISH_IMAGES[0];
+
   return (
     <motion.div 
       ref={cardRef}
@@ -67,7 +69,7 @@ const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: N
         className="absolute inset-0"
       >
         <Image
-          src={DISH_IMAGES[0]}
+          src={displayImage}
           alt={dish.name}
           fill
           className="object-cover"
@@ -144,6 +146,8 @@ const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, on
     }
   };
 
+  const displayImage = dish.image || DISH_IMAGES[idx + 1] || DISH_IMAGES[0];
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 60 }}
@@ -157,7 +161,7 @@ const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, on
     >
       <div className="absolute inset-0 overflow-hidden">
         <Image
-          src={DISH_IMAGES[idx + 1] || DISH_IMAGES[0]}
+          src={displayImage}
           alt={dish.name}
           fill
           className="object-cover transition-transform duration-[8s] ease-out group-hover:scale-110 saturate-[1.1]"
@@ -184,22 +188,23 @@ const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, on
   );
 };
 
-export default function Signature({ onTabChange }: { onTabChange?: (tab: NavTab) => void }) {
+export default function Signature({ onTabChange, initialMenuData }: { onTabChange?: (tab: NavTab) => void, initialMenuData?: Dish[] }) {
   const { t } = useLanguage();
   const [isMounted, setIsMounted] = useState(false);
+  const menuDataToUse = initialMenuData || menuData;
   
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   const signatures = useMemo(() => {
-    const base = menuData.filter(d => d.tags.includes('Signature'));
+    const base = menuDataToUse.filter(d => d.tags.includes('Signature'));
     // Return stable slice during SSR, shuffle only on Client
     if (!isMounted) return base.slice(0, 3);
     return [...base].sort(() => Math.random() - 0.5).slice(0, 3);
-  }, [isMounted]);
+  }, [isMounted, menuDataToUse]);
 
-  const featured = signatures[0] || menuData[0];
+  const featured = signatures[0] || menuDataToUse[0];
   const secondary = signatures.slice(1);
 
   return (
