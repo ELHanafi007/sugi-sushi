@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import Lenis from 'lenis';
 import { useLanguage } from '@/context/LanguageContext';
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { motion, useTransform, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
 const galleryData = [
@@ -14,7 +13,6 @@ const galleryData = [
   { id: 4, src: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=1600&h=1200&fit=crop&q=80', x: 20, y: -25, zOffset: -4500, w: 'w-[65vw] md:w-[35vw]', aspect: 'aspect-square', label: 'UMAMI' },
   { id: 5, src: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=1200&h=1600&fit=crop&q=80', x: -10, y: -20, zOffset: -6000, w: 'w-[55vw] md:w-[30vw]', aspect: 'aspect-[4/5]', label: 'ESSENCE' },
   { id: 6, src: 'https://images.unsplash.com/photo-1534422298391-e4f8c170db76?w=1600&h=1200&fit=crop&q=80', x: 30, y: 5, zOffset: -7500, w: 'w-[75vw] md:w-[45vw]', aspect: 'aspect-[16/9]', label: 'TEMPORAL' },
-  // The Final Masterpiece
   { id: 7, src: 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?w=1600&h=1200&fit=crop&q=80', x: 0, y: 0, zOffset: -9000, w: 'w-[100vw]', aspect: 'h-[100vh]', label: '', isFinal: true },
 ];
 
@@ -22,22 +20,12 @@ function FlyThroughImage({ item, progress }: { item: any, progress: any }) {
     const travel = 9000;
     const relativeZ = useTransform(progress, [0, 1], [item.zOffset, item.zOffset + travel]);
 
-    const opacityRanges = item.isFinal 
-        ? [-5000, -2000, 0, 1000] 
-        : [-4000, -1500, 0, 500];
-    const opacityValues = item.isFinal
-        ? [0, 1, 1, 1]
-        : [0, 1, 1, 0];
-        
+    const opacityRanges = item.isFinal ? [-5000, -2000, 0, 1000] : [-4000, -1500, 0, 500];
+    const opacityValues = item.isFinal ? [0, 1, 1, 1] : [0, 1, 1, 0];
     const opacity = useTransform(relativeZ, opacityRanges, opacityValues);
 
-    const blurRanges = item.isFinal
-        ? [-5000, -1000, 0, 1000]
-        : [-4000, -1000, 0, 500];
-    const blurValues = item.isFinal
-        ? ['blur(20px)', 'blur(0px)', 'blur(0px)', 'blur(0px)']
-        : ['blur(20px)', 'blur(0px)', 'blur(0px)', 'blur(20px)'];
-        
+    const blurRanges = item.isFinal ? [-5000, -1000, 0, 1000] : [-4000, -1000, 0, 500];
+    const blurValues = item.isFinal ? ['blur(20px)', 'blur(0px)', 'blur(0px)', 'blur(0px)'] : ['blur(20px)', 'blur(0px)', 'blur(0px)', 'blur(20px)'];
     const filter = useTransform(relativeZ, blurRanges, blurValues);
 
     return (
@@ -52,19 +40,23 @@ function FlyThroughImage({ item, progress }: { item: any, progress: any }) {
                 opacity,
                 filter,
             }}
-            className={`flex flex-col items-center justify-center ${item.w} ${item.aspect} ${item.isFinal ? '' : 'luxury-card rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] p-2'}`}
+            className={cn(
+                "flex flex-col items-center justify-center",
+                item.w, item.aspect,
+                item.isFinal ? "z-0" : "luxury-card rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] p-2 z-10"
+            )}
         >
-            <div className={`relative w-full h-full ${item.isFinal ? '' : 'rounded-[2rem] overflow-hidden'}`}>
+            <div className={cn("relative w-full h-full", !item.isFinal && "rounded-[2rem] overflow-hidden")}>
                 <Image 
                     src={item.src} 
                     alt={item.label} 
                     fill 
                     sizes={item.isFinal ? "100vw" : "50vw"}
-                    className={`object-cover ${item.isFinal ? 'brightness-[0.6]' : ''}`}
+                    className={cn("object-cover", item.isFinal && "brightness-[0.6]")}
                     priority={item.isFinal}
                 />
                 {!item.isFinal && (
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />
+                    <div className="absolute inset-0 bg-black/20 hover:bg-transparent transition-colors duration-700" />
                 )}
                 {!item.isFinal && (
                     <div className="absolute bottom-6 left-0 right-0 flex justify-center">
@@ -72,9 +64,7 @@ function FlyThroughImage({ item, progress }: { item: any, progress: any }) {
                     </div>
                 )}
             </div>
-            {item.isFinal && (
-                 <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent" />
-            )}
+            {item.isFinal && <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent" />}
         </motion.div>
     );
 }
@@ -82,27 +72,11 @@ function FlyThroughImage({ item, progress }: { item: any, progress: any }) {
 export default function ZoomExperience() {
     const { t } = useLanguage();
     const containerRef = useRef<HTMLDivElement>(null);
+    const [virtualProgress, setVirtualProgress] = useState(0);
+    const progressTarget = useRef(0);
+    const [hasFinished, setHasFinished] = useState(false);
 
-    useEffect(() => {
-        const lenis = new Lenis({
-            lerp: 0.05,
-            smoothWheel: true,
-        });
-        function raf(time: number) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-        return () => lenis.destroy();
-    }, []);
-
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ['start start', 'end end']
-    });
-
-    const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-
+    // Mouse tracking
     const mouseX = useMotionValue(0.5);
     const mouseY = useMotionValue(0.5);
 
@@ -118,17 +92,79 @@ export default function ZoomExperience() {
     const rotateX = useSpring(useTransform(mouseY, [0, 1], [5, -5]), { stiffness: 50, damping: 20 });
     const rotateY = useSpring(useTransform(mouseX, [0, 1], [-5, 5]), { stiffness: 50, damping: 20 });
 
+    // Smooth virtual progress
+    const smoothProgress = useSpring(virtualProgress, { stiffness: 40, damping: 25, restDelta: 0.0001 });
+
+    // Handle Virtual Scroll Hijacking
+    useEffect(() => {
+        const handleWheel = (e: WheelEvent) => {
+            if (!containerRef.current) return;
+            
+            const rect = containerRef.current.getBoundingClientRect();
+            const inView = rect.top <= 0 && rect.bottom >= window.innerHeight;
+
+            if (inView && !hasFinished) {
+                // If we are scrolling down and haven't finished, hijack
+                if (e.deltaY > 0 && progressTarget.current < 1) {
+                    e.preventDefault();
+                    progressTarget.current = Math.min(1, progressTarget.current + e.deltaY * 0.0008);
+                    setVirtualProgress(progressTarget.current);
+                    return false;
+                }
+                // If we are scrolling up and haven't finished, hijack
+                if (e.deltaY < 0 && progressTarget.current > 0) {
+                    e.preventDefault();
+                    progressTarget.current = Math.max(0, progressTarget.current + e.deltaY * 0.0008);
+                    setVirtualProgress(progressTarget.current);
+                    return false;
+                }
+            }
+
+            if (progressTarget.current >= 1 && !hasFinished) {
+                setHasFinished(true);
+            }
+            
+            if (progressTarget.current < 1 && hasFinished) {
+                setHasFinished(false);
+            }
+        };
+
+        window.addEventListener('wheel', handleWheel, { passive: false });
+        return () => window.removeEventListener('wheel', handleWheel);
+    }, [hasFinished]);
+
+    // Handle touch for mobile
+    useEffect(() => {
+        let startY = 0;
+        const handleTouchStart = (e: TouchEvent) => { startY = e.touches[0].clientY; };
+        const handleTouchMove = (e: TouchEvent) => {
+            if (!containerRef.current || hasFinished) return;
+            const rect = containerRef.current.getBoundingClientRect();
+            if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
+                const deltaY = startY - e.touches[0].clientY;
+                if ((deltaY > 0 && progressTarget.current < 1) || (deltaY < 0 && progressTarget.current > 0)) {
+                    e.preventDefault();
+                    progressTarget.current = Math.max(0, Math.min(1, progressTarget.current + deltaY * 0.002));
+                    setVirtualProgress(progressTarget.current);
+                    startY = e.touches[0].clientY;
+                }
+            }
+        };
+        window.addEventListener('touchstart', handleTouchStart);
+        window.addEventListener('touchmove', handleTouchMove, { passive: false });
+        return () => {
+            window.removeEventListener('touchstart', handleTouchStart);
+            window.removeEventListener('touchmove', handleTouchMove);
+        };
+    }, [hasFinished]);
+
     return (
-        <section className="relative w-full bg-bg overflow-hidden">
+        <section className="relative w-full bg-bg">
             {/* Cinematic Intro */}
-            <div className="relative flex h-[60vh] flex-col items-center justify-center text-center px-4">
+            <div className="relative flex h-[70vh] flex-col items-center justify-center text-center px-4 overflow-hidden">
                 <div
                     aria-hidden="true"
-                    className={cn(
-                        'pointer-events-none absolute -top-1/2 left-1/2 h-[120vmin] w-[120vmin] -translate-x-1/2 rounded-full',
-                        'bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.1),transparent_70%)]',
-                        'blur-[100px]',
-                    )}
+                    className="pointer-events-none absolute -top-1/2 left-1/2 h-[120vmin] w-[120vmin] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.1),transparent_70%)] blur-[100px]"
                 />
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
@@ -151,8 +187,8 @@ export default function ZoomExperience() {
                 </motion.h2>
             </div>
 
-            {/* MINDBLOWING 3D FLY-THROUGH GALLERY */}
-            <div ref={containerRef} className="relative h-[1600vh] bg-bg">
+            {/* THE LOCKED GALLERY ZONE */}
+            <div ref={containerRef} className="relative h-[200vh] md:h-[300vh] bg-bg">
                 <div className="sticky top-0 h-screen overflow-hidden bg-bg" style={{ perspective: '1200px' }}>
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
                     
@@ -165,36 +201,54 @@ export default function ZoomExperience() {
                         ))}
                     </motion.div>
                     
-                    {/* Floating Center Narrative Text */}
-                    <motion.div 
-                        style={{ 
-                          opacity: useTransform(smoothProgress, [0, 0.1, 0.8, 0.9], [1, 1, 1, 0]),
-                          z: useTransform(smoothProgress, [0, 1], [-200, -800])
-                        }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[10] text-center mix-blend-overlay"
-                    >
-                        <h2 className="text-white text-6xl md:text-[10rem] font-serif italic opacity-10 whitespace-nowrap">
-                            The Archive
-                        </h2>
-                    </motion.div>
-
-                    {/* Progress Indicator */}
+                    {/* Progress Overlay */}
                     <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-50">
-                        <span className="text-gold/40 text-[8px] uppercase tracking-[0.5em] font-mono">Traversing Memory</span>
-                        <div className="w-32 h-[1px] bg-white/5 relative overflow-hidden">
+                        <AnimatePresence mode="wait">
+                            {!hasFinished ? (
+                                <motion.span 
+                                    key="traversing"
+                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                    className="text-gold/40 text-[8px] uppercase tracking-[0.5em] font-mono"
+                                >
+                                    Traversing Memory
+                                </motion.span>
+                            ) : (
+                                <motion.span 
+                                    key="unlocked"
+                                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                    className="text-gold text-[8px] uppercase tracking-[0.5em] font-mono animate-pulse"
+                                >
+                                    Experience Complete ↓
+                                </motion.span>
+                            )}
+                        </AnimatePresence>
+                        <div className="w-48 h-[1px] bg-white/5 relative overflow-hidden">
                             <motion.div 
                                 style={{ scaleX: smoothProgress }}
                                 className="absolute inset-0 bg-gold origin-left"
                             />
                         </div>
                     </div>
+
+                    {/* Background Text */}
+                    <motion.div 
+                        style={{ 
+                          opacity: useTransform(smoothProgress, [0, 0.1, 0.8, 0.9], [0.2, 0.2, 0.2, 0]),
+                          z: useTransform(smoothProgress, [0, 1], [-200, -800])
+                        }}
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 text-center mix-blend-overlay"
+                    >
+                        <h2 className="text-white text-6xl md:text-[15rem] font-serif italic whitespace-nowrap">
+                            Archive
+                        </h2>
+                    </motion.div>
                 </div>
             </div>
 
-            {/* The Narrative Landing — Directly following the fly-through */}
+            {/* Narrative Transition Section */}
             <div className="relative z-20 bg-bg pt-32 pb-40">
                 <div className="container-luxury">
-                    <div className="max-w-4xl mx-auto text-center space-y-16">
+                    <div className="max-max-4xl mx-auto text-center space-y-16">
                         <motion.div
                             initial={{ opacity: 0, y: 50 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -209,30 +263,12 @@ export default function ZoomExperience() {
                                 <span className="opacity-50">tells a thousand-year story.</span>
                             </h4>
                         </motion.div>
-
-                        <motion.div 
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            transition={{ duration: 2, delay: 0.5 }}
-                            className="w-px h-32 bg-gradient-to-b from-gold/50 to-transparent mx-auto" 
-                        />
-
+                        <div className="w-px h-32 bg-gradient-to-b from-gold/50 to-transparent mx-auto" />
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left items-center">
-                            <motion.div
-                                initial={{ opacity: 0, x: -30 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 1.5 }}
-                            >
-                                <p className="text-white/70 text-lg md:text-xl font-serif italic leading-relaxed">
-                                    At Sugi Sushi, we believe that the true essence of Japanese cuisine lies in the pursuit of perfection within simplicity. Our gallery is a testament to the hands that craft, the sea that provides, and the fire that transforms.
-                                </p>
-                            </motion.div>
-                            <motion.div
-                                initial={{ opacity: 0, x: 30 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 1.5 }}
-                                className="space-y-6"
-                            >
+                            <p className="text-white/70 text-lg md:text-xl font-serif italic leading-relaxed">
+                                At Sugi Sushi, we believe that the true essence of Japanese cuisine lies in the pursuit of perfection within simplicity. Our gallery is a testament to the hands that craft, the sea that provides, and the fire that transforms.
+                            </p>
+                            <div className="space-y-6">
                                 <p className="text-white/40 text-sm md:text-base font-light leading-relaxed">
                                     From the precision of the sushi knife to the gentle steam of artisanal ramen, each image captures a moment of "Ichi-go Ichi-e"—the philosophy that this exact moment will never happen again.
                                 </p>
@@ -240,13 +276,11 @@ export default function ZoomExperience() {
                                     <div className="h-px w-12 bg-gold/30" />
                                     <span className="text-gold/50 text-[10px] uppercase font-mono tracking-widest font-black">Est. Riyadh 2024</span>
                                 </div>
-                            </motion.div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div className="h-[20vh]"/>
         </section>
     );
 }
