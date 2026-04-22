@@ -38,10 +38,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased select-none">
         <LanguageProvider>
-          <CinematicReveal>
-            {children}
-          </CinematicReveal>
-          <BottomNavWrapper />
+          {children}
         </LanguageProvider>
 
         {/* Film Grain — low z, pointer-events none */}
