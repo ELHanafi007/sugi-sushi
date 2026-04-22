@@ -59,24 +59,29 @@ function FlyThroughCard({ item, index, camZ }: { item: any, index: number, camZ:
                 willChange: 'transform, opacity',
             }}
             className={cn(
-                "flex flex-col items-center justify-center overflow-hidden",
+                "flex flex-col items-center justify-center overflow-hidden group",
                 item.w, item.aspect,
-                "luxury-card rounded-[2.5rem] shadow-[0_40px_80px_rgba(0,0,0,0.9)] p-2 z-10"
+                "luxury-card rounded-[20px] shadow-[0_30px_70px_rgba(0,0,0,0.85)] p-0 z-10"
             )}
         >
-            <div className="relative w-full h-full rounded-[2rem] overflow-hidden">
+            <div className="relative w-full h-full overflow-hidden">
                 <Image 
                     src={item.src} 
                     alt={item.label} 
                     fill 
                     sizes="50vw"
-                    className="object-cover transition-transform duration-1000 hover:scale-105"
+                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
                     priority={index < 2}
                 />
-                <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent pointer-events-none" />
+                {/* Gradient Scrim */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-black/70 via-transparent to-transparent pointer-events-none opacity-80" />
+                
+                {/* Gold Left-Edge Accent */}
+                <div className="absolute top-8 bottom-8 left-0 w-[2px] bg-gradient-to-b from-transparent via-gold to-transparent opacity-40" />
+
                 <div className="absolute bottom-8 left-8 text-left">
-                    <div className="font-mono text-[9px] text-gold tracking-[0.4em] uppercase mb-1 opacity-80">{item.sub}</div>
-                    <div className="font-serif text-3xl text-white italic font-light">{item.label}</div>
+                    <div className="font-mono text-[8.5px] text-gold tracking-[0.38em] uppercase mb-1 opacity-80">{item.sub}</div>
+                    <div className="font-serif text-3xl text-white italic font-light tracking-wide">{item.label}</div>
                 </div>
             </div>
         </motion.div>
@@ -113,7 +118,10 @@ export default function ZoomExperience() {
             <div ref={containerRef} className="relative h-[6000px] bg-bg">
                 <div className="sticky top-0 h-screen w-full overflow-hidden bg-bg" style={{ perspective: '900px' }}>
                     {/* Ambient Center Glow */}
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(201,168,76,0.06),transparent_70%)] pointer-events-none" />
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(201,168,76,0.055),transparent_65%)] pointer-events-none" />
+                    
+                    {/* Vignette Corners */}
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_100%_at_50%_50%,transparent_55%,rgba(6,6,6,0.7)_100%)] pointer-events-none z-20" />
                     
                     {/* The World - Traveling Camera */}
                     <motion.div 
@@ -175,20 +183,29 @@ export default function ZoomExperience() {
 
             {/* The Content After - This covers the fixed scene naturally */}
             <div className="relative z-[110] bg-bg pt-48 pb-40">
+                <div className="absolute top-0 left-0 right-0 h-[180px] bg-gradient-to-b from-transparent to-bg pointer-events-none" />
+                
                 <div className="container-luxury text-center">
-                    <div className="text-mono text-gold/60 text-[9px] tracking-[0.5em] uppercase mb-6">Our Menu</div>
-                    <h2 className="text-5xl md:text-8xl text-white font-serif italic font-light leading-none mb-24">A Journey Through<br/><span className="text-gold">Flavor.</span></h2>
+                    <div className="text-mono text-gold/60 text-[9px] tracking-[0.52em] uppercase mb-6">Our Menu</div>
+                    <h2 className="text-5xl md:text-8xl text-white font-serif italic font-light leading-none mb-24">A Journey Through<br/><span className="text-gold italic">Flavor.</span></h2>
                     
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-1 max-w-4xl mx-auto border border-white/5 mb-20">
-                        {['Omakase', 'Sashimi', 'Nigiri', 'Ramen', 'Yakitori', 'Kaiseki'].map((cat) => (
-                            <div key={cat} className="group p-12 border border-white/5 hover:bg-gold/[0.04] hover:border-gold/20 transition-all duration-500 cursor-pointer">
-                                <div className="text-mono text-gold/50 text-[8px] tracking-[0.3em] uppercase mb-2">Signature</div>
-                                <div className="text-2xl text-white/80 font-serif italic group-hover:text-white transition-colors">{cat}</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 max-w-[860px] mx-auto border border-white/5 mb-24">
+                        {[
+                            { name: 'Omakase', cat: 'Signature' },
+                            { name: 'Sashimi', cat: 'From the Sea' },
+                            { name: 'Nigiri', cat: 'Classic' },
+                            { name: 'Ramen', cat: 'Warmth' },
+                            { name: 'Yakitori', cat: 'Fire' },
+                            { name: 'Kaiseki', cat: 'Legacy' }
+                        ].map((item) => (
+                            <div key={item.name} className="group p-11 border border-white/[0.04] hover:bg-gold/[0.04] hover:border-gold/22 transition-all duration-500 cursor-pointer">
+                                <div className="text-mono text-gold/65 text-[8.5px] tracking-[0.38em] uppercase mb-3">{item.cat}</div>
+                                <div className="text-2xl text-white/85 font-serif italic font-light group-hover:text-white transition-colors">{item.name}</div>
                             </div>
                         ))}
                     </div>
 
-                    <a href="#reservation" className="inline-block px-12 py-4 border border-gold/30 text-gold font-mono text-[10px] tracking-[0.4em] uppercase hover:bg-gold/5 hover:border-gold/60 transition-all">
+                    <a href="#reservation" className="cta-btn inline-block px-14 py-4 border border-gold/35 text-gold font-mono text-[10px] tracking-[0.42em] uppercase hover:bg-gold/7 hover:border-gold/60 transition-all no-underline">
                         Reserve a Table
                     </a>
                 </div>
