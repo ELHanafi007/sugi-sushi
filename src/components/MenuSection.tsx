@@ -143,7 +143,7 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
 };
 
 const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: number }) => {
-  const { t } = useLanguage();
+  const { t, setActiveTab, setPendingDish } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const imageUrl = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
 
@@ -154,9 +154,13 @@ const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar';
       viewport={{ once: true }}
       transition={{ delay: 0.2 * idx, duration: 2, ease: [0.19, 1, 0.22, 1] }}
       style={{ willChange: "transform, opacity" }}
-      className={`relative rounded-[2.5rem] overflow-hidden group luxury-card ${
+      className={`relative rounded-[2.5rem] overflow-hidden group luxury-card cursor-pointer ${
         idx === 0 ? 'aspect-[4/5]' : 'aspect-square lg:mt-20'
       }`}
+      onClick={() => {
+        setPendingDish(dish);
+        setActiveTab('menu');
+      }}
     >
       <div className="absolute inset-0 overflow-hidden">
         <Image

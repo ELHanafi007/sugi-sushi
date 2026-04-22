@@ -86,10 +86,26 @@ function DishModal({
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Immediate scroll reset on dish change
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({ top: 0, behavior: 'instant' });
-    }
+    const reset = () => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = 0;
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    };
+    
+    reset();
+    // Insurance for layout shifts
+    const raf = requestAnimationFrame(reset);
+    const timeout = setTimeout(reset, 10);
+    const timeout2 = setTimeout(reset, 100);
+    
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timeout);
+      clearTimeout(timeout2);
+    };
   }, [dish.id]);
 
   return (
@@ -99,8 +115,9 @@ function DishModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-[20000] modal-glass overflow-y-auto no-scrollbar"
+      className="fixed inset-0 z-[20000] modal-glass overflow-y-auto no-scrollbar outline-none"
       style={{ willChange: "opacity" }}
+      tabIndex={-1}
       onClick={onClose}
     >
       <div className="min-h-screen" onClick={e => e.stopPropagation()}>
