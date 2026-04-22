@@ -9,17 +9,17 @@ import Image from 'next/image';
 
 const galleryData = [
   { id: 1, src: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=1600&h=1200&fit=crop&q=80', x: -20, y: -15, zOffset: 0, w: 'w-[60vw] md:w-[30vw]', aspect: 'aspect-[4/5]', label: 'PRECISION' },
-  { id: 2, src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&h=1200&fit=crop&q=80', x: 25, y: 20, zOffset: -1000, w: 'w-[70vw] md:w-[40vw]', aspect: 'aspect-[16/9]', label: 'SANCTUARY' },
-  { id: 3, src: 'https://images.unsplash.com/photo-1580828369019-2238b909ca8c?w=1200&h=1600&fit=crop&q=80', x: -25, y: 25, zOffset: -2000, w: 'w-[50vw] md:w-[25vw]', aspect: 'aspect-[3/4]', label: 'FOCUS' },
-  { id: 4, src: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=1600&h=1200&fit=crop&q=80', x: 20, y: -25, zOffset: -3000, w: 'w-[65vw] md:w-[35vw]', aspect: 'aspect-square', label: 'UMAMI' },
-  { id: 5, src: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=1200&h=1600&fit=crop&q=80', x: -10, y: -20, zOffset: -4000, w: 'w-[55vw] md:w-[30vw]', aspect: 'aspect-[4/5]', label: 'ESSENCE' },
-  { id: 6, src: 'https://images.unsplash.com/photo-1534422298391-e4f8c170db76?w=1600&h=1200&fit=crop&q=80', x: 30, y: 5, zOffset: -5000, w: 'w-[75vw] md:w-[45vw]', aspect: 'aspect-[16/9]', label: 'TEMPORAL' },
+  { id: 2, src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&h=1200&fit=crop&q=80', x: 25, y: 20, zOffset: -1500, w: 'w-[70vw] md:w-[40vw]', aspect: 'aspect-[16/9]', label: 'SANCTUARY' },
+  { id: 3, src: 'https://images.unsplash.com/photo-1580828369019-2238b909ca8c?w=1200&h=1600&fit=crop&q=80', x: -25, y: 25, zOffset: -3000, w: 'w-[50vw] md:w-[25vw]', aspect: 'aspect-[3/4]', label: 'FOCUS' },
+  { id: 4, src: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=1600&h=1200&fit=crop&q=80', x: 20, y: -25, zOffset: -4500, w: 'w-[65vw] md:w-[35vw]', aspect: 'aspect-square', label: 'UMAMI' },
+  { id: 5, src: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=1200&h=1600&fit=crop&q=80', x: -10, y: -20, zOffset: -6000, w: 'w-[55vw] md:w-[30vw]', aspect: 'aspect-[4/5]', label: 'ESSENCE' },
+  { id: 6, src: 'https://images.unsplash.com/photo-1534422298391-e4f8c170db76?w=1600&h=1200&fit=crop&q=80', x: 30, y: 5, zOffset: -7500, w: 'w-[75vw] md:w-[45vw]', aspect: 'aspect-[16/9]', label: 'TEMPORAL' },
   // The Final Masterpiece
-  { id: 7, src: 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?w=1600&h=1200&fit=crop&q=80', x: 0, y: 0, zOffset: -6000, w: 'w-[100vw]', aspect: 'h-[100vh]', label: '', isFinal: true },
+  { id: 7, src: 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?w=1600&h=1200&fit=crop&q=80', x: 0, y: 0, zOffset: -9000, w: 'w-[100vw]', aspect: 'h-[100vh]', label: '', isFinal: true },
 ];
 
 function FlyThroughImage({ item, progress }: { item: any, progress: any }) {
-    const travel = 6000;
+    const travel = 9000;
     const relativeZ = useTransform(progress, [0, 1], [item.zOffset, item.zOffset + travel]);
 
     const opacityRanges = item.isFinal 
@@ -152,7 +152,7 @@ export default function ZoomExperience() {
             </div>
 
             {/* MINDBLOWING 3D FLY-THROUGH GALLERY */}
-            <div ref={containerRef} className="relative h-[800vh] bg-bg">
+            <div ref={containerRef} className="relative h-[1600vh] bg-bg">
                 <div className="sticky top-0 h-screen overflow-hidden bg-bg" style={{ perspective: '1200px' }}>
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
                     
@@ -167,10 +167,13 @@ export default function ZoomExperience() {
                     
                     {/* Floating Center Narrative Text */}
                     <motion.div 
-                        style={{ opacity: useTransform(smoothProgress, [0, 0.1, 0.8, 0.9], [1, 1, 1, 0]) }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[100] text-center mix-blend-overlay"
+                        style={{ 
+                          opacity: useTransform(smoothProgress, [0, 0.1, 0.8, 0.9], [1, 1, 1, 0]),
+                          z: useTransform(smoothProgress, [0, 1], [-200, -800])
+                        }}
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[10] text-center mix-blend-overlay"
                     >
-                        <h2 className="text-white text-6xl md:text-[10rem] font-serif italic opacity-20 whitespace-nowrap">
+                        <h2 className="text-white text-6xl md:text-[10rem] font-serif italic opacity-10 whitespace-nowrap">
                             The Archive
                         </h2>
                     </motion.div>
