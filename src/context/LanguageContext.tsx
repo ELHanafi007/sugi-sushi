@@ -7,6 +7,7 @@ export type NavTab = 'home' | 'menu' | 'reservations' | 'location' | 'gallery';
 
 interface ContextType {
   lang: Lang;
+  isRTL: boolean;
   setLang: (l: Lang) => void;
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
@@ -420,6 +421,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLang] = useState<Lang>('en');
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [pendingDish, setPendingDish] = useState<any>(null);
+  const isRTL = lang === 'ar';
 
   useEffect(() => {
     const saved = localStorage.getItem('lang');
@@ -440,13 +442,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(() => ({
     lang,
+    isRTL,
     setLang,
     activeTab,
     setActiveTab,
     pendingDish,
     setPendingDish,
     t
-  }), [lang, activeTab, pendingDish, t]);
+  }), [lang, isRTL, activeTab, pendingDish, t]);
 
   return (
     <LanguageContext.Provider value={value}>
