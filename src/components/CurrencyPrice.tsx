@@ -4,9 +4,15 @@ import Image from 'next/image';
 
 function splitPrice(price: string) {
   const trimmed = (price || '').trim();
-  const match = trimmed.match(/^(.*?)(?:\s*)(SR|SAR)$/i);
+  // Improved regex to handle case-insensitivity, optional spaces, and different positions
+  // Matches "20 SR", "20SR", "SR 20", "20 SAR", etc.
+  const match = trimmed.match(/^(\d+)\s*(SR|SAR)$/i) || trimmed.match(/^(SR|SAR)\s*(\d+)$/i);
+  
   if (!match) return { amount: trimmed, hasRiyal: false };
-  return { amount: match[1].trim(), hasRiyal: true };
+  
+  // If first group is SR/SAR, amount is in second group, otherwise first
+  const amount = /SR|SAR/i.test(match[1]) ? match[2] : match[1];
+  return { amount, hasRiyal: true };
 }
 
 export default function CurrencyPrice({

@@ -7,6 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { getDynamicRecommendations } from '@/utils/recommendationEngine';
 import Image from 'next/image';
+import CurrencyPrice from '@/components/CurrencyPrice';
 
 const KANJI: Record<string, string> = {
   'Salads': '菜', 'Soups': '汁', 'Starters': '前',
@@ -216,7 +217,7 @@ function DishModal({
           >
             {/* Price + Description */}
             <div className="flex justify-between items-center gap-6">
-              <span className="text-4xl text-gold font-serif font-light">{dish.price}</span>
+              <CurrencyPrice price={dish.price} className="text-4xl text-gold font-serif font-light" iconClassName="w-8 h-8" />
               <div className="h-px flex-1 bg-white/5" />
             </div>
 
@@ -298,7 +299,9 @@ function DishModal({
                           {lang === 'ar' ? item.nameAr || item.name : item.name}
                         </h5>
                         <p className="text-white/20 text-[11px] font-serif italic line-clamp-1 mt-1">{lang === 'ar' ? item.descriptionAr || item.description : item.description}</p>
-                        <p className="text-gold/30 text-[9px] uppercase tracking-widest mt-1 font-mono">{item.price}</p>
+                        <div className="mt-1">
+                          <CurrencyPrice price={item.price} className="text-gold/30 text-[9px] uppercase tracking-widest font-mono" iconClassName="w-3 h-3" />
+                        </div>
                       </div>
                       <div className="w-8 h-8 rounded-full border border-white/5 flex items-center justify-center text-white/10 group-hover:border-gold/30 group-hover:text-gold transition-all duration-700">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m9 18 6-6-6-6"/></svg>
@@ -673,7 +676,7 @@ export default function StrictMenu({
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-baseline mb-2">
                       <h4 className="text-white font-serif text-2xl group-hover:text-gold transition-colors duration-700 truncate tracking-tight">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h4>
-                      <span className="text-gold font-serif text-2xl flex-shrink-0 font-light">{dish.price}</span>
+                      <CurrencyPrice price={dish.price} className="text-gold font-serif text-2xl flex-shrink-0 font-light" iconClassName="w-5 h-5" />
                     </div>
                     <p className="text-white/30 text-sm font-serif italic line-clamp-1 group-hover:text-white/60 transition-colors duration-700">{lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}</p>
                     
