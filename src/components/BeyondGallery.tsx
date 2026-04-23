@@ -8,7 +8,8 @@ import {
   useSpring, 
   useMotionValue, 
   AnimatePresence,
-  useVelocity
+  useVelocity,
+  MotionValue
 } from 'framer-motion';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
@@ -152,9 +153,9 @@ const Particles = () => {
 interface GalleryItemProps {
   item: typeof GALLERY_IMAGES[0];
   index: number;
-  scrollYProgress: any;
-  mouseX: any;
-  mouseY: any;
+  scrollYProgress: MotionValue<number>;
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
   isRTL: boolean;
   onSelect: (item: any) => void;
 }
