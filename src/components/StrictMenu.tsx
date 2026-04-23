@@ -85,6 +85,29 @@ function DishModal({
   }, []);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const previousDishIdRef = useRef<Dish['id'] | null>(null);
+  const [transitionDirection, setTransitionDirection] = useState(1);
+
+  const contentVariants = {
+    initial: (direction: number) => ({
+      opacity: 0,
+      x: direction > 0 ? 90 : -90,
+      scale: 0.985,
+      filter: 'blur(8px)',
+    }),
+    animate: {
+      opacity: 1,
+      x: 0,
+      scale: 1,
+      filter: 'blur(0px)',
+    },
+    exit: (direction: number) => ({
+      opacity: 0,
+      x: direction > 0 ? -70 : 70,
+      scale: 0.98,
+      filter: 'blur(6px)',
+    }),
+  };
 
   // Immediate scroll reset on dish change
   useEffect(() => {
@@ -107,6 +130,18 @@ function DishModal({
       clearTimeout(timeout2);
     };
   }, [dish.id]);
+
+  useEffect(() => {
+    const prevId = previousDishIdRef.current;
+    if (prevId !== null && prevId !== dish.id) {
+      const prevIndex = menuDataToUse.findIndex((item) => item.id === prevId);
+      const currentIndex = menuDataToUse.findIndex((item) => item.id === dish.id);
+      if (prevIndex !== -1 && currentIndex !== -1 && prevIndex !== currentIndex) {
+        setTransitionDirection(currentIndex > prevIndex ? 1 : -1);
+      }
+    }
+    previousDishIdRef.current = dish.id;
+  }, [dish.id, menuDataToUse]);
 
   return (
     <motion.div 
@@ -138,7 +173,17 @@ function DishModal({
           <div className="w-12" />
         </div>
 
-        <div className="max-w-2xl mx-auto px-6 pb-40">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={dish.id}
+            custom={transitionDirection}
+            variants={contentVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1] }}
+            className="max-w-2xl mx-auto px-6 pb-40"
+          >
 
           {/* Cinematic Hero Image */}
           <motion.div
@@ -329,7 +374,8 @@ function DishModal({
               </div>
             </div>
           </motion.div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </motion.div>
   );
