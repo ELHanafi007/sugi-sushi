@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
@@ -86,22 +86,25 @@ function DishModal({
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Always open each selected dish from the very top of the modal.
-  useLayoutEffect(() => {
+  // Immediate scroll reset on dish change
+  useEffect(() => {
     const reset = () => {
       if (scrollRef.current) {
         scrollRef.current.scrollTop = 0;
       }
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'instant' });
     };
-
+    
     reset();
+    // Insurance for layout shifts
     const raf = requestAnimationFrame(reset);
-    const timeout = setTimeout(reset, 16);
-
+    const timeout = setTimeout(reset, 10);
+    const timeout2 = setTimeout(reset, 100);
+    
     return () => {
       cancelAnimationFrame(raf);
       clearTimeout(timeout);
+      clearTimeout(timeout2);
     };
   }, [dish.id]);
 
