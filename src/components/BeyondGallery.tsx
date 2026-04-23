@@ -234,9 +234,25 @@ export default function BeyondGallery() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedItem, setSelectedItem] = useState<typeof GALLERY_IMAGES[0] | null>(null);
   const [isTouch, setIsTouch] = useState(false);
+  const [isRevealing, setIsRevealing] = useState(true);
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+
+  // Lock scroll during intro
+  useEffect(() => {
+    if (isRevealing) {
+      document.body.style.overflow = 'hidden';
+      const timer = setTimeout(() => {
+        setIsRevealing(false);
+        document.body.style.overflow = '';
+      }, 3000);
+      return () => {
+        clearTimeout(timer);
+        document.body.style.overflow = '';
+      };
+    }
+  }, [isRevealing]);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -277,6 +293,35 @@ export default function BeyondGallery() {
       className={`relative h-[700vh] bg-[#020203] overflow-hidden ${isTouch ? 'cursor-auto' : 'cursor-none'}`}
       onMouseMove={handleMouseMove}
     >
+      {/* Intro Reveal Overlay */}
+      <AnimatePresence>
+        {isRevealing && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+            className="fixed inset-0 z-[1000] bg-black flex items-center justify-center"
+          >
+            <div className="flex flex-col items-center gap-6">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: 200 }}
+                transition={{ duration: 2, ease: "easeInOut" }}
+                className="h-[1px] bg-gold"
+              />
+              <motion.span 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="text-gold text-[10px] tracking-[1em] font-mono uppercase"
+              >
+                Initializing Archive
+              </motion.span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* 3D Stage Container */}
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden perspective-[1500px]">
         
