@@ -30,6 +30,7 @@ export default function ProductForm({
   });
 
   const [newTag, setNewTag] = useState('');
+  const [newAllergen, setNewAllergen] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,6 +55,17 @@ export default function ProductForm({
 
   const removeTag = (tag: string) => {
     setFormData({ ...formData, tags: formData.tags?.filter(t => t !== tag) });
+  };
+
+  const addAllergen = () => {
+    if (newAllergen && !formData.allergens?.includes(newAllergen)) {
+      setFormData({ ...formData, allergens: [...(formData.allergens || []), newAllergen] });
+      setNewAllergen('');
+    }
+  };
+
+  const removeAllergen = (allergen: string) => {
+    setFormData({ ...formData, allergens: formData.allergens?.filter(a => a !== allergen) });
   };
 
   return (
@@ -235,6 +247,39 @@ export default function ProductForm({
                 <button 
                   type="button" 
                   onClick={addTag}
+                  className="p-3 bg-white/[0.04] rounded-2xl text-gold hover:bg-gold/10 transition-all"
+                >
+                  <Plus size={20} />
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-6">
+            <h2 className="text-2xl font-serif italic border-b border-white/5 pb-4">Allergies</h2>
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                {formData.allergens?.map(allergen => (
+                  <span key={allergen} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/5 text-[10px] font-black uppercase tracking-widest text-white/60">
+                    {allergen}
+                    <button type="button" onClick={() => removeAllergen(allergen)} className="hover:text-red-400 transition-colors">
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  placeholder="Add allergy (e.g. Nuts)" 
+                  value={newAllergen}
+                  onChange={(e) => setNewAllergen(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAllergen())}
+                  className="flex-1 bg-white/[0.02] border border-white/5 rounded-2xl py-3 px-6 text-white focus:outline-none focus:border-gold/30 transition-all text-xs"
+                />
+                <button 
+                  type="button" 
+                  onClick={addAllergen}
                   className="p-3 bg-white/[0.04] rounded-2xl text-gold hover:bg-gold/10 transition-all"
                 >
                   <Plus size={20} />
