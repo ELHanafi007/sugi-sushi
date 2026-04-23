@@ -34,10 +34,12 @@ export default function CurrencyPrice({
       {hasRiyal ? (
         <Image
           src="/media/optimized/Saudi_Riyal_Symbol.png"
-          alt="Saudi Riyal"
-          width={16}
-          height={16}
-          className={iconClassName}
+          alt="SR"
+          width={24}
+          height={24}
+          className={`${iconClassName} object-contain brightness-110`}
+          unoptimized
+          priority
         />
       ) : null}
     </span>
