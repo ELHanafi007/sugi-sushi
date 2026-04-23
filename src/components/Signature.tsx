@@ -5,6 +5,7 @@ import { useState, useRef, useMemo, useEffect } from 'react';
 import { menuData, Dish } from '@/data/menuData';
 import Image from 'next/image';
 import { useLanguage, NavTab } from '@/context/LanguageContext';
+import CurrencyPrice from '@/components/CurrencyPrice';
 
 /**
  * SIGNATURE SELECTION — Editorial Showcase (Masterpiece Edition)
@@ -119,7 +120,7 @@ const FeaturedDish = ({ dish, onTabChange }: { dish: Dish, onTabChange?: (tab: N
             <div className="flex flex-col items-end gap-4">
               <span className="text-mono text-white/45 tracking-[1em] text-[10px]">{t('signature.sig')}</span>
               <div className="flex items-baseline gap-4 bg-white/[0.02] border border-white/5 backdrop-blur-2xl px-10 py-5 rounded-full group-hover:border-gold/30 transition-colors duration-700">
-                <span className="text-4xl text-gold font-serif font-light">{dish.price}</span>
+                <CurrencyPrice price={dish.price} className="text-4xl text-gold font-serif font-light" iconClassName="w-6 h-6" />
               </div>
             </div>
           </div>
@@ -179,7 +180,7 @@ const SecondaryDish = ({ dish, idx, onTabChange }: { dish: Dish, idx: number, on
             {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
           </h4>
           <div className="flex items-center justify-between">
-            <span className="text-white/45 font-serif italic text-lg">{dish.price}</span>
+            <CurrencyPrice price={dish.price} className="text-white/45 font-serif italic text-lg" iconClassName="w-4 h-4" />
             <div className="w-3 h-3 rounded-full bg-gold/5 group-hover:bg-gold/40 transition-all duration-1000 shadow-[0_0_20px_rgba(212,175,55,0)] group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
           </div>
         </motion.div>

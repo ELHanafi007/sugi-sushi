@@ -14,7 +14,7 @@ const StoryPage = dynamic(() => import('@/components/StoryPage'), { ssr: false }
 const ReservationPage = dynamic(() => import('@/components/ReservationPage'), { ssr: false });
 const LocationPage = dynamic(() => import('@/components/LocationPage'), { ssr: false });
 const KineticGallery = dynamic(() => import('@/components/KineticGallery'), { ssr: false });
-const ZoomExperience = dynamic(() => import('@/components/ZoomExperience'), { ssr: false });
+const BeyondGallery = dynamic(() => import('@/components/BeyondGallery'), { ssr: false });
 
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
@@ -193,7 +193,7 @@ export default function HomeClient({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ZoomExperience />
+            <BeyondGallery />
           </motion.div>
         )}
       </AnimatePresence>

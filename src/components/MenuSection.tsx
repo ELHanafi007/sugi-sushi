@@ -5,6 +5,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
+import CurrencyPrice from '@/components/CurrencyPrice';
 
 /* ─── Kanji per category ─── */
 const KANJI: Record<string, string> = {
@@ -131,7 +132,7 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
           
           <div className="flex items-center gap-8">
             <div className="flex items-baseline gap-3">
-              <span className="text-4xl text-gold font-serif">{dish.price}</span>
+              <CurrencyPrice price={dish.price} className="text-4xl text-gold font-serif" iconClassName="w-6 h-6 md:w-7 md:h-7" />
             </div>
             <div className="h-10 w-px bg-white/5" />
             <span className="text-mono text-white/35 text-[10px] tracking-[0.5em] font-black">{t(`menu.cat.${dish.category}`)}</span>
@@ -177,7 +178,7 @@ const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar';
         <h4 className="text-white text-2xl md:text-4xl font-serif font-light mb-6 leading-tight group-hover:text-gold transition-colors duration-1000">{name}</h4>
         <div className="flex justify-between items-center">
           <div className="flex items-baseline gap-2">
-            <span className="text-gold/60 text-2xl font-serif">{dish.price}</span>
+            <CurrencyPrice price={dish.price} className="text-gold/60 text-2xl font-serif" iconClassName="w-5 h-5" />
           </div>
           <div className="w-2.5 h-2.5 rounded-full bg-gold/5 group-hover:bg-gold/40 transition-all duration-1000" />
         </div>
@@ -363,7 +364,7 @@ function MenuExperience({ initialMenuData }: { initialMenuData?: Dish[] }) {
                                   <span className="text-white/80 font-serif text-lg md:text-xl group-hover:text-gold transition-colors duration-700">
                                     {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
                                   </span>
-                                  <span className="text-gold/65 font-serif text-base group-hover:text-gold transition-colors duration-700">{dish.price}</span>
+                                  <CurrencyPrice price={dish.price} className="text-gold/65 font-serif text-base group-hover:text-gold transition-colors duration-700" iconClassName="w-4 h-4" />
                                 </div>
                                 <p className="text-white/45 text-[10px] md:text-xs italic font-serif leading-relaxed line-clamp-1 group-hover:text-white/65 transition-colors duration-700">
                                   {lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}
