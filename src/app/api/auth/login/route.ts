@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
+// POST handler for admin login
 export async function POST(request: Request) {
   const { password } = await request.json();
 
