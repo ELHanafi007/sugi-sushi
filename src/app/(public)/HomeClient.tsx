@@ -44,7 +44,7 @@ export default function HomeClient({
 
   // Scroll to top on tab change and ensure body is unlocked
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
     document.body.style.overflow = '';
     document.body.style.pointerEvents = 'auto';
   }, [activeTab]);
