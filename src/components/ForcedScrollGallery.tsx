@@ -135,12 +135,12 @@ function SlideItem({ photo, index, progress, totalSlides }: { photo: any; index:
 }
 
 function Dot({ index, progress, total }: { index: number; progress: any; total: number }) {
-  const isActive = useTransform(progress, (v) => {
+  const isActive = useTransform(progress, (v: number) => {
     const currentIdx = Math.floor(v * (total - 1));
     return currentIdx === index;
   });
   
-  const width = useTransform(progress, (v) => {
+  const width = useTransform(progress, (v: number) => {
     const currentIdx = Math.floor(v * (total - 1));
     return currentIdx === index ? 32 : 8;
   });
