@@ -2,7 +2,7 @@ import { getMenu } from '@/lib/data';
 import ProductForm from '../ProductForm';
 
 export default async function NewProductPage() {
-  const { categories } = getMenu();
+  const { categories } = await getMenu();
 
   return (
     <div className="space-y-8">

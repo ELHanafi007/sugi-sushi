@@ -61,11 +61,11 @@ export default function Atmosphere() {
     mouseY.set(e.clientY - rect.top);
   };
 
-  return (
+return (
     <section 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative w-full h-[100vh] flex items-center justify-center bg-bg overflow-hidden"
+      className="relative w-full min-h-[80vh] md:h-[100vh] flex items-center justify-center bg-bg overflow-hidden py-20 md:py-0"
     >
       {/* ─── Mouse-Reactive Spotlight ─── */}
       <motion.div 
@@ -74,7 +74,7 @@ export default function Atmosphere() {
           top: spotlightY,
           transform: 'translate(-50%, -50%)'
         }}
-        className="absolute w-[80vw] h-[80vw] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.06),transparent_70%)] pointer-events-none z-0"
+        className="absolute w-[120vw] h-[120vw] md:w-[80vw] md:h-[80vw] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.06),transparent_70%)] pointer-events-none z-0"
       />
 
       {/* Background Kanji — Ultra-subtle Parallax */}
@@ -82,7 +82,7 @@ export default function Atmosphere() {
         style={{ scale: kanjiScale }}
         className="absolute inset-0 z-0 flex items-center justify-center opacity-[0.025] select-none pointer-events-none"
       >
-        <span className="text-[50vw] font-serif leading-none tracking-tighter">粋</span>
+        <span className="text-[30vw] md:text-[50vw] font-serif leading-none tracking-tighter">粋</span>
       </motion.div>
 
       {/* Floating Particle Field */}
@@ -122,13 +122,13 @@ export default function Atmosphere() {
           </motion.div>
           
           {/* The Core Quote */}
-          <div className="max-w-5xl mx-auto px-4">
+          <div className="max-w-5xl mx-auto px-4 md:px-8">
             <motion.h2 
               initial={{ opacity: 0, y: 60, filter: 'blur(15px)' }}
               whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
-              className="text-white/95 text-4xl md:text-7xl lg:text-8xl font-serif font-light leading-[1.1] tracking-tight italic"
+              className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl xl:text-8xl text-white/95 font-serif font-light leading-[1.1] md:leading-[1.15] tracking-tight italic"
               dangerouslySetInnerHTML={{ __html: t('atmosphere.quote') }}
             />
           </div>

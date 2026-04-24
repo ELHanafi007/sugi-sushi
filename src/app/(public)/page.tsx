@@ -2,7 +2,7 @@ import { getMenu } from '@/lib/data';
 import HomeClient from './HomeClient';
 
 export default async function Home() {
-  const { products, categories } = getMenu();
+  const { products, categories } = await getMenu();
 
   return (
     <HomeClient 

@@ -6,7 +6,6 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Atmosphere from '@/components/Atmosphere';
 import ChefArtistry from '@/components/ChefArtistry';
-import Signature from '@/components/Signature';
 
 const MenuSection = dynamic(() => import('@/components/MenuSection'), { ssr: false });
 const StrictMenu = dynamic(() => import('@/components/StrictMenu'), { ssr: false });
@@ -15,6 +14,9 @@ const ReservationPage = dynamic(() => import('@/components/ReservationPage'), { 
 const LocationPage = dynamic(() => import('@/components/LocationPage'), { ssr: false });
 const KineticGallery = dynamic(() => import('@/components/KineticGallery'), { ssr: false });
 const BeyondGallery = dynamic(() => import('@/components/BeyondGallery'), { ssr: false });
+const ImmersiveGallery = dynamic(() => import('@/components/ImmersiveGallery'), { ssr: false });
+const ForcedScrollGallery = dynamic(() => import('@/components/ForcedScrollGallery'), { ssr: false });
+const VerticalImageStack = dynamic(() => import('@/components/ui/vertical-image-stack').then(m => m.VerticalImageStack), { ssr: false });
 
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
@@ -124,7 +126,6 @@ export default function HomeClient({
             <Atmosphere />
 
             {/* Scene 3: Curated Selection */}
-            <Signature onTabChange={setActiveTab} initialMenuData={initialMenuData} />
 
             {/* Scene 4: Emotional Peak */}
             <ChefArtistry />
@@ -133,9 +134,6 @@ export default function HomeClient({
             <div className="relative z-10 bg-bg">
               <StoryPage />
             </div>
-
-            {/* Scene 5.5: The Visual Archive (Forced Horizontal) */}
-            <KineticGallery />
 
             {/* Scene 6: Full Experience */}
             <div className="relative z-10 bg-bg pt-20">
@@ -193,7 +191,10 @@ export default function HomeClient({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <BeyondGallery />
+            <VerticalImageStack 
+              onComplete={() => setActiveTab('menu')}
+              completeTab="menu"
+            />
           </motion.div>
         )}
       </AnimatePresence>

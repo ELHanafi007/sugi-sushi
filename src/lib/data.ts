@@ -1,30 +1,17 @@
-import fs from 'fs';
-import path from 'path';
-import { Dish } from '@/data/menuData';
-
-const DATA_PATH = path.join(process.cwd(), 'src/data/menu.json');
+import { Dish, CATEGORIES, menuData } from '@/data/menuData';
 
 export interface MenuData {
   categories: string[];
   products: Dish[];
 }
 
-export function getMenu(): MenuData {
-  try {
-    const data = fs.readFileSync(DATA_PATH, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading menu data:', error);
-    return { categories: [], products: [] };
-  }
+export async function getMenu(): Promise<MenuData> {
+  // Use local menu data (no Supabase setup yet)
+  return { categories: CATEGORIES, products: menuData };
 }
 
-export function saveMenu(data: MenuData): boolean {
-  try {
-    fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2), 'utf8');
-    return true;
-  } catch (error) {
-    console.error('Error saving menu data:', error);
-    return false;
-  }
+// These are now handled by direct Supabase calls in actions.ts for better control
+export async function saveMenu(data: MenuData): Promise<boolean> {
+  console.warn('saveMenu is deprecated, use specific actions instead');
+  return false;
 }

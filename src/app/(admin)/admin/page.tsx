@@ -9,7 +9,7 @@ import {
 import Link from 'next/link';
 
 export default async function AdminDashboard() {
-  const { categories, products } = getMenu();
+  const { categories, products } = await getMenu();
 
   const stats = [
     { name: 'Total Products', value: products.length, icon: UtensilsCrossed, color: 'text-gold' },

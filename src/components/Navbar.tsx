@@ -7,6 +7,7 @@ import {
   useTransform,
   useSpring
 } from 'framer-motion';
+import { Images } from 'lucide-react';
 
 import { useLanguage, NavTab } from '@/context/LanguageContext';
 
@@ -54,6 +55,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
     { id: 'home', labelKey: 'nav.home' },
     { id: 'menu', labelKey: 'nav.menu' },
     { id: 'reservations', labelKey: 'nav.reservations' },
+    { id: 'gallery', labelKey: 'nav.gallery' },
   ];
 
   return (
@@ -78,12 +80,13 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
             <nav className="hidden lg:flex gap-6">
               {navItems.map((item) => {
                 const isActive = activeTab === item.id;
+                const isGallery = item.id === 'gallery';
 
                 return (
                   <button
                     key={item.id}
                     onClick={() => onTabChange(item.id)}
-                    className={`relative px-5 py-2 text-[11px] uppercase tracking-[0.25em] font-semibold transition ${
+                    className={`relative px-5 py-2 text-[11px] uppercase tracking-[0.25em] font-semibold transition flex items-center gap-2 ${
                       isActive
                         ? 'text-yellow-400'
                         : 'text-white/40 hover:text-white'
@@ -94,6 +97,9 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                         layoutId="nav-pill"
                         className="absolute inset-0 rounded-full bg-yellow-400/10 border border-yellow-400/20"
                       />
+                    )}
+                    {isGallery && (
+                      <Images className="w-3.5 h-3.5" />
                     )}
                     <span className="relative z-10">
                       {t(item.labelKey)}

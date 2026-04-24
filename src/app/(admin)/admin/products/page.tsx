@@ -10,7 +10,7 @@ import {
 import ProductListClient from './ProductListClient';
 
 export default async function ProductsPage() {
-  const { products, categories } = getMenu();
+  const { products, categories } = await getMenu();
 
   return (
     <div className="space-y-8">

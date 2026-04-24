@@ -29,9 +29,8 @@ export default function StoryPage() {
   const scaleImage = useTransform(springScroll, [0, 1], [1, 1.2]);
   const textBlur = useTransform(springScroll, [0, 0.2, 0.8, 1], [0, 0, 0, 10]);
 
-  return (
-    <div ref={containerRef} className="min-h-screen bg-bg relative pt-56 pb-[120px] overflow-hidden">
-      {/* ─── Cinematic Background Canvas ─── */}
+return (
+    <div ref={containerRef} className="min-h-[80vh] bg-bg relative pt-32 md:pt-56 pb-[60px] md:pb-[120px] overflow-hidden">
       <motion.div 
         style={{ scale: scaleImage, opacity: 0.1 }} 
         className="absolute inset-0 pointer-events-none z-0"
@@ -56,34 +55,34 @@ export default function StoryPage() {
 
       <div className="container-luxury relative z-10">
         {/* ─── Hero Orchestration ─── */}
-        <div className="flex flex-col items-center text-center max-w-5xl mx-auto pt-24 mb-48">
+        <div className="flex flex-col items-center text-center max-w-5xl mx-auto pt-16 md:pt-24 mb-24 md:mb-48">
           <motion.div
             initial={{ opacity: 0, y: 50, filter: 'blur(20px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
           >
-            <div className="flex items-center justify-center gap-6 mb-12">
-               <div className="w-12 h-px bg-gold/30" />
+            <div className="flex items-center justify-center gap-3 md:gap-6 mb-8 md:12">
+               <div className="w-8 md:w-12 h-px bg-gold/30" />
                <span className="text-mono text-gold/65 text-[10px] tracking-[1em] uppercase font-black">{t('story.label')}</span>
-               <div className="w-12 h-px bg-gold/30" />
+               <div className="w-8 md:w-12 h-px bg-gold/30" />
             </div>
             
-            <h1 className="text-display text-white mb-16 !leading-[0.85] drop-shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl text-white mb-12 md:mb-16 !leading-[0.85] drop-shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
               {t('story.hero1')} <br />
               <span className="text-gold shimmer-gold italic font-light !text-[0.7em] leading-normal">{t('story.hero2')}</span> <br />
               <span className="opacity-80">{t('story.hero3')}</span>
             </h1>
             
             <motion.div 
-              animate={{ height: [0, 120] }}
+              animate={{ height: [0, 80, 120] }}
               transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
-              className="w-[1px] h-32 bg-gradient-to-b from-gold/50 via-gold/10 to-transparent mx-auto" 
+              className="w-[1px] h-24 md:h-32 bg-gradient-to-b from-gold/50 via-gold/10 to-transparent mx-auto" 
             />
           </motion.div>
         </div>
 
         {/* ─── Narrative Triptych ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-40 items-center mb-60">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-24 lg:gap-40 items-center mb-32 md:mb-60">
           <motion.div 
             initial={{ opacity: 0, x: -60, scale: 0.9 }}
             whileInView={{ opacity: 1, x: 0, scale: 1 }}

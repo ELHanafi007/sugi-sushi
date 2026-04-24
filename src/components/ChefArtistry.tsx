@@ -35,7 +35,7 @@ export default function ChefArtistry() {
   return (
     <section 
       ref={containerRef}
-      className="relative w-full h-[120vh] bg-black overflow-hidden flex items-center justify-center"
+      className="relative w-full min-h-[80vh] md:h-[120vh] bg-black overflow-hidden flex items-center justify-center py-20 md:py-0"
     >
       {/* ─── Cinematic Background Layer ─── */}
       <motion.div 
@@ -48,6 +48,7 @@ export default function ChefArtistry() {
           fill
           className="object-cover opacity-60 contrast-[1.2] saturate-[0.8] brightness-[0.4]"
           priority
+          sizes="100vw"
         />
         
         {/* Multi-layered Grading */}
@@ -89,7 +90,7 @@ export default function ChefArtistry() {
               whileInView={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
               viewport={{ once: true }}
               transition={{ duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
-              className="text-display liquid-gold mb-16 drop-shadow-[0_20px_60px_rgba(212,175,55,0.3)] !leading-[0.8] !text-5xl md:!text-9xl"
+              className="text-display liquid-gold mb-8 md:mb-16 drop-shadow-[0_20px_60px_rgba(212,175,55,0.3)] !leading-[0.8] !text-3xl sm:!text-4xl md:!text-7xl lg:!text-9xl"
             >
               {t('artistry.title1')} <br className="hidden md:block" /> 
               <span className="shimmer-gold italic font-thin !text-[0.55em] lowercase opacity-60">&</span>{' '}
@@ -102,16 +103,16 @@ export default function ChefArtistry() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 3, delay: 0.8 }}
-              className="flex flex-col items-center gap-12"
+              className="flex flex-col items-center gap-8 md:gap-12"
             >
-              <div className="relative w-px h-32 bg-white/5 overflow-hidden">
+              <div className="relative w-px h-20 md:h-32 bg-white/5 overflow-hidden">
                 <motion.div 
                   animate={{ y: ['-100%', '300%'] }}
                   transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
                   className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent via-gold/40 to-transparent"
                 />
               </div>
-              <p className="text-2xl md:text-4xl text-white/65 max-w-4xl font-serif italic leading-[1.5] font-light" dangerouslySetInnerHTML={{ __html: t('artistry.quote') }} />
+              <p className="text-lg md:text-2xl lg:text-4xl text-white/65 max-w-3xl md:max-w-4xl font-serif italic leading-[1.5] font-light px-4" dangerouslySetInnerHTML={{ __html: t('artistry.quote') }} />
             </motion.div>
           </motion.div>
         </div>
