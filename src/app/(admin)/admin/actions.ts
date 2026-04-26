@@ -7,6 +7,8 @@ import { getSupabaseAdmin } from '@/lib/supabase';
 export async function upsertProduct(product: Dish) {
   const supabase = getSupabaseAdmin();
   
+  console.log('Upserting product:', product.id, product.name);
+  
   const { data, error } = await supabase
     .from('products')
     .upsert({
@@ -25,10 +27,11 @@ export async function upsertProduct(product: Dish) {
     .select();
 
   if (error) {
-    console.error('Error upserting product:', error);
+    console.error('Error upserting product:', error.message, error.details);
     return false;
   }
   
+  console.log('Product upserted successfully:', data);
   revalidatePath('/');
   revalidatePath('/admin/products');
   return true;

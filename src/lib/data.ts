@@ -1,5 +1,12 @@
 import { Dish, CATEGORIES, menuData } from '@/data/menuData';
-import { supabase } from './supabase';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: { persistSession: false }
+});
 
 export interface MenuData {
   categories: string[];
@@ -8,7 +15,6 @@ export interface MenuData {
 
 export async function getMenu(): Promise<MenuData> {
   try {
-    // Try fetching from Supabase
     const [{ data: categoriesData, error: catError }, { data: productsData, error: prodError }] = await Promise.all([
       supabase.from('categories').select('name').order('order'),
       supabase.from('products').select('*')
@@ -16,7 +22,6 @@ export async function getMenu(): Promise<MenuData> {
 
     if (catError || prodError) {
       console.error('Supabase error:', catError || prodError);
-      // Fallback to local data
       return { categories: CATEGORIES, products: menuData };
     }
 
@@ -39,11 +44,11 @@ export async function getMenu(): Promise<MenuData> {
       return { categories, products };
     }
 
-    // If no data in DB, use local data as fallback
     return { categories: CATEGORIES, products: menuData };
   } catch (error) {
     console.error('Error fetching from Supabase:', error);
-    // Fallback to local data
     return { categories: CATEGORIES, products: menuData };
   }
 }
+
+export const dynamic = 'force-dynamic';
