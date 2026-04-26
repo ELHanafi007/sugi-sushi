@@ -81,12 +81,14 @@ export default function ProductForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const success = await upsertProduct(formData as Dish);
-    if (success) {
+    console.log('=== SUBMITTING PRODUCT ===');
+    console.log('FormData:', formData);
+    const result = await upsertProduct(formData as Dish);
+    console.log('=== RESULT ===', result);
+    if (result && result.success) {
       router.push('/admin/products');
-      router.refresh();
     } else {
-      alert('Failed to save product');
+      alert('Failed to save product: ' + (result?.error || 'Unknown error'));
       setLoading(false);
     }
   };

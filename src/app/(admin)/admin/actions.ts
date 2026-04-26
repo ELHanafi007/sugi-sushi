@@ -7,7 +7,21 @@ import { getSupabaseAdmin } from '@/lib/supabase';
 export async function upsertProduct(product: Dish) {
   const supabase = getSupabaseAdmin();
   
-  console.log('Upserting product:', product.id, product.name);
+  console.log('=== UPSERT PRODUCT ===');
+  console.log('Product ID:', product.id);
+  console.log('Product Data:', JSON.stringify({
+    id: product.id,
+    name: product.name,
+    name_ar: product.nameAr,
+    description: product.description,
+    description_ar: product.descriptionAr,
+    price: product.price,
+    category: product.category,
+    calories: product.calories,
+    tags: product.tags,
+    image: product.image,
+    allergens: product.allergens
+  }));
   
   const { data, error } = await supabase
     .from('products')
@@ -27,14 +41,18 @@ export async function upsertProduct(product: Dish) {
     .select();
 
   if (error) {
-    console.error('Error upserting product:', error.message, error.details);
-    return false;
+    console.error('=== UPSERT ERROR ===');
+    console.error('Error:', error.message);
+    console.error('Details:', error.details);
+    console.error('Hint:', error.hint);
+    return { success: false, error: error.message };
   }
   
-  console.log('Product upserted successfully:', data);
+  console.log('=== UPSERT SUCCESS ===');
+  console.log('Data:', data);
   revalidatePath('/');
   revalidatePath('/admin/products');
-  return true;
+  return { success: true };
 }
 
 export async function deleteProduct(id: string) {
