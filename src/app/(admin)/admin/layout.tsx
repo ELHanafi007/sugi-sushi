@@ -9,9 +9,11 @@ import {
   LogOut, 
   ChevronRight,
   Menu,
-  X
+  X,
+  Calendar,
+  Bell
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AdminLayout({
@@ -21,6 +23,24 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [unseenCount, setUnseenCount] = useState(0);
+
+  useEffect(() => {
+    fetchUnseenCount();
+    const interval = setInterval(fetchUnseenCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchUnseenCount = async () => {
+    try {
+      const res = await fetch('/api/reservations');
+      const data = await res.json();
+      const count = data.filter((r: any) => !r.is_seen && r.status === 'pending').length;
+      setUnseenCount(count);
+    } catch (error) {
+      console.error('Error fetching unseen count:', error);
+    }
+  };
 
   // Don't show sidebar on login page
   if (pathname === '/admin/login') {
@@ -31,6 +51,7 @@ export default function AdminLayout({
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Products', href: '/admin/products', icon: UtensilsCrossed },
     { name: 'Categories', href: '/admin/categories', icon: Tags },
+    { name: 'Reservations', href: '/admin/reservations', icon: Calendar },
   ];
 
   return (
@@ -58,6 +79,7 @@ export default function AdminLayout({
         <nav className="flex-1 px-4 space-y-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
+            const showBadge = item.name === 'Reservations' && unseenCount > 0;
             return (
               <Link 
                 key={item.href} 
@@ -69,7 +91,12 @@ export default function AdminLayout({
                 }`}
               >
                 <div className="flex items-center gap-4">
-                  <item.icon size={20} className={isActive ? 'text-gold' : 'text-white/20 group-hover:text-gold/40 transition-colors'} />
+                  <div className="relative">
+                    <item.icon size={20} className={isActive ? 'text-gold' : 'text-white/20 group-hover:text-gold/40 transition-colors'} />
+                    {showBadge && (
+                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-gold rounded-full animate-pulse" />
+                    )}
+                  </div>
                   <span className="text-sm font-medium tracking-wide">{item.name}</span>
                 </div>
                 {isActive && <motion.div layoutId="activeNav" className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_10px_rgba(212,175,55,0.5)]" />}

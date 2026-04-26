@@ -51,11 +51,10 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   /* =========================
      NAV ITEMS
   ========================== */
-  const navItems: { id: NavTab; labelKey: string }[] = [
+  const navItems: { id: 'home' | 'menu' | 'gallery'; labelKey: string; hasIcon?: boolean }[] = [
     { id: 'home', labelKey: 'nav.home' },
     { id: 'menu', labelKey: 'nav.menu' },
-    { id: 'reservations', labelKey: 'nav.reservations' },
-    { id: 'gallery', labelKey: 'nav.gallery' },
+    { id: 'gallery', labelKey: 'nav.gallery', hasIcon: true },
   ];
 
   return (
@@ -80,7 +79,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
             <nav className="hidden lg:flex gap-6">
               {navItems.map((item) => {
                 const isActive = activeTab === item.id;
-                const isGallery = item.id === 'gallery';
+                const hasIcon = 'hasIcon' in item && item.hasIcon;
 
                 return (
                   <button
@@ -98,7 +97,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                         className="absolute inset-0 rounded-full bg-yellow-400/10 border border-yellow-400/20"
                       />
                     )}
-                    {isGallery && (
+                    {hasIcon && (
                       <Images className="w-3.5 h-3.5" />
                     )}
                     <span className="relative z-10">
@@ -154,6 +153,14 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
               </span>
             </div>
 
+            {/* RESERVE BUTTON */}
+            <a
+              href="/reserve"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-yellow-400/20 transition"
+            >
+              {t('nav.reservations')}
+            </a>
+
             {/* LANGUAGE */}
             <button
               onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
@@ -195,6 +202,13 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                 {t(item.labelKey)}
               </button>
             ))}
+            <a
+              href="/reserve"
+              onClick={() => setMobileOpen(false)}
+              className="text-left text-yellow-400 text-sm uppercase tracking-[0.2em] font-bold"
+            >
+              {t('nav.reservations')}
+            </a>
           </div>
         </motion.div>
       )}

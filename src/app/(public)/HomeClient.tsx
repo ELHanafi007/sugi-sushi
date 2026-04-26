@@ -10,8 +10,6 @@ import ChefArtistry from '@/components/ChefArtistry';
 const MenuSection = dynamic(() => import('@/components/MenuSection'), { ssr: false });
 const StrictMenu = dynamic(() => import('@/components/StrictMenu'), { ssr: false });
 const StoryPage = dynamic(() => import('@/components/StoryPage'), { ssr: false });
-const ReservationPage = dynamic(() => import('@/components/ReservationPage'), { ssr: false });
-const LocationPage = dynamic(() => import('@/components/LocationPage'), { ssr: false });
 const KineticGallery = dynamic(() => import('@/components/KineticGallery'), { ssr: false });
 const BeyondGallery = dynamic(() => import('@/components/BeyondGallery'), { ssr: false });
 const ImmersiveGallery = dynamic(() => import('@/components/ImmersiveGallery'), { ssr: false });
@@ -155,31 +153,6 @@ export default function HomeClient({
               initialMenuData={initialMenuData}
               initialCategories={initialCategories}
             />
-          </motion.div>
-        )}
-
-        {activeTab === 'reservations' && (
-          <motion.div 
-            key="reservations"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-          >
-            <ReservationPage />
-          </motion.div>
-        )}
-
-
-        {activeTab === 'location' && (
-          <motion.div 
-            key="location"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-          >
-            <LocationPage />
           </motion.div>
         )}
 

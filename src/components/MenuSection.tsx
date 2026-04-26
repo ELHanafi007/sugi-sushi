@@ -490,18 +490,33 @@ function Footer() {
 
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-12 pt-16 border-t border-white/[0.03]">
           <div className="flex gap-12 md:gap-20">
-            {['menu', 'story', 'reservations', 'location'].map(item => (
-              <button 
-                key={item} 
-                onClick={() => {
-                  const tab = item === 'story' ? 'gallery' : item as any;
-                  setActiveTab(tab);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="text-[10px] text-white/20 hover:text-gold transition-all duration-500 uppercase tracking-[0.4em] font-black font-mono"
-              >
-                {t(`nav.${item}`)}
-              </button>
+            {[
+              { key: 'menu', action: 'menu' },
+              { key: 'story', action: 'gallery' },
+              { key: 'reservations', action: '/reserve' },
+              { key: 'location', action: 'location' }
+            ].map(item => (
+              item.action.startsWith('/') ? (
+                <a
+                  key={item.key}
+                  href={item.action}
+                  className="text-[10px] text-white/20 hover:text-gold transition-all duration-500 uppercase tracking-[0.4em] font-black font-mono"
+                >
+                  {t(`nav.${item.key}`)}
+                </a>
+              ) : (
+                <button
+                  key={item.key}
+                  onClick={() => {
+                    if (item.action === 'menu') setActiveTab(item.action);
+                    else if (item.action === 'gallery') setActiveTab(item.action);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="text-[10px] text-white/20 hover:text-gold transition-all duration-500 uppercase tracking-[0.4em] font-black font-mono"
+                >
+                  {t(`nav.${item.key}`)}
+                </button>
+              )
             ))}
           </div>
           <div className="flex flex-col items-center md:items-end gap-2">

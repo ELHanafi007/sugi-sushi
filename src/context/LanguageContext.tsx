@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 type Lang = 'en' | 'ar';
-export type NavTab = 'home' | 'menu' | 'reservations' | 'location' | 'gallery';
+export type NavTab = 'home' | 'menu' | 'gallery';
 
 interface ContextType {
   lang: Lang;

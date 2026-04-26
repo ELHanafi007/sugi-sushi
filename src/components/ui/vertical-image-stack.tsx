@@ -294,7 +294,7 @@ export function VerticalImageStack({ onComplete, completeTab }: VerticalImageSta
                 className="text-white/50 text-sm md:text-base max-w-md mx-auto mb-12"
               >
                 Each nigiri: a moment frozen in time. 
-                Chef's vision, ocean's gift, rice farmer's prayer — on your plate.
+                Chef&apos;s vision, ocean&apos;s gift, rice farmer&apos;s prayer — on your plate.
               </motion.p>
 
               <motion.div 

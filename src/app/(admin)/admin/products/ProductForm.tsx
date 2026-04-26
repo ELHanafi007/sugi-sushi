@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Dish } from '@/data/menuData';
 import { useRouter } from 'next/navigation';
 import { upsertProduct } from '../actions';
-import { ArrowLeft, Save, X, Plus, Info } from 'lucide-react';
+import { ArrowLeft, Save, X, Plus, Info, Upload, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ProductForm({ 
@@ -15,6 +15,9 @@ export default function ProductForm({
   categories: string[] 
 }) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  
   const [formData, setFormData] = useState<Partial<Dish>>({
     id: product?.id || `prod-${Date.now()}`,
     name: product?.name || '',
@@ -32,6 +35,48 @@ export default function ProductForm({
   const [newTag, setNewTag] = useState('');
   const [newAllergen, setNewAllergen] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Only JPG, PNG, and WebP files are allowed');
+      return;
+    }
+
+    setUploading(true);
+    
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+      formDataUpload.append('productId', formData.id || `prod-${Date.now()}`);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formDataUpload,
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setFormData({ ...formData, image: data.url });
+      } else {
+        alert('Failed to upload image');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -197,14 +242,45 @@ export default function ProductForm({
                 ) : (
                   <div className="text-center p-8">
                     <div className="w-16 h-16 rounded-full bg-white/[0.04] flex items-center justify-center mx-auto mb-4 text-white/10">
-                      <Plus size={32} />
+                      <ImageIcon size={32} />
                     </div>
                     <p className="text-white/20 text-xs font-mono uppercase tracking-widest">No Image Set</p>
                   </div>
                 )}
               </div>
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+              />
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="w-full bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold py-4 rounded-2xl font-bold uppercase tracking-wider text-xs flex items-center justify-center gap-3 transition-all disabled:opacity-50"
+              >
+                {uploading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload size={16} />
+                    Upload Image
+                  </>
+                )}
+              </button>
+
+              <div className="text-center">
+                <p className="text-white/20 text-[10px] font-mono uppercase tracking-widest">Or paste URL</p>
+              </div>
+              
               <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest font-black text-white/40 ml-4">Image URL</label>
                 <input 
                   type="url" 
                   placeholder="https://images.unsplash.com/..."
@@ -213,10 +289,11 @@ export default function ProductForm({
                   className="w-full bg-white/[0.02] border border-white/5 rounded-3xl py-4 px-6 text-white focus:outline-none focus:border-gold/30 transition-all text-xs"
                 />
               </div>
+              
               <div className="p-4 rounded-2xl bg-gold/5 border border-gold/10 flex gap-3">
                 <Info size={16} className="text-gold flex-shrink-0 mt-0.5" />
                 <p className="text-[10px] text-gold/60 leading-relaxed italic">
-                  Tip: Use high-quality Unsplash or Cloudinary URLs for the best cinematic look.
+                  Upload JPG, PNG or WebP (max 5MB). Images are stored securely on cloud storage.
                 </p>
               </div>
             </div>
