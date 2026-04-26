@@ -9,42 +9,60 @@ export async function upsertProduct(product: Dish) {
   
   console.log('=== UPSERT PRODUCT ===');
   console.log('Product ID:', product.id);
-  console.log('Product Data:', JSON.stringify({
-    id: product.id,
-    name: product.name,
-    name_ar: product.nameAr,
-    description: product.description,
-    description_ar: product.descriptionAr,
-    price: product.price,
-    category: product.category,
-    calories: product.calories,
-    tags: product.tags,
-    image: product.image,
-    allergens: product.allergens
-  }));
   
-  const { data, error } = await supabase
+  // First check if product exists
+  const { data: existing, error: checkError } = await supabase
     .from('products')
-    .upsert({
-      id: product.id,
-      name: product.name,
-      name_ar: product.nameAr,
-      description: product.description,
-      description_ar: product.descriptionAr,
-      price: product.price,
-      category: product.category,
-      calories: product.calories,
-      tags: product.tags,
-      image: product.image,
-      allergens: product.allergens
-    } as any, { onConflict: 'id' })
-    .select();
+    .select('id')
+    .eq('id', product.id)
+    .single();
+    
+  let result;
+  if (existing) {
+    // Update existing
+    console.log('Updating existing product...');
+    result = await supabase
+      .from('products')
+      .update({
+        name: product.name,
+        name_ar: product.nameAr,
+        description: product.description,
+        description_ar: product.descriptionAr,
+        price: product.price,
+        category: product.category,
+        calories: product.calories,
+        tags: product.tags,
+        image: product.image,
+        allergens: product.allergens
+      })
+      .eq('id', product.id)
+      .select();
+  } else {
+    // Insert new
+    console.log('Inserting new product...');
+    result = await supabase
+      .from('products')
+      .insert({
+        id: product.id,
+        name: product.name,
+        name_ar: product.nameAr,
+        description: product.description,
+        description_ar: product.descriptionAr,
+        price: product.price,
+        category: product.category,
+        calories: product.calories,
+        tags: product.tags,
+        image: product.image,
+        allergens: product.allergens
+      })
+      .select();
+  }
+
+  const { data, error } = result;
 
   if (error) {
     console.error('=== UPSERT ERROR ===');
     console.error('Error:', error.message);
-    console.error('Details:', error.details);
-    console.error('Hint:', error.hint);
     return { success: false, error: error.message };
   }
   
