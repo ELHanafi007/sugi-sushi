@@ -14,17 +14,22 @@ export async function createReservation(formData: FormData) {
   const occasion = formData.get('occasion') as string;
   const notes = formData.get('notes') as string;
 
-  const { data: countData, error: countError } = await supabase
+  const { data: existingCodes, error: countError } = await supabase
     .from('reservations')
-    .select('*', { count: 'exact', head: true });
+    .select('code')
+    .order('created_at', { ascending: false })
+    .limit(1);
 
-  if (countError) {
-    console.error('Table check error:', countError);
-    return { success: false, error: 'Database table not found. Please run the SQL setup in Supabase.' };
+  let nextNum = 1;
+  if (existingCodes && existingCodes.length > 0) {
+    const lastCode = existingCodes[0].code;
+    const lastNum = parseInt(lastCode.replace('#', ''));
+    if (!isNaN(lastNum)) {
+      nextNum = lastNum + 1;
+    }
   }
 
-  const codeNum = (countData?.length || 0) + 1;
-  const code = `#${codeNum.toString().padStart(4, '0')}`;
+  const code = `#${nextNum.toString().padStart(4, '0')}`;
 
   const { data, error } = await supabase
     .from('reservations')
