@@ -14,19 +14,17 @@ export async function createReservation(formData: FormData) {
   const occasion = formData.get('occasion') as string;
   const notes = formData.get('notes') as string;
 
-  const { data: existingCodes, error: countError } = await supabase
+  const { data: allReservations } = await supabase
     .from('reservations')
-    .select('code')
-    .order('created_at', { ascending: false })
-    .limit(1);
+    .select('code');
 
   let nextNum = 1;
-  if (existingCodes && existingCodes.length > 0) {
-    const lastCode = existingCodes[0].code;
-    const lastNum = parseInt(lastCode.replace('#', ''));
-    if (!isNaN(lastNum)) {
-      nextNum = lastNum + 1;
-    }
+  if (allReservations && allReservations.length > 0) {
+    const maxCode = allReservations.reduce((max, r) => {
+      const num = parseInt(r.code.replace('#', ''));
+      return num > max ? num : max;
+    }, 0);
+    nextNum = maxCode + 1;
   }
 
   const code = `#${nextNum.toString().padStart(4, '0')}`;
