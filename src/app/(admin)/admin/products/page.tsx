@@ -9,6 +9,9 @@ import {
 } from 'lucide-react';
 import ProductListClient from './ProductListClient';
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'no-store';
+
 export default async function ProductsPage() {
   const { products, categories } = await getMenu();
 

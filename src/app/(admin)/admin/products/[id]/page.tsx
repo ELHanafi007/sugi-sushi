@@ -2,6 +2,9 @@ import { getMenu } from '@/lib/data';
 import ProductForm from '../ProductForm';
 import { notFound } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'no-store';
+
 export default async function EditProductPage({ 
   params 
 }: { 
