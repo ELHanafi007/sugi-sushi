@@ -37,7 +37,7 @@ export async function upsertProduct(product: Dish) {
       tags: product.tags,
       image: product.image,
       allergens: product.allergens
-    })
+    } as any, { onConflict: 'id' })
     .select();
 
   if (error) {
