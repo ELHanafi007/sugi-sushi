@@ -7,7 +7,7 @@ import { getSupabaseAdmin } from '@/lib/supabase';
 export async function upsertProduct(product: Dish) {
   const supabase = getSupabaseAdmin();
   
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('products')
     .upsert({
       id: product.id,
@@ -21,16 +21,17 @@ export async function upsertProduct(product: Dish) {
       tags: product.tags,
       image: product.image,
       allergens: product.allergens
-    });
+    })
+    .select();
 
-  if (!error) {
-    revalidatePath('/');
-    revalidatePath('/admin/products');
-    return true;
+  if (error) {
+    console.error('Error upserting product:', error);
+    return false;
   }
   
-  console.error('Error upserting product:', error);
-  return false;
+  revalidatePath('/');
+  revalidatePath('/admin/products');
+  return true;
 }
 
 export async function deleteProduct(id: string) {
@@ -41,24 +42,19 @@ export async function deleteProduct(id: string) {
     .delete()
     .eq('id', id);
 
-  if (!error) {
-    revalidatePath('/');
-    revalidatePath('/admin/products');
-    return true;
+  if (error) {
+    console.error('Error deleting product:', error);
+    return false;
   }
   
-  console.error('Error deleting product:', error);
-  return false;
+  revalidatePath('/');
+  revalidatePath('/admin/products');
+  return true;
 }
 
 export async function updateCategories(categories: string[]) {
   const supabase = getSupabaseAdmin();
   
-  // This is a bit more complex as we need to sync the categories table
-  // For simplicity, we'll upsert all and potentially mark old ones (or just leave them)
-  // A better way would be to delete all and re-insert, or use a specific order field
-  
-  // First, get existing categories to know what to delete or update
   const { data: existing } = await supabase.from('categories').select('name');
   const existingNames = (existing || []).map(c => c.name);
   
@@ -77,12 +73,12 @@ export async function updateCategories(categories: string[]) {
     .from('categories')
     .upsert(upserts, { onConflict: 'name' });
 
-  if (!error) {
-    revalidatePath('/');
-    revalidatePath('/admin/categories');
-    return true;
+  if (error) {
+    console.error('Error updating categories:', error);
+    return false;
   }
   
-  console.error('Error updating categories:', error);
-  return false;
+  revalidatePath('/');
+  revalidatePath('/admin/categories');
+  return true;
 }
