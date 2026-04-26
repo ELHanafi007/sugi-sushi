@@ -14,18 +14,19 @@ export interface InteractiveMenuProps {
   accentColor?: string;
   activeIndex?: number;
   onItemClick?: (index: number) => void;
+  forceActiveIndex?: number;
 }
 
 const defaultAccentColor = 'var(--component-active-color-default)';
 
-const InteractiveMenu: React.FC<InteractiveMenuProps> = ({ items, accentColor, activeIndex: externalActiveIndex, onItemClick }) => {
+const InteractiveMenu: React.FC<InteractiveMenuProps> = ({ items, accentColor, activeIndex: externalActiveIndex, onItemClick, forceActiveIndex }) => {
 
   const finalItems = useMemo(() => {
      return items || [];
   }, [items]);
 
   const [internalActiveIndex, setInternalActiveIndex] = useState(0);
-  const activeIndex = externalActiveIndex !== undefined ? externalActiveIndex : internalActiveIndex;
+  const activeIndex = forceActiveIndex !== undefined ? forceActiveIndex : (externalActiveIndex !== undefined ? externalActiveIndex : internalActiveIndex);
 
   const handleItemClick = (index: number) => {
     if (onItemClick) {
