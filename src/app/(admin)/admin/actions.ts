@@ -10,67 +10,74 @@ export async function upsertProduct(product: Dish) {
   console.log('=== UPSERT PRODUCT ===');
   console.log('Product ID:', product.id);
   
-  // First check if product exists
-  const { data: existing, error: checkError } = await supabase
-    .from('products')
-    .select('id')
-    .eq('id', product.id)
-    .single();
-    
-  let result;
-  if (existing) {
-    // Update existing
-    console.log('Updating existing product...');
-    result = await supabase
+  try {
+    // First check if product exists
+    const { data: existing } = await supabase
       .from('products')
-      .update({
-        name: product.name,
-        name_ar: product.nameAr,
-        description: product.description,
-        description_ar: product.descriptionAr,
-        price: product.price,
-        category: product.category,
-        calories: product.calories,
-        tags: product.tags,
-        image: product.image,
-        allergens: product.allergens
-      })
+      .select('id')
       .eq('id', product.id)
-      .select();
-  } else {
-    // Insert new
-    console.log('Inserting new product...');
-    result = await supabase
-      .from('products')
-      .insert({
-        id: product.id,
-        name: product.name,
-        name_ar: product.nameAr,
-        description: product.description,
-        description_ar: product.descriptionAr,
-        price: product.price,
-        category: product.category,
-        calories: product.calories,
-        tags: product.tags,
-        image: product.image,
-        allergens: product.allergens
-      })
-      .select();
-  }
+      .single();
+    
+    let error = null;
+    
+    if (existing) {
+      // Update existing - NO select() to avoid payload issue
+      console.log('Updating existing product...');
+      const { error: updateError } = await supabase
+        .from('products')
+        .update({
+          name: product.name,
+          name_ar: product.nameAr,
+          description: product.description,
+          description_ar: product.descriptionAr,
+          price: product.price,
+          category: product.category,
+          calories: product.calories,
+          tags: product.tags,
+          image: product.image,
+          allergens: product.allergens
+        })
+        .eq('id', product.id);
+      
+      error = updateError;
+    } else {
+      // Insert new
+      console.log('Inserting new product...');
+      const { error: insertError } = await supabase
+        .from('products')
+        .insert({
+          id: product.id,
+          name: product.name,
+          name_ar: product.nameAr,
+          description: product.description,
+          description_ar: product.descriptionAr,
+          price: product.price,
+          category: product.category,
+          calories: product.calories,
+          tags: product.tags,
+          image: product.image,
+          allergens: product.allergens
+        });
+      
+      error = insertError;
+    }
 
-  const { data, error } = result;
-
-  if (error) {
-    console.error('=== UPSERT ERROR ===');
-    console.error('Error:', error.message);
-    return { success: false, error: error.message };
+    if (error) {
+      console.error('=== UPSERT ERROR ===');
+      console.error('Error:', error.message);
+      return { success: false, error: error.message };
+    }
+    
+    console.log('=== UPSERT SUCCESS ===');
+    revalidatePath('/');
+    revalidatePath('/admin/products');
+    return { success: true };
+    
+  } catch (e: any) {
+    console.error('=== UPSERT EXCEPTION ===');
+    console.error(e.message);
+    return { success: false, error: e.message };
   }
-  
-  console.log('=== UPSERT SUCCESS ===');
-  console.log('Data:', data);
-  revalidatePath('/');
-  revalidatePath('/admin/products');
-  return { success: true };
 }
 
 export async function deleteProduct(id: string) {
