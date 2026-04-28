@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dish } from '@/data/menuData';
 import { Search, Edit2, Trash2, MoreVertical } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { deleteProduct } from '../actions';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -19,6 +20,12 @@ export default function ProductListClient({
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [products, setProducts] = useState(initialProducts);
 
+  const router = useRouter();
+
+  useEffect(() => {
+    setProducts(initialProducts);
+  }, [initialProducts]);
+
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || 
                           (p.nameAr && p.nameAr.includes(search));
@@ -31,6 +38,7 @@ export default function ProductListClient({
       const success = await deleteProduct(id);
       if (success) {
         setProducts(products.filter(p => p.id !== id));
+        router.refresh();
       } else {
         alert('Failed to delete product');
       }

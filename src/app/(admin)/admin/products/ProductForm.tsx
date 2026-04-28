@@ -86,6 +86,7 @@ export default function ProductForm({
     const result = await upsertProduct(formData as Dish);
     console.log('=== RESULT ===', result);
     if (result && result.success) {
+      router.refresh();
       router.push('/admin/products');
     } else {
       alert('Failed to save product: ' + (result?.error || 'Unknown error'));

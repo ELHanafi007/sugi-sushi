@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { getMenu } from '@/lib/data';
 import { updateCategories } from '../actions';
 import { 
@@ -21,6 +22,11 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
   const [newCategory, setNewCategory] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    setCategories(initialCategories);
+  }, [initialCategories]);
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +49,7 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
     const success = await updateCategories(categories);
     if (success) {
       setHasChanges(false);
+      router.refresh();
       alert('Categories updated successfully');
     } else {
       alert('Failed to update categories');
