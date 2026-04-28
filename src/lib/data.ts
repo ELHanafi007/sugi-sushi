@@ -1,13 +1,7 @@
 import { Dish, CATEGORIES, menuData } from '@/data/menuData';
 import { createClient } from '@supabase/supabase-js';
-import { cacheTag } from 'next/cache';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: { persistSession: false }
-});
 
 export interface MenuData {
   categories: string[];
@@ -24,11 +18,15 @@ export async function getMenu(): Promise<MenuData> {
   }
 
   const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: { persistSession: false }
+    auth: { persistSession: false },
+    global: {
+      fetch: (url, options) => {
+        return fetch(url, { ...options, cache: 'no-store' });
+      }
+    }
   });
 
   try {
-    cacheTag('products');
     const [{ data: categoriesData, error: catError }, { data: productsData, error: prodError }] = await Promise.all([
       supabase.from('categories').select('name').order('order'),
       supabase.from('products').select('*')
@@ -39,22 +37,29 @@ export async function getMenu(): Promise<MenuData> {
       return { categories: CATEGORIES, products: menuData };
     }
 
-    if (categoriesData && categoriesData.length > 0) {
-      // Deduplicate categories by name
-      const categories = Array.from(new Set(categoriesData.map(c => c.name)));
-      const products: Dish[] = productsData?.map(p => ({
-        id: p.id,
-        name: p.name,
-        nameAr: p.name_ar,
-        description: p.description,
-        descriptionAr: p.description_ar,
-        price: p.price,
-        category: p.category,
-        calories: p.calories,
-        tags: p.tags || [],
-        image: p.image,
-        allergens: p.allergens || []
-      })) || [];
+    if (productsData && productsData.length > 0) {
+      // If categories table is blocked by RLS, derive from products
+      let fetchedCategories = categoriesData && categoriesData.length > 0 
+        ? categoriesData.map(c => c.name) 
+        : Array.from(new Set(productsData.map(p => p.category)));
+        
+      const categories = Array.from(new Set(fetchedCategories));
+      
+      const products: Dish[] = productsData.map(p => {
+        return {
+          id: p.id,
+          name: p.name,
+          nameAr: p.name_ar,
+          description: p.description,
+          descriptionAr: p.description_ar,
+          price: p.price,
+          category: p.category,
+          calories: p.calories,
+          tags: p.tags || [],
+          image: p.image,
+          allergens: p.allergens || []
+        };
+      });
       
       return { categories, products };
     }
