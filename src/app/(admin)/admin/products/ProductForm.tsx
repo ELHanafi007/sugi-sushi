@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { Dish } from '@/data/menuData';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { upsertProduct } from '../actions';
-import { ArrowLeft, Save, X, Plus, Info, Upload, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Save, X, Plus, Upload, Image as ImageIcon, Check } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ProductForm({ 
@@ -19,6 +19,7 @@ export default function ProductForm({
   const defaultCategory = searchParams.get('category') || categories[0];
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const isEditing = !!product?.id;
   
   const [formData, setFormData] = useState<Partial<Dish>>({
     id: product?.id || `prod-${Date.now()}`,
@@ -37,6 +38,8 @@ export default function ProductForm({
   const [newTag, setNewTag] = useState('');
   const [newAllergen, setNewAllergen] = useState('');
   const [loading, setLoading] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [activeTab, setActiveTab] = useState<'basic' | 'media' | 'tags'>('basic');
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -88,8 +91,11 @@ export default function ProductForm({
     const result = await upsertProduct(formData as Dish);
     console.log('=== RESULT ===', result);
     if (result && result.success) {
-      router.refresh();
-      router.push('/admin/products');
+      setSaved(true);
+      setTimeout(() => {
+        router.refresh();
+        router.push('/admin/products');
+      }, 600);
     } else {
       alert('Failed to save product: ' + (result?.error || 'Unknown error'));
       setLoading(false);
@@ -118,259 +124,341 @@ export default function ProductForm({
     setFormData({ ...formData, allergens: formData.allergens?.filter(a => a !== allergen) });
   };
 
+  const tabs = [
+    { id: 'basic' as const, label: 'Details' },
+    { id: 'media' as const, label: 'Image' },
+    { id: 'tags' as const, label: 'Tags & Allergies' },
+  ];
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-12 pb-24">
-      <div className="flex items-center justify-between">
+    <form onSubmit={handleSubmit} className="space-y-6 pb-24">
+      {/* Header Bar */}
+      <div className="flex items-center justify-between gap-4">
         <Link 
           href="/admin/products"
-          className="flex items-center gap-2 text-white/40 hover:text-white transition-colors group"
+          className="flex items-center gap-2 text-white/30 hover:text-white/60 transition-colors text-[13px]"
         >
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="text-sm font-medium">Back to Products</span>
+          <ArrowLeft size={16} />
+          <span className="hidden sm:inline">Back</span>
         </Link>
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-gold text-black px-8 py-4 rounded-full font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:scale-105 transition-all disabled:opacity-50"
-        >
-          <Save size={16} />
-          {loading ? 'Saving...' : 'Save Product'}
-        </button>
+
+        <div className="flex items-center gap-3">
+          {/* Saved indicator */}
+          {saved && (
+            <span className="flex items-center gap-1.5 text-emerald-400 text-[12px]">
+              <Check size={14} />
+              Saved
+            </span>
+          )}
+          <button
+            type="submit"
+            disabled={loading || saved}
+            className="flex items-center gap-2 bg-gold hover:bg-gold/90 text-black px-6 py-2.5 rounded-xl font-semibold text-[13px] transition-all disabled:opacity-50"
+          >
+            <Save size={14} />
+            {loading ? 'Saving...' : saved ? 'Saved!' : isEditing ? 'Update' : 'Create'}
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Basic Info */}
-        <div className="lg:col-span-2 space-y-8">
-          <section className="space-y-6">
-            <h2 className="text-2xl font-serif italic border-b border-white/5 pb-4">Basic Information</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest font-black text-white/40 ml-4">Product Name (EN)</label>
-                <input 
-                  type="text" 
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-3xl py-4 px-6 text-white focus:outline-none focus:border-gold/30 transition-all"
-                  required
-                />
-              </div>
-              <div className="space-y-2 text-right">
-                <label className="text-[10px] uppercase tracking-widest font-black text-white/40 mr-4">Product Name (AR)</label>
-                <input 
-                  type="text" 
-                  dir="rtl"
-                  value={formData.nameAr}
-                  onChange={(e) => setFormData({ ...formData, nameAr: e.target.value })}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-3xl py-4 px-6 text-white focus:outline-none focus:border-gold/30 transition-all text-right font-arabic"
-                />
-              </div>
-            </div>
+      {/* Tab Navigation */}
+      <div className="flex items-center gap-1 bg-white/[0.02] border border-white/[0.06] rounded-xl p-1">
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 py-2.5 rounded-lg text-[12px] font-medium transition-all ${
+              activeTab === tab.id
+                ? 'bg-white/[0.06] text-white/80'
+                : 'text-white/25 hover:text-white/45'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-            <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-widest font-black text-white/40 ml-4">Description (EN)</label>
-              <textarea 
-                rows={3}
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full bg-white/[0.02] border border-white/5 rounded-3xl py-4 px-6 text-white focus:outline-none focus:border-gold/30 transition-all resize-none"
+      {/* ─── Basic Details Tab ─── */}
+      {activeTab === 'basic' && (
+        <div className="space-y-5">
+          {/* Product Name */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FieldGroup label="Name (EN)">
+              <input 
+                type="text" 
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="admin-input"
+                placeholder="e.g. Salmon Maki"
+                required
               />
-            </div>
-
-            <div className="space-y-2 text-right">
-              <label className="text-[10px] uppercase tracking-widest font-black text-white/40 mr-4">Description (AR)</label>
-              <textarea 
-                rows={3}
+            </FieldGroup>
+            <FieldGroup label="Name (AR)" align="right">
+              <input 
+                type="text" 
                 dir="rtl"
-                value={formData.descriptionAr}
-                onChange={(e) => setFormData({ ...formData, descriptionAr: e.target.value })}
-                className="w-full bg-white/[0.02] border border-white/5 rounded-3xl py-4 px-6 text-white focus:outline-none focus:border-gold/30 transition-all resize-none text-right font-arabic"
+                value={formData.nameAr}
+                onChange={(e) => setFormData({ ...formData, nameAr: e.target.value })}
+                className="admin-input text-right font-arabic"
+                placeholder="الاسم بالعربية"
               />
-            </div>
-          </section>
+            </FieldGroup>
+          </div>
 
-          <section className="space-y-6">
-            <h2 className="text-2xl font-serif italic border-b border-white/5 pb-4">Classification & Pricing</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest font-black text-white/40 ml-4">Category</label>
-                <select 
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-3xl py-4 px-6 text-white focus:outline-none focus:border-gold/30 transition-all appearance-none cursor-pointer"
-                >
-                  {categories.map(cat => (
-                    <option key={cat} value={cat} className="bg-[#060608]">{cat}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest font-black text-white/40 ml-4">Price (e.g. 20 SR)</label>
-                <input 
-                  type="text" 
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-3xl py-4 px-6 text-white focus:outline-none focus:border-gold/30 transition-all"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest font-black text-white/40 ml-4">Calories</label>
-                <input 
-                  type="text" 
-                  value={formData.calories}
-                  onChange={(e) => setFormData({ ...formData, calories: e.target.value })}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-3xl py-4 px-6 text-white focus:outline-none focus:border-gold/30 transition-all"
-                />
-              </div>
-            </div>
-          </section>
-        </div>
+          {/* Description */}
+          <FieldGroup label="Description (EN)">
+            <textarea 
+              rows={2}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="admin-input resize-none"
+              placeholder="Brief description of the dish..."
+            />
+          </FieldGroup>
 
-        {/* Media & Tags */}
-        <div className="space-y-8">
-          <section className="space-y-6">
-            <h2 className="text-2xl font-serif italic border-b border-white/5 pb-4">Product Image</h2>
-            <div className="space-y-4">
-              <div className="aspect-square rounded-[2rem] bg-white/[0.02] border border-white/5 overflow-hidden flex items-center justify-center relative group">
-                {formData.image ? (
-                  <>
-                    <img src={formData.image} alt="Preview" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700" />
-                    <button 
-                      type="button"
-                      onClick={() => setFormData({ ...formData, image: '' })}
-                      className="absolute top-4 right-4 p-2 bg-black/60 rounded-full text-white/60 hover:text-white transition-all"
-                    >
-                      <X size={16} />
-                    </button>
-                  </>
-                ) : (
-                  <div className="text-center p-8">
-                    <div className="w-16 h-16 rounded-full bg-white/[0.04] flex items-center justify-center mx-auto mb-4 text-white/10">
-                      <ImageIcon size={32} />
-                    </div>
-                    <p className="text-white/20 text-xs font-mono uppercase tracking-widest">No Image Set</p>
-                  </div>
-                )}
-              </div>
+          <FieldGroup label="Description (AR)" align="right">
+            <textarea 
+              rows={2}
+              dir="rtl"
+              value={formData.descriptionAr}
+              onChange={(e) => setFormData({ ...formData, descriptionAr: e.target.value })}
+              className="admin-input resize-none text-right font-arabic"
+              placeholder="الوصف بالعربية"
+            />
+          </FieldGroup>
 
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-                accept="image/jpeg,image/png,image/webp"
-                className="hidden"
-              />
-
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="w-full bg-gold/10 hover:bg-gold/20 border border-gold/30 text-gold py-4 rounded-2xl font-bold uppercase tracking-wider text-xs flex items-center justify-center gap-3 transition-all disabled:opacity-50"
+          {/* Category, Price, Calories */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <FieldGroup label="Category">
+              <select 
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="admin-input appearance-none cursor-pointer"
               >
-                {uploading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Upload size={16} />
-                    Upload Image
-                  </>
-                )}
-              </button>
-
-              <div className="text-center">
-                <p className="text-white/20 text-[10px] font-mono uppercase tracking-widest">Or paste URL</p>
-              </div>
-              
-              <div className="space-y-2">
-                <input 
-                  type="url" 
-                  placeholder="https://images.unsplash.com/..."
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-3xl py-4 px-6 text-white focus:outline-none focus:border-gold/30 transition-all text-xs"
-                />
-              </div>
-              
-              <div className="p-4 rounded-2xl bg-gold/5 border border-gold/10 flex gap-3">
-                <Info size={16} className="text-gold flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-gold/60 leading-relaxed italic">
-                  Upload JPG, PNG or WebP (max 5MB). Images are stored securely on cloud storage.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <section className="space-y-6">
-            <h2 className="text-2xl font-serif italic border-b border-white/5 pb-4">Tags & Labels</h2>
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-2">
-                {formData.tags?.map(tag => (
-                  <span key={tag} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/5 text-[10px] font-black uppercase tracking-widest text-white/60">
-                    {tag}
-                    <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-400 transition-colors">
-                      <X size={12} />
-                    </button>
-                  </span>
+                {categories.map(cat => (
+                  <option key={cat} value={cat} className="bg-[#0a0a0c]">{cat}</option>
                 ))}
-              </div>
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  placeholder="Add tag (e.g. Signature)" 
-                  value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                  className="flex-1 bg-white/[0.02] border border-white/5 rounded-2xl py-3 px-6 text-white focus:outline-none focus:border-gold/30 transition-all text-xs"
-                />
-                <button 
-                  type="button" 
-                  onClick={addTag}
-                  className="p-3 bg-white/[0.04] rounded-2xl text-gold hover:bg-gold/10 transition-all"
-                >
-                  <Plus size={20} />
-                </button>
-              </div>
-            </div>
-          </section>
-
-          <section className="space-y-6">
-            <h2 className="text-2xl font-serif italic border-b border-white/5 pb-4">Allergies</h2>
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-2">
-                {formData.allergens?.map(allergen => (
-                  <span key={allergen} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/5 text-[10px] font-black uppercase tracking-widest text-white/60">
-                    {allergen}
-                    <button type="button" onClick={() => removeAllergen(allergen)} className="hover:text-red-400 transition-colors">
-                      <X size={12} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  placeholder="Add allergy (e.g. Nuts)" 
-                  value={newAllergen}
-                  onChange={(e) => setNewAllergen(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAllergen())}
-                  className="flex-1 bg-white/[0.02] border border-white/5 rounded-2xl py-3 px-6 text-white focus:outline-none focus:border-gold/30 transition-all text-xs"
-                />
-                <button 
-                  type="button" 
-                  onClick={addAllergen}
-                  className="p-3 bg-white/[0.04] rounded-2xl text-gold hover:bg-gold/10 transition-all"
-                >
-                  <Plus size={20} />
-                </button>
-              </div>
-            </div>
-          </section>
+              </select>
+            </FieldGroup>
+            <FieldGroup label="Price">
+              <input 
+                type="text" 
+                value={formData.price}
+                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                className="admin-input"
+                placeholder="e.g. 35 SR"
+              />
+            </FieldGroup>
+            <FieldGroup label="Calories">
+              <input 
+                type="text" 
+                value={formData.calories}
+                onChange={(e) => setFormData({ ...formData, calories: e.target.value })}
+                className="admin-input"
+                placeholder="e.g. 250 cal"
+              />
+            </FieldGroup>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* ─── Media Tab ─── */}
+      {activeTab === 'media' && (
+        <div className="space-y-5">
+          {/* Image preview */}
+          <div className="aspect-[16/10] max-w-lg mx-auto rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden relative group">
+            {formData.image ? (
+              <>
+                <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                <button 
+                  type="button"
+                  onClick={() => setFormData({ ...formData, image: '' })}
+                  className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-xl text-white/60 hover:text-white transition-all"
+                >
+                  <X size={14} />
+                </button>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full gap-3 text-white/10">
+                <ImageIcon size={40} />
+                <p className="text-[11px] font-mono uppercase tracking-widest">No image</p>
+              </div>
+            )}
+          </div>
+
+          {/* Upload button */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+          />
+
+          <div className="max-w-lg mx-auto space-y-3">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="w-full flex items-center justify-center gap-2 bg-gold/[0.08] hover:bg-gold/[0.15] border border-gold/20 text-gold py-3 rounded-xl font-medium text-[13px] transition-all disabled:opacity-50"
+            >
+              {uploading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload size={16} />
+                  Upload Image
+                </>
+              )}
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-white/[0.04]" />
+              <span className="text-[10px] font-mono text-white/15 uppercase tracking-widest">or paste url</span>
+              <div className="flex-1 h-px bg-white/[0.04]" />
+            </div>
+
+            <input 
+              type="url" 
+              placeholder="https://..."
+              value={formData.image}
+              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+              className="admin-input text-[12px]"
+            />
+
+            <p className="text-[10px] text-white/15 text-center">
+              JPG, PNG, or WebP • Max 5MB
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Tags & Allergies Tab ─── */}
+      {activeTab === 'tags' && (
+        <div className="space-y-8">
+          {/* Tags */}
+          <div className="space-y-4">
+            <h3 className="text-[13px] font-medium text-white/50">Tags</h3>
+            <div className="flex flex-wrap gap-2">
+              {formData.tags?.map(tag => (
+                <span key={tag} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-[11px] text-white/50">
+                  {tag}
+                  <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-400 transition-colors">
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+              {(!formData.tags || formData.tags.length === 0) && (
+                <span className="text-[11px] text-white/15 italic">No tags added</span>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="Add tag (e.g. Signature)" 
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                className="admin-input flex-1 text-[12px]"
+              />
+              <button 
+                type="button" 
+                onClick={addTag}
+                className="p-3 bg-white/[0.03] border border-white/[0.06] rounded-xl text-gold hover:bg-gold/10 transition-all"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+            {/* Quick-add tag suggestions */}
+            <div className="flex flex-wrap gap-1.5">
+              {['Signature', 'Best Seller', 'New', 'Spicy', 'Vegetarian', 'Seafood', 'Premium', 'Classic', "Chef's Choice", 'Healthy'].map(suggestion => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => {
+                    if (!formData.tags?.includes(suggestion)) {
+                      setFormData({ ...formData, tags: [...(formData.tags || []), suggestion] });
+                    }
+                  }}
+                  disabled={formData.tags?.includes(suggestion)}
+                  className="px-2.5 py-1 rounded-md text-[10px] font-mono uppercase tracking-wider bg-white/[0.02] border border-white/[0.04] text-white/20 hover:text-gold/60 hover:border-gold/15 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                >
+                  + {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Allergens */}
+          <div className="space-y-4">
+            <h3 className="text-[13px] font-medium text-white/50">Allergens</h3>
+            <div className="flex flex-wrap gap-2">
+              {formData.allergens?.map(allergen => (
+                <span key={allergen} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-400/[0.04] border border-red-400/10 text-[11px] text-red-400/60">
+                  {allergen}
+                  <button type="button" onClick={() => removeAllergen(allergen)} className="hover:text-red-400 transition-colors">
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+              {(!formData.allergens || formData.allergens.length === 0) && (
+                <span className="text-[11px] text-white/15 italic">No allergens added</span>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="Add allergen (e.g. Nuts)" 
+                value={newAllergen}
+                onChange={(e) => setNewAllergen(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addAllergen())}
+                className="admin-input flex-1 text-[12px]"
+              />
+              <button 
+                type="button" 
+                onClick={addAllergen}
+                className="p-3 bg-white/[0.03] border border-white/[0.06] rounded-xl text-gold hover:bg-gold/10 transition-all"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+            {/* Quick-add allergen suggestions */}
+            <div className="flex flex-wrap gap-1.5">
+              {['Shellfish', 'Fish', 'Soy', 'Gluten', 'Egg', 'Nuts', 'Peanuts', 'Sesame', 'Dairy', 'Wheat'].map(suggestion => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => {
+                    if (!formData.allergens?.includes(suggestion)) {
+                      setFormData({ ...formData, allergens: [...(formData.allergens || []), suggestion] });
+                    }
+                  }}
+                  disabled={formData.allergens?.includes(suggestion)}
+                  className="px-2.5 py-1 rounded-md text-[10px] font-mono uppercase tracking-wider bg-red-400/[0.02] border border-red-400/[0.06] text-red-400/25 hover:text-red-400/60 hover:border-red-400/15 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                >
+                  + {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </form>
+  );
+}
+
+/* ─── Reusable Field Group ─── */
+function FieldGroup({ label, children, align }: { label: string; children: React.ReactNode; align?: 'right' }) {
+  return (
+    <div className="space-y-1.5">
+      <label className={`text-[10px] font-mono uppercase tracking-widest text-white/25 block ${align === 'right' ? 'text-right mr-1' : 'ml-1'}`}>
+        {label}
+      </label>
+      {children}
+    </div>
   );
 }

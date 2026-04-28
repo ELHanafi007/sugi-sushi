@@ -2,26 +2,24 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getMenu } from '@/lib/data';
 import { updateCategories } from '../actions';
 import { 
   Plus, 
   Trash2, 
   GripVertical, 
   Save, 
-  X, 
-  Info,
+  Check,
   AlertTriangle
 } from 'lucide-react';
 import { motion, Reorder, AnimatePresence } from 'framer-motion';
 
-// This is a client component but we need initial data. 
-// We'll fetch it in a useEffect or pass it from a server component.
 export default function CategoriesPageClient({ initialCategories }: { initialCategories: string[] }) {
   const [categories, setCategories] = useState(initialCategories);
   const [newCategory, setNewCategory] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,14 +32,15 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
       setCategories([...categories, newCategory]);
       setNewCategory('');
       setHasChanges(true);
+      setSaved(false);
     }
   };
 
   const handleDelete = (cat: string) => {
-    if (confirm(`Are you sure? Products in "${cat}" will lose their category association.`)) {
-      setCategories(categories.filter(c => c !== cat));
-      setHasChanges(true);
-    }
+    setCategories(categories.filter(c => c !== cat));
+    setHasChanges(true);
+    setSaved(false);
+    setDeleteConfirm(null);
   };
 
   const handleSave = async () => {
@@ -49,8 +48,9 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
     const success = await updateCategories(categories);
     if (success) {
       setHasChanges(false);
+      setSaved(true);
       router.refresh();
-      alert('Categories updated successfully');
+      setTimeout(() => setSaved(false), 3000);
     } else {
       alert('Failed to update categories');
     }
@@ -58,45 +58,58 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
   };
 
   return (
-    <div className="space-y-12 pb-24">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="space-y-6 pb-24">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-serif italic mb-2">Categories</h1>
-          <p className="text-white/20 text-[10px] uppercase tracking-widest font-black font-mono">Organize your menu structure</p>
+          <h1 className="text-3xl font-serif italic text-white/90">Categories</h1>
+          <p className="text-white/25 text-[11px] font-mono uppercase tracking-widest mt-1">
+            {categories.length} categories — drag to reorder
+          </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <AnimatePresence>
             {hasChanges && (
               <motion.span 
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="text-gold/60 text-[10px] font-black font-mono uppercase tracking-widest"
+                exit={{ opacity: 0, x: 10 }}
+                className="text-gold/50 text-[10px] font-mono uppercase tracking-widest"
               >
-                Unsaved Changes
+                Unsaved
+              </motion.span>
+            )}
+            {saved && (
+              <motion.span 
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                className="text-emerald-400 text-[12px] flex items-center gap-1"
+              >
+                <Check size={14} />
+                Saved
               </motion.span>
             )}
           </AnimatePresence>
           <button
             onClick={handleSave}
             disabled={!hasChanges || isSaving}
-            className="bg-gold text-black px-8 py-4 rounded-full font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:scale-105 transition-all disabled:opacity-50 shadow-[0_10px_30px_rgba(212,175,55,0.2)]"
+            className="flex items-center gap-2 bg-gold hover:bg-gold/90 text-black px-6 py-2.5 rounded-xl font-semibold text-[13px] transition-all disabled:opacity-30"
           >
-            <Save size={16} />
-            {isSaving ? 'Saving...' : 'Save Order'}
+            <Save size={14} />
+            {isSaving ? 'Saving...' : 'Save'}
           </button>
         </div>
-      </header>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Category List */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="p-6 rounded-[2rem] bg-gold/5 border border-gold/10 flex gap-4">
-            <Info size={20} className="text-gold flex-shrink-0" />
-            <p className="text-xs text-gold/80 italic leading-relaxed">
-              Drag and drop to reorder categories. This order will reflect directly in the menu sliders on the live site.
-            </p>
+        <div className="lg:col-span-2 space-y-4">
+          {/* Info tip */}
+          <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-white/25 flex items-center gap-2">
+            <GripVertical size={14} className="text-white/15 flex-shrink-0" />
+            <span>Drag categories to reorder. This order reflects on the live menu.</span>
           </div>
 
           <Reorder.Group 
@@ -105,65 +118,88 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
             onReorder={(newOrder) => {
               setCategories(newOrder);
               setHasChanges(true);
+              setSaved(false);
             }}
-            className="space-y-3"
+            className="space-y-2"
           >
-            {categories.map((cat) => (
+            {categories.map((cat, index) => (
               <Reorder.Item 
                 key={cat} 
                 value={cat}
-                className="group relative flex items-center justify-between p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-gold/20 hover:bg-white/[0.04] transition-all duration-300 cursor-grab active:cursor-grabbing"
+                className="group flex items-center justify-between py-3 px-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/[0.1] transition-all cursor-grab active:cursor-grabbing"
               >
-                <div className="flex items-center gap-4">
-                  <GripVertical size={18} className="text-white/10 group-hover:text-gold/40 transition-colors" />
-                  <span className="text-lg font-serif italic text-white/80 group-hover:text-white transition-colors">{cat}</span>
+                <div className="flex items-center gap-3">
+                  <GripVertical size={14} className="text-white/10 group-hover:text-white/25 transition-colors flex-shrink-0" />
+                  <span className="text-white/15 text-[10px] font-mono w-5">{index + 1}</span>
+                  <span className="text-[14px] text-white/60 group-hover:text-white/80 transition-colors">{cat}</span>
                 </div>
                 
-                <button 
-                  onClick={() => handleDelete(cat)}
-                  className="p-2 rounded-xl text-white/10 hover:text-red-400 hover:bg-red-400/5 transition-all opacity-0 group-hover:opacity-100"
-                >
-                  <Trash2 size={18} />
-                </button>
+                {deleteConfirm === cat ? (
+                  <div className="flex items-center gap-1">
+                    <button 
+                      onClick={() => handleDelete(cat)}
+                      className="px-2.5 py-1 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-bold hover:bg-red-500/30 transition-all"
+                    >
+                      Delete
+                    </button>
+                    <button 
+                      onClick={() => setDeleteConfirm(null)}
+                      className="px-2.5 py-1 rounded-lg bg-white/[0.04] text-white/30 text-[10px] hover:bg-white/[0.08] transition-all"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => setDeleteConfirm(cat)}
+                    className="p-1.5 rounded-lg text-white/8 hover:text-red-400 hover:bg-red-400/5 transition-all opacity-0 group-hover:opacity-100"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
               </Reorder.Item>
             ))}
           </Reorder.Group>
+
+          {categories.length === 0 && (
+            <div className="py-12 text-center bg-white/[0.01] border border-dashed border-white/[0.06] rounded-xl">
+              <p className="text-white/15 text-[13px]">No categories yet. Add one to get started.</p>
+            </div>
+          )}
         </div>
 
         {/* Add New Category */}
-        <div className="space-y-8">
-          <section className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 space-y-6">
-            <h2 className="text-xl font-serif italic">Add New Category</h2>
-            <form onSubmit={handleAdd} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest font-black text-white/40 ml-4">Category Name</label>
-                <input 
-                  type="text" 
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  placeholder="e.g. Signature Sushi"
-                  className="w-full bg-white/[0.04] border border-white/5 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-gold/30 transition-all"
-                />
-              </div>
+        <div className="space-y-4">
+          <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
+            <h2 className="text-[14px] font-medium text-white/60">Add Category</h2>
+            <form onSubmit={handleAdd} className="space-y-3">
+              <input 
+                type="text" 
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                placeholder="e.g. Signature Rolls"
+                className="admin-input text-[13px]"
+              />
               <button
                 type="submit"
-                className="w-full bg-white/[0.04] border border-white/5 text-white/60 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-gold/10 hover:text-gold hover:border-gold/20 transition-all duration-500"
+                disabled={!newCategory || categories.includes(newCategory)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white/40 hover:text-gold hover:bg-gold/[0.06] hover:border-gold/15 transition-all text-[12px] font-medium disabled:opacity-20"
               >
-                <Plus size={16} />
-                Add to List
+                <Plus size={14} />
+                Add Category
               </button>
             </form>
-          </section>
+          </div>
 
-          <section className="p-8 rounded-[2.5rem] bg-red-400/[0.02] border border-red-400/5 space-y-4">
-            <div className="flex items-center gap-3 text-red-400/60">
-              <AlertTriangle size={18} />
-              <h3 className="text-sm font-black uppercase tracking-widest font-mono">Danger Zone</h3>
+          <div className="p-4 rounded-xl bg-red-400/[0.02] border border-red-400/[0.06] space-y-2">
+            <div className="flex items-center gap-2 text-red-400/40">
+              <AlertTriangle size={14} />
+              <h3 className="text-[10px] font-mono uppercase tracking-widest font-bold">Note</h3>
             </div>
-            <p className="text-[10px] text-white/20 leading-relaxed italic">
-              Deleting a category does not delete the products within it, but they will no longer appear under this category filter until reassigned.
+            <p className="text-[11px] text-white/20 leading-relaxed">
+              Deleting a category won't delete the products inside it, but they'll lose their category until reassigned.
             </p>
-          </section>
+          </div>
         </div>
       </div>
     </div>

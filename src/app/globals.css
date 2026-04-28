@@ -658,3 +658,30 @@ img {
   background-color: rgba(212, 175, 55, 0.06);
   transform: scale(0.99);
 }
+
+/* ─── Admin Panel Shared Styles ─── */
+.admin-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: white;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.admin-input:focus {
+  border-color: rgba(212, 175, 55, 0.3);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.admin-input::placeholder {
+  color: rgba(255, 255, 255, 0.12);
+}
+
+/* Safe area for mobile bottom nav */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
