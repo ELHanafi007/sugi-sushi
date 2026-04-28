@@ -1,5 +1,6 @@
 import { Dish, CATEGORIES, menuData } from '@/data/menuData';
 import { createClient } from '@supabase/supabase-js';
+import { cacheTag } from 'next/cache';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -14,19 +15,33 @@ export interface MenuData {
 }
 
 export async function getMenu(): Promise<MenuData> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('CRITICAL: Supabase credentials missing in getMenu');
+    return { categories: CATEGORIES, products: menuData };
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { persistSession: false }
+  });
+
   try {
+    cacheTag('products');
     const [{ data: categoriesData, error: catError }, { data: productsData, error: prodError }] = await Promise.all([
       supabase.from('categories').select('name').order('order'),
       supabase.from('products').select('*')
     ]);
 
     if (catError || prodError) {
-      console.error('Supabase error:', catError || prodError);
+      console.error('Supabase fetch error:', catError || prodError);
       return { categories: CATEGORIES, products: menuData };
     }
 
     if (categoriesData && categoriesData.length > 0) {
-      const categories = categoriesData.map(c => c.name);
+      // Deduplicate categories by name
+      const categories = Array.from(new Set(categoriesData.map(c => c.name)));
       const products: Dish[] = productsData?.map(p => ({
         id: p.id,
         name: p.name,
