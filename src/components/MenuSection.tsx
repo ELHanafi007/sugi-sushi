@@ -5,6 +5,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import CurrencyPrice from '@/components/CurrencyPrice';
 
 /* ─── Kanji per category ─── */
@@ -441,14 +443,14 @@ function ContactSection() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <a 
-              href="tel:+966" 
-              className="cta-btn group px-20 py-8"
+            <Link 
+              href="/reserve" 
+              className="cta-btn group px-20 py-8 inline-block"
             >
               <span className="relative text-white text-[11px] uppercase tracking-[0.6em] font-black group-hover:text-gold group-hover:tracking-[0.8em] transition-all duration-700">
                 {t('contact.cta')}
               </span>
-            </a>
+            </Link>
           </motion.div>
         </div>
       </div>
@@ -458,6 +460,8 @@ function ContactSection() {
 
 function Footer() {
   const { t, setActiveTab } = useLanguage();
+  const router = useRouter();
+  
   return (
     <footer className="w-full pt-48 pb-32 bg-bg relative overflow-hidden">
       <div className="container-luxury flex flex-col items-center">
@@ -497,20 +501,26 @@ function Footer() {
               { key: 'location', action: 'location' }
             ].map(item => (
               item.action.startsWith('/') ? (
-                <a
+                <Link
                   key={item.key}
                   href={item.action}
                   className="text-[10px] text-white/20 hover:text-gold transition-all duration-500 uppercase tracking-[0.4em] font-black font-mono"
                 >
                   {t(`nav.${item.key}`)}
-                </a>
+                </Link>
               ) : (
                 <button
                   key={item.key}
                   onClick={() => {
-                    if (item.action === 'menu') setActiveTab(item.action);
-                    else if (item.action === 'gallery') setActiveTab(item.action);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    if (window.location.pathname !== '/') {
+                      if (item.action === 'menu') setActiveTab('menu');
+                      else if (item.action === 'gallery') setActiveTab('gallery');
+                      router.push('/');
+                    } else {
+                      if (item.action === 'menu') setActiveTab('menu');
+                      else if (item.action === 'gallery') setActiveTab('gallery');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
                   }}
                   className="text-[10px] text-white/20 hover:text-gold transition-all duration-500 uppercase tracking-[0.4em] font-black font-mono"
                 >

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, Users, Phone, Mail, MessageSquare, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 import { OCCASIONS, TIME_SLOTS } from '@/types/reservation';
 
 export default function ReservePage() {
@@ -62,12 +63,12 @@ export default function ReservePage() {
             Please save this code. We will contact you shortly to confirm your reservation.
           </p>
 
-          <a
+          <Link
             href="/"
             className="inline-block bg-gold text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider text-xs hover:scale-105 transition-transform"
           >
             Back to Home
-          </a>
+          </Link>
         </motion.div>
       </div>
     );

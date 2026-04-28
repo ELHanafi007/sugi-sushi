@@ -8,6 +8,8 @@ import {
   useSpring
 } from 'framer-motion';
 import { Images } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { useLanguage, NavTab } from '@/context/LanguageContext';
 
@@ -19,6 +21,7 @@ interface NavbarProps {
 export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   const { lang, setLang, t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const router = useRouter();
 
   const isHome = activeTab === 'home';
 
@@ -84,7 +87,14 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => onTabChange(item.id)}
+                    onClick={() => {
+                      if (window.location.pathname !== '/') {
+                        onTabChange(item.id);
+                        router.push('/');
+                      } else {
+                        onTabChange(item.id);
+                      }
+                    }}
                     className={`relative px-5 py-2 text-[11px] uppercase tracking-[0.25em] font-semibold transition flex items-center gap-2 ${
                       isActive
                         ? 'text-yellow-400'
@@ -120,8 +130,13 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
             >
               <button
                 onClick={() => {
-                  onTabChange('home');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  if (window.location.pathname !== '/') {
+                    onTabChange('home');
+                    router.push('/');
+                  } else {
+                    onTabChange('home');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
                 }}
                 className="flex items-center gap-3 md:gap-6 transition-transform hover:scale-105 active:scale-95"
               >
@@ -154,12 +169,12 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
             </div>
 
             {/* RESERVE BUTTON */}
-            <a
+            <Link
               href="/reserve"
               className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-yellow-400/20 transition"
             >
               {t('nav.reservations')}
-            </a>
+            </Link>
 
             {/* LANGUAGE */}
             <button
@@ -194,7 +209,12 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
               <button
                 key={item.id}
                 onClick={() => {
-                  onTabChange(item.id);
+                  if (window.location.pathname !== '/') {
+                    onTabChange(item.id);
+                    router.push('/');
+                  } else {
+                    onTabChange(item.id);
+                  }
                   setMobileOpen(false);
                 }}
                 className="text-left text-white/70 hover:text-yellow-400 text-sm uppercase tracking-[0.2em]"
@@ -202,13 +222,13 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                 {t(item.labelKey)}
               </button>
             ))}
-            <a
+            <Link
               href="/reserve"
               onClick={() => setMobileOpen(false)}
               className="text-left text-yellow-400 text-sm uppercase tracking-[0.2em] font-bold"
             >
               {t('nav.reservations')}
-            </a>
+            </Link>
           </div>
         </motion.div>
       )}
