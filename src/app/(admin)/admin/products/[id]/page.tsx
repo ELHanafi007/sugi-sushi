@@ -2,6 +2,8 @@ import { getMenu } from '@/lib/data';
 import ProductForm from '../ProductForm';
 import { notFound } from 'next/navigation';
 
+import { Suspense } from 'react';
+
 export const dynamic = 'force-dynamic';
 
 export default async function EditProductPage({ 
@@ -24,7 +26,9 @@ export default async function EditProductPage({
         <p className="text-white/20 text-[10px] uppercase tracking-widest font-black font-mono">Refining the details</p>
       </div>
 
-      <ProductForm product={product} categories={categories} />
+      <Suspense fallback={<div className="p-8 text-white/40 italic font-serif">Loading form...</div>}>
+        <ProductForm product={product} categories={categories} />
+      </Suspense>
     </div>
   );
 }

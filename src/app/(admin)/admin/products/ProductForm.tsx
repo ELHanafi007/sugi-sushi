@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Dish } from '@/data/menuData';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { upsertProduct } from '../actions';
 import { ArrowLeft, Save, X, Plus, Info, Upload, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -15,6 +15,8 @@ export default function ProductForm({
   categories: string[] 
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const defaultCategory = searchParams.get('category') || categories[0];
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   
@@ -25,7 +27,7 @@ export default function ProductForm({
     description: product?.description || '',
     descriptionAr: product?.descriptionAr || '',
     price: product?.price || '',
-    category: product?.category || categories[0],
+    category: product?.category || defaultCategory,
     calories: product?.calories || '',
     tags: product?.tags || [],
     allergens: product?.allergens || [],

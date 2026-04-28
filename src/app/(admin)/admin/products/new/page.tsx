@@ -1,6 +1,8 @@
 import { getMenu } from '@/lib/data';
 import ProductForm from '../ProductForm';
 
+import { Suspense } from 'react';
+
 export default async function NewProductPage() {
   const { categories } = await getMenu();
 
@@ -11,7 +13,9 @@ export default async function NewProductPage() {
         <p className="text-white/20 text-[10px] uppercase tracking-widest font-black font-mono">Create a masterpiece</p>
       </div>
 
-      <ProductForm categories={categories} />
+      <Suspense fallback={<div className="p-8 text-white/40 italic font-serif">Loading form...</div>}>
+        <ProductForm categories={categories} />
+      </Suspense>
     </div>
   );
 }

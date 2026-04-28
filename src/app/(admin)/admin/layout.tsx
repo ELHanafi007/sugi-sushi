@@ -7,11 +7,11 @@ import {
   UtensilsCrossed, 
   Tags, 
   LogOut, 
-  ChevronRight,
-  Menu,
-  X,
   Calendar,
-  Bell
+  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Eye
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,7 +22,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [unseenCount, setUnseenCount] = useState(0);
 
   useEffect(() => {
@@ -54,118 +54,271 @@ export default function AdminLayout({
     { name: 'Reservations', href: '/admin/reservations', icon: Calendar },
   ];
 
+  // Build breadcrumbs from pathname
+  const buildBreadcrumbs = () => {
+    const segments = pathname.split('/').filter(Boolean);
+    const crumbs: { label: string; href: string }[] = [];
+    
+    segments.forEach((seg, i) => {
+      const href = '/' + segments.slice(0, i + 1).join('/');
+      let label = seg.charAt(0).toUpperCase() + seg.slice(1);
+      
+      // Friendly labels
+      if (seg === 'admin' && i === 0) label = 'Dashboard';
+      if (seg === 'products') label = 'Products';
+      if (seg === 'categories') label = 'Categories';
+      if (seg === 'reservations') label = 'Reservations';
+      if (seg === 'new') label = 'New Product';
+      if (seg.startsWith('prod-') || seg.startsWith('salad-') || seg.startsWith('soup-') || seg.startsWith('starter-') || seg.startsWith('wok-') || seg.startsWith('tempura-') || seg.startsWith('sugi-') || seg.startsWith('sashimi-') || seg.startsWith('tataki-') || seg.startsWith('ceviche-') || seg.startsWith('nigiri-') || seg.startsWith('gunkan-') || seg.startsWith('temaki-') || seg.startsWith('maki-') || seg.startsWith('aromaki-') || seg.startsWith('california-') || seg.startsWith('special-') || seg.startsWith('fried-') || seg.startsWith('box-') || seg.startsWith('boat-') || seg.startsWith('cold-') || seg.startsWith('juice-') || seg.startsWith('hot-') || seg.startsWith('dessert-') || seg.startsWith('sauce-')) {
+        label = 'Edit';
+      }
+      
+      crumbs.push({ label, href });
+    });
+    
+    return crumbs;
+  };
+
+  const breadcrumbs = buildBreadcrumbs();
+  const isActive = (href: string) => {
+    if (href === '/admin') return pathname === '/admin';
+    return pathname.startsWith(href);
+  };
+
   return (
-    <div className="min-h-screen bg-[#060608] text-white flex flex-col md:flex-row">
-      {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-[#060608]/80 backdrop-blur-xl sticky top-0 z-50">
-        <Link href="/admin" className="flex items-center gap-2">
-          <span className="text-gold font-serif text-xl italic tracking-tight">SUGI</span>
-          <span className="text-white/20 text-[10px] uppercase tracking-widest font-mono mt-1">Admin</span>
-        </Link>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
+    <div className="min-h-screen bg-[#060608] text-white flex flex-col">
+      {/* ─── Desktop Layout ─── */}
+      <div className="hidden md:flex flex-1">
+        {/* Sidebar */}
+        <motion.aside
+          animate={{ width: sidebarCollapsed ? 80 : 260 }}
+          transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
+          className="flex flex-col border-r border-white/[0.06] bg-[#08080a] h-screen sticky top-0 overflow-hidden"
+        >
+          {/* Logo */}
+          <div className={`p-6 ${sidebarCollapsed ? 'px-0 flex justify-center' : ''} border-b border-white/[0.04]`}>
+            <Link href="/admin" className="flex flex-col items-center md:items-start">
+              {sidebarCollapsed ? (
+                <span className="text-gold font-serif text-2xl italic tracking-tighter shimmer-gold">S</span>
+              ) : (
+                <>
+                  <span className="text-gold font-serif text-2xl italic tracking-tighter shimmer-gold">SUGI</span>
+                  <span className="text-white/15 text-[9px] uppercase tracking-[0.35em] font-mono mt-1">Admin Panel</span>
+                </>
+              )}
+            </Link>
+          </div>
 
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-64 flex-col border-r border-white/5 bg-[#08080a] h-screen sticky top-0">
-        <div className="p-8 mb-8">
-          <Link href="/admin" className="flex flex-col">
-            <span className="text-gold font-serif text-3xl italic tracking-tighter shimmer-gold">SUGI</span>
-            <span className="text-white/20 text-[10px] uppercase tracking-[0.4em] font-black font-mono mt-2">Management</span>
-          </Link>
-        </div>
-
-        <nav className="flex-1 px-4 space-y-2">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            const showBadge = item.name === 'Reservations' && unseenCount > 0;
-            return (
-              <Link 
-                key={item.href} 
-                href={item.href}
-                className={`flex items-center justify-between p-4 rounded-2xl transition-all duration-500 group ${
-                  isActive 
-                    ? 'bg-gold/10 text-gold border border-gold/20' 
-                    : 'text-white/40 hover:text-white/80 hover:bg-white/[0.02]'
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <item.icon size={20} className={isActive ? 'text-gold' : 'text-white/20 group-hover:text-gold/40 transition-colors'} />
-                    {showBadge && (
-                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-gold rounded-full animate-pulse" />
-                    )}
-                  </div>
-                  <span className="text-sm font-medium tracking-wide">{item.name}</span>
-                </div>
-                {isActive && <motion.div layoutId="activeNav" className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_10px_rgba(212,175,55,0.5)]" />}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="p-6 mt-auto">
-          <button 
-            onClick={async () => {
-              // Simple logout logic
-              document.cookie = "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-              window.location.href = '/admin/login';
-            }}
-            className="flex items-center gap-4 p-4 w-full text-red-400/40 hover:text-red-400 hover:bg-red-400/5 rounded-2xl transition-all duration-500 group"
-          >
-            <LogOut size={20} />
-            <span className="text-sm font-medium">Logout</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            className="fixed inset-0 z-40 bg-[#060608] pt-20 px-6 md:hidden"
-          >
-            <nav className="space-y-4">
-              {navItems.map((item) => (
+          {/* Navigation */}
+          <nav className="flex-1 py-4 px-3 space-y-1">
+            {navItems.map((item) => {
+              const active = isActive(item.href);
+              const showBadge = item.name === 'Reservations' && unseenCount > 0;
+              
+              return (
                 <Link 
                   key={item.href} 
                   href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center gap-4 p-6 rounded-3xl border ${
-                    pathname === item.href 
-                      ? 'bg-gold/10 border-gold/20 text-gold' 
-                      : 'bg-white/[0.02] border-white/5 text-white/40'
+                  title={sidebarCollapsed ? item.name : undefined}
+                  className={`flex items-center gap-3 py-3 rounded-xl transition-all duration-300 group relative ${
+                    sidebarCollapsed ? 'justify-center px-0' : 'px-4'
+                  } ${
+                    active 
+                      ? 'bg-gold/[0.08] text-gold' 
+                      : 'text-white/35 hover:text-white/70 hover:bg-white/[0.03]'
                   }`}
                 >
-                  <item.icon size={24} />
-                  <span className="text-xl font-medium">{item.name}</span>
+                  {active && (
+                    <motion.div
+                      layoutId="sidebar-active"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-gold"
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
+                  <div className="relative flex-shrink-0">
+                    <item.icon size={20} strokeWidth={active ? 2 : 1.5} />
+                    {showBadge && (
+                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-gold rounded-full ring-2 ring-[#08080a] animate-pulse" />
+                    )}
+                  </div>
+                  <AnimatePresence>
+                    {!sidebarCollapsed && (
+                      <motion.span
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        className="text-[13px] font-medium tracking-wide whitespace-nowrap overflow-hidden"
+                      >
+                        {item.name}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                  {showBadge && !sidebarCollapsed && (
+                    <span className="ml-auto text-[10px] font-mono font-bold bg-gold/15 text-gold px-2 py-0.5 rounded-full">
+                      {unseenCount}
+                    </span>
+                  )}
                 </Link>
-              ))}
-              <button 
-                onClick={() => {
-                  document.cookie = "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-                  window.location.href = '/admin/login';
-                }}
-                className="flex items-center gap-4 p-6 w-full bg-red-400/5 border border-red-400/10 text-red-400 rounded-3xl mt-8"
-              >
-                <LogOut size={24} />
-                <span className="text-xl font-medium">Logout</span>
-              </button>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              );
+            })}
+          </nav>
 
-      {/* Main Content */}
-      <main className="flex-1 p-6 md:p-12 lg:p-16 overflow-y-auto">
-        <div className="max-w-6xl mx-auto">
-          {children}
+          {/* Bottom actions */}
+          <div className={`p-3 space-y-1 border-t border-white/[0.04] ${sidebarCollapsed ? '' : ''}`}>
+            {/* View site */}
+            <Link
+              href="/"
+              target="_blank"
+              title={sidebarCollapsed ? 'View Live Site' : undefined}
+              className={`flex items-center gap-3 py-3 rounded-xl text-white/25 hover:text-white/50 hover:bg-white/[0.02] transition-all ${
+                sidebarCollapsed ? 'justify-center px-0' : 'px-4'
+              }`}
+            >
+              <Eye size={18} strokeWidth={1.5} />
+              {!sidebarCollapsed && <span className="text-[12px] font-medium tracking-wide">View Site</span>}
+            </Link>
+            
+            {/* Collapse toggle */}
+            <button 
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className={`flex items-center gap-3 py-3 rounded-xl text-white/20 hover:text-white/40 hover:bg-white/[0.02] transition-all w-full ${
+                sidebarCollapsed ? 'justify-center px-0' : 'px-4'
+              }`}
+            >
+              {sidebarCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+              {!sidebarCollapsed && <span className="text-[12px] font-medium tracking-wide">Collapse</span>}
+            </button>
+
+            {/* Logout */}
+            <button 
+              onClick={async () => {
+                document.cookie = "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                window.location.href = '/admin/login';
+              }}
+              title={sidebarCollapsed ? 'Logout' : undefined}
+              className={`flex items-center gap-3 py-3 rounded-xl text-red-400/30 hover:text-red-400 hover:bg-red-400/[0.04] transition-all w-full ${
+                sidebarCollapsed ? 'justify-center px-0' : 'px-4'
+              }`}
+            >
+              <LogOut size={18} />
+              {!sidebarCollapsed && <span className="text-[12px] font-medium tracking-wide">Logout</span>}
+            </button>
+          </div>
+        </motion.aside>
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
+          {/* Top bar with breadcrumbs */}
+          <header className="sticky top-0 z-30 bg-[#060608]/80 backdrop-blur-xl border-b border-white/[0.04]">
+            <div className="px-8 py-4 flex items-center justify-between">
+              {/* Breadcrumbs */}
+              <nav className="flex items-center gap-1.5 text-[12px]">
+                {breadcrumbs.map((crumb, i) => (
+                  <span key={crumb.href} className="flex items-center gap-1.5">
+                    {i > 0 && <ChevronRight size={12} className="text-white/10" />}
+                    {i === breadcrumbs.length - 1 ? (
+                      <span className="text-white/60 font-medium">{crumb.label}</span>
+                    ) : (
+                      <Link href={crumb.href} className="text-white/25 hover:text-white/50 transition-colors">
+                        {crumb.label}
+                      </Link>
+                    )}
+                  </span>
+                ))}
+              </nav>
+            </div>
+          </header>
+
+          {/* Page content */}
+          <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
+            <div className="max-w-[1400px] mx-auto">
+              {children}
+            </div>
+          </main>
         </div>
-      </main>
+      </div>
+
+      {/* ─── Mobile Layout ─── */}
+      <div className="md:hidden flex flex-col flex-1">
+        {/* Mobile Top Bar */}
+        <header className="sticky top-0 z-50 bg-[#060608]/90 backdrop-blur-xl border-b border-white/[0.05]">
+          <div className="flex items-center justify-between px-4 py-3">
+            <Link href="/admin" className="flex items-center gap-2">
+              <span className="text-gold font-serif text-xl italic tracking-tight shimmer-gold">SUGI</span>
+              <span className="text-white/15 text-[9px] uppercase tracking-[0.2em] font-mono mt-0.5">Admin</span>
+            </Link>
+            <button
+              onClick={async () => {
+                document.cookie = "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                window.location.href = '/admin/login';
+              }}
+              className="p-2 text-white/20 hover:text-red-400 transition-colors"
+            >
+              <LogOut size={18} />
+            </button>
+          </div>
+          
+          {/* Breadcrumbs on mobile */}
+          {breadcrumbs.length > 1 && (
+            <div className="px-4 pb-2 flex items-center gap-1 text-[11px] overflow-x-auto no-scrollbar">
+              {breadcrumbs.map((crumb, i) => (
+                <span key={crumb.href} className="flex items-center gap-1 whitespace-nowrap">
+                  {i > 0 && <ChevronRight size={10} className="text-white/10 flex-shrink-0" />}
+                  {i === breadcrumbs.length - 1 ? (
+                    <span className="text-white/50 font-medium">{crumb.label}</span>
+                  ) : (
+                    <Link href={crumb.href} className="text-white/20">
+                      {crumb.label}
+                    </Link>
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
+        </header>
+
+        {/* Mobile Content */}
+        <main className="flex-1 p-4 pb-24 overflow-y-auto">
+          {children}
+        </main>
+
+        {/* Mobile Bottom Tab Bar */}
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#08080a]/95 backdrop-blur-xl border-t border-white/[0.06] safe-area-bottom">
+          <div className="flex items-stretch justify-around px-2 py-1">
+            {navItems.map((item) => {
+              const active = isActive(item.href);
+              const showBadge = item.name === 'Reservations' && unseenCount > 0;
+              
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex flex-col items-center gap-1 py-2 px-3 rounded-xl transition-all relative ${
+                    active ? 'text-gold' : 'text-white/30'
+                  }`}
+                >
+                  <div className="relative">
+                    <item.icon size={20} strokeWidth={active ? 2 : 1.5} />
+                    {showBadge && (
+                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-gold rounded-full" />
+                    )}
+                  </div>
+                  <span className={`text-[9px] font-mono uppercase tracking-wider ${active ? 'font-bold' : ''}`}>
+                    {item.name}
+                  </span>
+                  {active && (
+                    <motion.div
+                      layoutId="mobile-tab"
+                      className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full bg-gold"
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      </div>
     </div>
   );
 }
