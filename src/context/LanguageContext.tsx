@@ -214,6 +214,20 @@ const translations = {
     'menu.cat.Hot Drinks': 'Hot Drinks',
     'menu.cat.Desserts': 'Desserts',
     'menu.cat.Extra Sauces': 'Sauces',
+    'menu.cat.Specialty': 'Specialty',
+    'menu.cat.Sugi Roll': 'Sugi Roll',
+    'menu.cat.kani  CRUNCHY   roll': 'Kani Crunchy',
+    'menu.cat.Fire Crunchy roll': 'Fire Crunchy',
+    'menu.cat.TUNA ROLL': 'Tuna Roll',
+    'menu.cat.Vegi roll': 'Vegi Roll',
+    'menu.cat.Chicken Tempura Roll': 'Chicken Tempura',
+    'menu.cat.Flame SALMON ROLL': 'Flame Salmon',
+    'menu.cat.Flame crab  roll': 'Flame Crab',
+    'menu.cat.LOBSTER ROLL': 'Lobster Roll',
+    'menu.cat.TRUFFLE tanoki   ROLL': 'Truffle Roll',
+    'menu.cat.WIN RollS': 'Win Rolls',
+    'menu.cat.Dynamite Roll': 'Dynamite Roll',
+    'menu.cat.Beef   Roll': 'Beef Roll',
   },
   ar: {
     // Navigation
@@ -412,6 +426,20 @@ const translations = {
     'menu.cat.Hot Drinks': 'مشروبات ساخنة',
     'menu.cat.Desserts': 'حلويات',
     'menu.cat.Extra Sauces': 'صوصات',
+    'menu.cat.Specialty': 'تخصصات',
+    'menu.cat.Sugi Roll': 'سوجي رول',
+    'menu.cat.kani  CRUNCHY   roll': 'كاني كرانشي',
+    'menu.cat.Fire Crunchy roll': 'فاير كرانشي',
+    'menu.cat.TUNA ROLL': 'تونا رول',
+    'menu.cat.Vegi roll': 'فيجي رول',
+    'menu.cat.Chicken Tempura Roll': 'دجاج تمبورا رول',
+    'menu.cat.Flame SALMON ROLL': 'فليم سلمون رول',
+    'menu.cat.Flame crab  roll': 'فليم كراب رول',
+    'menu.cat.LOBSTER ROLL': 'لوبستر رول',
+    'menu.cat.TRUFFLE tanoki   ROLL': 'ترافل رول',
+    'menu.cat.WIN RollS': 'وين رولز',
+    'menu.cat.Dynamite Roll': 'داينمت رول',
+    'menu.cat.Beef   Roll': 'بيف رول',
   }
 };
 
@@ -437,7 +465,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, [lang]);
 
   const t = useCallback((key: string) => {
-    return translations[lang][key as keyof typeof translations['en']] || key;
+    const translation = translations[lang][key as keyof typeof translations['en']];
+    if (translation) return translation;
+    
+    // Fallback for categories: "menu.cat.Salads" -> "Salads"
+    if (key.startsWith('menu.cat.')) {
+      return key.replace('menu.cat.', '');
+    }
+    
+    return key;
   }, [lang]);
 
   const value = useMemo(() => ({
