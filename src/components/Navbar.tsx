@@ -30,7 +30,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   ========================== */
   const { scrollY } = useScroll();
 
-  const progressRaw = useTransform(scrollY, [0, 160], [0, 1]);
+  const progressRaw = useTransform(scrollY, [0, 400], [0, 1]);
   const progress = useSpring(progressRaw, {
     stiffness: 120,
     damping: 25
@@ -39,13 +39,13 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   /* =========================
      LOGO ANIMATION
   ========================== */
-  const logoY = useTransform(progress, [0, 1], [120, 0]);
-  const logoScale = useTransform(progress, [0, 1], [3.2, 1]);
+  const logoY = useTransform(progress, [0, 1], ['35vh', '0px']);
+  const logoScale = useTransform(progress, [0, 1], [3.5, 1]);
 
   /* =========================
      NAV ANIMATION
   ========================== */
-  const navOpacity = useTransform(progress, [0.5, 1], [0, 1]);
+  const navOpacity = useTransform(progress, [0, 0.5], [0, 1]);
   const navHeight = useTransform(progress, [0, 1], [140, 80]);
   const logoFadeScale = useTransform(progress, [0.5, 1], [0.85, 1]);
 
@@ -120,13 +120,13 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
           </motion.div>
 
           {/* ================= CENTER LOGO ================= */}
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center relative">
             <motion.div
               style={{
-                opacity: isHome ? navOpacity : 1,
-                scale: isHome ? logoFadeScale : 1
+                y: isHome ? logoY : 0,
+                scale: isHome ? logoScale : 1,
               }}
-              className="origin-center"
+              className="origin-center z-[10001]"
             >
               <button
                 onClick={() => {
@@ -138,19 +138,18 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }
                 }}
-                className="flex items-center gap-3 md:gap-6 transition-transform hover:scale-105 active:scale-95"
+                className="flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
               >
-                <span className="text-white text-[18px] md:text-[22px] font-black tracking-tight">
-                  SUGI
-                </span>
-
-                <span className="text-yellow-400 text-[22px] md:text-[26px]">
-                  杉
-                </span>
-
-                <span className="text-white text-[18px] md:text-[22px] font-black opacity-90">
-                  سوجي
-                </span>
+                <div className="relative w-24 h-24 md:w-32 md:h-32">
+                  <motion.img
+                    src="/brand-logo.png"
+                    alt="Sugi Sushi Logo"
+                    className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                  />
+                </div>
               </button>
             </motion.div>
           </div>

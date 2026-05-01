@@ -86,6 +86,7 @@ export default function Hero({ onTabChange }: HeroProps) {
         className="relative z-20 flex flex-col items-center text-center px-6"
       >
         {/* Masterpiece Text Brand Mark */}
+        {/* The brand logo is now handled by the Navbar's scroll-morph engine */}
         <div className="h-[45vh] mb-20 flex flex-col items-center justify-center relative">
           {/* Ambient Glow */}
           <motion.div 
@@ -96,93 +97,6 @@ export default function Hero({ onTabChange }: HeroProps) {
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent_70%)] blur-3xl pointer-events-none"
           />
-
-          <motion.div
-            initial={{ opacity: 0, y: 30, filter: 'blur(20px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{ duration: 2.5, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
-            className="flex flex-col items-center gap-8"
-          >
-            {/* EST Badge */}
-            <div className="flex items-center gap-8">
-              <div className="w-16 h-px bg-gradient-to-r from-transparent to-white/30" />
-              <span className="text-mono text-white/50 text-[9px] tracking-[1.5em] uppercase font-black">
-                {t('hero.est')}
-              </span>
-              <div className="w-16 h-px bg-gradient-to-l from-transparent to-white/30" />
-            </div>
-
-            {/* Tripartite Brand Mark */}
-            <div className="flex items-center gap-6 md:gap-8">
-              {/* SUGI — Latin */}
-              <motion.span
-                initial={{ opacity: 0, filter: 'blur(10px)', x: -20 }}
-                animate={{ opacity: 1, filter: 'blur(0px)', x: 0 }}
-                transition={{ delay: 0.8, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-                className="text-white text-[clamp(2rem,7vw,5rem)] font-serif font-black tracking-[0.15em] leading-none select-none drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
-                style={{ fontFamily: "'Playfair Display', serif" }}
-              >
-                SUGI
-              </motion.span>
-
-              {/* Divider */}
-              <motion.div
-                initial={{ scaleY: 0, opacity: 0 }}
-                animate={{ scaleY: 1, opacity: 1 }}
-                transition={{ delay: 1.2, duration: 1.2 }}
-                className="w-[1px] h-16 md:h-20 bg-gradient-to-b from-transparent via-white/30 to-transparent"
-              />
-
-              {/* 杉 — Kanji */}
-              <motion.span
-                initial={{ opacity: 0, filter: 'blur(10px)', y: 10 }}
-                animate={{ 
-                  opacity: 1, 
-                  filter: 'blur(0px)', 
-                  y: 0,
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{ 
-                  opacity: { delay: 1, duration: 1.5 },
-                  y: { delay: 1, duration: 1.5 },
-                  scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                }}
-                className="text-[clamp(2rem,7vw,5rem)] shimmer-gold leading-none select-none drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]"
-                style={{ fontFamily: "'Noto Serif JP', serif" }}
-              >
-                杉
-              </motion.span>
-
-              {/* Divider */}
-              <motion.div
-                initial={{ scaleY: 0, opacity: 0 }}
-                animate={{ scaleY: 1, opacity: 1 }}
-                transition={{ delay: 1.2, duration: 1.2 }}
-                className="w-[1px] h-16 md:h-20 bg-gradient-to-b from-transparent via-white/30 to-transparent"
-              />
-
-              {/* سوجي — Arabic */}
-              <motion.span
-                initial={{ opacity: 0, filter: 'blur(10px)', x: 20 }}
-                animate={{ opacity: 1, filter: 'blur(0px)', x: 0 }}
-                transition={{ delay: 0.8, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-                className="text-[clamp(2rem,7vw,5rem)] text-white/90 leading-none select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
-                style={{ fontFamily: "'Noto Sans Arabic', sans-serif" }}
-              >
-                سوجي
-              </motion.span>
-            </div>
-
-            {/* Tagline */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.8, duration: 2 }}
-              className="text-white/25 text-[10px] md:text-xs uppercase tracking-[0.6em] font-mono font-black"
-            >
-              Japanese Cuisine · Riyadh
-            </motion.p>
-          </motion.div>
         </div>
 
         {/* Masterpiece CTA Button */}
