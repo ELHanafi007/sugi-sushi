@@ -39,8 +39,8 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   /* =========================
      LOGO ANIMATION
   ========================== */
-  const logoY = useTransform(progress, [0, 1], ['35vh', '0px']);
-  const logoScale = useTransform(progress, [0, 1], [3.5, 1]);
+  const logoY = useTransform(progress, [0, 1], ['45vh', '0px']);
+  const logoScale = useTransform(progress, [0, 1], [2.5, 1]);
 
   /* =========================
      NAV ANIMATION

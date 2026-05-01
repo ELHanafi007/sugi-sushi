@@ -108,18 +108,15 @@ export default function Hero({ onTabChange }: HeroProps) {
         >
           <button 
             onClick={() => onTabChange('menu')}
-            className="cta-btn group px-20 py-8 shadow-2xl"
+            className="group relative px-10 py-4 overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-sm transition-all duration-700 hover:bg-white/10 hover:border-gold/50 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
           >
-            <div className="relative flex flex-col items-center">
-              <span className="text-white/90 text-[11px] uppercase tracking-[0.8em] font-black group-hover:text-gold group-hover:tracking-[1em] transition-all duration-1000">
+            <div className="relative z-10 flex items-center justify-center">
+              <span className="text-white/90 text-[10px] md:text-xs uppercase tracking-[0.4em] font-medium transition-all duration-700 group-hover:tracking-[0.5em] group-hover:text-gold">
                 {t('hero.cta')}
               </span>
-              <motion.div 
-                className="h-px w-0 bg-gold mt-4 group-hover:w-full transition-all duration-1000" 
-                layoutId="ctaUnderline"
-              />
             </div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.1),transparent)] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+            {/* Elegant sweep effect */}
+            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-1000 group-hover:translate-x-full" />
           </button>
         </motion.div>
       </motion.div>
