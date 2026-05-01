@@ -27,6 +27,8 @@ async function sync() {
   let products = [];
   let currentCategory = "Starters";
   
+  const KNOWN_CATS = ['SALADS', 'SOUPS', 'STARTERS', 'WOK', 'TEMPURA', 'SASHIMI', 'TATAKI', 'CHEVISHI', 'NIGIRI', 'GUNKAN', 'TEMAKI', 'MAKI ROLL', 'AROMAKI ROLLS', 'CALIFORNIA ROLLS', 'WIN ROLLS', 'DYNAMITE ROLL', 'BEEF   ROLL', 'KANI  CRUNCHY', 'FIRE CRUNCHY', 'TUNA ROLL', 'VEGI ROLL', 'CHICKEN TEMPURA', 'FLAME SALMON', 'FLAME CRAB', 'LOBSTER ROLL', 'TRUFFLE', 'FRY ROLLS', 'BOXES', 'BOAT', 'DRINKS', 'DESSERTS', 'SAUCES'];
+
   console.log(`Processing ${data.length} rows...`);
 
   for (let i = 0; i < data.length; i++) {
@@ -43,11 +45,13 @@ async function sync() {
     // Ignore headers/footer stuff
     if (col0.includes('PRICES') || col0.includes('RESTAURANT') || col0.includes('Calories') || col0.includes('VAT')) continue;
 
+    const isKnownCategory = KNOWN_CATS.some(c => col0.toUpperCase().trim() === c);
+
     // Detect Category
     if (col0 && !col5 && !col6 && row.length < 15 && !col0.includes('served with') && !col0.includes('mix of')) {
-       const isKnownCategory = ['SALADS', 'SOUPS', 'STARTERS', 'WOK', 'TEMPURA', 'SASHIMI', 'TATAKI', 'CHEVISHI', 'NIGIRI', 'GUNKAN', 'TEMAKI', 'MAKI ROLL', 'AROMAKI ROLLS', 'CALIFORNIA ROLLS', 'WIN ROLLS', 'DYNAMITE ROLL', 'BEEF   ROLL', 'KANI  CRUNCHY', 'FIRE CRUNCHY', 'TUNA ROLL', 'VEGI ROLL', 'CHICKEN TEMPURA', 'FLAME SALMON', 'FLAME CRAB', 'LOBSTER ROLL', 'TRUFFLE', 'FRY ROLLS', 'BOXES', 'BOAT', 'DRINKS', 'DESSERTS', 'SAUCES'].some(c => col0.toUpperCase().includes(c));
-       
-       if (isKnownCategory || (col0.length < 30 && !col1)) {
+       // A category usually has no Arabic translation in the same row, or the Arabic is in a specific place
+       const hasNoArabic = !col11 && !col9;
+       if (isKnownCategory || (hasNoArabic && col0.length < 30 && !col1)) {
          let catName = col0.split('calories')[0].trim();
          // Normalize common categories to match translations
          if (catName.toUpperCase().includes('SALADS')) catName = 'Salads';
@@ -74,47 +78,59 @@ async function sync() {
     }
 
     // Detect Product
-    // A product usually has a price in col 6 OR calories in col 5
-    const priceVal = parseFloat(col6);
-    const hasPrice = !isNaN(priceVal) && priceVal > 0;
-    const hasCalories = col5 && col5.toLowerCase().includes('calories');
-    
-    if (hasPrice || hasCalories) {
+    // A product usually has a name and an Arabic translation.
+    // If it's not a category and not empty, and has Arabic text, it's a candidate.
+    const col8plus = row.slice(8).join(' ');
+    const hasArabic = /[\u0600-\u06FF]/.test(col8plus);
+    const hasEnglish = (col0 || col1);
+    const isActuallyCat = isKnownCategory || (!hasArabic && col0 && !col1 && !col5 && !col6 && col0.length < 30 && !col0.includes('served with') && !col0.includes('mix of'));
+
+    // Even more inclusive: if it has English text and isn't a category/header, it's a product
+    if (hasEnglish && !isActuallyCat && !col0.includes('All served')) {
       let name = col0 || col1;
-      // If col0 and col1 are both present, col0 might be a subcategory (like NOODLES)
+      // Handle sub-categories in same row
       if (col0 && col1 && col0 !== col1 && col0.length < 20) {
         name = `${col0} ${col1}`;
       }
       
-      let nameAr = col11 || col9;
+      // Find the Arabic part in the row
+      let nameAr = row.slice(8).find(c => c && /[\u0600-\u06FF]/.test(c.toString())) || '';
       let calories = col5;
       let description = '';
       let descriptionAr = '';
 
-      // Check next row for description
+      // Check next row for description (only if next row is NOT a product itself)
       const nextRow = data[i+1];
       if (nextRow && nextRow.length > 0) {
         const nextCol0 = nextRow[0] ? nextRow[0].toString().trim() : '';
         const nextCol1 = nextRow[1] ? nextRow[1].toString().trim() : '';
+        const nextCol5 = nextRow[5] ? nextRow[5].toString().trim() : '';
         const nextCol6 = nextRow[6] ? nextRow[6].toString().trim() : '';
-        const nextCol9 = nextRow[9] ? nextRow[9].toString().trim() : '';
+        const nextArabic = nextRow.slice(8).find(c => c && /[\u0600-\u06FF]/.test(c.toString()));
 
-        if (!nextCol6 && (nextCol0 || nextCol1) && !(nextCol0+nextCol1).toLowerCase().includes('calories')) {
+        // If next row has NO price and NO calories, and it's not a category, it's likely a description
+        const nextHasPrice = !isNaN(parseFloat(nextCol6)) && parseFloat(nextCol6) > 0;
+        const nextIsCat = KNOWN_CATS.some(c => nextCol0.toUpperCase().trim() === c);
+        
+        if (!nextHasPrice && !nextCol5 && (nextCol0 || nextCol1) && !nextIsCat) {
           description = nextCol0 || nextCol1;
-          descriptionAr = nextCol9;
+          descriptionAr = nextArabic || '';
           i++; // Skip next row
         }
       }
 
+      const priceVal = parseFloat(col6);
+      const hasPrice = !isNaN(priceVal) && priceVal > 0;
+
       products.push({
         id: `prod-${products.length + 1}-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
         name: name,
-        name_ar: nameAr,
+        name_ar: nameAr.toString().trim(),
         description: description,
-        description_ar: descriptionAr,
+        description_ar: descriptionAr.toString().trim(),
         price: hasPrice ? `${priceVal} SR` : '',
         category: currentCategory,
-        calories: calories.replace(/calories/gi, '').trim(),
+        calories: calories ? calories.replace(/calories/gi, '').trim() : '',
         tags: [],
         image: '',
         allergens: []
