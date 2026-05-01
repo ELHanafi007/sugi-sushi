@@ -40,7 +40,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
      LOGO ANIMATION
   ========================== */
   const logoY = useTransform(progress, [0, 1], ['45vh', '0vh'], { clamp: true });
-  const logoScale = useTransform(progress, [0, 1], [4, 1], { clamp: true });
+  const logoScale = useTransform(progress, [0, 1], [2.5, 1], { clamp: true });
 
   /* =========================
      NAV ANIMATION
@@ -140,7 +140,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                 }}
                 className="flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
               >
-                <div className="relative w-24 h-24 md:w-32 md:h-32">
+                <div className="relative w-36 h-36 md:w-48 md:h-48 -mt-2">
                   <motion.img
                     src="/brand-logo.png"
                     alt="Sugi Sushi Logo"
