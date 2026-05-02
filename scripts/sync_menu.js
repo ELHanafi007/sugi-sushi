@@ -25,7 +25,7 @@ async function sync() {
   
   let categories = [];
   let products = [];
-  let currentCategory = "Starters";
+  let currentCategory = "";
   
   const KNOWN_CATS = ['SALADS', 'SOUPS', 'STARTERS', 'WOK', 'TEMPURA', 'SASHIMI', 'TATAKI', 'CHEVISHI', 'NIGIRI', 'GUNKAN', 'TEMAKI', 'MAKI ROLL', 'AROMAKI ROLLS', 'CALIFORNIA ROLLS', 'WIN ROLLS', 'DYNAMITE ROLL', 'BEEF   ROLL', 'KANI  CRUNCHY', 'FIRE CRUNCHY', 'TUNA ROLL', 'VEGI ROLL', 'CHICKEN TEMPURA', 'FLAME SALMON', 'FLAME CRAB', 'LOBSTER ROLL', 'TRUFFLE', 'FRY ROLLS', 'BOXES', 'BOAT', 'DRINKS', 'DESSERTS', 'SAUCES'];
 
@@ -39,88 +39,94 @@ async function sync() {
     const col1 = row[1] ? row[1].toString().trim() : '';
     const col5 = row[5] ? row[5].toString().trim() : '';
     const col6 = row[6] ? row[6].toString().trim() : '';
-    const col9 = row[9] ? row[9].toString().trim() : '';
-    const col11 = row[11] ? row[11].toString().trim() : '';
+    
+    if (col0.includes('PRICES') || col0.includes('RESTAURANT') || col0.includes('VAT')) continue;
 
-    // Ignore headers/footer stuff
-    if (col0.includes('PRICES') || col0.includes('RESTAURANT') || col0.includes('Calories') || col0.includes('VAT')) continue;
+    // 1. Check if it's a CATEGORY
+    const normalizedCol0 = col0.toUpperCase().replace(/[^A-Z ]/g, '').trim();
+    const foundCat = KNOWN_CATS.find(c => {
+      const normalizedCat = c.toUpperCase().replace(/[^A-Z ]/g, '').trim();
+      return normalizedCol0 === normalizedCat || normalizedCol0.includes(normalizedCat);
+    });
 
-    const isKnownCategory = KNOWN_CATS.some(c => col0.toUpperCase().trim() === c);
+    // A category row shouldn't have a price in col 6 (unless it's the header "PRICE")
+    const priceVal = parseFloat(col6);
+    const hasPrice = !isNaN(priceVal) && priceVal > 0;
 
-    // Detect Category
-    if (col0 && !col5 && !col6 && row.length < 15 && !col0.includes('served with') && !col0.includes('mix of')) {
-       // A category usually has no Arabic translation in the same row, or the Arabic is in a specific place
-       const hasNoArabic = !col11 && !col9;
-       if (isKnownCategory || (hasNoArabic && col0.length < 30 && !col1)) {
-         let catName = col0.split('calories')[0].trim();
-         // Normalize common categories to match translations
-         if (catName.toUpperCase().includes('SALADS')) catName = 'Salads';
-         if (catName.toUpperCase().includes('SOUPS')) catName = 'Soups';
-         if (catName.toUpperCase().includes('STARTERS')) catName = 'Starters';
-         if (catName.toUpperCase().includes('WOK')) catName = 'Wok, Noodles & Rice';
-         if (catName.toUpperCase().includes('TEMPURA')) catName = 'Tempura';
-         if (catName.toUpperCase().includes('SASHIMI')) catName = 'Sashimi';
-         if (catName.toUpperCase().includes('NIGIRI')) catName = 'Nigiri';
-         if (catName.toUpperCase().includes('TEMAKI')) catName = 'Temaki';
-         if (catName.toUpperCase().includes('MAKI ROLL')) catName = 'Maki Rolls';
-         if (catName.toUpperCase().includes('BOXES')) catName = 'Boxes';
-         if (catName.toUpperCase().includes('DESSERTS')) catName = 'Desserts';
-         if (catName.toUpperCase().includes('COLD DRINKS')) catName = 'Cold Drinks';
-         if (catName.toUpperCase().includes('HOT DRINKS')) catName = 'Hot Drinks';
-         if (catName.toUpperCase().includes('EXTRA SAUCES')) catName = 'Extra Sauces';
+    if (foundCat && !hasPrice && col0.length < 500) {
+      let catName = foundCat;
+      // Normalization
+      if (catName.includes('SALADS')) catName = 'Salads';
+      else if (catName.includes('SOUPS')) catName = 'Soups';
+      else if (catName.includes('STARTERS')) catName = 'Starters';
+      else if (catName.includes('WOK')) catName = 'Wok, Noodles & Rice';
+      else if (catName.includes('TEMPURA')) catName = 'Tempura';
+      else if (catName.includes('SASHIMI')) catName = 'Sashimi';
+      else if (catName.includes('TATAKI')) catName = 'Tataki';
+      else if (catName.includes('NIGIRI')) catName = 'Nigiri';
+      else if (catName.includes('GUNKAN')) catName = 'Gunkan';
+      else if (catName.includes('TEMAKI')) catName = 'Temaki';
+      else if (catName.includes('MAKI ROLL')) catName = 'Maki Rolls';
+      else if (catName.includes('AROMAKI')) catName = 'Aromaki Rolls';
+      else if (catName.includes('CALIFORNIA')) catName = 'California Rolls';
+      else if (catName.includes('BOXES')) catName = 'Boxes';
+      else if (catName.includes('BOAT')) catName = 'Sugi Boat';
+      else if (catName.includes('DRINKS')) catName = 'Cold Drinks';
+      else if (catName.includes('DESSERTS')) catName = 'Desserts';
+      else if (catName.includes('SAUCES')) catName = 'Extra Sauces';
+      else {
+        // Keep name as is but title case
+        catName = catName.charAt(0).toUpperCase() + catName.slice(1).toLowerCase();
+      }
 
-         currentCategory = catName;
-         if (!categories.includes(currentCategory)) {
-           categories.push(currentCategory);
-         }
-         continue;
-       }
+      currentCategory = catName;
+      if (!categories.includes(currentCategory)) {
+        categories.push(currentCategory);
+      }
+      continue;
     }
 
-    // Detect Product
-    // A product usually has a name and an Arabic translation.
-    // If it's not a category and not empty, and has Arabic text, it's a candidate.
+    // 2. Check if it's a PRODUCT
     const col8plus = row.slice(8).join(' ');
     const hasArabic = /[\u0600-\u06FF]/.test(col8plus);
     const hasEnglish = (col0 || col1);
-    const isActuallyCat = isKnownCategory || (!hasArabic && col0 && !col1 && !col5 && !col6 && col0.length < 30 && !col0.includes('served with') && !col0.includes('mix of'));
+    
+    // Safety: if it's a header like "Calories" skip
+    if (col0.toLowerCase() === 'calories' || col1.toLowerCase() === 'calories') continue;
 
-    // Even more inclusive: if it has English text and isn't a category/header, it's a product
-    if (hasEnglish && !isActuallyCat && !col0.includes('All served')) {
+    if (hasEnglish && (hasArabic || hasPrice || col5)) {
       let name = col0 || col1;
-      // Handle sub-categories in same row
-      if (col0 && col1 && col0 !== col1 && col0.length < 20) {
+      
+      // Special case for sub-headers that are part of the name
+      if (col0 && col1 && col0 !== col1 && col0.length < 20 && !col0.includes('All served')) {
         name = `${col0} ${col1}`;
       }
-      
-      // Find the Arabic part in the row
+
       let nameAr = row.slice(8).find(c => c && /[\u0600-\u06FF]/.test(c.toString())) || '';
       let calories = col5;
       let description = '';
       let descriptionAr = '';
 
-      // Check next row for description (only if next row is NOT a product itself)
+      // Description logic: check next row
       const nextRow = data[i+1];
-      if (nextRow && nextRow.length > 0) {
+      if (nextRow) {
         const nextCol0 = nextRow[0] ? nextRow[0].toString().trim() : '';
         const nextCol1 = nextRow[1] ? nextRow[1].toString().trim() : '';
-        const nextCol5 = nextRow[5] ? nextRow[5].toString().trim() : '';
         const nextCol6 = nextRow[6] ? nextRow[6].toString().trim() : '';
+        const nextPrice = parseFloat(nextCol6);
+        const nextHasPrice = !isNaN(nextPrice) && nextPrice > 0;
         const nextArabic = nextRow.slice(8).find(c => c && /[\u0600-\u06FF]/.test(c.toString()));
 
-        // If next row has NO price and NO calories, and it's not a category, it's likely a description
-        const nextHasPrice = !isNaN(parseFloat(nextCol6)) && parseFloat(nextCol6) > 0;
-        const nextIsCat = KNOWN_CATS.some(c => nextCol0.toUpperCase().trim() === c);
-        
-        if (!nextHasPrice && !nextCol5 && (nextCol0 || nextCol1) && !nextIsCat) {
+        // If next row has text but no price and is not a known category, it's a description
+        const nextCol0Upper = nextCol0.toUpperCase();
+        const nextIsCat = KNOWN_CATS.some(c => nextCol0Upper.includes(c.toUpperCase()));
+
+        if (!nextHasPrice && (nextCol0 || nextCol1) && !nextIsCat && !nextCol0.includes('Calories')) {
           description = nextCol0 || nextCol1;
           descriptionAr = nextArabic || '';
-          i++; // Skip next row
+          i++;
         }
       }
-
-      const priceVal = parseFloat(col6);
-      const hasPrice = !isNaN(priceVal) && priceVal > 0;
 
       products.push({
         id: `prod-${products.length + 1}-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
@@ -129,7 +135,7 @@ async function sync() {
         description: description,
         description_ar: descriptionAr.toString().trim(),
         price: hasPrice ? `${priceVal} SR` : '',
-        category: currentCategory,
+        category: currentCategory || 'Other',
         calories: calories ? calories.replace(/calories/gi, '').trim() : '',
         tags: [],
         image: '',
