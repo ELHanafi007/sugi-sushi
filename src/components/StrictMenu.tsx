@@ -287,20 +287,23 @@ function DishModal({
                     >
                       <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
                         <Image 
-                          src={item.image || CAT_IMAGES[item.category] || DEFAULT_IMAGE}
-                          alt={item.name}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
+                          src={item.image || CAT_IMAGES[item.category] || DEFAULT_IMAGE} 
+                          alt={item.name} 
+                          width={64} 
+                          height={64} 
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" 
                         />
                       </div>
-                      <div className="flex-1">
-                        <h5 className="text-white/80 font-serif text-lg group-hover:text-gold transition-colors">
+                      <div className="flex-1 min-w-0">
+                        <h5 className="text-white/80 font-serif text-base group-hover:text-gold transition-colors leading-snug">
                           {lang === 'ar' ? item.nameAr || item.name : item.name}
                         </h5>
-                        <p className="text-white/20 text-[11px] font-serif italic line-clamp-1 mt-1">{lang === 'ar' ? item.descriptionAr || item.description : item.description}</p>
                         <div className="mt-1">
-                          <CurrencyPrice price={item.price} className="text-gold/30 text-[9px] uppercase tracking-widest font-mono" iconClassName="w-3 h-3" />
+                          <CurrencyPrice 
+                            price={item.price} 
+                            className="text-gold/40 text-[11px] font-mono tracking-widest" 
+                            iconClassName="w-3.5 h-3.5" 
+                          />
                         </div>
                       </div>
                       <div className="w-8 h-8 rounded-full border border-white/5 flex items-center justify-center text-white/10 group-hover:border-gold/30 group-hover:text-gold transition-all duration-700">
@@ -658,7 +661,7 @@ export default function StrictMenu({
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: idx * 0.05, duration: 1 }}
+                  transition={{ delay: 0.1 * idx, duration: 1 }}
                   whileTap={{ scale: 0.98 }}
                   className="group relative flex items-center gap-6 p-6 rounded-[2.5rem] luxury-card dish-card-tap cursor-pointer overflow-hidden z-20"
                 >
@@ -674,17 +677,15 @@ export default function StrictMenu({
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-baseline mb-2">
-                      <h4 className="text-white font-serif text-2xl group-hover:text-gold transition-colors duration-700 truncate tracking-tight">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h4>
-                      <CurrencyPrice price={dish.price} className="text-gold font-serif text-2xl flex-shrink-0 font-light" iconClassName="w-5 h-5" />
-                    </div>
-                    <p className="text-white/30 text-sm font-serif italic line-clamp-1 group-hover:text-white/60 transition-colors duration-700">{lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}</p>
-                    
-                    <div className="flex items-center gap-4 mt-4">
-                      {dish.tags.slice(0, 1).map(tag => (
-                        <span key={tag} className="mono-tag !py-1 !px-4 !text-[7px] !bg-gold/5 !border-gold/10 !text-gold/60">{tag}</span>
-                      ))}
-                      <div className="h-px flex-1 bg-white/[0.03] group-hover:bg-gold/20 transition-all duration-1000" />
+                    <h5 className="text-white/80 font-serif text-base group-hover:text-gold transition-colors leading-tight">
+                      {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
+                    </h5>
+                    <div className="mt-2">
+                      <CurrencyPrice 
+                        price={dish.price} 
+                        className="text-gold/60 text-base font-serif" 
+                        iconClassName="w-5 h-5" 
+                      />
                     </div>
                   </div>
 

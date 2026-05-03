@@ -659,6 +659,25 @@ img {
   transform: scale(0.99);
 }
 
+/* ─── Responsive text handling for mobile ─── */
+@media (max-width: 768px) {
+  .truncate-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .flexible-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  .price-container {
+    white-space: nowrap;
+  }
+}
+
 /* ─── Admin Panel Shared Styles ─── */
 .admin-input {
   width: 100%;

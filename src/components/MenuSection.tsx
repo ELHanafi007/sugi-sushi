@@ -356,21 +356,22 @@ function MenuExperience({ initialMenuData }: { initialMenuData?: Dish[] }) {
                             {others.map((dish, idx) => (
                               <motion.div 
                                 key={dish.id} 
-                                className="flex flex-col group py-3 relative"
+                                className="flex flex-col group py-4 relative"
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: idx * 0.05 }}
                               >
-                                <div className="flex justify-between items-baseline mb-1">
-                                  <span className="text-white/80 font-serif text-lg md:text-xl group-hover:text-gold transition-colors duration-700">
+                                <div className="flex flex-col gap-1">
+                                  <span className="text-white/80 font-serif text-base md:text-lg group-hover:text-gold transition-colors duration-700 leading-tight">
                                     {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
                                   </span>
-                                  <CurrencyPrice price={dish.price} className="text-gold/65 font-serif text-base group-hover:text-gold transition-colors duration-700" iconClassName="w-4 h-4" />
+                                  <CurrencyPrice 
+                                    price={dish.price} 
+                                    className="text-gold/50 font-serif text-sm group-hover:text-gold/80 transition-colors duration-700" 
+                                    iconClassName="w-3.5 h-3.5" 
+                                  />
                                 </div>
-                                <p className="text-white/45 text-[10px] md:text-xs italic font-serif leading-relaxed line-clamp-1 group-hover:text-white/65 transition-colors duration-700">
-                                  {lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}
-                                </p>
                                 <div className="absolute bottom-0 left-0 w-0 h-px bg-gold/20 group-hover:w-full transition-all duration-1000" />
                               </motion.div>
                             ))}
