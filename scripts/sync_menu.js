@@ -91,7 +91,8 @@ async function sync() {
 
     // Product logic
     const arabicName = col11 || row.slice(8).find(c => c && /[\u0600-\u06FF]/.test(c.toString())) || '';
-    if (col0 && (hasPrice || arabicName || col5)) {
+    // A row is a product IF it has col0 AND at least one price field (primary or portion)
+    if (col0 && (hasPrice || col5)) {
       let name = col0;
       const lowerName = name.toLowerCase();
       
@@ -176,6 +177,26 @@ async function sync() {
   }
 
   console.log('Sync process completed successfully!');
+
+  // 4. Cleanup obsolete products (those in DB but NOT in Excel)
+  console.log('Checking for obsolete products to remove...');
+  const { data: dbProducts, error: fetchError } = await supabase.from('products').select('id');
+  if (fetchError) {
+    console.error('Error fetching existing products for cleanup:', fetchError.message);
+  } else {
+    const idsToDelete = dbProducts
+      .map(p => p.id)
+      .filter(id => !seenIds.has(id));
+    
+    if (idsToDelete.length > 0) {
+      console.log(`Deleting ${idsToDelete.length} obsolete products: ${idsToDelete.join(', ')}`);
+      const { error: delError } = await supabase.from('products').delete().in('id', idsToDelete);
+      if (delError) console.error('Error during cleanup:', delError.message);
+      else console.log('Cleanup completed.');
+    } else {
+      console.log('No obsolete products found. System is clean.');
+    }
+  }
 }
 
 sync().catch(console.error);
