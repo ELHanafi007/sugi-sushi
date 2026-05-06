@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import CurrencyPrice from '@/components/CurrencyPrice';
+import { PortionSelector } from '@/components/PortionSelector';
 
 /* ─── Kanji per category ─── */
 const KANJI: Record<string, string> = {
@@ -77,9 +78,31 @@ const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754
 
 const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => {
   const { t, setActiveTab, setPendingDish } = useLanguage();
+  const [selectedPortionIdx, setSelectedPortionIdx] = useState(0);
+
+  // Set default portion to the cheapest one when dish changes
+  useEffect(() => {
+    if (dish.portions && dish.portions.length > 1) {
+      let minPrice = Infinity;
+      let minIdx = 0;
+      dish.portions.forEach((p, i) => {
+        const pPrice = parseInt(p.price) || 0;
+        if (pPrice < minPrice) {
+          minPrice = pPrice;
+          minIdx = i;
+        }
+      });
+      setSelectedPortionIdx(minIdx);
+    } else {
+      setSelectedPortionIdx(0);
+    }
+  }, [dish]);
+  
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
   const imageUrl = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
+  
+  const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
 
   return (
     <motion.div 
@@ -132,12 +155,38 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
             &quot;{desc}&quot;
           </p>
           
-          <div className="flex items-center gap-8">
-            <div className="flex items-baseline gap-3">
-              <CurrencyPrice price={dish.price} className="text-4xl text-gold font-serif" iconClassName="w-6 h-6 md:w-7 md:h-7" />
+          <div className="flex flex-col gap-10">
+            {dish.portions && dish.portions.length > 1 && (
+              <div className="w-full flex justify-center py-6">
+                <PortionSelector 
+                  portions={dish.portions} 
+                  selectedIdx={selectedPortionIdx} 
+                  onChange={setSelectedPortionIdx}
+                  lang={lang}
+                />
+              </div>
+            )}
+            
+            <div className="flex items-center gap-8">
+              <div className="flex flex-col items-center md:items-start gap-2">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentPrice}
+                    initial={{ opacity: 0, y: 10, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, y: -10, filter: 'blur(10px)' }}
+                    transition={{ duration: 0.5, ease: "circOut" }}
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-gold/20 text-[8px] uppercase tracking-[0.6em] font-black mb-1 text-center md:text-left">{t('menu.current_price')}</span>
+                      <CurrencyPrice price={currentPrice} className="text-5xl md:text-6xl text-gold font-serif" iconClassName="w-10 h-10 md:w-12 md:h-12" />
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+              <div className="h-10 w-px bg-white/5" />
+              <span className="text-mono text-white/35 text-[10px] tracking-[0.5em] font-black">{t(`menu.cat.${dish.category}`)}</span>
             </div>
-            <div className="h-10 w-px bg-white/5" />
-            <span className="text-mono text-white/35 text-[10px] tracking-[0.5em] font-black">{t(`menu.cat.${dish.category}`)}</span>
           </div>
         </div>
       </div>
@@ -178,12 +227,20 @@ const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar';
       
       <div className={`absolute inset-0 p-8 md:p-12 flex flex-col justify-end ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
         <h4 className="text-white text-2xl md:text-4xl font-serif font-light mb-6 leading-tight group-hover:text-gold transition-colors duration-1000">{name}</h4>
-        <div className="flex justify-between items-center">
-          <div className="flex items-baseline gap-2">
-            <CurrencyPrice price={dish.price} className="text-gold/60 text-2xl font-serif" iconClassName="w-5 h-5" />
+          <div className="flex flex-col items-end gap-2">
+            {dish.portions && dish.portions.length > 1 ? (
+              <div className="flex items-center gap-2">
+                <span className="text-gold/30 text-[9px] uppercase font-black tracking-widest">{t('menu.from')}</span>
+                <CurrencyPrice 
+                  price={dish.portions.reduce((min, p) => parseInt(p.price) < parseInt(min) ? p.price : min, dish.portions[0].price)} 
+                  className="text-gold/60 text-xl font-serif" 
+                  iconClassName="w-4 h-4" 
+                />
+              </div>
+            ) : (
+              <CurrencyPrice price={dish.price} className="text-gold/60 text-2xl font-serif" iconClassName="w-5 h-5" />
+            )}
           </div>
-          <div className="w-2.5 h-2.5 rounded-full bg-gold/5 group-hover:bg-gold/40 transition-all duration-1000" />
-        </div>
       </div>
     </motion.div>
   );
@@ -366,11 +423,24 @@ function MenuExperience({ initialMenuData }: { initialMenuData?: Dish[] }) {
                                   <span className="text-white/80 font-serif text-base md:text-lg group-hover:text-gold transition-colors duration-700 leading-tight">
                                     {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
                                   </span>
-                                  <CurrencyPrice 
-                                    price={dish.price} 
-                                    className="text-gold/50 font-serif text-sm group-hover:text-gold/80 transition-colors duration-700" 
-                                    iconClassName="w-3.5 h-3.5" 
-                                  />
+                                  <div className="flex items-center gap-4 mt-1">
+                                    {dish.portions && dish.portions.length > 1 ? (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-gold/20 text-[9px] uppercase font-black tracking-widest">{t('menu.from')}</span>
+                                        <CurrencyPrice 
+                                          price={dish.portions.reduce((min, p) => parseInt(p.price) < parseInt(min) ? p.price : min, dish.portions[0].price)} 
+                                          className="text-gold/40 font-serif text-[11px] group-hover:text-gold/60 transition-colors duration-700" 
+                                          iconClassName="w-3 h-3" 
+                                        />
+                                      </div>
+                                    ) : (
+                                      <CurrencyPrice 
+                                        price={dish.price} 
+                                        className="text-gold/50 font-serif text-sm group-hover:text-gold/80 transition-colors duration-700" 
+                                        iconClassName="w-3.5 h-3.5" 
+                                      />
+                                    )}
+                                  </div>
                                 </div>
                                 <div className="absolute bottom-0 left-0 w-0 h-px bg-gold/20 group-hover:w-full transition-all duration-1000" />
                               </motion.div>

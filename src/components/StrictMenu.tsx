@@ -8,6 +8,7 @@ import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { getDynamicRecommendations } from '@/utils/recommendationEngine';
 import Image from 'next/image';
 import CurrencyPrice from '@/components/CurrencyPrice';
+import { PortionSelector } from '@/components/PortionSelector';
 
 const KANJI: Record<string, string> = {
   'Salads': '菜', 'Soups': '汁', 'Starters': '前',
@@ -57,9 +58,31 @@ function DishModal({
   categoriesToUse: string[];
 }) {
   const { lang, t } = useLanguage();
+  const [selectedPortionIdx, setSelectedPortionIdx] = useState(0);
+
+  // Set default portion to the cheapest one when dish changes
+  useEffect(() => {
+    if (dish.portions && dish.portions.length > 1) {
+      let minPrice = Infinity;
+      let minIdx = 0;
+      dish.portions.forEach((p, i) => {
+        const pPrice = parseInt(p.price) || 0;
+        if (pPrice < minPrice) {
+          minPrice = pPrice;
+          minIdx = i;
+        }
+      });
+      setSelectedPortionIdx(minIdx);
+    } else {
+      setSelectedPortionIdx(0);
+    }
+  }, [dish]);
+  
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
   const image = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
+
+  const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
 
   const recommendations = useMemo(() => {
     return getDynamicRecommendations(dish, menuDataToUse, lang as 'en' | 'ar');
@@ -215,10 +238,34 @@ function DishModal({
             transition={{ delay: 0.3, duration: 1 }}
             className="space-y-12"
           >
-            {/* Price + Description */}
-            <div className="flex justify-between items-center gap-6">
-              <CurrencyPrice price={dish.price} className="text-4xl text-gold font-serif font-light" iconClassName="w-8 h-8" />
-              <div className="h-px flex-1 bg-white/5" />
+            {/* Price + Portions + Description */}
+            <div className="flex flex-col items-center gap-10 pt-4">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentPrice}
+                  initial={{ opacity: 0, y: 20, filter: 'blur(20px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -20, filter: 'blur(20px)' }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <span className="text-gold/20 text-[9px] uppercase tracking-[1em] font-black">{t('menu.current_price')}</span>
+                  <CurrencyPrice price={currentPrice} className="text-7xl text-gold font-serif font-light" iconClassName="w-14 h-14" />
+                </motion.div>
+              </AnimatePresence>
+
+              {dish.portions && dish.portions.length > 1 && (
+                <div className="w-full flex flex-col items-center">
+                   <div className="w-full h-px bg-white/5 mb-8" />
+                   <PortionSelector 
+                     portions={dish.portions} 
+                     selectedIdx={selectedPortionIdx} 
+                     onChange={setSelectedPortionIdx}
+                     lang={lang as 'en' | 'ar'}
+                   />
+                   <div className="w-full h-px bg-white/5 mt-4" />
+                </div>
+              )}
             </div>
 
             <p className="text-xl md:text-2xl text-white/40 font-serif italic leading-relaxed font-light">
@@ -322,53 +369,24 @@ function DishModal({
               </div>
 
               <div className="space-y-6">
-                {/* Row 1 */}
                 <motion.div 
                   className="flex gap-4 px-6 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing"
                   drag="x"
-                  dragConstraints={{ right: 0, left: -1000 }} // Approximate constraint, will be responsive
+                  dragConstraints={{ right: 0, left: -2000 }} // Increased for single row
                 >
-                  {categoriesToUse.slice(0, Math.ceil(categoriesToUse.length / 2)).map((cat) => (
+                  {categoriesToUse.map((cat) => (
                     <motion.button
                       key={cat}
                       onClick={() => { onCategorySelect(cat); onClose(); }}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="relative flex-shrink-0 w-48 aspect-[16/10] rounded-2xl overflow-hidden group luxury-card border border-white/5"
+                      className="relative flex-shrink-0 w-48 md:w-56 aspect-[16/10] rounded-2xl overflow-hidden group luxury-card border border-white/5"
                     >
                       <Image 
                         src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
                         alt={cat} 
                         fill 
-                        sizes="200px"
-                        className="object-cover brightness-[0.4] group-hover:scale-110 transition-transform duration-1000" 
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center p-4">
-                        <span className="text-white text-xs md:text-sm font-serif italic text-center leading-tight">{cat}</span>
-                      </div>
-                    </motion.button>
-                  ))}
-                </motion.div>
-
-                {/* Row 2 */}
-                <motion.div 
-                  className="flex gap-4 px-6 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing ml-12"
-                  drag="x"
-                  dragConstraints={{ right: 0, left: -1000 }}
-                >
-                  {categoriesToUse.slice(Math.ceil(categoriesToUse.length / 2)).map((cat) => (
-                    <motion.button
-                      key={cat}
-                      onClick={() => { onCategorySelect(cat); onClose(); }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="relative flex-shrink-0 w-48 aspect-[16/10] rounded-2xl overflow-hidden group luxury-card border border-white/5"
-                    >
-                      <Image 
-                        src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
-                        alt={cat} 
-                        fill 
-                        sizes="200px"
+                        sizes="(max-width: 768px) 192px, 224px"
                         className="object-cover brightness-[0.4] group-hover:scale-110 transition-transform duration-1000" 
                       />
                       <div className="absolute inset-0 flex items-center justify-center p-4">
@@ -680,12 +698,25 @@ export default function StrictMenu({
                     <h5 className="text-white/80 font-serif text-base group-hover:text-gold transition-colors leading-tight">
                       {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
                     </h5>
-                    <div className="mt-2">
-                      <CurrencyPrice 
-                        price={dish.price} 
-                        className="text-gold/60 text-base font-serif" 
-                        iconClassName="w-5 h-5" 
-                      />
+                    <div className="mt-2 flex items-center gap-3">
+                      {dish.portions && dish.portions.length > 1 ? (
+                        <div className="flex items-center gap-3">
+                           <span className="text-gold/30 text-[10px] uppercase font-black tracking-widest">{t('menu.from')}</span>
+                           <CurrencyPrice 
+                             price={dish.portions.reduce((min, p) => parseInt(p.price) < parseInt(min) ? p.price : min, dish.portions[0].price)} 
+                             className="text-gold/70 text-lg font-serif" 
+                             iconClassName="w-5 h-5" 
+                           />
+                           <div className="h-4 w-px bg-white/10" />
+                           <span className="text-white/20 text-[9px] uppercase font-black tracking-tighter">4P / 8P</span>
+                        </div>
+                      ) : (
+                        <CurrencyPrice 
+                          price={dish.price} 
+                          className="text-gold/60 text-base font-serif" 
+                          iconClassName="w-5 h-5" 
+                        />
+                      )}
                     </div>
                   </div>
 

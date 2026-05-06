@@ -5,20 +5,24 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env.local') });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !serviceKey) {
-  console.error("Missing Supabase credentials in .env.local");
-  process.exit(1);
-}
-
-console.log("Using Supabase URL:", supabaseUrl);
-console.log("Using Service Key (first 10 chars):", serviceKey.substring(0, 10) + "...");
-
 const supabase = createClient(supabaseUrl, serviceKey);
 
 async function sync() {
-  console.log('Reading Excel file...');
-  const filePath = path.join(__dirname, '../SUGI   MENU LAST Updated Price KARIM GRAPHIC 1 UP last up.xlsx');
+  console.log('--- SUGI MENU SYNC 3.0 (ID-Stable & Portion-Aware) ---');
+  
+  // 1. Fetch current products to map Name -> {id, image}
+  console.log('Fetching current products to preserve data mapping...');
+  const { data: currentProducts } = await supabase.from('products').select('id, name, image');
+  const productMap = new Map(); // name.toLowerCase() -> {id, image}
+  if (currentProducts) {
+    currentProducts.forEach(p => {
+      productMap.set(p.name.trim().toLowerCase(), { id: p.id, image: p.image });
+    });
+    console.log(`Mapped ${productMap.size} existing products.`);
+  }
+
+  // 2. Read Excel file
+  const filePath = path.join(__dirname, '../menu_update.xlsx');
   const workbook = xlsx.readFile(filePath);
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
   const data = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
@@ -26,36 +30,39 @@ async function sync() {
   let categories = [];
   let products = [];
   let currentCategory = "";
-  
-  const KNOWN_CATS = ['SALADS', 'SOUPS', 'STARTERS', 'WOK', 'TEMPURA', 'SASHIMI', 'TATAKI', 'CHEVISHI', 'NIGIRI', 'GUNKAN', 'TEMAKI', 'MAKI ROLL', 'AROMAKI ROLLS', 'CALIFORNIA ROLLS', 'WIN ROLLS', 'DYNAMITE ROLL', 'BEEF   ROLL', 'KANI  CRUNCHY', 'FIRE CRUNCHY', 'TUNA ROLL', 'VEGI ROLL', 'CHICKEN TEMPURA', 'FLAME SALMON', 'FLAME CRAB', 'LOBSTER ROLL', 'TRUFFLE', 'FRY ROLLS', 'BOXES', 'BOAT', 'DRINKS', 'DESSERTS', 'SAUCES'];
-
-  console.log(`Processing ${data.length} rows...`);
+  const KNOWN_CATS = ['SALADS', 'SOUPS', 'STARTERS', 'WOK', 'TEMPURA', 'SASHIMI', 'TATAKI', 'CHEVISHI', 'NIGIRI', 'GUNKAN', 'TEMAKI', 'MAKI ROLL', 'AROMAKI ROLLS', 'CALIFORNIA ROLLS', 'WIN ROLLS', 'DYNAMITE ROLL', 'BEEF ROLL', 'KANI CRUNCHY', 'FIRE CRUNCHY', 'TUNA ROLL', 'VEGI ROLL', 'CHICKEN TEMPURA', 'FLAME SALMON', 'FLAME CRAB', 'LOBSTER ROLL', 'TRUFFLE', 'FRY ROLLS', 'BOXES', 'BOAT', 'DRINKS', 'HOT DRINKS', 'EXPRESSO', 'FRESH JUICES', 'DESSERTS', 'SAUCES'];
 
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
     if (!row || row.length === 0) continue;
 
     const col0 = row[0] ? row[0].toString().trim() : '';
-    const col1 = row[1] ? row[1].toString().trim() : '';
+    const col4 = row[4] ? row[4].toString().trim() : '';
     const col5 = row[5] ? row[5].toString().trim() : '';
     const col6 = row[6] ? row[6].toString().trim() : '';
-    
-    if (col0.includes('PRICES') || col0.includes('RESTAURANT') || col0.includes('VAT')) continue;
+    const col7 = row[7] ? row[7].toString().trim() : '';
+    const col11 = row[11] ? row[11].toString().trim() : '';
 
-    // 1. Check if it's a CATEGORY
-    const normalizedCol0 = col0.toUpperCase().replace(/[^A-Z ]/g, '').trim();
-    const foundCat = KNOWN_CATS.find(c => {
-      const normalizedCat = c.toUpperCase().replace(/[^A-Z ]/g, '').trim();
-      return normalizedCol0 === normalizedCat || normalizedCol0.includes(normalizedCat);
-    });
+    if (col0.toUpperCase().includes('PRICES') || col0.toUpperCase().includes('RESTAURANT') || col0.toUpperCase().includes('VAT')) continue;
 
-    // A category row shouldn't have a price in col 6 (unless it's the header "PRICE")
-    const priceVal = parseFloat(col6);
+    // Category logic
+    const priceVal = parseFloat(col6) || parseFloat(col4);
     const hasPrice = !isNaN(priceVal) && priceVal > 0;
+    const normalizedCol0 = col0.toUpperCase().trim();
+    
+    // A category header typically has no price, no calories in col4/col5, and matches a known cat
+    const isCategoryHeader = !hasPrice && col0.length > 0 && col0.length < 50 && 
+                             KNOWN_CATS.some(c => {
+                               const nc = c.toUpperCase();
+                               return normalizedCol0 === nc || 
+                                      (normalizedCol0.includes(nc) && normalizedCol0.length < nc.length + 10);
+                             });
 
-    if (foundCat && !hasPrice && col0.length < 500) {
-      let catName = foundCat;
-      // Normalization
+    if (isCategoryHeader) {
+      const foundCat = KNOWN_CATS.find(c => normalizedCol0.includes(c.toUpperCase()));
+      let catName = foundCat || col0;
+      
+      // Map to standardized names
       if (catName.includes('SALADS')) catName = 'Salads';
       else if (catName.includes('SOUPS')) catName = 'Soups';
       else if (catName.includes('STARTERS')) catName = 'Starters';
@@ -71,100 +78,104 @@ async function sync() {
       else if (catName.includes('CALIFORNIA')) catName = 'California Rolls';
       else if (catName.includes('BOXES')) catName = 'Boxes';
       else if (catName.includes('BOAT')) catName = 'Sugi Boat';
-      else if (catName.includes('DRINKS')) catName = 'Cold Drinks';
+      else if (catName.includes('DRINKS') || catName.includes('JUICES')) catName = 'Cold Drinks';
+      else if (catName.includes('HOT DRINKS')) catName = 'Hot Drinks';
       else if (catName.includes('DESSERTS')) catName = 'Desserts';
       else if (catName.includes('SAUCES')) catName = 'Extra Sauces';
-      else {
-        // Keep name as is but title case
-        catName = catName.charAt(0).toUpperCase() + catName.slice(1).toLowerCase();
-      }
+      else catName = catName.charAt(0).toUpperCase() + catName.slice(1).toLowerCase();
 
       currentCategory = catName;
-      if (!categories.includes(currentCategory)) {
-        categories.push(currentCategory);
-      }
+      if (!categories.includes(currentCategory)) categories.push(currentCategory);
       continue;
     }
 
-    // 2. Check if it's a PRODUCT
-    const col8plus = row.slice(8).join(' ');
-    const hasArabic = /[\u0600-\u06FF]/.test(col8plus);
-    const hasEnglish = (col0 || col1);
-    
-    // Safety: if it's a header like "Calories" skip
-    if (col0.toLowerCase() === 'calories' || col1.toLowerCase() === 'calories') continue;
-
-    if (hasEnglish && (hasArabic || hasPrice || col5)) {
-      let name = col0 || col1;
+    // Product logic
+    const arabicName = col11 || row.slice(8).find(c => c && /[\u0600-\u06FF]/.test(c.toString())) || '';
+    if (col0 && (hasPrice || arabicName || col5)) {
+      let name = col0;
+      const lowerName = name.toLowerCase();
       
-      // Special case for sub-headers that are part of the name
-      if (col0 && col1 && col0 !== col1 && col0.length < 20 && !col0.includes('All served')) {
-        name = `${col0} ${col1}`;
+      // Smart price detection: ignore values containing 'Calories'
+      let finalPriceVal = 0;
+      const p6 = parseFloat(col6);
+      const p4 = parseFloat(col4);
+      
+      if (!isNaN(p6) && !col6.toLowerCase().includes('calorie')) {
+        finalPriceVal = p6;
+      } else if (!isNaN(p4) && !col4.toLowerCase().includes('calorie')) {
+        finalPriceVal = p4;
       }
 
-      let nameAr = row.slice(8).find(c => c && /[\u0600-\u06FF]/.test(c.toString())) || '';
-      let calories = col5;
+      let price = finalPriceVal > 0 ? `${finalPriceVal} SR` : '';
+      let calories = col5 || (col4.toLowerCase().includes('calorie') ? col4 : '');
       let description = '';
       let descriptionAr = '';
+      let portions = [];
 
-      // Description logic: check next row
+      // Detect Portions (ignore if values are calories)
+      const p1_raw = col4.toLowerCase().includes('calorie') ? NaN : parseFloat(col4);
+      const p2_raw = col6.toLowerCase().includes('calorie') ? NaN : parseFloat(col6);
+      
+      if (!isNaN(p1_raw) && !isNaN(p2_raw) && p1_raw !== p2_raw) {
+        portions = [
+          { name: 'Full Order', nameAr: 'طلب كامل', price: `${p1_raw} SR`, pieces: 8, tags: ['Best Value'] },
+          { name: 'Half Order', nameAr: 'نصف طلب', price: `${p2_raw} SR`, pieces: 4 }
+        ];
+        price = `${p2_raw} SR`;
+      }
+
+      // Description logic
       const nextRow = data[i+1];
       if (nextRow) {
         const nextCol0 = nextRow[0] ? nextRow[0].toString().trim() : '';
-        const nextCol1 = nextRow[1] ? nextRow[1].toString().trim() : '';
         const nextCol6 = nextRow[6] ? nextRow[6].toString().trim() : '';
-        const nextPrice = parseFloat(nextCol6);
-        const nextHasPrice = !isNaN(nextPrice) && nextPrice > 0;
-        const nextArabic = nextRow.slice(8).find(c => c && /[\u0600-\u06FF]/.test(c.toString()));
-
-        // If next row has text but no price and is not a known category, it's a description
-        const nextCol0Upper = nextCol0.toUpperCase();
-        const nextIsCat = KNOWN_CATS.some(c => nextCol0Upper.includes(c.toUpperCase()));
-
-        if (!nextHasPrice && (nextCol0 || nextCol1) && !nextIsCat && !nextCol0.includes('Calories')) {
-          description = nextCol0 || nextCol1;
-          descriptionAr = nextArabic || '';
+        const nextHasPrice = !isNaN(parseFloat(nextCol6)) && parseFloat(nextCol6) > 0;
+        if (!nextHasPrice && nextCol0 && nextCol0.length > 5 && !KNOWN_CATS.some(c => nextCol0.toUpperCase().includes(c))) {
+          description = nextCol0;
+          descriptionAr = nextRow.slice(8).find(c => c && /[\u0600-\u06FF]/.test(c.toString())) || '';
           i++;
         }
       }
 
+      // Resolve ID and Image from mapping
+      const existing = productMap.get(lowerName);
+      const id = existing ? existing.id : `prod-${Date.now()}-${lowerName.replace(/[^a-z0-9]/g, '-')}`;
+      const image = existing ? existing.image : '';
+
       products.push({
-        id: `prod-${products.length + 1}-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
-        name: name,
-        name_ar: nameAr.toString().trim(),
-        description: description,
-        description_ar: descriptionAr.toString().trim(),
-        price: hasPrice ? `${priceVal} SR` : '',
-        category: currentCategory || 'Other',
-        calories: calories ? calories.replace(/calories/gi, '').trim() : '',
-        tags: [],
-        image: '',
-        allergens: []
+        id, name, name_ar: arabicName.toString().trim(),
+        description, description_ar: descriptionAr.toString().trim(),
+        price, category: currentCategory || 'Other',
+        calories: calories ? calories.toString().replace(/calories/gi, '').trim() : '',
+        tags: [], image, portions, allergens: []
       });
     }
   }
 
-  console.log(`Found ${categories.length} categories and ${products.length} products.`);
+  // 2.5 Deduplicate products by ID
+  const uniqueProducts = [];
+  const seenIds = new Set();
+  for (const p of products) {
+    if (!seenIds.has(p.id)) {
+      uniqueProducts.push(p);
+      seenIds.add(p.id);
+    }
+  }
+  console.log(`Finalized ${uniqueProducts.length} unique products for upload.`);
 
-  // Sync to Supabase
-  console.log('Cleaning up existing data...');
-  await supabase.from('products').delete().neq('id', '0'); // Delete all products
-  await supabase.from('categories').delete().neq('name', '0'); // Delete all categories
-
-  console.log('Syncing categories...');
+  // 3. Sync to Supabase
+  console.log('Upserting categories...');
   const categoryData = categories.map((name, index) => ({ name, order: index }));
-  const { error: catError } = await supabase.from('categories').insert(categoryData);
-  if (catError) console.error('Error syncing categories:', catError);
+  await supabase.from('categories').upsert(categoryData, { onConflict: 'name' });
 
-  console.log('Syncing products...');
-  // Insert in batches of 50 to avoid issues
-  for (let i = 0; i < products.length; i += 50) {
-    const batch = products.slice(i, i + 50);
-    const { error: prodError } = await supabase.from('products').insert(batch);
-    if (prodError) console.error(`Error syncing products batch ${i/50 + 1}:`, prodError);
+  console.log(`Upserting ${uniqueProducts.length} products...`);
+  for (let i = 0; i < uniqueProducts.length; i += 50) {
+    const batch = uniqueProducts.slice(i, i + 50);
+    const { error } = await supabase.from('products').upsert(batch, { onConflict: 'id' });
+    if (error) console.error(`Error in batch ${i/50 + 1}:`, error.message);
   }
 
-  console.log('Sync complete!');
+  console.log('Sync process completed successfully!');
 }
 
 sync().catch(console.error);

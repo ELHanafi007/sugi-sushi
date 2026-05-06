@@ -10,6 +10,7 @@ export interface Dish {
   tags: string[];
   image?: string;
   allergens?: string[];
+  portions?: { name: string; nameAr: string; price: string; pieces: number; tags?: string[] }[];
 }
 
 export const CATEGORIES = [
@@ -889,9 +890,13 @@ export const menuData: Dish[] = [
     nameAr: 'جمبري تمبورا, افوكادو, جبنة',
     description: 'Shrimp tempura, avocado, cheese, cheves',
     descriptionAr: 'جمبري تمبورا, افوكادو, جبنة, سمسم',
-    price: '24 SR',
+    price: '38 SR',
     category: 'California Rolls',
-    tags: ['Seafood'],
+    tags: ['Seafood', 'Signature'],
+    portions: [
+      { name: 'Full Order', nameAr: 'طلب كامل', price: '38 SR', pieces: 8, tags: ['Best Value'] },
+      { name: 'Half Order', nameAr: 'نصف طلب', price: '24 SR', pieces: 4 }
+    ],
     allergens: ['Shellfish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
@@ -915,6 +920,21 @@ export const menuData: Dish[] = [
     category: 'California Rolls',
     calories: '190 cal',
     tags: ['Premium', 'Seafood'],
+    allergens: ['Shellfish', 'Dairy'],
+  },
+  {
+    id: 'california-005',
+    name: 'Classic California',
+    nameAr: 'كلاسيك كاليفورنيا',
+    description: 'Crab, avocado, cheese',
+    descriptionAr: 'كراب, افوكادو, جبنة',
+    price: '26 SR',
+    category: 'California Rolls',
+    tags: ['Classic', 'Seafood'],
+    portions: [
+      { name: 'Full Order', nameAr: 'طلب كامل', price: '38 SR', pieces: 8, tags: ['Best Value'] },
+      { name: 'Half Order', nameAr: 'نصف طلب', price: '24 SR', pieces: 4 }
+    ],
     allergens: ['Shellfish', 'Dairy'],
   },
   {

@@ -343,8 +343,13 @@ export default function ProductListClient({
                   </div>
 
                   {/* Price */}
-                  <div>
-                    {product.price ? (
+                  <div className="flex flex-col">
+                    {product.portions && product.portions.length > 0 ? (
+                      <div className="flex flex-col">
+                        <span className="text-[13px] text-gold/70 font-mono">Portions ({product.portions.length})</span>
+                        <span className="text-[9px] text-white/20 uppercase font-bold tracking-tighter">Slider Active</span>
+                      </div>
+                    ) : product.price ? (
                       <span className="text-[13px] text-gold/70 font-mono">{product.price}</span>
                     ) : (
                       <span className="text-[11px] text-amber-400/50 flex items-center gap-1">

@@ -32,6 +32,22 @@ export default function HomeClient({
   initialMenuData: Dish[], 
   initialCategories: string[] 
 }) {
+  // Prototype Injection: Ensure our dual-price logic is present even if fetched from database
+  const menuDataWithPrototype = initialMenuData.map(dish => {
+    if (dish.name?.toLowerCase().includes('california') || dish.nameAr?.includes('كاليفورنيا')) {
+      if (!dish.portions) {
+        return {
+          ...dish,
+          portions: [
+            { name: 'Full Order', nameAr: 'طلب كامل', price: '38 SR', pieces: 8, tags: ['Best Value'] },
+            { name: 'Half Order', nameAr: 'نصف طلب', price: '24 SR', pieces: 4 }
+          ]
+        };
+      }
+    }
+    return dish;
+  });
+
   const { activeTab, setActiveTab } = useLanguage();
   const [isLetterbox, setIsLetterbox] = useState(false);
   const { scrollYProgress } = useScroll();
@@ -49,26 +65,33 @@ export default function HomeClient({
     document.body.style.pointerEvents = 'auto';
   }, [activeTab]);
 
-  // Letterbox trigger based on scroll depth
+  // Letterbox trigger based on scroll depth (DOM-direct for performance)
   useEffect(() => {
     if (activeTab !== 'home') {
-      setIsLetterbox(false);
+      document.documentElement.classList.remove('letterbox-active');
       return;
     }
     
     const checkScroll = () => {
       const scrollPos = window.scrollY;
       const windowHeight = window.innerHeight;
-      setIsLetterbox(scrollPos > windowHeight * 0.5);
+      if (scrollPos > windowHeight * 0.5) {
+        document.documentElement.classList.add('letterbox-active');
+      } else {
+        document.documentElement.classList.remove('letterbox-active');
+      }
     };
-    checkScroll();
-
+    
     window.addEventListener('scroll', checkScroll, { passive: true });
-    return () => window.removeEventListener('scroll', checkScroll);
+    checkScroll();
+    return () => {
+      window.removeEventListener('scroll', checkScroll);
+      document.documentElement.classList.remove('letterbox-active');
+    };
   }, [activeTab]);
 
   return (
-    <main className={`relative min-h-screen bg-bg overflow-x-hidden pb-[104px] ${isLetterbox ? 'letterbox-active' : ''}`}>
+    <main className={`relative min-h-screen bg-bg overflow-x-hidden pb-[104px]`}>
       {/* Cinematic Shutter — Appears on tab change */}
       <AnimatePresence>
         <motion.div 
@@ -135,7 +158,7 @@ export default function HomeClient({
 
             {/* Scene 6: Full Experience */}
             <div className="relative z-10 bg-bg pt-20">
-              <MenuSection initialMenuData={initialMenuData} />
+              <MenuSection initialMenuData={menuDataWithPrototype} />
             </div>
           </motion.div>
         )}
@@ -150,7 +173,7 @@ export default function HomeClient({
           >
             <StrictMenu 
               onTabChange={setActiveTab} 
-              initialMenuData={initialMenuData}
+              initialMenuData={menuDataWithPrototype}
               initialCategories={initialCategories}
             />
           </motion.div>

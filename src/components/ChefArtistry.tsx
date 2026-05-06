@@ -86,8 +86,8 @@ export default function ChefArtistry() {
 
             {/* Display Title */}
             <motion.h2 
-              initial={{ opacity: 0, scale: 0.95, filter: 'blur(30px)' }}
-              whileInView={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
               className="text-display liquid-gold mb-8 md:mb-16 drop-shadow-[0_20px_60px_rgba(212,175,55,0.3)] !leading-[0.8] !text-3xl sm:!text-4xl md:!text-7xl lg:!text-9xl"

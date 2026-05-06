@@ -48,6 +48,7 @@ export async function upsertProduct(product: Dish) {
       category: product.category,
       calories: product.calories || '',
       tags: product.tags || [],
+      portions: product.portions || [],
       image: product.image || '',
       allergens: product.allergens || []
     };

@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import Image from 'next/image';
 import { useLanguage, NavTab } from '@/context/LanguageContext';
@@ -9,133 +9,82 @@ interface HeroProps {
   onTabChange: (tab: NavTab) => void;
 }
 
-/**
- * SUGI SUSHI — Cinematic Hero (Transition Edition)
- * 
- * This version is optimized for the Logo-to-Nav morphing transition.
- * The central text is removed to let the brand mark take center stage.
- */
-
 export default function Hero({ onTabChange }: HeroProps) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-300, 300], [5, -5]), { stiffness: 100, damping: 30 });
-  const rotateY = useSpring(useTransform(x, [-300, 300], [-5, 5]), { stiffness: 100, damping: 30 });
-
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"]
   });
 
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.25]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, -150]);
-  const blurValue = useTransform(scrollYProgress, [0, 0.5], ['blur(0px)', 'blur(20px)']);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    x.set(e.clientX - centerX);
-    y.set(e.clientY - centerY);
-  };
+  const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
     <section 
       ref={containerRef} 
-      onMouseMove={handleMouseMove}
-      className="relative h-[115vh] w-full flex items-center justify-center overflow-hidden bg-bg"
+      className="relative h-[100vh] w-full flex items-center justify-center overflow-hidden bg-bg"
     >
-      {/* ─── Parallax Background ─── */}
+      {/* ─── Cinematic Background ─── */}
       <motion.div 
-        style={{ scale: heroScale, opacity: heroOpacity, filter: blurValue }}
+        style={{ opacity }}
         className="absolute inset-0 z-0"
       >
         <motion.div
-          animate={{ scale: [1, 1.05, 1], rotate: [0, 0.5, 0] }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 w-full h-full"
+          style={{ y: imageY }}
+          className="absolute inset-0 w-full h-[120%] -top-[10%]"
         >
           <Image
             src="/media/optimized/hero-wallpaper-alt-0.jpg"
             alt="Sugi Sushi"
             fill
             priority
-            className="object-cover brightness-[0.35] contrast-[1.2] saturate-[1.1]"
+            className="object-cover brightness-[0.35] saturate-[0.8] contrast-[1.1]"
           />
         </motion.div>
         
-        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/20 to-bg" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
+        {/* Cinematic Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-bg" />
+        <div className="absolute inset-0 bg-gradient-to-r from-bg/30 via-transparent to-bg/30" />
       </motion.div>
 
-      {/* ─── Content Stage ─── */}
+      {/* ─── CTA Button at Bottom ─── */}
       <motion.div
-        style={{ 
-          y: contentY, 
-          rotateX, 
-          rotateY,
-          transformStyle: "preserve-3d",
-          willChange: "transform"
-        }}
-        className="relative z-20 flex flex-col items-center text-center px-6"
+        style={{ opacity }}
+        className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-8"
       >
-        {/* Masterpiece Text Brand Mark */}
-        {/* The brand logo is now handled by the Navbar's scroll-morph engine */}
-        <div className="h-[45vh] mb-20 flex flex-col items-center justify-center relative">
-          {/* Ambient Glow */}
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.1, 0.25, 0.1]
-            }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent_70%)] blur-3xl pointer-events-none"
-          />
-        </div>
-
-        {/* Masterpiece CTA Button */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2, delay: 1.2, ease: [0.19, 1, 0.22, 1] }}
-          style={{ willChange: "transform, opacity" }}
+          transition={{ duration: 1.5, delay: 1.2, ease: [0.19, 1, 0.22, 1] }}
         >
           <button 
             onClick={() => onTabChange('menu')}
-            className="group relative px-10 py-4 overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-sm transition-all duration-700 hover:bg-white/10 hover:border-gold/50 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+            className="group relative px-14 py-5 overflow-hidden rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md transition-all duration-700 hover:bg-gold hover:border-gold shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
           >
-            <div className="relative z-10 flex items-center justify-center">
-              <span className="text-white/90 text-[10px] md:text-xs uppercase tracking-[0.4em] font-medium transition-all duration-700 group-hover:tracking-[0.5em] group-hover:text-gold">
-                {t('hero.cta')}
-              </span>
-            </div>
-            {/* Elegant sweep effect */}
-            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-1000 group-hover:translate-x-full" />
+            <span className="relative z-10 text-white text-[10px] md:text-xs uppercase tracking-[0.5em] font-black group-hover:text-bg transition-colors duration-500">
+              {t('hero.cta')}
+            </span>
+            <div className="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-[0.19,1,0.22,1]" />
           </button>
         </motion.div>
-      </motion.div>
 
-      {/* ─── Scroll Indicator ─── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 2 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-6"
-      >
-        <span className="text-mono text-[8px] text-white/45 tracking-[0.4em] uppercase">{t('hero.scroll')}</span>
-        <div className="relative w-[1px] h-20 bg-white/5 overflow-hidden">
-          <motion.div 
-            animate={{ y: ['-100%', '200%'] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent via-gold/50 to-transparent"
-          />
-        </div>
+        {/* Scroll Cue */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          transition={{ delay: 2, duration: 1 }}
+          className="flex flex-col items-center gap-2"
+        >
+          <div className="w-[1px] h-10 bg-gradient-to-b from-gold/50 to-transparent relative overflow-hidden">
+            <motion.div 
+              animate={{ y: ['-100%', '100%'] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 bg-white/40"
+            />
+          </div>
+        </motion.div>
       </motion.div>
     </section>
   );

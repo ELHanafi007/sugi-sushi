@@ -56,6 +56,7 @@ export async function getMenu(): Promise<MenuData> {
           category: p.category,
           calories: p.calories,
           tags: p.tags || [],
+          portions: p.portions || [],
           image: p.image,
           allergens: p.allergens || []
         };

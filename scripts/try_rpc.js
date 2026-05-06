@@ -6,13 +6,13 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, serviceKey);
 
-async function checkSchema() {
-  const { data, error } = await supabase.from('products').select('*').limit(1);
+async function tryRpc() {
+  const { data, error } = await supabase.rpc('exec_sql', { sql: 'ALTER TABLE products ADD COLUMN IF NOT EXISTS portions JSONB;' });
   if (error) {
-    console.error('Error fetching product:', error);
+    console.log('RPC exec_sql not available or error:', error.message);
   } else {
-    console.log('Columns in products table:', Object.keys(data[0] || {}));
+    console.log('Successfully added portions column via RPC!');
   }
 }
 
-checkSchema().catch(console.error);
+tryRpc().catch(console.error);

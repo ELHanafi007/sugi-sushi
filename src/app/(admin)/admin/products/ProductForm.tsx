@@ -31,6 +31,7 @@ export default function ProductForm({
     category: product?.category || defaultCategory,
     calories: product?.calories || '',
     tags: product?.tags || [],
+    portions: product?.portions || [],
     allergens: product?.allergens || [],
     image: product?.image || '',
   });
@@ -39,7 +40,7 @@ export default function ProductForm({
   const [newAllergen, setNewAllergen] = useState('');
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [activeTab, setActiveTab] = useState<'basic' | 'media' | 'tags'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'media' | 'tags' | 'portions'>('basic');
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -126,6 +127,7 @@ export default function ProductForm({
 
   const tabs = [
     { id: 'basic' as const, label: 'Details' },
+    { id: 'portions' as const, label: 'Portions' },
     { id: 'media' as const, label: 'Image' },
     { id: 'tags' as const, label: 'Tags & Allergies' },
   ];
@@ -447,7 +449,130 @@ export default function ProductForm({
           </div>
         </div>
       )}
-    </form>
+      {/* ─── Portions Tab ─── */}
+      {activeTab === 'portions' && (
+        <div className="space-y-6">
+          <div className="p-4 bg-amber-400/5 border border-amber-400/10 rounded-xl flex gap-3">
+            <Check className="text-amber-400 flex-shrink-0" size={18} />
+            <p className="text-[12px] text-amber-400/70 leading-relaxed">
+              If portions are defined, the main price field will be ignored and the product will use the "Slider Scale" UX.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {formData.portions?.map((portion, idx) => (
+              <div key={idx} className="p-4 bg-white/[0.02] border border-white/[0.06] rounded-2xl relative group">
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    const newPortions = [...(formData.portions || [])];
+                    newPortions.splice(idx, 1);
+                    setFormData({ ...formData, portions: newPortions });
+                  }}
+                  className="absolute top-4 right-4 p-1 text-white/10 hover:text-red-400 transition-colors"
+                >
+                  <X size={14} />
+                </button>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <FieldGroup label={`Portion ${idx + 1} Name (EN)`}>
+                    <input 
+                      type="text" 
+                      value={portion.name}
+                      onChange={(e) => {
+                        const newPortions = [...(formData.portions || [])];
+                        newPortions[idx] = { ...portion, name: e.target.value };
+                        setFormData({ ...formData, portions: newPortions });
+                      }}
+                      className="admin-input"
+                      placeholder="e.g. Full Order"
+                    />
+                  </FieldGroup>
+                  <FieldGroup label="Name (AR)" align="right">
+                    <input 
+                      type="text" 
+                      dir="rtl"
+                      value={portion.nameAr}
+                      onChange={(e) => {
+                        const newPortions = [...(formData.portions || [])];
+                        newPortions[idx] = { ...portion, nameAr: e.target.value };
+                        setFormData({ ...formData, portions: newPortions });
+                      }}
+                      className="admin-input text-right font-arabic"
+                      placeholder="الاسم بالعربية"
+                    />
+                  </FieldGroup>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <FieldGroup label="Price">
+                    <input 
+                      type="text" 
+                      value={portion.price}
+                      onChange={(e) => {
+                        const newPortions = [...(formData.portions || [])];
+                        newPortions[idx] = { ...portion, price: e.target.value };
+                        setFormData({ ...formData, portions: newPortions });
+                      }}
+                      className="admin-input"
+                      placeholder="e.g. 38 SR"
+                    />
+                  </FieldGroup>
+                  <FieldGroup label="Pieces">
+                    <input 
+                      type="number" 
+                      value={portion.pieces}
+                      onChange={(e) => {
+                        const newPortions = [...(formData.portions || [])];
+                        newPortions[idx] = { ...portion, pieces: parseInt(e.target.value) || 0 };
+                        setFormData({ ...formData, portions: newPortions });
+                      }}
+                      className="admin-input"
+                      placeholder="e.g. 8"
+                    />
+                  </FieldGroup>
+                  <div className="md:col-span-1 flex items-end">
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        const newPortions = [...(formData.portions || [])];
+                        const tags = portion.tags || [];
+                        if (tags.includes('Best Value')) {
+                          newPortions[idx] = { ...portion, tags: tags.filter(t => t !== 'Best Value') };
+                        } else {
+                          newPortions[idx] = { ...portion, tags: [...tags, 'Best Value'] };
+                        }
+                        setFormData({ ...formData, portions: newPortions });
+                      }}
+                      className={`w-full py-2.5 rounded-xl border text-[11px] font-bold transition-all ${
+                        portion.tags?.includes('Best Value') 
+                          ? 'bg-gold/20 border-gold/30 text-gold' 
+                          : 'bg-white/[0.02] border-white/[0.06] text-white/20'
+                      }`}
+                    >
+                      Best Value
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <button 
+              type="button"
+              onClick={() => {
+                setFormData({ 
+                  ...formData, 
+                  portions: [...(formData.portions || []), { name: 'New Portion', nameAr: 'قسم جديد', price: '', pieces: 0 }] 
+                });
+              }}
+              className="w-full py-4 border-2 border-dashed border-white/[0.05] rounded-2xl text-white/20 hover:text-gold hover:border-gold/20 hover:bg-gold/[0.02] transition-all flex items-center justify-center gap-2"
+            >
+              <Plus size={16} />
+              Add Portion
+            </button>
+          </div>
+        </div>
+      )}
   );
 }
 

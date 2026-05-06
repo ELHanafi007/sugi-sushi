@@ -124,8 +124,8 @@ return (
           {/* The Core Quote */}
           <div className="max-w-5xl mx-auto px-4 md:px-8">
             <motion.h2 
-              initial={{ opacity: 0, y: 60, filter: 'blur(15px)' }}
-              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
               className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl xl:text-8xl text-white/95 font-serif font-light leading-[1.1] md:leading-[1.15] tracking-tight italic"
