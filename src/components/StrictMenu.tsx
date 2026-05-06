@@ -577,7 +577,7 @@ export default function StrictMenu({
                       </motion.span>
                     )}
                   </AnimatePresence>
-                  <span className={`text-lg md:text-3xl font-serif italic transition-all duration-700 leading-none ${
+                  <span className={`text-[10px] md:text-xs font-mono uppercase tracking-[0.2em] transition-all duration-700 leading-relaxed ${
                     isActive ? 'text-gold shimmer-gold' : 'text-white/60'
                   }`}>
                     {t(`menu.cat.${cat}`)}
