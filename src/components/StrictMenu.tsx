@@ -389,8 +389,10 @@ function DishModal({
                         sizes="(max-width: 768px) 192px, 224px"
                         className="object-cover brightness-[0.4] group-hover:scale-110 transition-transform duration-1000" 
                       />
-                      <div className="absolute inset-0 flex items-center justify-center p-4">
-                        <span className="text-white text-xs md:text-sm font-serif italic text-center leading-tight">{cat}</span>
+                      <div className="absolute inset-0 flex flex-col justify-end p-5 bg-gradient-to-t from-black/90 via-black/20 to-transparent">
+                        <span className="text-white/80 text-[9px] md:text-[11px] font-mono uppercase tracking-[0.3em] leading-relaxed">
+                          {cat}
+                        </span>
                       </div>
                     </motion.button>
                   ))}
