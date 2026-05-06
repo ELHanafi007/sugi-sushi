@@ -573,6 +573,7 @@ export default function ProductForm({
           </div>
         </div>
       )}
+    </form>
   );
 }
 
