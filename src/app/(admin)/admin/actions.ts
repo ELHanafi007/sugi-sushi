@@ -134,26 +134,20 @@ export async function updateCategories(categories: string[]) {
 
   const supabase = getSupabaseAdmin();
   
-  const { data: existing } = await supabase.from('categories').select('name');
-  const existingNames = (existing || []).map(c => c.name);
-  
-  const toDelete = existingNames.filter(name => !categories.includes(name));
-  
-  if (toDelete.length > 0) {
-    await supabase.from('categories').delete().in('name', toDelete);
-  }
+  // Delete all existing categories to avoid unique constraint issues
+  await supabase.from('categories').delete().not('name', 'eq', 'SOME_IMPOSSIBLE_NAME');
 
-  const upserts = categories.map((name, index) => ({
+  const inserts = categories.map((name, index) => ({
     name,
     order: index
   }));
 
   const { error } = await supabase
     .from('categories')
-    .upsert(upserts, { onConflict: 'name' });
+    .insert(inserts);
 
   if (error) {
-    console.error('Error updating categories:', error);
+    console.error('Error inserting categories:', error);
     return false;
   }
   

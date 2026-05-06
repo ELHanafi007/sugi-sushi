@@ -129,7 +129,8 @@ async function syncFromMd() {
 
   // Sync Categories
   console.log('Syncing categories...');
-  await supabase.from('categories').upsert(categories.map((c, i) => ({ name: c, order: i })), { onConflict: 'name' });
+  await supabase.from('categories').delete().not('name', 'eq', 'SOME_IMPOSSIBLE_NAME');
+  await supabase.from('categories').insert(categories.map((c, i) => ({ name: c, order: i })));
 
   // Sync Products
   console.log(`Syncing ${uniqueProducts.length} products...`);
