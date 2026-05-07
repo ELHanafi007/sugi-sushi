@@ -207,12 +207,6 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
               </button>
             </form>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
           <div className="p-4 rounded-xl bg-red-400/[0.02] border border-red-400/[0.06] space-y-2">
             <div className="flex items-center gap-2 text-red-400/40">
               <AlertTriangle size={14} />
