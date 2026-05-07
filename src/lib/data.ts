@@ -15,7 +15,7 @@ export async function getMenu(): Promise<MenuData> {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error('CRITICAL: Supabase credentials missing in getMenu');
-    return { categories: CATEGORIES, products: menuData };
+    return { categories: CATEGORIES, products: menuData, categoryData: [] };
   }
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
 
