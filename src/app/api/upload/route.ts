@@ -5,11 +5,14 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const productId = formData.get('productId') as string;
+    const type = formData.get('type') as string; // 'product' or 'category'
+    const id = formData.get('id') as string;
 
-    if (!file || !productId) {
-      return NextResponse.json({ success: false, error: 'Missing file or product ID' }, { status: 400 });
+    if (!file || !id) {
+      return NextResponse.json({ success: false, error: 'Missing file or ID' }, { status: 400 });
     }
+
+    const bucketName = type === 'category' ? 'category-images' : 'product-images';
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -19,10 +22,10 @@ export async function POST(request: Request) {
     });
 
     const fileExt = file.name.split('.').pop();
-    const fileName = `${productId}-${Date.now()}.${fileExt}`;
+    const fileName = `${id}-${Date.now()}.${fileExt}`;
 
     const { data, error } = await supabase.storage
-      .from('product-images')
+      .from(bucketName)
       .upload(fileName, file, {
         cacheControl: '3600',
         upsert: true
@@ -34,7 +37,7 @@ export async function POST(request: Request) {
     }
 
     const { data: urlData } = supabase.storage
-      .from('product-images')
+      .from(bucketName)
       .getPublicUrl(data.path);
 
     return NextResponse.json({ success: true, url: urlData.publicUrl });

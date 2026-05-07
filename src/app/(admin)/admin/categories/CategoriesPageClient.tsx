@@ -17,6 +17,7 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
   const [categories, setCategories] = useState(initialCategories);
   const [newCategory, setNewCategory] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [saved, setSaved] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -47,6 +48,34 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
     setCategories(categories.map(c => c.name === name ? { ...c, image } : c));
     setHasChanges(true);
     setSaved(false);
+  };
+
+  const handleFileUpload = async (name: string, file: File) => {
+    if (!file) return;
+    
+    setUploadingId(name);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'category');
+    formData.append('id', name.toLowerCase().replace(/\s+/g, '-'));
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        handleUpdateImage(name, data.url);
+      } else {
+        alert('Upload failed: ' + data.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Upload failed');
+    } finally {
+      setUploadingId(null);
+    }
   };
 
   const handleSave = async () => {
@@ -161,18 +190,42 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
                 </div>
 
                 <div className="flex items-center gap-4 pl-7">
-                  {cat.image && (
-                    <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/10">
+                  <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-white/[0.02] flex-shrink-0">
+                    {cat.image ? (
                       <img src={cat.image} alt={cat.name} className="object-cover w-full h-full" />
-                    </div>
-                  )}
-                  <input 
-                    type="text"
-                    value={cat.image}
-                    onChange={(e) => handleUpdateImage(cat.name, e.target.value)}
-                    placeholder="Image URL (e.g. https://...)"
-                    className="flex-1 admin-input text-[11px] py-2"
-                  />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white/5">
+                        <Plus size={16} />
+                      </div>
+                    )}
+                    {uploadingId === cat.name && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                        <div className="w-4 h-4 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex-1 flex items-center gap-2">
+                    <input 
+                      type="text"
+                      value={cat.image}
+                      onChange={(e) => handleUpdateImage(cat.name, e.target.value)}
+                      placeholder="Image URL or upload..."
+                      className="flex-1 admin-input text-[11px] py-2"
+                    />
+                    <label className="cursor-pointer p-2 rounded-lg bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] transition-all text-white/40 hover:text-white/60">
+                      <Plus size={14} />
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleFileUpload(cat.name, file);
+                        }}
+                      />
+                    </label>
+                  </div>
                 </div>
               </Reorder.Item>
             ))}
@@ -207,6 +260,7 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
               </button>
             </form>
           </div>
+
           <div className="p-4 rounded-xl bg-red-400/[0.02] border border-red-400/[0.06] space-y-2">
             <div className="flex items-center gap-2 text-red-400/40">
               <AlertTriangle size={14} />
