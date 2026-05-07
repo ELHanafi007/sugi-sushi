@@ -190,41 +190,46 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
                 </div>
 
                 <div className="flex items-center gap-4 pl-7">
-                  <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-white/[0.02] flex-shrink-0">
+                  <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/10 bg-white/[0.02] flex-shrink-0 group/img">
                     {cat.image ? (
-                      <img src={cat.image} alt={cat.name} className="object-cover w-full h-full" />
+                      <>
+                        <img src={cat.image} alt={cat.name} className="object-cover w-full h-full" />
+                        <button 
+                          onClick={() => handleUpdateImage(cat.name, '')}
+                          className="absolute inset-0 bg-red-500/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white"
+                          title="Remove Image"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </>
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-white/5">
-                        <Plus size={16} />
-                      </div>
+                      <label className="w-full h-full flex flex-col items-center justify-center text-white/10 hover:text-gold/50 hover:bg-gold/5 cursor-pointer transition-all gap-1">
+                        <Plus size={18} />
+                        <span className="text-[8px] font-mono uppercase tracking-widest">Upload</span>
+                        <input 
+                          type="file" 
+                          className="hidden" 
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleFileUpload(cat.name, file);
+                          }}
+                        />
+                      </label>
                     )}
                     {uploadingId === cat.name && (
-                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                        <div className="w-4 h-4 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+                      <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center gap-2">
+                        <div className="w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+                        <span className="text-[7px] text-gold font-mono uppercase tracking-widest animate-pulse">Wait</span>
                       </div>
                     )}
                   </div>
                   
-                  <div className="flex-1 flex items-center gap-2">
-                    <input 
-                      type="text"
-                      value={cat.image}
-                      onChange={(e) => handleUpdateImage(cat.name, e.target.value)}
-                      placeholder="Image URL or upload..."
-                      className="flex-1 admin-input text-[11px] py-2"
-                    />
-                    <label className="cursor-pointer p-2 rounded-lg bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] transition-all text-white/40 hover:text-white/60">
-                      <Plus size={14} />
-                      <input 
-                        type="file" 
-                        className="hidden" 
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleFileUpload(cat.name, file);
-                        }}
-                      />
-                    </label>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] text-white/20 font-mono uppercase tracking-widest">Category Photo</span>
+                    <p className="text-[11px] text-white/40 italic">
+                      {cat.image ? 'Custom image active' : 'Using default stock image'}
+                    </p>
                   </div>
                 </div>
               </Reorder.Item>
