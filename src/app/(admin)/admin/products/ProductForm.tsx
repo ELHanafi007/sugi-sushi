@@ -62,7 +62,8 @@ export default function ProductForm({
     try {
       const formDataUpload = new FormData();
       formDataUpload.append('file', file);
-      formDataUpload.append('productId', formData.id || `prod-${Date.now()}`);
+      formDataUpload.append('type', 'product');
+      formDataUpload.append('id', formData.id || `prod-${Date.now()}`);
 
       const res = await fetch('/api/upload', {
         method: 'POST',
@@ -74,7 +75,7 @@ export default function ProductForm({
       if (data.success) {
         setFormData({ ...formData, image: data.url });
       } else {
-        alert('Failed to upload image');
+        alert('Failed to upload image: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Upload error:', error);
@@ -272,11 +273,18 @@ export default function ProductForm({
           <div className="aspect-[16/10] max-w-lg mx-auto rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden relative group">
             {formData.image ? (
               <>
-                <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                <img 
+                  src={formData.image} 
+                  alt="Preview" 
+                  className="w-full h-full object-cover" 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
+                  }}
+                />
                 <button 
                   type="button"
                   onClick={() => setFormData({ ...formData, image: '' })}
-                  className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-xl text-white/60 hover:text-white transition-all"
+                  className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-xl text-white/60 hover:text-white transition-all opacity-0 group-hover:opacity-100"
                 >
                   <X size={14} />
                 </button>
@@ -317,20 +325,6 @@ export default function ProductForm({
                 </>
               )}
             </button>
-
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-white/[0.04]" />
-              <span className="text-[10px] font-mono text-white/15 uppercase tracking-widest">or paste url</span>
-              <div className="flex-1 h-px bg-white/[0.04]" />
-            </div>
-
-            <input 
-              type="url" 
-              placeholder="https://..."
-              value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-              className="admin-input text-[12px]"
-            />
 
             <p className="text-[10px] text-white/15 text-center">
               JPG, PNG, or WebP • Max 5MB
