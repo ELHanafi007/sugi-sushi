@@ -709,12 +709,10 @@ export default function StrictMenu({
                   className="group relative flex items-center gap-6 p-6 rounded-[2.5rem] luxury-card dish-card-tap cursor-pointer overflow-hidden z-20"
                 >
                   <div className="w-24 h-24 rounded-3xl overflow-hidden flex-shrink-0 bg-white/[0.04] shadow-2xl">
-                    <Image 
+                    <img 
                       src={dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE} 
                       alt={dish.name} 
-                      fill 
-                      sizes="96px"
-                      className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-[0.8]"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=40';
                       }}

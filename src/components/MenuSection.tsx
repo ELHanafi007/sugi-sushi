@@ -100,7 +100,7 @@ const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; l
   
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
-  const imageUrl = dish.image || dynamicCategoryImages[dish.category] || DEFAULT_IMAGE;
+  const imageUrl = dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE;
   
   const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
 
@@ -118,12 +118,10 @@ const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; l
       }}
     >
       <div className="absolute inset-0 overflow-hidden">
-        <Image
+        <img
           src={imageUrl}
           alt={name}
-          fill
-          sizes="(max-width: 1024px) 100vw, 1200px"
-          className="object-cover transition-transform duration-[8s] group-hover:scale-110 saturate-[1.2]"
+          className="w-full h-full object-cover transition-transform duration-[8s] group-hover:scale-110 saturate-[1.2]"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
           }}
@@ -200,7 +198,7 @@ const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; l
 const SecondaryDishCard = ({ dish, lang, idx, dynamicCategoryImages }: { dish: Dish; lang: 'en' | 'ar'; idx: number; dynamicCategoryImages: Record<string, string> }) => {
   const { t, setActiveTab, setPendingDish } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
-  const imageUrl = dish.image || dynamicCategoryImages[dish.category] || DEFAULT_IMAGE;
+  const imageUrl = dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE;
 
   return (
     <motion.div 
@@ -218,12 +216,10 @@ const SecondaryDishCard = ({ dish, lang, idx, dynamicCategoryImages }: { dish: D
       }}
     >
       <div className="absolute inset-0 overflow-hidden">
-        <Image
+        <img
           src={imageUrl}
           alt={name}
-          fill
-          sizes="(max-width: 768px) 100vw, 500px"
-          className="object-cover transition-transform duration-[6s] group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-[6s] group-hover:scale-110"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=800&q=60';
           }}
@@ -321,10 +317,15 @@ function MenuExperience({
   const menuDataToUse = initialMenuData || menuData;
 
   const dynamicCategoryImages = useMemo(() => {
-    const map = { ...CAT_IMAGES };
+    const map: Record<string, string> = {};
+    // Base from static images (lowercase)
+    Object.entries(CAT_IMAGES).forEach(([name, img]) => {
+      map[name.toLowerCase()] = img;
+    });
+    // Override from database (lowercase)
     if (initialCategoryData) {
       initialCategoryData.forEach(cat => {
-        if (cat.image) map[cat.name] = cat.image;
+        if (cat.image) map[cat.name.toLowerCase()] = cat.image;
       });
     }
     return map;
