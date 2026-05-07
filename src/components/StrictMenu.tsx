@@ -56,6 +56,7 @@ function DishModal({
   onCategorySelect: (cat: string) => void;
   menuDataToUse: Dish[];
   categoriesToUse: string[];
+  dynamicCategoryImages: Record<string, string>;
 }) {
   const { lang, t } = useLanguage();
   const [selectedPortionIdx, setSelectedPortionIdx] = useState(0);
@@ -80,7 +81,7 @@ function DishModal({
   
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
-  const image = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
+  const image = dish.image || dynamicCategoryImages[dish.category] || DEFAULT_IMAGE;
 
   const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
 
@@ -766,6 +767,7 @@ export default function StrictMenu({
             onCategorySelect={setSelectedCategory}
             menuDataToUse={menuDataToUse}
             categoriesToUse={categoriesToUse}
+            dynamicCategoryImages={dynamicCategoryImages}
           />
         )}
       </AnimatePresence>
