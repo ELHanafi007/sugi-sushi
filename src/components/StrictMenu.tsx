@@ -48,7 +48,8 @@ function DishModal({
   onDishSelect, 
   onCategorySelect,
   menuDataToUse,
-  categoriesToUse
+  categoriesToUse,
+  dynamicCategoryImages
 }: { 
   dish: Dish; 
   onClose: () => void;
