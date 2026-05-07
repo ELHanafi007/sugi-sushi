@@ -383,7 +383,7 @@ function DishModal({
                       className="relative flex-shrink-0 w-48 md:w-56 aspect-[16/10] rounded-2xl overflow-hidden group luxury-card border border-white/5"
                     >
                       <Image 
-                        src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
+                        src={dynamicCategoryImages[cat] || DEFAULT_IMAGE} 
                         alt={cat} 
                         fill 
                         sizes="(max-width: 768px) 192px, 224px"
@@ -411,17 +411,30 @@ function DishModal({
 export default function StrictMenu({ 
   onTabChange,
   initialMenuData,
-  initialCategories
+  initialCategories,
+  initialCategoryData
 }: { 
   onTabChange?: (tab: any) => void;
   initialMenuData?: Dish[];
   initialCategories?: string[];
+  initialCategoryData?: { name: string, image: string }[];
 }) {
   const { lang, t, pendingDish, setPendingDish } = useLanguage();
   
   // Use props if provided, otherwise fallback to static data
   const menuDataToUse = initialMenuData || menuData;
   const categoriesToUse = initialCategories || CATEGORIES;
+
+  // Map category images from database
+  const dynamicCategoryImages = useMemo(() => {
+    const map = { ...CAT_IMAGES };
+    if (initialCategoryData) {
+      initialCategoryData.forEach(cat => {
+        if (cat.image) map[cat.name] = cat.image;
+      });
+    }
+    return map;
+  }, [initialCategoryData]);
 
   const [selectedCategory, setSelectedCategory] = useState(categoriesToUse[0]);
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
@@ -554,7 +567,7 @@ export default function StrictMenu({
                 }`}
               >
                 <Image 
-                  src={CAT_IMAGES[cat] || DEFAULT_IMAGE} 
+                  src={dynamicCategoryImages[cat] || DEFAULT_IMAGE} 
                   alt={cat}
                   fill
                   sizes="150px"

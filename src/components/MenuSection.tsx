@@ -76,7 +76,7 @@ const CAT_IMAGES: Record<string, string> = {
 };
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
 
-const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => {
+const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; lang: 'en' | 'ar'; dynamicCategoryImages: Record<string, string> }) => {
   const { t, setActiveTab, setPendingDish } = useLanguage();
   const [selectedPortionIdx, setSelectedPortionIdx] = useState(0);
 
@@ -100,7 +100,7 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
   
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
-  const imageUrl = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
+  const imageUrl = dish.image || dynamicCategoryImages[dish.category] || DEFAULT_IMAGE;
   
   const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
 
@@ -194,10 +194,10 @@ const FeaturedDishCard = ({ dish, lang }: { dish: Dish; lang: 'en' | 'ar' }) => 
   );
 };
 
-const SecondaryDishCard = ({ dish, lang, idx }: { dish: Dish; lang: 'en' | 'ar'; idx: number }) => {
+const SecondaryDishCard = ({ dish, lang, idx, dynamicCategoryImages }: { dish: Dish; lang: 'en' | 'ar'; idx: number; dynamicCategoryImages: Record<string, string> }) => {
   const { t, setActiveTab, setPendingDish } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
-  const imageUrl = dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
+  const imageUrl = dish.image || dynamicCategoryImages[dish.category] || DEFAULT_IMAGE;
 
   return (
     <motion.div 
@@ -303,10 +303,26 @@ function PhilosophySection() {
   );
 }
 
-function MenuExperience({ initialMenuData }: { initialMenuData?: Dish[] }) {
+function MenuExperience({ 
+  initialMenuData, 
+  initialCategoryData 
+}: { 
+  initialMenuData?: Dish[]; 
+  initialCategoryData?: { name: string, image: string }[];
+}) {
   const { t, lang } = useLanguage();
   const [activeChapter, setActiveChapter] = useState(CHAPTERS[2].id);
   const menuDataToUse = initialMenuData || menuData;
+
+  const dynamicCategoryImages = useMemo(() => {
+    const map = { ...CAT_IMAGES };
+    if (initialCategoryData) {
+      initialCategoryData.forEach(cat => {
+        if (cat.image) map[cat.name] = cat.image;
+      });
+    }
+    return map;
+  }, [initialCategoryData]);
 
   return (
     <section id="menu" className="w-full py-32 md:py-56 bg-bg relative">
@@ -397,15 +413,15 @@ function MenuExperience({ initialMenuData }: { initialMenuData?: Dish[] }) {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 items-stretch">
                       <div className="flex flex-col gap-12 md:gap-20">
-                        <FeaturedDishCard dish={featured} lang={lang} />
+                        <FeaturedDishCard dish={featured} lang={lang} dynamicCategoryImages={dynamicCategoryImages} />
                         {secondary.slice(0, 1).map((s, i) => (
-                          <SecondaryDishCard key={s.id} dish={s} lang={lang} idx={i} />
+                          <SecondaryDishCard key={s.id} dish={s} lang={lang} idx={i} dynamicCategoryImages={dynamicCategoryImages} />
                         ))}
                       </div>
 
                       <div className="flex flex-col gap-12 md:gap-20">
                         {secondary.slice(1).map((s, i) => (
-                          <SecondaryDishCard key={s.id} dish={s} lang={lang} idx={i + 1} />
+                          <SecondaryDishCard key={s.id} dish={s} lang={lang} idx={i + 1} dynamicCategoryImages={dynamicCategoryImages} />
                         ))}
                         
                         {others.length > 0 && (
@@ -610,11 +626,20 @@ function Footer() {
   );
 }
 
-export default function MenuSection({ initialMenuData }: { initialMenuData?: Dish[] }) {
+export default function MenuSection({ 
+  initialMenuData, 
+  initialCategoryData 
+}: { 
+  initialMenuData?: Dish[]; 
+  initialCategoryData?: { name: string, image: string }[];
+}) {
   return (
     <div className="bg-bg relative">
       <PhilosophySection />
-      <MenuExperience initialMenuData={initialMenuData} />
+      <MenuExperience 
+        initialMenuData={initialMenuData} 
+        initialCategoryData={initialCategoryData}
+      />
       <ContactSection />
       <Footer />
     </div>

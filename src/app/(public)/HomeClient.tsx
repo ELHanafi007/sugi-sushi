@@ -27,10 +27,12 @@ import { Dish } from '@/data/menuData';
 
 export default function HomeClient({ 
   initialMenuData, 
-  initialCategories 
+  initialCategories,
+  initialCategoryData
 }: { 
-  initialMenuData: Dish[], 
-  initialCategories: string[] 
+  initialMenuData: Dish[]; 
+  initialCategories: string[];
+  initialCategoryData: { name: string, image: string }[];
 }) {
   // Prototype Injection: Ensure our dual-price logic is present even if fetched from database
   const menuDataWithPrototype = initialMenuData.map(dish => {
@@ -158,7 +160,10 @@ export default function HomeClient({
 
             {/* Scene 6: Full Experience */}
             <div className="relative z-10 bg-bg pt-20">
-              <MenuSection initialMenuData={menuDataWithPrototype} />
+              <MenuSection 
+                initialMenuData={menuDataWithPrototype} 
+                initialCategoryData={initialCategoryData}
+              />
             </div>
           </motion.div>
         )}
@@ -175,6 +180,7 @@ export default function HomeClient({
               onTabChange={setActiveTab} 
               initialMenuData={menuDataWithPrototype}
               initialCategories={initialCategories}
+              initialCategoryData={initialCategoryData}
             />
           </motion.div>
         )}

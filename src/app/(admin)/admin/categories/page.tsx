@@ -2,9 +2,9 @@ import { getMenu } from '@/lib/data';
 import CategoriesPageClient from './CategoriesPageClient';
 
 export default async function CategoriesPage() {
-  const { categories } = await getMenu();
+  const { categoryData } = await getMenu();
 
   return (
-    <CategoriesPageClient initialCategories={categories} />
+    <CategoriesPageClient initialCategories={categoryData} />
   );
 }

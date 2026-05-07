@@ -6,6 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 export interface MenuData {
   categories: string[];
   products: Dish[];
+  categoryData: { name: string; image: string }[];
 }
 
 export async function getMenu(): Promise<MenuData> {
@@ -29,22 +30,23 @@ export async function getMenu(): Promise<MenuData> {
 
   try {
     const [{ data: categoriesData, error: catError }, { data: productsData, error: prodError }] = await Promise.all([
-      supabase.from('categories').select('name').order('order'),
+      supabase.from('categories').select('name, image').order('order'),
       supabase.from('products').select('*')
     ]);
 
     if (catError || prodError) {
       console.error('Supabase fetch error:', catError || prodError);
-      return { categories: CATEGORIES, products: menuData };
+      return { categories: CATEGORIES, products: menuData, categoryData: [] };
     }
 
     if (productsData && productsData.length > 0) {
       // If categories table is blocked by RLS, derive from products
-      let fetchedCategories = categoriesData && categoriesData.length > 0 
-        ? categoriesData.map(c => c.name) 
-        : Array.from(new Set(productsData.map(p => p.category)));
+      let categoryList = categoriesData && categoriesData.length > 0 
+        ? categoriesData 
+        : Array.from(new Set(productsData.map(p => p.category))).map(name => ({ name, image: '' }));
         
-      const categories = Array.from(new Set(fetchedCategories));
+      const categories = categoryList.map(c => c.name);
+      const categoryData = categoryList;
       
       const products: Dish[] = productsData.map(p => {
         return {
@@ -63,13 +65,13 @@ export async function getMenu(): Promise<MenuData> {
         };
       });
       
-      return { categories, products };
+      return { categories, products, categoryData };
     }
 
-    return { categories: CATEGORIES, products: menuData };
+    return { categories: CATEGORIES, products: menuData, categoryData: [] };
   } catch (error) {
     console.error('Error fetching from Supabase:', error);
-    return { categories: CATEGORIES, products: menuData };
+    return { categories: CATEGORIES, products: menuData, categoryData: [] };
   }
 }
 

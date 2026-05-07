@@ -124,7 +124,7 @@ export async function deleteProduct(id: string) {
   return true;
 }
 
-export async function updateCategories(categories: string[]) {
+export async function updateCategories(categories: { name: string, image: string }[]) {
   // Security check: verify admin session
   const cookieStore = await cookies();
   const session = cookieStore.get('admin_session');
@@ -137,8 +137,9 @@ export async function updateCategories(categories: string[]) {
   // Delete all existing categories to avoid unique constraint issues
   await supabase.from('categories').delete().not('name', 'eq', 'SOME_IMPOSSIBLE_NAME');
 
-  const inserts = categories.map((name, index) => ({
-    name,
+  const inserts = categories.map((cat, index) => ({
+    name: cat.name,
+    image: cat.image,
     order: index
   }));
 
