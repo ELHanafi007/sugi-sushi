@@ -336,11 +336,13 @@ function DishModal({
                     >
                       <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
                         <Image 
-                          src={item.image || CAT_IMAGES[item.category] || DEFAULT_IMAGE} 
+                          src={item.image || dynamicCategoryImages[item.category] || DEFAULT_IMAGE} 
                           alt={item.name} 
-                          width={64} 
-                          height={64} 
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" 
+                          fill 
+                          className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-[0.85]"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=100&q=20';
+                          }}
                         />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -389,7 +391,10 @@ function DishModal({
                         alt={cat} 
                         fill 
                         sizes="(max-width: 768px) 192px, 224px"
-                        className="object-cover brightness-[0.4] group-hover:scale-110 transition-transform duration-1000" 
+                        className="object-cover brightness-[0.75] group-hover:brightness-100 group-hover:scale-110 transition-all duration-1000" 
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=40';
+                        }}
                       />
                       <div className="absolute inset-0 flex flex-col justify-end p-5 bg-gradient-to-t from-black/90 via-black/20 to-transparent">
                         <span className="text-white/80 text-[9px] md:text-[11px] font-mono uppercase tracking-[0.3em] leading-relaxed">
@@ -576,6 +581,9 @@ export default function StrictMenu({
                   className={`object-cover transition-all duration-1000 ${
                     isActive ? 'scale-110 brightness-[0.4] saturate-[1.5]' : 'brightness-[0.2] blur-[2px] group-hover:brightness-[0.3] group-hover:scale-105 group-hover:blur-0'
                   }`}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=40';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
                 
@@ -702,12 +710,14 @@ export default function StrictMenu({
                 >
                   <div className="w-24 h-24 rounded-3xl overflow-hidden flex-shrink-0 bg-white/[0.04] shadow-2xl">
                     <Image 
-                      src={dish.image || CAT_IMAGES[dish.category] || DEFAULT_IMAGE} 
+                      src={dish.image || dynamicCategoryImages[dish.category] || DEFAULT_IMAGE} 
                       alt={dish.name} 
-                      width={96} 
-                      height={96} 
+                      fill 
                       sizes="96px"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" 
+                      className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-[0.8]"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=40';
+                      }}
                     />
                   </div>
 

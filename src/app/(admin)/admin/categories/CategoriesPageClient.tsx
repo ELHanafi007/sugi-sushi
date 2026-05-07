@@ -57,7 +57,7 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', 'category');
-    formData.append('id', name.toLowerCase().replace(/\s+/g, '-'));
+    formData.append('id', name.toLowerCase().replace(/[^a-z0-9]/g, '-'));
 
     try {
       const res = await fetch('/api/upload', {
@@ -193,7 +193,14 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
                   <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/10 bg-white/[0.02] flex-shrink-0 group/img">
                     {cat.image ? (
                       <>
-                        <img src={cat.image} alt={cat.name} className="object-cover w-full h-full" />
+                        <img 
+                          src={cat.image} 
+                          alt={cat.name} 
+                          className="object-cover w-full h-full"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=100&q=20';
+                          }}
+                        />
                         <button 
                           onClick={() => handleUpdateImage(cat.name, '')}
                           className="absolute inset-0 bg-red-500/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white"
