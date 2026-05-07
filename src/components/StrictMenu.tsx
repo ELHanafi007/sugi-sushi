@@ -82,7 +82,7 @@ function DishModal({
   
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
-  const image = dish.image || dynamicCategoryImages[dish.category] || DEFAULT_IMAGE;
+  const image = dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE;
 
   const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
 
@@ -334,12 +334,11 @@ function DishModal({
                       whileHover={{ x: 10, backgroundColor: 'rgba(255,255,255,0.02)' }}
                       className="flex items-center gap-5 p-4 rounded-3xl luxury-card cursor-pointer group transition-all duration-700"
                     >
-                      <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
-                        <Image 
-                          src={item.image || dynamicCategoryImages[item.category] || DEFAULT_IMAGE} 
+                      <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04] relative">
+                        <img 
+                          src={item.image || dynamicCategoryImages[item.category.toLowerCase()] || DEFAULT_IMAGE} 
                           alt={item.name} 
-                          fill 
-                          className="object-cover group-hover:scale-110 transition-transform duration-1000"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=100&q=20';
                           }}
@@ -386,12 +385,10 @@ function DishModal({
                       whileTap={{ scale: 0.95 }}
                       className="relative flex-shrink-0 w-48 md:w-56 aspect-[16/10] rounded-2xl overflow-hidden group luxury-card border border-white/5"
                     >
-                      <Image 
-                        src={dynamicCategoryImages[cat] || DEFAULT_IMAGE} 
+                      <img 
+                        src={dynamicCategoryImages[cat.toLowerCase()] || DEFAULT_IMAGE} 
                         alt={cat} 
-                        fill 
-                        sizes="(max-width: 768px) 192px, 224px"
-                        className="object-cover group-hover:scale-110 transition-all duration-1000" 
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-1000" 
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=40';
                         }}
@@ -434,10 +431,15 @@ export default function StrictMenu({
 
   // Map category images from database
   const dynamicCategoryImages = useMemo(() => {
-    const map = { ...CAT_IMAGES };
+    const map: Record<string, string> = {};
+    // Base from static images (lowercase)
+    Object.entries(CAT_IMAGES).forEach(([name, img]) => {
+      map[name.toLowerCase()] = img;
+    });
+    // Override from database (lowercase)
     if (initialCategoryData) {
       initialCategoryData.forEach(cat => {
-        if (cat.image) map[cat.name] = cat.image;
+        if (cat.image) map[cat.name.toLowerCase()] = cat.image;
       });
     }
     return map;
@@ -573,12 +575,10 @@ export default function StrictMenu({
                   isActive ? 'shadow-[0_30px_60px_rgba(0,0,0,0.6)]' : 'hover:shadow-[0_15px_30px_rgba(0,0,0,0.3)]'
                 }`}
               >
-                <Image 
-                  src={dynamicCategoryImages[cat] || DEFAULT_IMAGE} 
+                <img 
+                  src={dynamicCategoryImages[cat.toLowerCase()] || DEFAULT_IMAGE} 
                   alt={cat}
-                  fill
-                  sizes="150px"
-                  className={`object-cover transition-all duration-1000 ${
+                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${
                     isActive ? 'scale-110' : 'blur-[1px] group-hover:scale-105 group-hover:blur-0'
                   }`}
                   onError={(e) => {
@@ -710,7 +710,7 @@ export default function StrictMenu({
                 >
                   <div className="w-24 h-24 rounded-3xl overflow-hidden flex-shrink-0 bg-white/[0.04] shadow-2xl">
                     <Image 
-                      src={dish.image || dynamicCategoryImages[dish.category] || DEFAULT_IMAGE} 
+                      src={dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE} 
                       alt={dish.name} 
                       fill 
                       sizes="96px"
