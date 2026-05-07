@@ -123,7 +123,7 @@ const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; l
           alt={name}
           fill
           sizes="(max-width: 1024px) 100vw, 1200px"
-          className="object-cover transition-transform duration-[8s] group-hover:scale-110 brightness-[0.7] saturate-[1.2]"
+          className="object-cover transition-transform duration-[8s] group-hover:scale-110 saturate-[1.2]"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
           }}
@@ -223,7 +223,7 @@ const SecondaryDishCard = ({ dish, lang, idx, dynamicCategoryImages }: { dish: D
           alt={name}
           fill
           sizes="(max-width: 768px) 100vw, 500px"
-          className="object-cover transition-transform duration-[6s] group-hover:scale-110 brightness-[0.7]"
+          className="object-cover transition-transform duration-[6s] group-hover:scale-110"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=800&q=60';
           }}

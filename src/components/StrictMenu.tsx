@@ -339,7 +339,7 @@ function DishModal({
                           src={item.image || dynamicCategoryImages[item.category] || DEFAULT_IMAGE} 
                           alt={item.name} 
                           fill 
-                          className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-[0.85]"
+                          className="object-cover group-hover:scale-110 transition-transform duration-1000"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=100&q=20';
                           }}
@@ -391,7 +391,7 @@ function DishModal({
                         alt={cat} 
                         fill 
                         sizes="(max-width: 768px) 192px, 224px"
-                        className="object-cover brightness-[0.75] group-hover:brightness-100 group-hover:scale-110 transition-all duration-1000" 
+                        className="object-cover group-hover:scale-110 transition-all duration-1000" 
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=40';
                         }}
@@ -579,7 +579,7 @@ export default function StrictMenu({
                   fill
                   sizes="150px"
                   className={`object-cover transition-all duration-1000 ${
-                    isActive ? 'scale-110 brightness-[0.4] saturate-[1.5]' : 'brightness-[0.2] blur-[2px] group-hover:brightness-[0.3] group-hover:scale-105 group-hover:blur-0'
+                    isActive ? 'scale-110' : 'blur-[1px] group-hover:scale-105 group-hover:blur-0'
                   }`}
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=40';
