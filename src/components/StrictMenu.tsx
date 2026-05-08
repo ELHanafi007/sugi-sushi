@@ -733,7 +733,7 @@ export default function StrictMenu({
                              iconClassName="w-5 h-5" 
                            />
                            <div className="h-4 w-px bg-white/10" />
-                           <span className="text-white/20 text-[9px] uppercase font-black tracking-tighter">4P / 8P</span>
+                           <span className="text-white/20 text-[9px] uppercase font-black tracking-tighter">{dish.portions!.map(p => `${p.pieces}P`).join(' / ')}</span>
                         </div>
                       ) : (
                         <CurrencyPrice 

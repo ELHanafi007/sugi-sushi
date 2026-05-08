@@ -34,21 +34,9 @@ export default function HomeClient({
   initialCategories: string[];
   initialCategoryData: { name: string, image: string }[];
 }) {
-  // Prototype Injection: Ensure our dual-price logic is present even if fetched from database
-  const menuDataWithPrototype = initialMenuData.map(dish => {
-    if (dish.name?.toLowerCase().includes('california') || dish.nameAr?.includes('كاليفورنيا')) {
-      if (!dish.portions) {
-        return {
-          ...dish,
-          portions: [
-            { name: 'Full Order', nameAr: 'طلب كامل', price: '38 SR', pieces: 8, tags: ['Best Value'] },
-            { name: 'Half Order', nameAr: 'نصف طلب', price: '24 SR', pieces: 4 }
-          ]
-        };
-      }
-    }
-    return dish;
-  });
+  // Data is now pre-merged by the data layer (mergePortionDuplicates in data.ts)
+  const menuDataWithPrototype = initialMenuData;
+
 
   const { activeTab, setActiveTab } = useLanguage();
   const [isLetterbox, setIsLetterbox] = useState(false);

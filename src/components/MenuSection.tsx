@@ -455,6 +455,8 @@ function MenuExperience({
                                           className="text-gold/40 font-serif text-[11px] group-hover:text-gold/60 transition-colors duration-700" 
                                           iconClassName="w-3 h-3" 
                                         />
+                                        <div className="h-3 w-px bg-white/10" />
+                                        <span className="text-white/20 text-[8px] uppercase font-black tracking-tighter">{dish.portions.map(p => `${p.pieces}P`).join(' / ')}</span>
                                       </div>
                                     ) : (
                                       <CurrencyPrice 
