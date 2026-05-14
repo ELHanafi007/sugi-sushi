@@ -1,12 +1,20 @@
 import { Resend } from 'resend';
 import { Reservation } from '@/types/reservation';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey && process.env.NODE_ENV === 'production') {
+    // Only throw in production if we're actually trying to send
+    // During build, we might not have the key
+  }
+  return new Resend(apiKey || 're_dummy_key_for_build');
+};
 
 export async function sendConfirmationEmail(reservation: Reservation) {
   if (!reservation.email) return { success: false, error: 'No email address provided' };
 
   try {
+    const resend = getResend();
     const { data, error } = await resend.emails.send({
       from: 'Sugi Sushi <reservations@sugi-sushi.com>',
       to: [reservation.email],
@@ -93,6 +101,7 @@ export async function sendReceivedEmail(reservation: Reservation) {
   if (!reservation.email) return { success: false, error: 'No email address provided' };
 
   try {
+    const resend = getResend();
     const { data, error } = await resend.emails.send({
       from: 'Sugi Sushi <reservations@sugi-sushi.com>',
       to: [reservation.email],
