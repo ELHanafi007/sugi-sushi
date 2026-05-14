@@ -1,8 +1,6 @@
-'use client';
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, Users, Phone, Mail, MessageSquare, Sparkles } from 'lucide-react';
+import { Calendar, Clock, Users, Phone, Mail, MessageSquare, Sparkles, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { OCCASIONS, TIME_SLOTS } from '@/types/reservation';
 
@@ -65,7 +63,7 @@ export default function ReservePage() {
 
           <Link
             href="/"
-            className="inline-block bg-gold text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider text-xs hover:scale-105 transition-transform"
+            className="inline-block bg-gold text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider text-xs hover:scale-105 active:scale-95 transition-transform"
           >
             Back to Home
           </Link>
@@ -79,15 +77,26 @@ export default function ReservePage() {
   const minDate = tomorrow.toISOString().split('T')[0];
 
   return (
-    <div className="min-h-screen bg-[#060608] py-12 px-6">
+    <div className="min-h-screen bg-[#060608] py-8 md:py-12 px-6">
       <div className="max-w-2xl mx-auto">
+        {/* Back Button */}
+        <Link 
+          href="/"
+          className="inline-flex items-center gap-2 text-white/40 hover:text-gold transition-colors mb-8 group"
+        >
+          <div className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center group-hover:border-gold/20">
+            <ChevronLeft size={20} />
+          </div>
+          <span className="text-[10px] uppercase tracking-widest font-black">Back</span>
+        </Link>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-gold font-serif text-5xl italic tracking-tighter mb-4 shimmer-gold">Reserve</h1>
-          <p className="text-white/40 text-sm uppercase tracking-[0.3em]">Book Your Table</p>
+          <h1 className="text-gold font-serif text-5xl md:text-6xl italic tracking-tighter mb-4 shimmer-gold">Reserve</h1>
+          <p className="text-white/40 text-xs uppercase tracking-[0.4em]">Book Your Masterpiece</p>
         </motion.div>
 
         <motion.form
@@ -95,84 +104,84 @@ export default function ReservePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           onSubmit={handleSubmit}
-          className="space-y-6"
+          className="space-y-6 pb-20"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative">
-              <label className="block text-white/40 text-xs uppercase tracking-widest mb-3 pl-1">Name *</label>
+              <label className="block text-white/30 text-[9px] uppercase tracking-[0.2em] font-black mb-3 pl-1">Name *</label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-gold transition-colors">
-                  <Users size={18} />
+                  <Users size={16} />
                 </div>
                 <input
                   type="text"
                   name="name"
                   required
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white placeholder:text-white/10 focus:outline-none focus:border-gold/30 focus:bg-white/[0.04] transition-all"
+                  className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white placeholder:text-white/10 focus:outline-none focus:border-gold/30 focus:bg-white/[0.05] transition-all"
                   placeholder="Your name"
                 />
               </div>
             </div>
 
             <div className="relative">
-              <label className="block text-white/40 text-xs uppercase tracking-widest mb-3 pl-1">Phone *</label>
+              <label className="block text-white/30 text-[9px] uppercase tracking-[0.2em] font-black mb-3 pl-1">Phone *</label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-gold transition-colors">
-                  <Phone size={18} />
+                  <Phone size={16} />
                 </div>
                 <input
                   type="tel"
                   name="phone"
                   required
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white placeholder:text-white/10 focus:outline-none focus:border-gold/30 focus:bg-white/[0.04] transition-all"
-                  placeholder="0501234567"
+                  className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white placeholder:text-white/10 focus:outline-none focus:border-gold/30 focus:bg-white/[0.05] transition-all"
+                  placeholder="050 000 0000"
                 />
               </div>
             </div>
           </div>
 
           <div className="relative">
-            <label className="block text-white/40 text-xs uppercase tracking-widest mb-3 pl-1">Email</label>
+            <label className="block text-white/30 text-[9px] uppercase tracking-[0.2em] font-black mb-3 pl-1">Email</label>
             <div className="relative group">
               <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-gold transition-colors">
-                <Mail size={18} />
+                <Mail size={16} />
               </div>
               <input
                 type="email"
                 name="email"
-                className="w-full bg-white/[0.02] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white placeholder:text-white/10 focus:outline-none focus:border-gold/30 focus:bg-white/[0.04] transition-all"
-                placeholder="your@email.com"
+                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white placeholder:text-white/10 focus:outline-none focus:border-gold/30 focus:bg-white/[0.05] transition-all"
+                placeholder="luxury@experience.com"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative">
-              <label className="block text-white/40 text-xs uppercase tracking-widest mb-3 pl-1">Date *</label>
+              <label className="block text-white/30 text-[9px] uppercase tracking-[0.2em] font-black mb-3 pl-1">Date *</label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-gold transition-colors">
-                  <Calendar size={18} />
+                  <Calendar size={16} />
                 </div>
                 <input
                   type="date"
                   name="date"
                   required
                   min={minDate}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white focus:outline-none focus:border-gold/30 focus:bg-white/[0.04] transition-all [color-scheme:dark]"
+                  className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white focus:outline-none focus:border-gold/30 focus:bg-white/[0.05] transition-all [color-scheme:dark] appearance-none"
                 />
               </div>
             </div>
 
             <div className="relative">
-              <label className="block text-white/40 text-xs uppercase tracking-widest mb-3 pl-1">Time *</label>
+              <label className="block text-white/30 text-[9px] uppercase tracking-[0.2em] font-black mb-3 pl-1">Time *</label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-gold transition-colors">
-                  <Clock size={18} />
+                  <Clock size={16} />
                 </div>
                 <select
                   name="time"
                   required
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white focus:outline-none focus:border-gold/30 focus:bg-white/[0.04] transition-all appearance-none cursor-pointer"
+                  className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white focus:outline-none focus:border-gold/30 focus:bg-white/[0.05] transition-all appearance-none cursor-pointer"
                 >
                   <option value="">Select time</option>
                   {TIME_SLOTS.map(slot => (
@@ -185,15 +194,15 @@ export default function ReservePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative">
-              <label className="block text-white/40 text-xs uppercase tracking-widest mb-3 pl-1">Number of Guests *</label>
+              <label className="block text-white/30 text-[9px] uppercase tracking-[0.2em] font-black mb-3 pl-1">Number of Guests *</label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-gold transition-colors">
-                  <Users size={18} />
+                  <Users size={16} />
                 </div>
                 <select
                   name="guests"
                   required
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white focus:outline-none focus:border-gold/30 focus:bg-white/[0.04] transition-all appearance-none cursor-pointer"
+                  className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white focus:outline-none focus:border-gold/30 focus:bg-white/[0.05] transition-all appearance-none cursor-pointer"
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
                     <option key={n} value={n}>{n} {n === 1 ? 'Guest' : 'Guests'}</option>
@@ -203,14 +212,14 @@ export default function ReservePage() {
             </div>
 
             <div className="relative">
-              <label className="block text-white/40 text-xs uppercase tracking-widest mb-3 pl-1">Occasion</label>
+              <label className="block text-white/30 text-[9px] uppercase tracking-[0.2em] font-black mb-3 pl-1">Occasion</label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-gold transition-colors">
-                  <Sparkles size={18} />
+                  <Sparkles size={16} />
                 </div>
                 <select
                   name="occasion"
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white focus:outline-none focus:border-gold/30 focus:bg-white/[0.04] transition-all appearance-none cursor-pointer"
+                  className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white focus:outline-none focus:border-gold/30 focus:bg-white/[0.05] transition-all appearance-none cursor-pointer"
                 >
                   <option value="">Select occasion (optional)</option>
                   {OCCASIONS.map(o => (
@@ -222,15 +231,15 @@ export default function ReservePage() {
           </div>
 
           <div className="relative">
-            <label className="block text-white/40 text-xs uppercase tracking-widest mb-3 pl-1">Special Requests</label>
+            <label className="block text-white/30 text-[9px] uppercase tracking-[0.2em] font-black mb-3 pl-1">Special Requests</label>
             <div className="relative group">
               <div className="absolute left-5 top-4 text-white/20 group-focus-within:text-gold transition-colors">
-                <MessageSquare size={18} />
+                <MessageSquare size={16} />
               </div>
               <textarea
                 name="notes"
                 rows={4}
-                className="w-full bg-white/[0.02] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white placeholder:text-white/10 focus:outline-none focus:border-gold/30 focus:bg-white/[0.04] transition-all resize-none"
+                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white placeholder:text-white/10 focus:outline-none focus:border-gold/30 focus:bg-white/[0.05] transition-all resize-none"
                 placeholder="Any special requests or dietary requirements..."
               />
             </div>
@@ -240,7 +249,7 @@ export default function ReservePage() {
             <motion.p
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-red-400 text-sm text-center"
+              className="text-red-400 text-[10px] text-center font-bold uppercase tracking-widest"
             >
               {error}
             </motion.p>
@@ -249,9 +258,9 @@ export default function ReservePage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gold text-black rounded-2xl py-5 font-black uppercase tracking-wider text-xs flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+            className="w-full bg-gold text-black rounded-2xl py-5 font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 shadow-[0_20px_40px_rgba(212,175,55,0.15)]"
           >
-            {loading ? 'Processing...' : 'Confirm Reservation'}
+            {loading ? 'Processing...' : 'Request Reservation'}
           </button>
         </motion.form>
       </div>

@@ -61,9 +61,9 @@ export default function Hero({ onTabChange }: HeroProps) {
         >
           <button 
             onClick={() => onTabChange('menu')}
-            className="group relative px-14 py-5 overflow-hidden rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md transition-all duration-700 hover:bg-gold hover:border-gold shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
+            className="group relative px-10 md:px-14 py-4 md:py-5 overflow-hidden rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md transition-all duration-700 hover:bg-gold hover:border-gold shadow-[0_20px_60px_rgba(0,0,0,0.4)] active:scale-95"
           >
-            <span className="relative z-10 text-white text-[10px] md:text-xs uppercase tracking-[0.5em] font-black group-hover:text-bg transition-colors duration-500">
+            <span className="relative z-10 text-white text-[9px] md:text-xs uppercase tracking-[0.5em] font-black group-hover:text-bg transition-colors duration-500">
               {t('hero.cta')}
             </span>
             <div className="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-[0.19,1,0.22,1]" />

@@ -3,6 +3,7 @@
 import { Reservation } from '@/types/reservation';
 import { revalidatePath } from 'next/cache';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { sendConfirmationEmail } from '@/lib/email';
 
 export async function createReservation(formData: FormData) {
   const supabase = getSupabaseAdmin();
@@ -90,6 +91,18 @@ export async function updateReservationStatus(
 ) {
   const supabase = getSupabaseAdmin();
 
+  // First get the reservation details to send the email
+  const { data: reservation, error: fetchError } = await supabase
+    .from('reservations')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (fetchError || !reservation) {
+    console.error('Error fetching reservation for status update:', fetchError);
+    return false;
+  }
+
   const { error } = await supabase
     .from('reservations')
     .update({ status })
@@ -98,6 +111,11 @@ export async function updateReservationStatus(
   if (error) {
     console.error('Error updating reservation:', error);
     return false;
+  }
+
+  // If status is changed to confirmed, send the email
+  if (status === 'confirmed' && reservation.email) {
+    await sendConfirmationEmail(reservation as Reservation);
   }
 
   revalidatePath('/admin/reservations');

@@ -172,12 +172,12 @@ function DishModal({
   return (
     <motion.div 
       ref={scrollRef}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-[20000] modal-glass overflow-y-auto no-scrollbar outline-none"
-      style={{ willChange: "opacity" }}
+      initial={{ opacity: 0, y: "100%" }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: "100%" }}
+      transition={{ type: "spring", damping: 32, stiffness: 250 }}
+      className="fixed inset-0 z-[20000] modal-glass overflow-y-auto no-scrollbar outline-none pb-20"
+      style={{ willChange: "transform, opacity" }}
       tabIndex={-1}
       onClick={onClose}
     >
@@ -208,15 +208,17 @@ function DishModal({
             animate="animate"
             exit="exit"
             transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1] }}
-            className="max-w-2xl mx-auto px-6 pb-40"
+            className="max-w-2xl mx-auto md:px-6 pb-40"
           >
+            {/* Grab Handle for Mobile */}
+            <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mt-4 mb-2 md:hidden" />
 
           {/* Cinematic Hero Image */}
           <motion.div
             initial={{ y: 50, opacity: 0, scale: 0.95 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-            className="relative w-full h-[50vh] md:h-[65vh] rounded-[2.5rem] overflow-hidden mb-10 shadow-[0_50px_100px_rgba(0,0,0,0.8)] luxury-card"
+            className="relative w-full h-[45vh] md:h-[65vh] md:rounded-[2.5rem] overflow-hidden mb-8 shadow-[0_40px_80px_rgba(0,0,0,0.8)] luxury-card"
           >
             <img
               src={image}
@@ -245,14 +247,14 @@ function DishModal({
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentPrice}
-                  initial={{ opacity: 0, y: 20, filter: 'blur(20px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, y: -20, filter: 'blur(20px)' }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  className="flex flex-col items-center gap-2"
+                  initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
+                  animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  className="flex flex-col items-center gap-1"
                 >
-                  <span className="text-gold/20 text-[9px] uppercase tracking-[1em] font-black">{t('menu.current_price')}</span>
-                  <CurrencyPrice price={currentPrice} className="text-7xl text-gold font-serif font-light" iconClassName="w-14 h-14" />
+                  <span className="text-gold/20 text-[8px] uppercase tracking-[1em] font-black">{t('menu.current_price')}</span>
+                  <CurrencyPrice price={currentPrice} className="text-6xl md:text-7xl text-gold font-serif font-light" iconClassName="w-10 h-10 md:w-14 md:h-14" />
                 </motion.div>
               </AnimatePresence>
 

@@ -1,6 +1,7 @@
 'use server';
 
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { sendReceivedEmail } from '@/lib/email';
 
 export async function createReservation(formData: FormData) {
   const supabase = getSupabaseAdmin();
@@ -50,6 +51,11 @@ export async function createReservation(formData: FormData) {
   if (error) {
     console.error('Error creating reservation:', error);
     return { success: false, error: error.message };
+  }
+
+  // Send initial email if email address is provided
+  if (data.email) {
+    await sendReceivedEmail(data);
   }
 
   return { success: true, reservation: data };

@@ -128,7 +128,7 @@ return (
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
-              className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl xl:text-8xl text-white/95 font-serif font-light leading-[1.1] md:leading-[1.15] tracking-tight italic"
+              className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl xl:text-8xl text-white/95 font-serif font-light leading-[1.2] md:leading-[1.15] tracking-tight italic"
               dangerouslySetInnerHTML={{ __html: t('atmosphere.quote') }}
             />
           </div>

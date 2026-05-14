@@ -43,7 +43,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({ items, accentColor, a
 
   return (
     <nav
-      className="menu !bg-black/60 !backdrop-blur-3xl !border-white/5 !shadow-[0_20px_50px_rgba(0,0,0,0.8)] !p-2"
+      className="menu !bg-black/40 !backdrop-blur-[40px] !border-white/10 !shadow-[0_24px_64px_rgba(0,0,0,0.8)] !p-1.5"
       role="navigation"
       style={navStyle}
     >
@@ -53,9 +53,10 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({ items, accentColor, a
           const IconComponent = item.icon;
 
           return (
-            <button
+            <motion.button
               key={item.label}
-              className="menu__item relative flex flex-col items-center justify-center py-4 px-6 md:px-8 group transition-all duration-700"
+              whileTap={{ scale: 0.9, transition: { type: 'spring', stiffness: 400, damping: 10 } }}
+              className="menu__item relative flex flex-col items-center justify-center py-4 px-5 md:px-8 group transition-all duration-500"
               onClick={() => handleItemClick(index)}
               style={{ willChange: 'transform, opacity' }}
             >
@@ -63,39 +64,39 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({ items, accentColor, a
               {isActive && (
                 <motion.div 
                   layoutId="activeMasterPill"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  className="absolute inset-0 bg-white/[0.03] border border-white/5 rounded-full -z-10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  className="absolute inset-0 bg-white/[0.05] border border-white/10 rounded-full -z-10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]"
                 />
               )}
 
-              <div className="menu__icon relative">
+              <div className="menu__icon relative flex items-center justify-center">
                 <IconComponent 
-                  className={`icon transition-all duration-700 ${isActive ? 'text-gold scale-125' : 'text-white/20 group-hover:text-white/40'}`} 
+                  className={`icon transition-all duration-500 ${isActive ? 'text-gold scale-110' : 'text-white/30 group-hover:text-white/50'}`} 
                 />
                 
                 {/* Glow Effect */}
                 {isActive && (
                   <motion.div 
                     layoutId="iconGlow"
-                    className="absolute inset-0 bg-gold/20 blur-xl rounded-full -z-10"
+                    className="absolute inset-0 bg-gold/10 blur-2xl rounded-full -z-10"
                   />
                 )}
               </div>
 
-              <AnimatePresence>
+              <AnimatePresence mode="wait">
                 {isActive && (
                   <motion.span
-                    initial={{ opacity: 0, y: 10, filter: 'blur(10px)' }}
+                    initial={{ opacity: 0, y: 8, filter: 'blur(8px)' }}
                     animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    exit={{ opacity: 0, y: 5, filter: 'blur(10px)' }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                    className="text-[8px] font-mono font-black uppercase tracking-[0.2em] text-gold mt-2 block"
+                    exit={{ opacity: 0, y: 4, filter: 'blur(8px)' }}
+                    transition={{ type: 'spring', stiffness: 600, damping: 40 }}
+                    className="text-[7px] font-mono font-bold uppercase tracking-[0.25em] text-gold mt-1.5 block"
                   >
                     {item.label}
                   </motion.span>
                 )}
               </AnimatePresence>
-            </button>
+            </motion.button>
           );
         })}
       </div>

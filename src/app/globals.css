@@ -29,18 +29,21 @@ html, body {
 :root {
   --section-py: clamp(40px, 8vh, 180px);
   --container-px: clamp(16px, 5vw, 100px);
-  
-  /* Typography Scale */
-  --type-display: clamp(52px, 12vw, 180px);
-  --type-h1: clamp(40px, 7vw, 96px);
-  --type-h2: clamp(30px, 4.5vw, 64px);
-  --type-h3: clamp(20px, 2.2vw, 34px);
-  --type-body: 16px;
-  --type-mono: 10px;
 
-  /* Bottom nav safe area */
-  --bottom-nav-height: 88px;
-  --bottom-nav-safe: 104px;
+  /* Apple-style UI Scale */
+  --type-display: clamp(40px, 12vw, 120px);
+  --type-h1: clamp(32px, 8vw, 80px);
+  --type-h2: clamp(24px, 6vw, 48px);
+  --type-h3: clamp(18px, 4vw, 28px);
+  --type-body: 15px;
+  --type-mono: 9px;
+
+  /* Touch & Safe Areas */
+  --touch-target: 44px;
+  --safe-top: env(safe-area-inset-top, 20px);
+  --safe-bottom: env(safe-area-inset-bottom, 20px);
+  --bottom-nav-height: 72px;
+  --bottom-nav-safe: calc(var(--bottom-nav-height) + var(--safe-bottom) + 16px);
 }
 
 .section-padding {
@@ -105,13 +108,15 @@ html, body {
   opacity: 0.65;
 }
 
-/* ─── Obsidian Elevation & Depth ─── */
+/* ─── Apple-style Obsidian Elevation ─── */
 :root {
-  --elev-1: 0 4px 24px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.06);
-  --elev-2: 0 12px 48px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.08);
-  --elev-3: 0 24px 80px rgba(0, 0, 0, 0.85), 0 0 1px rgba(255, 255, 255, 0.1);
-  --gold-border: 1px solid rgba(212, 175, 55, 0.15);
-  --white-border: 1px solid rgba(255, 255, 255, 0.08);
+  --elev-1: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.1);
+  --elev-2: 0 12px 48px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.12);
+  --elev-3: 0 24px 80px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.15);
+  --gold-border: 1px solid rgba(212, 175, 55, 0.2);
+  --white-border: 1px solid rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(10, 10, 12, 0.7);
+  --glass-blur: 24px;
 }
 
 .luxury-card {
@@ -623,11 +628,18 @@ img {
 .modal-glass {
   background: linear-gradient(
     160deg,
-    rgba(15, 10, 5, 0.97) 0%,
-    rgba(6, 6, 8, 0.99) 100%
+    rgba(10, 10, 12, 0.94) 0%,
+    rgba(6, 6, 8, 0.98) 100%
   );
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-radius: 32px 32px 0 0;
+}
+
+@media (min-width: 768px) {
+  .modal-glass {
+    border-radius: 32px;
+  }
 }
 
 /* Iridescent top-border highlight on modal */
