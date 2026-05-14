@@ -42,7 +42,7 @@ export default function ReservePage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#060608] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#060608] flex items-center justify-center p-6 pb-32">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
