@@ -7,7 +7,10 @@ import CinematicReveal from "@/components/CinematicReveal";
 export const metadata: Metadata = {
   title: "SUGI — Kinetic Dining",
   description: "Experience Japanese perfection in motion. A luxury sushi dining experience in Riyadh.",
-  icons: { icon: "/favicon.ico" },
+  icons: {
+    icon: "/brand-logo-removebg-preview.png",
+    apple: "/brand-logo-removebg-preview.png",
+  },
   openGraph: {
     title: "SUGI SUSHI — Kinetic Dining",
     description: "Traditional Soul, Modern Vision. Experience Japanese perfection in motion.",
