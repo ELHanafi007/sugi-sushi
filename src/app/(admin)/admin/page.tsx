@@ -94,7 +94,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link 
           href="/admin/products/new"
           className="p-6 rounded-2xl bg-gold/[0.06] border border-gold/15 flex items-center gap-4 group hover:bg-gold/[0.1] hover:border-gold/25 transition-all"
@@ -118,20 +118,6 @@ export default async function AdminDashboard() {
           <div className="flex-1 min-w-0">
             <h3 className="text-[15px] font-medium text-white/90">Manage Products</h3>
             <p className="text-white/25 text-[10px] font-mono uppercase tracking-widest mt-0.5">Edit & organize</p>
-          </div>
-          <ArrowUpRight size={16} className="text-white/10 group-hover:text-gold/50 transition-colors" />
-        </Link>
-
-        <Link 
-          href="/admin/reservations"
-          className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-4 group hover:border-gold/20 transition-all"
-        >
-          <div className="w-12 h-12 rounded-xl bg-white/[0.04] flex items-center justify-center text-white/30 group-hover:text-gold group-hover:bg-gold/10 transition-all">
-            <Calendar size={22} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-[15px] font-medium text-white/90">Reservations</h3>
-            <p className="text-white/25 text-[10px] font-mono uppercase tracking-widest mt-0.5">View bookings</p>
           </div>
           <ArrowUpRight size={16} className="text-white/10 group-hover:text-gold/50 transition-colors" />
         </Link>

@@ -7,13 +7,12 @@ import {
   UtensilsCrossed, 
   Tags, 
   LogOut, 
-  Calendar,
   ChevronRight,
   PanelLeftClose,
   PanelLeftOpen,
   Eye
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AdminLayout({
@@ -23,24 +22,6 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [unseenCount, setUnseenCount] = useState(0);
-
-  useEffect(() => {
-    fetchUnseenCount();
-    const interval = setInterval(fetchUnseenCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchUnseenCount = async () => {
-    try {
-      const res = await fetch('/api/reservations');
-      const data = await res.json();
-      const count = data.filter((r: any) => !r.is_seen && r.status === 'pending').length;
-      setUnseenCount(count);
-    } catch (error) {
-      console.error('Error fetching unseen count:', error);
-    }
-  };
 
   // Don't show sidebar on login page
   if (pathname === '/admin/login') {
@@ -51,7 +32,6 @@ export default function AdminLayout({
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Products', href: '/admin/products', icon: UtensilsCrossed },
     { name: 'Categories', href: '/admin/categories', icon: Tags },
-    { name: 'Reservations', href: '/admin/reservations', icon: Calendar },
   ];
 
   // Build breadcrumbs from pathname
@@ -67,7 +47,7 @@ export default function AdminLayout({
       if (seg === 'admin' && i === 0) label = 'Dashboard';
       if (seg === 'products') label = 'Products';
       if (seg === 'categories') label = 'Categories';
-      if (seg === 'reservations') label = 'Reservations';
+
       if (seg === 'new') label = 'New Product';
       if (seg.startsWith('prod-') || seg.startsWith('salad-') || seg.startsWith('soup-') || seg.startsWith('starter-') || seg.startsWith('wok-') || seg.startsWith('tempura-') || seg.startsWith('sugi-') || seg.startsWith('sashimi-') || seg.startsWith('tataki-') || seg.startsWith('ceviche-') || seg.startsWith('nigiri-') || seg.startsWith('gunkan-') || seg.startsWith('temaki-') || seg.startsWith('maki-') || seg.startsWith('aromaki-') || seg.startsWith('california-') || seg.startsWith('special-') || seg.startsWith('fried-') || seg.startsWith('box-') || seg.startsWith('boat-') || seg.startsWith('cold-') || seg.startsWith('juice-') || seg.startsWith('hot-') || seg.startsWith('dessert-') || seg.startsWith('sauce-')) {
         label = 'Edit';
@@ -113,7 +93,6 @@ export default function AdminLayout({
           <nav className="flex-1 py-4 px-3 space-y-1">
             {navItems.map((item) => {
               const active = isActive(item.href);
-              const showBadge = item.name === 'Reservations' && unseenCount > 0;
               
               return (
                 <Link 
@@ -137,9 +116,6 @@ export default function AdminLayout({
                   )}
                   <div className="relative flex-shrink-0">
                     <item.icon size={20} strokeWidth={active ? 2 : 1.5} />
-                    {showBadge && (
-                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-gold rounded-full ring-2 ring-[#08080a] animate-pulse" />
-                    )}
                   </div>
                   <AnimatePresence>
                     {!sidebarCollapsed && (
@@ -153,11 +129,7 @@ export default function AdminLayout({
                       </motion.span>
                     )}
                   </AnimatePresence>
-                  {showBadge && !sidebarCollapsed && (
-                    <span className="ml-auto text-[10px] font-mono font-bold bg-gold/15 text-gold px-2 py-0.5 rounded-full">
-                      {unseenCount}
-                    </span>
-                  )}
+
                 </Link>
               );
             })}
@@ -287,7 +259,6 @@ export default function AdminLayout({
           <div className="flex items-stretch justify-around px-2 py-1">
             {navItems.map((item) => {
               const active = isActive(item.href);
-              const showBadge = item.name === 'Reservations' && unseenCount > 0;
               
               return (
                 <Link
@@ -299,9 +270,6 @@ export default function AdminLayout({
                 >
                   <div className="relative">
                     <item.icon size={20} strokeWidth={active ? 2 : 1.5} />
-                    {showBadge && (
-                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-gold rounded-full" />
-                    )}
                   </div>
                   <span className={`text-[9px] font-mono uppercase tracking-wider ${active ? 'font-bold' : ''}`}>
                     {item.name}

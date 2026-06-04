@@ -1,14 +1,46 @@
 import { NextResponse } from 'next/server';
-import { getReservations, updateReservationStatus, markReservationSeen, markAllReservationsSeen, deleteReservation } from '@/app/(admin)/admin/reservations/actions';
+import { cookies } from 'next/headers';
+import { getReservations, updateReservationStatus, markReservationSeen, markAllReservationsSeen, deleteReservation } from '@/lib/reservations-actions';
 import { createReservation } from '@/app/(public)/reserve/actions';
 
+async function isAuthorized() {
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get('admin_session');
+  const cashierSession = cookieStore.get('cashier_session');
+  return !!(adminSession || cashierSession);
+}
+
 export async function GET() {
+  if (!(await isAuthorized())) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const reservations = await getReservations();
   return NextResponse.json(reservations);
 }
 
 export async function POST(request: Request) {
   try {
+    const cookieStore = await cookies();
+    const adminSession = cookieStore.get('admin_session');
+    const cashierSession = cookieStore.get('cashier_session');
+
+    // POST requests can either be public (creating a reservation)
+    // or authenticated admin/cashier (like marking as seen, which passes JSON payload)
+    const contentType = request.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      if (!adminSession && !cashierSession) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+
+      const body = await request.json();
+      if (body.action === 'markSeen' && body.id) {
+        const success = await markReservationSeen(body.id);
+        return NextResponse.json({ success });
+      }
+      return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+    }
+
+    // Public booking creation using form data
     const formData = await request.formData();
     const result = await createReservation(formData);
 
@@ -24,6 +56,9 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  if (!(await isAuthorized())) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { id, status } = await request.json();
 
@@ -44,6 +79,9 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  if (!(await isAuthorized())) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

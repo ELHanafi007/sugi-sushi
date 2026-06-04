@@ -5,52 +5,6 @@ import { revalidatePath } from 'next/cache';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { sendConfirmationEmail } from '@/lib/email';
 
-export async function createReservation(formData: FormData) {
-  const supabase = getSupabaseAdmin();
-
-  const name = formData.get('name') as string;
-  const phone = formData.get('phone') as string;
-  const email = formData.get('email') as string;
-  const date = formData.get('date') as string;
-  const time = formData.get('time') as string;
-  const guests = parseInt(formData.get('guests') as string) || 2;
-  const occasion = formData.get('occasion') as string;
-  const notes = formData.get('notes') as string;
-
-  const { data: countData } = await supabase
-    .from('reservations')
-    .select('*', { count: 'exact', head: true });
-
-  const codeNum = (countData?.length || 0) + 1;
-  const code = `#${codeNum.toString().padStart(4, '0')}`;
-
-  const { data, error } = await supabase
-    .from('reservations')
-    .insert({
-      code,
-      name,
-      phone,
-      email: email || null,
-      date,
-      time,
-      guests,
-      occasion: occasion || null,
-      notes: notes || null,
-      status: 'pending',
-      is_seen: false
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error creating reservation:', error);
-    return { success: false, error: error.message };
-  }
-
-  revalidatePath('/reserve');
-  return { success: true, reservation: data };
-}
-
 export async function getReservations() {
   const supabase = getSupabaseAdmin();
 
@@ -118,7 +72,7 @@ export async function updateReservationStatus(
     await sendConfirmationEmail(reservation as Reservation);
   }
 
-  revalidatePath('/admin/reservations');
+  revalidatePath('/cashier');
   return true;
 }
 
@@ -135,7 +89,7 @@ export async function markReservationSeen(id: string) {
     return false;
   }
 
-  revalidatePath('/admin/reservations');
+  revalidatePath('/cashier');
   return true;
 }
 
@@ -152,7 +106,7 @@ export async function markAllReservationsSeen() {
     return false;
   }
 
-  revalidatePath('/admin/reservations');
+  revalidatePath('/cashier');
   return true;
 }
 
@@ -169,6 +123,6 @@ export async function deleteReservation(id: string) {
     return false;
   }
 
-  revalidatePath('/admin/reservations');
+  revalidatePath('/cashier');
   return true;
 }
