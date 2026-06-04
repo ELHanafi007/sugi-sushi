@@ -16,7 +16,7 @@ export async function sendConfirmationEmail(reservation: Reservation) {
   try {
     const resend = getResend();
     const { data, error } = await resend.emails.send({
-      from: 'Sugi Sushi <reservations@sugi-sushi.com>',
+      from: 'Sugi Sushi <info@sugisushi.com.sa>',
       to: [reservation.email],
       subject: `Reservation Confirmed - Sugi Sushi ${reservation.code}`,
       html: `
@@ -103,7 +103,7 @@ export async function sendReceivedEmail(reservation: Reservation) {
   try {
     const resend = getResend();
     const { data, error } = await resend.emails.send({
-      from: 'Sugi Sushi <reservations@sugi-sushi.com>',
+      from: 'Sugi Sushi <info@sugisushi.com.sa>',
       to: [reservation.email],
       subject: `Reservation Received - Sugi Sushi ${reservation.code}`,
       html: `
