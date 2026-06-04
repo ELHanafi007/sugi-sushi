@@ -152,21 +152,28 @@ export default function ReservationsPage() {
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'cancelled'>('all');
 
-  useEffect(() => {
-    fetchReservations();
-  }, []);
-
-  const fetchReservations = async () => {
+  const fetchReservations = async (silent = false) => {
     try {
+      if (!silent) setLoading(true);
       const res = await fetch('/api/reservations');
       const data = await res.json();
       setReservations(data);
     } catch (error) {
       console.error('Error fetching reservations:', error);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchReservations();
+
+    const interval = setInterval(() => {
+      fetchReservations(true);
+    }, 15000); // Auto-refresh every 15 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleStatusChange = async (id: string, status: 'pending' | 'confirmed' | 'cancelled') => {
     try {
@@ -218,11 +225,23 @@ export default function ReservationsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-serif italic text-white/90">Reservations</h1>
-        <p className="text-white/25 text-[11px] font-mono uppercase tracking-widest mt-1">
-          {reservations.length} total — {counts.pending} pending
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-serif italic text-white/90">Reservations</h1>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-white/25 text-[11px] font-mono uppercase tracking-widest">
+              {reservations.length} total — {counts.pending} pending
+            </p>
+            <span className="text-white/10 text-[9px]">•</span>
+            <div className="flex items-center gap-1.5">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+              </span>
+              <span className="text-[10px] font-mono text-emerald-400/80 uppercase tracking-wider">Live auto-update (15s)</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* New reservations alert */}
