@@ -3,6 +3,63 @@
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { sendReceivedEmail } from '@/lib/email';
 
+
+function generateEasyToRememberNumber(): string {
+  const patterns = [
+    // Pattern 1: AABB (A and B are distinct, A != 0)
+    () => {
+      const a = Math.floor(1 + Math.random() * 9); // 1-9
+      let b = Math.floor(Math.random() * 10); // 0-9
+      while (a === b) b = Math.floor(Math.random() * 10);
+      return `${a}${a}${b}${b}`;
+    },
+    // Pattern 2: ABAB (A and B are distinct, A != 0)
+    () => {
+      const a = Math.floor(1 + Math.random() * 9);
+      let b = Math.floor(Math.random() * 10);
+      while (a === b) b = Math.floor(Math.random() * 10);
+      return `${a}${b}${a}${b}`;
+    },
+    // Pattern 3: AB00 (A != 0, B != 0)
+    () => {
+      const a = Math.floor(1 + Math.random() * 9);
+      const b = Math.floor(1 + Math.random() * 9);
+      return `${a}${b}00`;
+    },
+    // Pattern 4: A00B (A != 0, B != 0)
+    () => {
+      const a = Math.floor(1 + Math.random() * 9);
+      const b = Math.floor(1 + Math.random() * 9);
+      return `${a}00${b}`;
+    },
+    // Pattern 5: AAAB (A != 0, A != B)
+    () => {
+      const a = Math.floor(1 + Math.random() * 9);
+      let b = Math.floor(Math.random() * 10);
+      while (a === b) b = Math.floor(Math.random() * 10);
+      return `${a}${a}${a}${b}`;
+    },
+    // Pattern 6: ABBB (A != 0, A != B)
+    () => {
+      const a = Math.floor(1 + Math.random() * 9);
+      let b = Math.floor(Math.random() * 10);
+      while (a === b) b = Math.floor(Math.random() * 10);
+      return `${a}${b}${b}${b}`;
+    },
+    // Pattern 7: Consecutive digits
+    () => {
+      const sequences = [
+        '1234', '2345', '3456', '4567', '5678', '6789',
+        '4321', '5432', '6543', '7654', '8765', '9876'
+      ];
+      return sequences[Math.floor(Math.random() * sequences.length)];
+    }
+  ];
+
+  const randomPattern = patterns[Math.floor(Math.random() * patterns.length)];
+  return randomPattern();
+}
+
 export async function createReservation(formData: FormData) {
   const supabase = getSupabaseAdmin();
 
@@ -24,8 +81,8 @@ export async function createReservation(formData: FormData) {
   let code = '';
   let attempts = 0;
   while (attempts < 100) {
-    const randomNum = Math.floor(1000 + Math.random() * 9000); // 1000 to 9999
-    const candidateCode = `#${randomNum}`;
+    const randomNumStr = generateEasyToRememberNumber();
+    const candidateCode = `#${randomNumStr}`;
     if (!existingCodes.has(candidateCode)) {
       code = candidateCode;
       break;
@@ -34,8 +91,7 @@ export async function createReservation(formData: FormData) {
   }
 
   if (!code) {
-    const randomNum = Math.floor(1000 + Math.random() * 9000);
-    code = `#${randomNum}`;
+    code = `#${generateEasyToRememberNumber()}`;
   }
 
   const { data, error } = await supabase
