@@ -15,20 +15,28 @@ export async function createReservation(formData: FormData) {
   const occasion = formData.get('occasion') as string;
   const notes = formData.get('notes') as string;
 
-  const { data: allReservations } = await supabase
+  const { data: existingReservations } = await supabase
     .from('reservations')
     .select('code');
 
-  let nextNum = 1;
-  if (allReservations && allReservations.length > 0) {
-    const maxCode = allReservations.reduce((max, r) => {
-      const num = parseInt(r.code.replace('#', ''));
-      return num > max ? num : max;
-    }, 0);
-    nextNum = maxCode + 1;
+  const existingCodes = new Set(existingReservations?.map(r => r.code) || []);
+
+  let code = '';
+  let attempts = 0;
+  while (attempts < 100) {
+    const randomNum = Math.floor(1000 + Math.random() * 9000); // 1000 to 9999
+    const candidateCode = `#${randomNum}`;
+    if (!existingCodes.has(candidateCode)) {
+      code = candidateCode;
+      break;
+    }
+    attempts++;
   }
 
-  const code = `#${nextNum.toString().padStart(4, '0')}`;
+  if (!code) {
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    code = `#${randomNum}`;
+  }
 
   const { data, error } = await supabase
     .from('reservations')
@@ -53,9 +61,11 @@ export async function createReservation(formData: FormData) {
     return { success: false, error: error.message };
   }
 
-  // Send initial email if email address is provided
+  // Send initial email if email address is provided (non-blocking)
   if (data.email) {
-    await sendReceivedEmail(data);
+    sendReceivedEmail(data).catch(err => {
+      console.error('Failed to send reservation received email:', err);
+    });
   }
 
   return { success: true, reservation: data };

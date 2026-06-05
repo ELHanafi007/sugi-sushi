@@ -29,7 +29,8 @@ export async function sendConfirmationEmail(reservation: Reservation) {
           <div style="padding: 40px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <h2 style="color: #c4a661; font-size: 24px; margin-bottom: 10px;">Your Reservation is Confirmed!</h2>
-              <p style="color: #666; font-size: 16px;">We are delighted to welcome you to Sugi Sushi.</p>
+              <p style="color: #666; font-size: 18px; font-weight: bold; color: #c4a661; margin-bottom: 15px;">Your table is waiting for you.</p>
+              <p style="color: #666; font-size: 14px;">We are delighted to welcome you to Sugi Sushi.</p>
             </div>
 
             <div style="background-color: #f9f9f9; padding: 30px; border-radius: 8px; margin-bottom: 30px;">
@@ -61,7 +62,8 @@ export async function sendConfirmationEmail(reservation: Reservation) {
 
             <div dir="rtl" style="text-align: right;">
               <h2 style="color: #c4a661; font-size: 24px; margin-bottom: 10px;">تم تأكيد حجزك!</h2>
-              <p style="color: #666; font-size: 16px;">يسعدنا استقبالكم في سوجي سوشي.</p>
+              <p style="color: #666; font-size: 18px; font-weight: bold; color: #c4a661; margin-bottom: 15px;">طاولتك بانتظارك الآن.</p>
+              <p style="color: #666; font-size: 14px;">يسعدنا استقبالكم في سوجي سوشي.</p>
               
               <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px;">
                 <p style="margin: 5px 0;"><strong>الاسم:</strong> ${reservation.name}</p>

@@ -67,9 +67,11 @@ export async function updateReservationStatus(
     return false;
   }
 
-  // If status is changed to confirmed, send the email
+  // If status is changed to confirmed, send the email (non-blocking)
   if (status === 'confirmed' && reservation.email) {
-    await sendConfirmationEmail(reservation as Reservation);
+    sendConfirmationEmail(reservation as Reservation).catch(err => {
+      console.error('Failed to send confirmation email:', err);
+    });
   }
 
   revalidatePath('/cashier');
