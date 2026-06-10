@@ -449,7 +449,7 @@ export default function ProductForm({
           <div className="p-4 bg-amber-400/5 border border-amber-400/10 rounded-xl flex gap-3">
             <Check className="text-amber-400 flex-shrink-0" size={18} />
             <p className="text-[12px] text-amber-400/70 leading-relaxed">
-              If portions are defined, the main price field will be ignored and the product will use the "Slider Scale" UX.
+              If portions are defined, the main price field will be ignored and the product will use the &quot;Slider Scale&quot; UX.
             </p>
           </div>
 

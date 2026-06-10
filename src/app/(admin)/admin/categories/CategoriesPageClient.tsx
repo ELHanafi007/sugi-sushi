@@ -279,7 +279,7 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
               <h3 className="text-[10px] font-mono uppercase tracking-widest font-bold">Note</h3>
             </div>
             <p className="text-[11px] text-white/20 leading-relaxed">
-              Deleting a category won't delete the products inside it, but they'll lose their category until reassigned.
+              Deleting a category won&apos;t delete the products inside it, but they&apos;ll lose their category until reassigned.
             </p>
           </div>
         </div>

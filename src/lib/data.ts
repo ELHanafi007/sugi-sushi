@@ -272,7 +272,7 @@ export async function getMenu(): Promise<MenuData> {
 
     if (productsData && productsData.length > 0) {
       // If categories table is blocked by RLS, derive from products
-      let categoryList = categoriesData && categoriesData.length > 0 
+      const categoryList = categoriesData && categoriesData.length > 0 
         ? categoriesData 
         : Array.from(new Set(productsData.map(p => p.category))).map(name => ({ name, image: '' }));
         

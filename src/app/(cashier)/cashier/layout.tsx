@@ -8,6 +8,7 @@ import {
   Eye,
   PanelLeftClose,
   PanelLeftOpen,
+  Table2,
 } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,10 +26,21 @@ export default function CashierLayout({
     return <>{children}</>;
   }
 
+  if (pathname === '/cashier/tables') {
+    return <div className="min-h-screen bg-[#060608] text-white">{children}</div>;
+  }
+
   const isActive = (href: string) => {
     if (href === '/cashier') return pathname === '/cashier';
     return pathname.startsWith(href);
   };
+
+  const navItems = [
+    { name: 'Reservations', href: '/cashier', icon: Calendar },
+    { name: 'Tables', href: '/cashier/tables', icon: Table2 },
+  ];
+
+  const activeItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
 
   return (
     <div className="min-h-screen bg-[#060608] text-white flex flex-col">
@@ -56,38 +68,45 @@ export default function CashierLayout({
 
           {/* Navigation */}
           <nav className="flex-1 py-4 px-3 space-y-1">
-            <Link 
-              href="/cashier"
-              title={sidebarCollapsed ? 'Reservations' : undefined}
-              className={`flex items-center gap-3 py-3 rounded-xl transition-all duration-300 group relative ${
-                sidebarCollapsed ? 'justify-center px-0' : 'px-4'
-              } ${
-                isActive('/cashier') 
-                  ? 'bg-gold/[0.08] text-gold' 
-                  : 'text-white/35 hover:text-white/70 hover:bg-white/[0.03]'
-              }`}
-            >
-              {isActive('/cashier') && (
-                <motion.div
-                  layoutId="cashier-sidebar-active"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-gold"
-                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                />
-              )}
-              <Calendar size={20} strokeWidth={isActive('/cashier') ? 2 : 1.5} />
-              <AnimatePresence>
-                {!sidebarCollapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    className="text-[13px] font-medium tracking-wide whitespace-nowrap overflow-hidden"
-                  >
-                    Reservations
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </Link>
+            {navItems.map((item) => {
+              const active = isActive(item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  title={sidebarCollapsed ? item.name : undefined}
+                  className={`flex items-center gap-3 py-3 rounded-xl transition-all duration-300 group relative ${
+                    sidebarCollapsed ? 'justify-center px-0' : 'px-4'
+                  } ${
+                    active
+                      ? 'bg-gold/[0.08] text-gold'
+                      : 'text-white/35 hover:text-white/70 hover:bg-white/[0.03]'
+                  }`}
+                >
+                  {active && (
+                    <motion.div
+                      layoutId="cashier-sidebar-active"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-gold"
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
+                  <item.icon size={20} strokeWidth={active ? 2 : 1.5} />
+                  <AnimatePresence>
+                    {!sidebarCollapsed && (
+                      <motion.span
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        className="text-[13px] font-medium tracking-wide whitespace-nowrap overflow-hidden"
+                      >
+                        {item.name}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Bottom actions */}
@@ -139,7 +158,9 @@ export default function CashierLayout({
           <header className="sticky top-0 z-30 bg-[#060608]/80 backdrop-blur-xl border-b border-white/[0.04]">
             <div className="px-8 py-4 flex items-center justify-between">
               <nav className="flex items-center gap-1.5 text-[12px]">
-                <span className="text-white/60 font-medium">Reservations</span>
+                <span className="text-white/25">Cashier</span>
+                <span className="text-white/10">/</span>
+                <span className="text-white/60 font-medium">{activeItem.name}</span>
               </nav>
             </div>
           </header>
@@ -175,9 +196,40 @@ export default function CashierLayout({
         </header>
 
         {/* Mobile Content */}
-        <main className="flex-1 p-4 pb-8 overflow-y-auto">
+        <main className="flex-1 p-4 pb-24 overflow-y-auto">
           {children}
         </main>
+
+        {/* Mobile Bottom Tab Bar */}
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#08080a]/95 backdrop-blur-xl border-t border-white/[0.06] safe-area-bottom">
+          <div className="flex items-stretch justify-around px-2 py-1">
+            {navItems.map((item) => {
+              const active = isActive(item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex flex-col items-center gap-1 py-2 px-3 rounded-xl transition-all relative ${
+                    active ? 'text-gold' : 'text-white/30'
+                  }`}
+                >
+                  <item.icon size={20} strokeWidth={active ? 2 : 1.5} />
+                  <span className={`text-[9px] font-mono uppercase tracking-wider ${active ? 'font-bold' : ''}`}>
+                    {item.name}
+                  </span>
+                  {active && (
+                    <motion.div
+                      layoutId="cashier-mobile-tab"
+                      className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full bg-gold"
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
       </div>
     </div>
   );
