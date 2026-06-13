@@ -44,7 +44,7 @@ function DishModal({
   dynamicCategoryImages: Record<string, string>;
 }) {
   const { lang, t } = useLanguage();
-  const { addToCart, buyNow, tableNumber } = useCart();
+  const { addToCart, buyNow, tableNumber, setIsCartOpen } = useCart();
   const [selectedPortionIdx, setSelectedPortionIdx] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isInstantLoading, setIsInstantLoading] = useState(false);
@@ -76,6 +76,8 @@ function DishModal({
 
   const handleAddToCart = () => {
     addToCart(dish, quantity, selectedPortionIdx);
+    setIsCartOpen(true);
+    onClose();
   };
 
   const handleInstantDelight = async () => {
