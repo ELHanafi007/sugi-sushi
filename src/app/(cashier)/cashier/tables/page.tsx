@@ -166,6 +166,7 @@ export default function CashierTablesPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [tableOrders, setTableOrders] = useState<any[]>([]);
+  const [activeSessionsOrders, setActiveSessionsOrders] = useState<Record<string, { orders: any[], total: number }>>({});
   const [dbError, setDbError] = useState<string | null>(null);
 
   const knownAlertsRef = useRef<Set<string>>(new Set());
@@ -235,6 +236,34 @@ export default function CashierTablesPage() {
         initialLoadDone.current = true;
       }
       setDbTables(data);
+
+      // Fetch active sessions and orders
+      try {
+        const { data: activeSessions } = await supabase
+          .from('sessions')
+          .select('id, table_id')
+          .eq('status', 'active');
+          
+        if (activeSessions && activeSessions.length > 0) {
+          const sessionIds = activeSessions.map(s => s.id);
+          const { data: orders } = await supabase
+            .from('orders')
+            .select('*')
+            .in('session_id', sessionIds);
+            
+          const mapping: Record<string, { orders: any[], total: number }> = {};
+          activeSessions.forEach(sess => {
+            const sessOrders = (orders || []).filter(o => o.session_id === sess.id);
+            const total = sessOrders.reduce((sum, o) => sum + (Number(o.total_price) || 0), 0);
+            mapping[sess.table_id] = { orders: sessOrders, total };
+          });
+          setActiveSessionsOrders(mapping);
+        } else {
+          setActiveSessionsOrders({});
+        }
+      } catch (err) {
+        console.error('Error fetching active sessions orders:', err);
+      }
     }
   }, [playAlert]);
 
@@ -268,6 +297,8 @@ export default function CashierTablesPage() {
     const channel = supabase
       .channel(channelName)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'restaurant_tables' }, fetchTables)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, fetchTables)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'sessions' }, fetchTables)
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchTables]);
@@ -430,17 +461,22 @@ export default function CashierTablesPage() {
                     <span
                       className={`
                         absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10
-                        flex items-center justify-center
-                        h-7 min-w-7 px-1.5 rounded-full
+                        flex flex-col items-center justify-center
+                        py-1 px-2 md:px-3 rounded-xl
                         text-[9px] font-black tracking-wider leading-none
                         ring-1 shadow-lg backdrop-blur-sm
                         transition-all duration-300
-                        md:h-9 md:min-w-9 md:px-2 md:text-[11px]
+                        md:text-[11px]
                         ${meta.bg} ${meta.ring} ${meta.text}
                         ${isSelected ? 'scale-110 ring-2 ring-gold/60 shadow-gold/20' : 'group-hover:scale-105'}
                       `}
                     >
-                      {table.label}
+                      <span className="font-bold">{table.label}</span>
+                      {activeSessionsOrders[table.id]?.total > 0 && (
+                        <span className="text-[7.5px] md:text-[9.5px] font-mono text-gold mt-0.5 whitespace-nowrap opacity-90">
+                          {activeSessionsOrders[table.id].total.toFixed(0)} MAD
+                        </span>
+                      )}
                     </span>
 
                     {/* Pulsing alert dot */}
@@ -522,24 +558,40 @@ export default function CashierTablesPage() {
                 {/* Orders summary */}
                 {selectedDbTable.status !== 'empty' && tableOrders.length > 0 && (
                   <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
-                    <div className="px-4 py-2.5 border-b border-white/[0.04]">
-                      <span className="text-[10px] text-white/30 font-mono uppercase tracking-widest">Session Bill</span>
+                    <div className="px-4 py-2.5 border-b border-white/[0.04] bg-white/[0.01]">
+                      <span className="text-[10px] text-white/30 font-mono uppercase tracking-widest">Meals & Orders</span>
                     </div>
-                    <div className="p-4 space-y-2">
-                      {tableOrders.map(order => (
-                        <div key={order.id} className="flex items-center justify-between text-xs">
-                          <span className="text-white/50">
-                            {order.items?.reduce((s: number, i: any) => s + i.quantity, 0) || 0} items
-                          </span>
-                          <span className="text-gold font-semibold tabular-nums">
-                            {Number(order.total_price).toFixed(2)} MAD
-                          </span>
+                    <div className="p-4 space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar">
+                      {tableOrders.map((order, idx) => (
+                        <div key={order.id} className="border-b border-white/[0.04] last:border-b-0 pb-3 last:pb-0">
+                          <div className="flex items-center justify-between text-[9px] text-white/30 font-mono uppercase mb-2">
+                            <span>Order #{idx + 1}</span>
+                            <span className="text-white/40">{new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          </div>
+                          
+                          <div className="space-y-2 mb-2">
+                            {order.items?.map((item: any, itemIdx: number) => (
+                              <div key={itemIdx} className="flex justify-between text-xs leading-normal">
+                                <span className="text-white/75 pr-2">
+                                  {item.quantity}x {item.name} {item.portion ? `(${item.portion.name})` : ''}
+                                </span>
+                                <span className="text-gold/90 font-mono text-[11px] tabular-nums whitespace-nowrap">
+                                  {(parseFloat(item.price.toString().replace(/[^0-9.]/g, '')) * item.quantity).toFixed(2)} MAD
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          <div className="flex justify-between text-[11px] font-semibold pt-1.5 border-t border-white/[0.02] mt-2">
+                            <span className="text-white/40">Subtotal</span>
+                            <span className="text-gold font-mono tabular-nums">{Number(order.total_price).toFixed(2)} MAD</span>
+                          </div>
                         </div>
                       ))}
                     </div>
                     <div className="px-4 py-3 border-t border-white/[0.06] bg-white/[0.02] flex items-center justify-between">
-                      <span className="text-xs text-white/70 font-semibold">Total</span>
-                      <span className="text-base text-gold font-bold tabular-nums">
+                      <span className="text-xs text-white/70 font-semibold">Total Bill</span>
+                      <span className="text-base text-gold font-bold font-mono tabular-nums">
                         {tableOrders.reduce((sum, o) => sum + (Number(o.total_price) || 0), 0).toFixed(2)} MAD
                       </span>
                     </div>
