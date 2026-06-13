@@ -18,7 +18,7 @@ import { execSync } from 'child_process';
 
 // ─── Configuration ──────────────────────────────────────────
 // Change BASE_URL to your production domain when deploying
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://www.sugisushi.com.sa';
 
 const OUTPUT_DIR = join(process.env.HOME, 'Desktop', '66');
 
