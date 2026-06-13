@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
+import { useCart } from '@/context/CartContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { getDynamicRecommendations } from '@/utils/recommendationEngine';
 import Image from 'next/image';
@@ -22,30 +23,13 @@ const KANJI: Record<string, string> = {
   'Desserts': '甘', 'Extra Sauces': '醤',
 };
 
-const CAT_IMAGES: Record<string, string> = {
-  'Salads': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80',
-  'Soups': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1200&q=80',
-  'Starters': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80',
-  'Wok, Noodles & Rice': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1200&q=80',
-  'Tempura': 'https://images.unsplash.com/photo-1569050278883-d5c58c39bb7a?auto=format&fit=crop&w=1200&q=80',
-  'Sugi Dishes': 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80',
-  'Sashimi': 'https://images.unsplash.com/photo-1534256958597-7feec80116e7?auto=format&fit=crop&w=1200&q=80',
-  'Tataki': 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=1200&q=80',
-  'Ceviche': 'https://images.unsplash.com/photo-1534604973900-c41ab4c5e636?auto=format&fit=crop&w=1200&q=80',
-  'Nigiri': 'https://images.unsplash.com/photo-1611712142469-e39736310f21?auto=format&fit=crop&w=1200&q=80',
-  'Maki Rolls': 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&fit=crop&w=1200&q=80',
-  'Special Rolls': 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80',
-  'Fried Rolls': 'https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=1200&q=80',
-  'Desserts': 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=1200&q=80',
-};
-
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
 
 /* ─── Dish Modal (Masterpiece Edition) ─── */
-function DishModal({ 
-  dish, 
-  onClose, 
-  onDishSelect, 
+function DishModal({
+  dish,
+  onClose,
+  onDishSelect,
   onCategorySelect,
   menuDataToUse,
   categoriesToUse,
@@ -60,7 +44,10 @@ function DishModal({
   dynamicCategoryImages: Record<string, string>;
 }) {
   const { lang, t } = useLanguage();
+  const { addToCart, buyNow, tableNumber } = useCart();
   const [selectedPortionIdx, setSelectedPortionIdx] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [isInstantLoading, setIsInstantLoading] = useState(false);
 
   // Set default portion to the cheapest one when dish changes
   useEffect(() => {
@@ -78,6 +65,7 @@ function DishModal({
     } else {
       setSelectedPortionIdx(0);
     }
+    setQuantity(1);
   }, [dish]);
   
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
@@ -85,6 +73,17 @@ function DishModal({
   const image = dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE;
 
   const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
+
+  const handleAddToCart = () => {
+    addToCart(dish, quantity, selectedPortionIdx);
+  };
+
+  const handleInstantDelight = async () => {
+    setIsInstantLoading(true);
+    await buyNow(dish, quantity, tableNumber, selectedPortionIdx);
+    setIsInstantLoading(false);
+    onClose();
+  };
 
   const recommendations = useMemo(() => {
     return getDynamicRecommendations(dish, menuDataToUse, lang as 'en' | 'ar');
@@ -111,7 +110,6 @@ function DishModal({
   }, []);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const previousDishIdRef = useRef<Dish['id'] | null>(null);
   const [transitionDirection, setTransitionDirection] = useState(1);
 
   const contentVariants = {
@@ -137,48 +135,17 @@ function DishModal({
 
   // Immediate scroll reset on dish change
   useEffect(() => {
-    const reset = () => {
-      if (scrollRef.current) {
-        scrollRef.current.scrollTop = 0;
-      }
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    };
-    
-    reset();
-    // Insurance for layout shifts
-    const raf = requestAnimationFrame(reset);
-    const timeout = setTimeout(reset, 10);
-    const timeout2 = setTimeout(reset, 100);
-    
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(timeout);
-      clearTimeout(timeout2);
-    };
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
   }, [dish.id]);
 
-  useEffect(() => {
-    const prevId = previousDishIdRef.current;
-    if (prevId !== null && prevId !== dish.id) {
-      const prevIndex = menuDataToUse.findIndex((item) => item.id === prevId);
-      const currentIndex = menuDataToUse.findIndex((item) => item.id === dish.id);
-      if (prevIndex !== -1 && currentIndex !== -1 && prevIndex !== currentIndex) {
-        setTransitionDirection(currentIndex > prevIndex ? 1 : -1);
-      }
-    }
-    previousDishIdRef.current = dish.id;
-  }, [dish.id, menuDataToUse]);
-
-  return (
+  return createPortal(
     <motion.div 
-      ref={scrollRef}
-      initial={{ opacity: 0, y: "100%" }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: "100%" }}
-      transition={{ type: "spring", damping: 32, stiffness: 250 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className="fixed inset-0 z-[20000] modal-glass overflow-y-auto no-scrollbar outline-none pb-20"
-      style={{ willChange: "transform, opacity" }}
-      tabIndex={-1}
       onClick={onClose}
     >
       <div className="min-h-screen" onClick={e => e.stopPropagation()}>
@@ -210,51 +177,36 @@ function DishModal({
             transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1] }}
             className="max-w-2xl mx-auto md:px-6 pb-40"
           >
-            {/* Grab Handle for Mobile */}
             <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mt-4 mb-2 md:hidden" />
 
           {/* Cinematic Hero Image */}
           <motion.div
-            initial={{ y: 50, opacity: 0, scale: 0.95 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
             className="relative w-full h-[45vh] md:h-[65vh] md:rounded-[2.5rem] overflow-hidden mb-8 shadow-[0_40px_80px_rgba(0,0,0,0.8)] luxury-card"
           >
             <img
               src={image}
               alt={name}
-              loading="eager"
-              className="w-full h-full object-cover transition-transform duration-[10s] hover:scale-110"
+              className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-black/20 to-transparent" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,black_100%)] opacity-30" />
-            {/* Dish name overlay at bottom of image */}
             <div className="absolute bottom-0 left-0 right-0 p-8">
               <span className="text-mono text-white/30 text-[9px] tracking-[0.8em] font-black uppercase block mb-2">{t('menu.featured')}</span>
               <h2 className="text-4xl md:text-6xl font-serif text-white tracking-tightest leading-tight italic">{name}</h2>
             </div>
           </motion.div>
 
-          {/* Editorial Content */}
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 1 }}
-            className="space-y-12"
-          >
-            {/* Price + Portions + Description */}
+          <div className="space-y-12">
             <div className="flex flex-col items-center gap-10 pt-4">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentPrice}
-                  initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
-                  animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
                   className="flex flex-col items-center gap-1"
                 >
                   <span className="text-gold/20 text-[8px] uppercase tracking-[1em] font-black">{t('menu.current_price')}</span>
-                  <CurrencyPrice price={currentPrice} className="text-6xl md:text-7xl text-gold font-serif font-light" iconClassName="w-10 h-10 md:w-14 md:h-14" />
+                  <CurrencyPrice price={currentPrice} className="text-6xl md:text-7xl text-gold font-serif font-light" />
                 </motion.div>
               </AnimatePresence>
 
@@ -270,15 +222,46 @@ function DishModal({
                    <div className="w-full h-px bg-white/5 mt-4" />
                 </div>
               )}
+
+              {/* Order Controls */}
+              <div className="w-full flex flex-col items-center gap-8">
+                <div className="flex items-center gap-10 bg-white/[0.03] border border-white/10 rounded-full p-2 px-8 backdrop-blur-md">
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-12 h-12 flex items-center justify-center text-white/20 hover:text-gold transition-colors text-2xl font-light">—</button>
+                  <div className="flex flex-col items-center min-w-[40px]">
+                    <span className="text-white text-2xl font-mono font-bold">{quantity}</span>
+                    <span className="text-[7px] text-white/20 uppercase tracking-[0.2em] font-black mt-1">Quantity</span>
+                  </div>
+                  <button onClick={() => setQuantity(quantity + 1)} className="w-12 h-12 flex items-center justify-center text-white/20 hover:text-gold transition-colors text-2xl font-light">+</button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleAddToCart}
+                    className="py-5 rounded-2xl border border-gold/30 text-gold text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14m-7-7v14"/></svg>
+                    {t('cart.add_to_order')}
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleInstantDelight}
+                    disabled={isInstantLoading}
+                    className="py-5 rounded-2xl bg-gold text-black text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 disabled:opacity-50"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    {isInstantLoading ? '...' : t('cart.instant_delight')}
+                  </motion.button>
+                </div>
+              </div>
             </div>
 
-            <p className="text-xl md:text-2xl text-white/40 font-serif italic leading-relaxed font-light">
-              &quot;{desc}&quot;
-            </p>
+            <p className="text-xl md:text-2xl text-white/40 font-serif italic leading-relaxed font-light text-center">&quot;{desc}&quot;</p>
 
-            {/* The Source */}
             <div className="pt-12 border-t border-white/[0.03] space-y-12">
-              {/* Allergens Orchestration */}
               <div className="space-y-6">
                 <div className="flex items-center gap-6">
                   <div className="w-16 h-[1px] bg-gold/20" />
@@ -303,470 +286,111 @@ function DishModal({
                   <div className="w-16 h-[1px] bg-gold/20" />
                   <h4 className="text-gold/30 text-[10px] uppercase tracking-[0.6em] font-black font-mono">{t('strict.details')}</h4>
                 </div>
-                
                 <div className="flex flex-wrap gap-3">
                   {dish.tags.map(tag => (
-                    <span key={tag} className="px-6 py-2 rounded-full bg-white/[0.02] border border-white/[0.05] text-[10px] text-white/30 uppercase tracking-[0.2em] font-black font-mono">
-                      {tag}
-                    </span>
+                    <span key={tag} className="px-6 py-2 rounded-full bg-white/[0.02] border border-white/[0.05] text-[10px] text-white/30 uppercase tracking-[0.2em] font-black font-mono">{tag}</span>
                   ))}
                 </div>
-
-                <p className="text-white/20 text-base leading-relaxed font-serif italic font-light">
-                  {t('strict.sourced')}
-                </p>
               </div>
             </div>
 
-            {/* ─── More from This Category ─── */}
+            {/* Recommendations */}
             <div className="pt-16 space-y-8">
-              <div className="flex items-center justify-between">
-                 <h4 className="text-white/60 text-xl font-serif italic">{t('strict.more_from')} {t(`menu.cat.${dish.category}`)}</h4>
-                 <div className="h-px flex-1 bg-white/5 mx-6" />
-                 <span className="text-gold/40 text-[9px] uppercase tracking-widest font-mono">{menuDataToUse.filter(d => d.category === dish.category && d.id !== dish.id).length} {t('menu.selections')}</span>
-              </div>
-              <div className="grid grid-cols-1 gap-4">
-                {menuDataToUse
-                  .filter(d => d.category === dish.category && d.id !== dish.id)
-                  .slice(0, 6)
-                  .map((item) => (
-                    <motion.div 
-                      key={item.id}
-                      onClick={() => onDishSelect(item)}
-                      whileHover={{ x: 10, backgroundColor: 'rgba(255,255,255,0.02)' }}
-                      className="flex items-center gap-5 p-4 rounded-3xl luxury-card cursor-pointer group transition-all duration-700"
-                    >
-                      <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04] relative">
-                        <img 
-                          src={item.image || dynamicCategoryImages[item.category.toLowerCase()] || DEFAULT_IMAGE} 
-                          alt={item.name} 
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=100&q=20';
-                          }}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h5 className="text-white/80 font-serif text-base group-hover:text-gold transition-colors leading-snug">
-                          {lang === 'ar' ? item.nameAr || item.name : item.name}
-                        </h5>
-                        <div className="mt-1">
-                          <CurrencyPrice 
-                            price={item.price} 
-                            className="text-gold/40 text-[11px] font-mono tracking-widest" 
-                            iconClassName="w-3.5 h-3.5" 
-                          />
-                        </div>
-                      </div>
-                      <div className="w-8 h-8 rounded-full border border-white/5 flex items-center justify-center text-white/10 group-hover:border-gold/30 group-hover:text-gold transition-all duration-700">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m9 18 6-6-6-6"/></svg>
-                      </div>
-                    </motion.div>
-                  ))}
-              </div>
+               <div className="flex items-center justify-between">
+                  <h4 className="text-white/60 text-xl font-serif italic">{t('strict.more_from')} {t(`menu.cat.${dish.category}`)}</h4>
+                  <div className="h-px flex-1 bg-white/5 mx-6" />
+               </div>
+               <div className="grid grid-cols-1 gap-4">
+                 {menuDataToUse.filter(d => d.category === dish.category && d.id !== dish.id).slice(0, 4).map((item) => (
+                   <div key={item.id} onClick={() => onDishSelect(item)} className="flex items-center gap-5 p-4 rounded-3xl luxury-card cursor-pointer group">
+                     <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
+                       <img src={item.image || dynamicCategoryImages[item.category.toLowerCase()] || DEFAULT_IMAGE} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                     </div>
+                     <div className="flex-1 min-w-0">
+                       <h5 className="text-white/80 font-serif text-base group-hover:text-gold transition-colors">{lang === 'ar' ? item.nameAr || item.name : item.name}</h5>
+                       <CurrencyPrice price={item.price} className="text-gold/40 text-[11px] font-mono mt-1" />
+                     </div>
+                   </div>
+                 ))}
+               </div>
             </div>
-
-            {/* ─── Cross-Category Discovery: Two-Row Slider ─── */}
-            <div className="pt-16 space-y-10 overflow-hidden -mx-6">
-              <div className="px-6 flex items-center justify-between">
-                 <h4 className="text-white/60 text-xl font-serif italic">{t('menu.discovery_title')}</h4>
-                 <div className="h-px flex-1 bg-white/5 mx-6" />
-              </div>
-
-              <div className="space-y-6">
-                <motion.div 
-                  className="flex gap-4 px-6 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing"
-                  drag="x"
-                  dragConstraints={{ right: 0, left: -2000 }} // Increased for single row
-                >
-                  {categoriesToUse.map((cat) => (
-                    <motion.button
-                      key={cat}
-                      onClick={() => { onCategorySelect(cat); onClose(); }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="relative flex-shrink-0 w-48 md:w-56 aspect-[16/10] rounded-2xl overflow-hidden group luxury-card border border-white/5"
-                    >
-                      <img 
-                        src={dynamicCategoryImages[cat.toLowerCase()] || DEFAULT_IMAGE} 
-                        alt={cat} 
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-1000" 
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=40';
-                        }}
-                      />
-                      <div className="absolute inset-0 flex flex-col justify-end p-5 bg-gradient-to-t from-black/90 via-black/20 to-transparent">
-                        <span className="text-white/80 text-[9px] md:text-[11px] font-mono uppercase tracking-[0.3em] leading-relaxed">
-                          {cat}
-                        </span>
-                      </div>
-                    </motion.button>
-                  ))}
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
+          </div>
           </motion.div>
         </AnimatePresence>
       </div>
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 }
 
-/* ─── Strict Menu Orchestrator ─── */
 export default function StrictMenu({ 
-  onTabChange,
-  initialMenuData,
-  initialCategories,
-  initialCategoryData
+  initialMenuData, 
+  initialCategories, 
+  initialCategoryData,
+  onTabChange
 }: { 
+  initialMenuData: Dish[]; 
+  initialCategories: string[]; 
+  initialCategoryData: { name: string; image: string }[];
   onTabChange?: (tab: any) => void;
-  initialMenuData?: Dish[];
-  initialCategories?: string[];
-  initialCategoryData?: { name: string, image: string }[];
 }) {
-  const { lang, t, pendingDish, setPendingDish } = useLanguage();
-  
-  // Use props if provided, otherwise fallback to static data
-  const menuDataToUse = initialMenuData || menuData;
-  const categoriesToUse = initialCategories || CATEGORIES;
+  const { lang, t } = useLanguage();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(initialCategories[0]);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
 
-  // Map category images from database
+  const menuDataToUse = initialMenuData;
+  const categoriesToUse = initialCategories;
+
   const dynamicCategoryImages = useMemo(() => {
     const map: Record<string, string> = {};
-    // Base from static images (lowercase)
-    Object.entries(CAT_IMAGES).forEach(([name, img]) => {
-      map[name.toLowerCase()] = img;
+    initialCategoryData.forEach(cat => {
+      map[cat.name.toLowerCase()] = cat.image;
     });
-    // Override from database (lowercase)
-    if (initialCategoryData) {
-      initialCategoryData.forEach(cat => {
-        if (cat.image) map[cat.name.toLowerCase()] = cat.image;
-      });
-    }
     return map;
   }, [initialCategoryData]);
 
-  const [selectedCategory, setSelectedCategory] = useState(categoriesToUse[0]);
-  const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  // Portal logic
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  
-  useEffect(() => {
-    (window as any).dispatchDishSelect = (dish: Dish) => setSelectedDish(dish);
-    
-    // Check for pending dish from other pages
-    if (pendingDish) {
-      setSelectedDish(pendingDish);
-      setSelectedCategory(pendingDish.category);
-      setPendingDish(null);
-    }
-
-    return () => { delete (window as any).dispatchDishSelect; };
-  }, [pendingDish, setPendingDish]);
-
   const filteredDishes = useMemo(() => {
-    const query = searchQuery.toLowerCase().trim();
-    
-    if (!query) {
-      // Standard Category Mode
-      let dishes = menuDataToUse.filter(dish => dish.category === selectedCategory);
-      if (activeFilters.length > 0) {
-        dishes = dishes.filter(dish => activeFilters.every(filter => dish.tags.includes(filter)));
-      }
-      return dishes;
-    }
-
-    // Dynamic Search Mode (Global across all categories)
     return menuDataToUse.filter(dish => {
-      const nameMatch = dish.name.toLowerCase().includes(query) || (dish.nameAr && dish.nameAr.includes(query));
-      const descMatch = dish.description.toLowerCase().includes(query) || (dish.descriptionAr && dish.descriptionAr.includes(query));
-      const tagMatch = dish.tags.some(tag => tag.toLowerCase().includes(query));
-      const categoryMatch = dish.category.toLowerCase().includes(query);
+      const matchesCategory = selectedCategory === 'All' || dish.category === selectedCategory;
+      const matchesSearch = dish.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (dish.nameAr || '').includes(searchQuery) ||
+                          dish.description.toLowerCase().includes(searchQuery.toLowerCase());
       
-      const basicMatches = nameMatch || descMatch || tagMatch || categoryMatch;
+      const basicMatches = matchesCategory && matchesSearch;
       
-      // If filters are active, they must also match
       if (activeFilters.length > 0) {
-        return basicMatches && activeFilters.every(filter => dish.tags.includes(filter));
+        return basicMatches && activeFilters.every(f => dish.tags.includes(f));
       }
       return basicMatches;
     });
-  }, [selectedCategory, activeFilters, searchQuery, menuDataToUse]);
-
-  const toggleFilter = (filter: string) => {
-    setActiveFilters(prev => prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]);
-  };
+  }, [selectedCategory, searchQuery, activeFilters, menuDataToUse]);
 
   return (
     <div className="min-h-screen bg-bg pt-48 pb-[120px]">
-      {/* Masterpiece Header Orchestration */}
-      <div className="px-8 mb-16 relative">
-        <motion.div 
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-6 mb-8"
-        >
-          <div className="w-16 h-px bg-gold/40" />
-          <span className="text-mono text-gold/50 text-[10px] tracking-[1em] font-black uppercase">{t('menu.archive')}</span>
-        </motion.div>
-        
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12">
-          <div>
-            <motion.h1 
-              initial={{ opacity: 0, y: 30, filter: 'blur(20px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ delay: 0.2, duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-              className="text-white text-6xl md:text-8xl lg:text-9xl font-serif font-light mb-8 tracking-tightest leading-[0.85] italic"
-            >
-              {t('menu.exp_title')} <span className="shimmer-gold not-italic !font-black">{t('menu.discovery_title')}</span>
-            </motion.h1>
-            <div className="flex items-center gap-4">
-               <span className="text-white/15 text-[9px] font-mono uppercase tracking-[0.6em] font-black">
-                 {menuDataToUse.length} {t('menu.selected_count')}
-               </span>
-               <div className="w-2 h-2 rounded-full bg-gold/40 animate-pulse shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
+      <div className="px-8 mb-16">
+        <h1 className="text-white text-6xl md:text-8xl font-serif italic">{t('menu.exp_title')} <span className="shimmer-gold not-italic font-black">{t('menu.discovery_title')}</span></h1>
+      </div>
+
+      <div className="flex gap-6 overflow-x-auto no-scrollbar px-8 mb-12">
+        {categoriesToUse.map(cat => (
+          <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-8 py-4 rounded-full border transition-all whitespace-nowrap ${selectedCategory === cat ? 'bg-gold border-gold text-black' : 'border-white/10 text-white/40'}`}>
+            {t(`menu.cat.${cat}`)}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">
+        {filteredDishes.map(dish => (
+          <motion.div key={dish.id} onClick={() => setSelectedDish(dish)} className="luxury-card rounded-[2.5rem] overflow-hidden p-6 cursor-pointer group">
+            <div className="aspect-square rounded-[2rem] overflow-hidden mb-6">
+              <img src={dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
             </div>
-          </div>
-
-          {/* Masterpiece Search Trigger */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="relative"
-          >
-            <button 
-              onClick={() => { /* Open Search Overlay logic */ }}
-              className="flex items-center gap-6 px-8 py-5 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-2xl group hover:border-gold/30 transition-all duration-700 shadow-2xl"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gold/40 group-hover:text-gold group-hover:scale-110 transition-all duration-700">
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-              </svg>
-              <input
-                type="text"
-                placeholder={t('menu.search')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent border-none text-white text-xs font-serif italic placeholder:text-white/10 focus:outline-none w-48 lg:w-64"
-              />
-            </button>
+            <h3 className="text-white text-2xl font-serif italic mb-2">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h3>
+            <CurrencyPrice price={dish.price} className="text-gold font-mono" />
           </motion.div>
-        </div>
-      </div>
-
-      {/* High-End Category Slider */}
-      <div className="mb-24">
-        <div className="flex gap-6 overflow-x-auto no-scrollbar px-8 pb-10">
-          {categoriesToUse.map((cat, idx) => {
-            const isActive = selectedCategory === cat;
-            return (
-              <motion.button
-                key={cat}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05, duration: 1 }}
-                onClick={() => { setSelectedCategory(cat); setActiveFilters([]); }}
-                whileTap={{ scale: 0.95 }}
-                className={`relative flex-shrink-0 w-36 h-56 rounded-[3rem] overflow-hidden group transition-all duration-1000 ${
-                  isActive ? 'shadow-[0_30px_60px_rgba(0,0,0,0.6)]' : 'hover:shadow-[0_15px_30px_rgba(0,0,0,0.3)]'
-                }`}
-              >
-                <img 
-                  src={dynamicCategoryImages[cat.toLowerCase()] || DEFAULT_IMAGE} 
-                  alt={cat}
-                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${
-                    isActive ? 'scale-110' : 'blur-[1px] group-hover:scale-105 group-hover:blur-0'
-                  }`}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=40';
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
-                
-                <div className="absolute inset-0 p-5 flex flex-col justify-end items-center text-center">
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.span 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 5 }}
-                        className="text-gold/40 font-serif text-2xl mb-2"
-                      >
-                        {KANJI[cat]}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                  <span className={`text-[10px] md:text-xs font-mono uppercase tracking-[0.2em] transition-all duration-700 leading-relaxed ${
-                    isActive ? 'text-gold shimmer-gold' : 'text-white/60'
-                  }`}>
-                    {t(`menu.cat.${cat}`)}
-                  </span>
-                  {isActive && (
-                    <motion.div 
-                      layoutId="catLineMaster" 
-                      className="w-12 h-[1px] bg-gold mt-4 shadow-[0_0_15px_rgba(212,175,55,1)]" 
-                    />
-                  )}
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Filter Orchestration */}
-      <div className="px-8 space-y-8">
-        <div className="flex justify-between items-center">
-        <AnimatePresence mode="wait">
-          <motion.h3 
-            key={searchQuery ? 'search' : selectedCategory}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="text-white text-3xl font-serif italic font-light"
-          >
-            {searchQuery 
-              ? t('strict.results')
-              : t(`menu.cat.${selectedCategory}`)
-            }
-          </motion.h3>
-        </AnimatePresence>
-        <div className="h-[1px] flex-1 bg-white/5 mx-6" />
-        <span className="text-mono text-white/10 text-[10px] font-black">{filteredDishes.length} {t('menu.selections')}</span>
-        </div>
-
-        <div className="flex flex-wrap gap-3">
-        {[
-          { 
-            id: 'Vegetarian', 
-            label: t('filter.vegetarian'), 
-            icon: (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/>
-                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-              </svg>
-            )
-          },
-          { 
-            id: 'Spicy', 
-            label: t('filter.spicy'), 
-            icon: (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
-              </svg>
-            )
-          },
-          { 
-            id: 'Best Seller', 
-            label: t('filter.bestseller'), 
-            icon: (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-            )
-          },
-        ].map((filter) => (
-            <motion.button
-              key={filter.id}
-              onClick={() => toggleFilter(filter.id)}
-              whileTap={{ scale: 0.95 }}
-              className={`flex items-center gap-3 px-6 py-3 rounded-2xl border transition-all duration-700 ${
-                activeFilters.includes(filter.id)
-                  ? 'bg-gold border-gold text-black shadow-[0_10px_20px_rgba(212,175,55,0.2)]'
-                  : 'bg-white/[0.02] border-white/[0.05] text-white/40 hover:border-gold/30'
-              }`}
-            >
-              <span className={activeFilters.includes(filter.id) ? 'text-black' : 'text-gold/50'}>{filter.icon}</span>
-              <span className="text-[10px] font-black uppercase tracking-widest font-mono">{filter.label}</span>
-            </motion.button>
-          ))}
-        </div>
-
-        {/* Masterpiece List */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selectedCategory + activeFilters.join(',')}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-            className="grid grid-cols-1 gap-4 pt-4"
-          >
-            {filteredDishes.length > 0 ? (
-              filteredDishes.map((dish, idx) => (
-                <motion.div
-                  key={dish.id}
-                  onClick={() => setSelectedDish(dish)}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1 * idx, duration: 1 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="group relative flex items-center gap-6 p-6 rounded-[2.5rem] luxury-card dish-card-tap cursor-pointer overflow-hidden z-20"
-                >
-                  <div className="w-24 h-24 rounded-3xl overflow-hidden flex-shrink-0 bg-white/[0.04] shadow-2xl">
-                    <img 
-                      src={dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE} 
-                      alt={dish.name} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=200&q=40';
-                      }}
-                    />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <h5 className="text-white/80 font-serif text-base group-hover:text-gold transition-colors leading-tight">
-                      {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
-                    </h5>
-                    <div className="mt-2 flex items-center gap-3">
-                      {dish.portions && dish.portions.length > 1 ? (
-                        <div className="flex items-center gap-3">
-                           <span className="text-gold/30 text-[10px] uppercase font-black tracking-widest">{t('menu.from')}</span>
-                           <CurrencyPrice 
-                             price={dish.portions.reduce((min, p) => parseInt(p.price) < parseInt(min) ? p.price : min, dish.portions[0].price)} 
-                             className="text-gold/70 text-lg font-serif" 
-                             iconClassName="w-5 h-5" 
-                           />
-                           <div className="h-4 w-px bg-white/10" />
-                           <span className="text-white/20 text-[9px] uppercase font-black tracking-tighter">{dish.portions!.map(p => `${p.pieces}P`).join(' / ')}</span>
-                        </div>
-                      ) : (
-                        <CurrencyPrice 
-                          price={dish.price} 
-                          className="text-gold/60 text-base font-serif" 
-                          iconClassName="w-5 h-5" 
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center text-white/10 group-hover:border-gold/30 group-hover:text-gold group-hover:bg-gold/5 transition-all duration-700">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m9 18 6-6-6-6"/></svg>
-                  </div>
-                </motion.div>
-              ))
-            ) : (
-              <div className="py-32 text-center">
-                 <p className="text-white/20 font-serif italic text-xl">{t('menu.no_results')}</p>
-                 {searchQuery && (
-                   <button 
-                     onClick={() => setSearchQuery('')}
-                     className="mt-6 text-gold/60 text-[10px] uppercase tracking-[0.4em] font-black border-b border-gold/20 pb-1"
-                   >
-                     {t('strict.clear')}
-                   </button>
-                 )}
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+        ))}
       </div>
 
       <AnimatePresence>

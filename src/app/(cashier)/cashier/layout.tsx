@@ -26,10 +26,6 @@ export default function CashierLayout({
     return <>{children}</>;
   }
 
-  if (pathname === '/cashier/tables') {
-    return <div className="min-h-screen bg-[#060608] text-white">{children}</div>;
-  }
-
   const isActive = (href: string) => {
     if (href === '/cashier') return pathname === '/cashier';
     return pathname.startsWith(href);

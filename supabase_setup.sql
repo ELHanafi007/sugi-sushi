@@ -1,0 +1,113 @@
+-- ==========================================
+-- SUGI SUSHI — Ordering System Migration
+-- ==========================================
+
+-- 1. Create Restaurant Tables Registry
+CREATE TABLE IF NOT EXISTS public.restaurant_tables (
+    id TEXT PRIMARY KEY,
+    label TEXT NOT NULL,
+    capacity INTEGER NOT NULL DEFAULT 2,
+    status TEXT NOT NULL DEFAULT 'empty',
+    floor_zone TEXT,
+    x_pos FLOAT,
+    y_pos FLOAT,
+    call_waiter BOOLEAN DEFAULT false,
+    CONSTRAINT valid_status CHECK (status IN ('empty', 'seated', 'ordering', 'waiting', 'ready', 'delivered'))
+);
+
+-- Enable RLS for restaurant_tables
+ALTER TABLE public.restaurant_tables ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read access (needed for validating QR scans)
+CREATE POLICY "Public read access for tables" 
+    ON public.restaurant_tables FOR SELECT 
+    USING (true);
+
+-- Allow authenticated (staff/admin) all access
+CREATE POLICY "Staff full access to tables" 
+    ON public.restaurant_tables FOR ALL 
+    USING (true)
+    WITH CHECK (true);
+
+-- 2. Create Sessions Table
+CREATE TABLE IF NOT EXISTS public.sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    table_id TEXT REFERENCES public.restaurant_tables(id) ON DELETE CASCADE,
+    started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    closed_at TIMESTAMPTZ,
+    status TEXT NOT NULL DEFAULT 'active',
+    CONSTRAINT valid_session_status CHECK (status IN ('active', 'closed'))
+);
+
+-- Enable RLS for sessions
+ALTER TABLE public.sessions ENABLE ROW LEVEL SECURITY;
+
+-- Allow public to insert (create session)
+CREATE POLICY "Public can create sessions" 
+    ON public.sessions FOR INSERT 
+    WITH CHECK (true);
+
+-- Allow public to read active sessions for their table
+CREATE POLICY "Public can view their session" 
+    ON public.sessions FOR SELECT 
+    USING (true);
+
+-- Allow staff all access
+CREATE POLICY "Staff full access to sessions" 
+    ON public.sessions FOR ALL 
+    USING (true)
+    WITH CHECK (true);
+
+-- 3. Modify existing orders table
+-- Add columns if they don't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'session_id') THEN
+        ALTER TABLE public.orders ADD COLUMN session_id UUID REFERENCES public.sessions(id) ON DELETE CASCADE;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'general_note') THEN
+        ALTER TABLE public.orders ADD COLUMN general_note TEXT;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'preparing_at') THEN
+        ALTER TABLE public.orders ADD COLUMN preparing_at TIMESTAMPTZ;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'ready_at') THEN
+        ALTER TABLE public.orders ADD COLUMN ready_at TIMESTAMPTZ;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'delivered_at') THEN
+        ALTER TABLE public.orders ADD COLUMN delivered_at TIMESTAMPTZ;
+    END IF;
+    
+    -- Ensure table_id exists (it might already exist as table_number, if so, we'll map table_id to table_number or add a new column)
+    -- The existing code uses 'table_number'. Let's ensure it maps to restaurant_tables.id, but we'll keep using table_number in existing code
+    -- We will add a foreign key constraint to table_number if possible, or just use it loosely.
+    -- For safety, we'll leave table_number as is, and use it as the relation to restaurant_tables.id.
+END $$;
+
+-- 4. Initial Seed Data (Mapping from the Cashier Tables Page)
+-- This matches the floor plan in the Next.js app
+INSERT INTO public.restaurant_tables (id, label, capacity, floor_zone, x_pos, y_pos)
+VALUES 
+    ('l01', 'L01', 2, 'Side Wall', 9.2, 17.5),
+    ('l02', 'L02', 2, 'Side Wall', 9.2, 26.7),
+    ('l03', 'L03', 2, 'Side Wall', 9.2, 41.0),
+    ('l04', 'L04', 2, 'Side Wall', 9.2, 49.9),
+    ('l05', 'L05', 2, 'Side Wall', 9.2, 63.9),
+    ('l06', 'L06', 2, 'Side Wall', 9.2, 72.8),
+    ('l07', 'L07', 2, 'Side Wall', 9.2, 84.7),
+    ('m01', 'M01', 4, 'Main Hall', 42.1, 8.8),
+    ('m02', 'M02', 4, 'Main Hall', 56.4, 8.8),
+    ('m03', 'M03', 4, 'Main Hall', 56.4, 35.8),
+    ('m04', 'M04', 4, 'Main Hall', 29.3, 56.3),
+    ('m05', 'M05', 4, 'Main Hall', 57.1, 56.3),
+    ('w01', 'W01', 6, 'Window Booths', 82.9, 12.6),
+    ('w02', 'W02', 6, 'Window Booths', 82.9, 37.3),
+    ('w03', 'W03', 6, 'Window Booths', 82.9, 61.8),
+    ('b01', 'B01', 6, 'Sushi Bar', 35.2, 76.6),
+    ('b02', 'B02', 6, 'Sushi Bar', 51.8, 76.6),
+    ('r01', 'R01', 2, 'Reception', 23.3, 13.6)
+ON CONFLICT (id) DO NOTHING;

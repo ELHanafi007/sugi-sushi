@@ -240,6 +240,8 @@ const translations = {
     // Hero
     'hero.est': 'تأسست عام ٢٠٢٤',
     'hero.cta': 'قائمتنا',
+    'hero.reserve': 'احجز تجربتك',
+    'hero.menu': 'استكشف القائمة',
     'hero.scroll': 'مرر للاستكشاف',
 
     // Atmosphere
@@ -399,6 +401,20 @@ const translations = {
     'filter.vegetarian': 'نباتي',
     'filter.spicy': 'حار',
     'filter.bestseller': 'الأكثر مبيعاً',
+
+    // Cart
+    'cart.title': 'طلبي',
+    'cart.add_to_order': 'إضافة للطلب',
+    'cart.instant_delight': 'بهجة فورية',
+    'cart.empty': 'طلبك فارغ',
+    'cart.submit': 'تأكيد الطلب',
+    'cart.total': 'المجموع',
+    'cart.table': 'طاولة',
+    'cart.status.pending': 'قيد الانتظار',
+    'cart.status.preparing': 'يتم التحضير',
+    'cart.status.ready': 'جاهز للتقديم',
+    'cart.status.served': 'تم التقديم',
+    'cart.preparing_notif': 'طبقك قيد التحضير الآن!',
 
     // Categories
     'menu.cat.Salads': 'سلطات',

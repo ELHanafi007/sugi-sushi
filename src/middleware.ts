@@ -29,10 +29,17 @@ export default function middleware(request: NextRequest) {
   if (isCashierLoginPage && cashierSession) {
     return NextResponse.redirect(new URL('/cashier', request.url));
   }
+  
+  // ─── Cuisine Route Protection ───
+  const isCuisinePath = pathname.startsWith('/cuisine');
+  
+  if (isCuisinePath && !adminSession && !cashierSession) {
+    return NextResponse.redirect(new URL('/cashier/login', request.url));
+  }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/cashier/:path*'],
+  matcher: ['/admin/:path*', '/cashier/:path*', '/cuisine/:path*'],
 };
