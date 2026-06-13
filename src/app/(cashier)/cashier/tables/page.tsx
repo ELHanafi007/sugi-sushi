@@ -55,6 +55,8 @@ export default function CashierTablesPage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [tableOrders, setTableOrders] = useState<any[]>([]);
 
+  const [dbError, setDbError] = useState<string | null>(null);
+
   // Refs for audio to avoid playing on initial load
   const knownAlertsRef = useRef<Set<string>>(new Set());
   const initialLoadDone = useRef(false);
@@ -81,10 +83,22 @@ export default function CashierTablesPage() {
   };
 
   const fetchTables = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('restaurant_tables')
       .select('*');
+
+    if (error) {
+      console.error('Error fetching tables:', error);
+      if (error.code === 'PGRST205' || error.message?.includes('Could not find the table')) {
+        setDbError('Supabase tables are missing. Please run the SQL schema migration in your Supabase Dashboard.');
+      } else {
+        setDbError(error.message);
+      }
+      return;
+    }
+
     if (data) {
+      setDbError(null);
       if (initialLoadDone.current) {
         // Check for new call_waiter or billing flags
         const hasNewAlert = data.some(t => {
@@ -149,7 +163,9 @@ export default function CashierTablesPage() {
   useEffect(() => {
     fetchTables();
 
-    const channel = supabase.channel('cashier-tables-db')
+    // Use a unique channel name on each mount to prevent "cannot add postgres_changes callbacks after subscribe" error
+    const uniqueChannelName = `cashier-tables-db-${Math.random().toString(36).substring(2, 9)}`;
+    const channel = supabase.channel(uniqueChannelName)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'restaurant_tables' }, fetchTables)
       .subscribe();
 
@@ -374,52 +390,73 @@ export default function CashierTablesPage() {
 
       {/* Main Floor Plan Area */}
       <div className="flex-1 relative bg-black flex items-center justify-center p-4">
-        <div className="relative aspect-[16/9] w-full max-w-[1100px] bg-white shadow-2xl rounded-2xl overflow-hidden">
-          <img
-            src={FLOOR_PLAN_IMAGE}
-            alt="SUGI floor plan"
-            className="absolute inset-0 h-full w-full object-fill opacity-95"
-            draggable={false}
-          />
+        {dbError ? (
+          <div className="max-w-md p-8 rounded-2xl bg-[#09090c] border border-red-500/20 text-center space-y-4 shadow-2xl">
+            <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mx-auto text-red-400">
+              <BellRing size={24} className="animate-pulse" />
+            </div>
+            <h3 className="text-lg font-serif italic text-white">Database Setup Required</h3>
+            <p className="text-xs text-white/60 leading-relaxed">
+              {dbError}
+            </p>
+            <div className="bg-black/30 p-4 rounded-xl border border-white/[0.04] text-left space-y-2">
+              <p className="text-[10px] font-mono text-gold uppercase tracking-widest font-bold">Quick Instructions:</p>
+              <ol className="text-[11px] text-white/50 space-y-1 list-decimal pl-4">
+                <li>Go to your <strong>Supabase Dashboard</strong></li>
+                <li>Navigate to the <strong>SQL Editor</strong></li>
+                <li>Paste and run the contents of <code className="text-white/80 font-mono bg-white/5 px-1 py-0.5 rounded">supabase_setup.sql</code> (located in the root of your project)</li>
+                <li>Refresh this page</li>
+              </ol>
+            </div>
+          </div>
+        ) : (
+          <div className="relative aspect-[16/9] w-full max-w-[1100px] bg-white shadow-2xl rounded-2xl overflow-hidden">
+            <img
+              src={FLOOR_PLAN_IMAGE}
+              alt="SUGI floor plan"
+              className="absolute inset-0 h-full w-full object-fill opacity-95"
+              draggable={false}
+            />
 
-          {floorTables.map((table) => {
-            const dbTable = dbTables.find((t) => t.id === table.id);
-            if (!dbTable) return null;
-            
-            const meta = getTableMeta(table);
-            const active = selectedId === table.id;
-            const Icon = meta.icon;
+            {floorTables.map((table) => {
+              const dbTable = dbTables.find((t) => t.id === table.id);
+              if (!dbTable) return null;
+              
+              const meta = getTableMeta(table);
+              const active = selectedId === table.id;
+              const Icon = meta.icon;
 
-            return (
-              <motion.button
-                key={table.id}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => {
-                  setSelectedId(table.id);
-                }}
-                title={`${table.label} - ${meta.label}`}
-                className={`absolute cursor-pointer rounded-md border-2 transition duration-200 ${
-                  active ? 'border-gold bg-gold/10' : 'border-transparent bg-transparent hover:border-zinc-950/20 hover:bg-black/10'
-                }`}
-                style={{
-                  left: `${table.x}%`,
-                  top: `${table.y}%`,
-                  width: `${table.w}%`,
-                  height: `${table.h}%`,
-                }}
-              >
-                <span
-                  className={`absolute left-1/2 top-1/2 flex h-8 min-w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border px-2 text-[10px] font-black leading-none shadow-[0_5px_14px_rgba(0,0,0,0.3)] backdrop-blur-sm transition duration-200 md:h-10 md:min-w-10 md:text-[12px] ${meta.badge}`}
+              return (
+                <motion.button
+                  key={table.id}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setSelectedId(table.id);
+                  }}
+                  title={`${table.label} - ${meta.label}`}
+                  className={`absolute cursor-pointer rounded-md border-2 transition duration-200 ${
+                    active ? 'border-gold bg-gold/10' : 'border-transparent bg-transparent hover:border-zinc-950/20 hover:bg-black/10'
+                  }`}
+                  style={{
+                    left: `${table.x}%`,
+                    top: `${table.y}%`,
+                    width: `${table.w}%`,
+                    height: `${table.h}%`,
+                  }}
                 >
-                  {table.label}
-                  <span className={`absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white ${meta.dot}`} />
-                  <Icon className={`absolute -bottom-1.5 -right-1.5 rounded-full bg-white p-0.5 shadow-sm ${meta.iconClass}`} size={16} />
-                </span>
-              </motion.button>
-            );
-          })}
-        </div>
+                  <span
+                    className={`absolute left-1/2 top-1/2 flex h-8 min-w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border px-2 text-[10px] font-black leading-none shadow-[0_5px_14px_rgba(0,0,0,0.3)] backdrop-blur-sm transition duration-200 md:h-10 md:min-w-10 md:text-[12px] ${meta.badge}`}
+                  >
+                    {table.label}
+                    <span className={`absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white ${meta.dot}`} />
+                    <Icon className={`absolute -bottom-1.5 -right-1.5 rounded-full bg-white p-0.5 shadow-sm ${meta.iconClass}`} size={16} />
+                  </span>
+                </motion.button>
+              );
+            })}
+          </div>
+        )}
       </div>
     </main>
   );

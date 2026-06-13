@@ -70,8 +70,9 @@ export default function CuisinePage() {
   useEffect(() => {
     fetchOrders();
 
+    const uniqueChannelName = `cuisine-orders-${Math.random().toString(36).substring(2, 9)}`;
     const channel = supabase
-      .channel('cuisine-orders')
+      .channel(uniqueChannelName)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'orders' },
