@@ -12,7 +12,7 @@ export async function GET(
     
     const { data, error } = await supabase
       .from('orders')
-      .select('status, table_id')
+      .select('status, table_number')
       .eq('id', id)
       .single();
 
@@ -71,7 +71,7 @@ export async function PATCH(
     // Get order to know its table
     const { data: orderData, error: fetchError } = await supabase
       .from('orders')
-      .select('table_id')
+      .select('table_number')
       .eq('id', id)
       .single();
 
@@ -91,7 +91,7 @@ export async function PATCH(
     }
 
     // Update table status
-    if (orderData.table_id) {
+    if (orderData.table_number) {
       let tableStatus = 'ordering';
       if (status === 'preparing') tableStatus = 'waiting';
       else if (status === 'ready') tableStatus = 'ready';
@@ -100,7 +100,7 @@ export async function PATCH(
       await supabase
         .from('restaurant_tables')
         .update({ status: tableStatus })
-        .eq('id', orderData.table_id);
+        .eq('id', orderData.table_number);
     }
 
     return NextResponse.json({ success: true, status: updateData.status });

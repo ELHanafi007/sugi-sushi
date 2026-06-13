@@ -175,13 +175,13 @@ function DishModal({
             animate="animate"
             exit="exit"
             transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1] }}
-            className="max-w-2xl mx-auto md:px-6 pb-40"
+            className="max-w-2xl mx-auto px-4 md:px-6 pb-40"
           >
             <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mt-4 mb-2 md:hidden" />
 
           {/* Cinematic Hero Image */}
           <motion.div
-            className="relative w-full h-[45vh] md:h-[65vh] md:rounded-[2.5rem] overflow-hidden mb-8 shadow-[0_40px_80px_rgba(0,0,0,0.8)] luxury-card"
+            className="relative w-full h-[35vh] md:h-[65vh] rounded-2xl md:rounded-[2.5rem] overflow-hidden mb-8 shadow-[0_40px_80px_rgba(0,0,0,0.8)] luxury-card"
           >
             <img
               src={image}
@@ -189,14 +189,14 @@ function DishModal({
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-8">
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
               <span className="text-mono text-white/30 text-[9px] tracking-[0.8em] font-black uppercase block mb-2">{t('menu.featured')}</span>
-              <h2 className="text-4xl md:text-6xl font-serif text-white tracking-tightest leading-tight italic">{name}</h2>
+              <h2 className="text-3xl md:text-6xl font-serif text-white tracking-tightest leading-tight italic">{name}</h2>
             </div>
           </motion.div>
 
           <div className="space-y-12">
-            <div className="flex flex-col items-center gap-10 pt-4">
+            <div className="flex flex-col items-center gap-6 md:gap-10 pt-2 md:pt-4">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentPrice}
@@ -206,7 +206,7 @@ function DishModal({
                   className="flex flex-col items-center gap-1"
                 >
                   <span className="text-gold/20 text-[8px] uppercase tracking-[1em] font-black">{t('menu.current_price')}</span>
-                  <CurrencyPrice price={currentPrice} className="text-6xl md:text-7xl text-gold font-serif font-light" />
+                  <CurrencyPrice price={currentPrice} className="text-4xl md:text-7xl text-gold font-serif font-light" />
                 </motion.div>
               </AnimatePresence>
 
@@ -224,8 +224,8 @@ function DishModal({
               )}
 
               {/* Order Controls */}
-              <div className="w-full flex flex-col items-center gap-8">
-                <div className="flex items-center gap-10 bg-white/[0.03] border border-white/10 rounded-full p-2 px-8 backdrop-blur-md">
+              <div className="w-full flex flex-col items-center gap-6 md:gap-8">
+                <div className="flex items-center gap-6 md:gap-10 bg-white/[0.03] border border-white/10 rounded-full p-2 px-6 md:px-8 backdrop-blur-md">
                   <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-12 h-12 flex items-center justify-center text-white/20 hover:text-gold transition-colors text-2xl font-light">—</button>
                   <div className="flex flex-col items-center min-w-[40px]">
                     <span className="text-white text-2xl font-mono font-bold">{quantity}</span>
@@ -239,7 +239,7 @@ function DishModal({
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleAddToCart}
-                    className="py-5 rounded-2xl border border-gold/30 text-gold text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3"
+                    className="py-4 md:py-5 rounded-2xl border border-gold/30 text-gold text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14m-7-7v14"/></svg>
                     {t('cart.add_to_order')}
@@ -250,7 +250,7 @@ function DishModal({
                     whileTap={{ scale: 0.98 }}
                     onClick={handleInstantDelight}
                     disabled={isInstantLoading}
-                    className="py-5 rounded-2xl bg-gold text-black text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 disabled:opacity-50"
+                    className="py-4 md:py-5 rounded-2xl bg-gold text-black text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 disabled:opacity-50"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     {isInstantLoading ? '...' : t('cart.instant_delight')}
@@ -259,9 +259,9 @@ function DishModal({
               </div>
             </div>
 
-            <p className="text-xl md:text-2xl text-white/40 font-serif italic leading-relaxed font-light text-center">&quot;{desc}&quot;</p>
+            <p className="text-base md:text-2xl text-white/40 font-serif italic leading-relaxed font-light text-center">&quot;{desc}&quot;</p>
 
-            <div className="pt-12 border-t border-white/[0.03] space-y-12">
+            <div className="pt-8 md:pt-12 border-t border-white/[0.03] space-y-8 md:space-y-12">
               <div className="space-y-6">
                 <div className="flex items-center gap-6">
                   <div className="w-16 h-[1px] bg-gold/20" />
@@ -368,27 +368,27 @@ export default function StrictMenu({
   }, [selectedCategory, searchQuery, activeFilters, menuDataToUse]);
 
   return (
-    <div className="min-h-screen bg-bg pt-48 pb-[120px]">
-      <div className="px-8 mb-16">
-        <h1 className="text-white text-6xl md:text-8xl font-serif italic">{t('menu.exp_title')} <span className="shimmer-gold not-italic font-black">{t('menu.discovery_title')}</span></h1>
+    <div className="min-h-screen bg-bg pt-24 md:pt-48 pb-[120px]">
+      <div className="px-4 md:px-8 mb-8 md:mb-16">
+        <h1 className="text-white text-4xl md:text-7xl lg:text-8xl font-serif italic leading-tight">{t('menu.exp_title')} <span className="shimmer-gold not-italic font-black">{t('menu.discovery_title')}</span></h1>
       </div>
 
-      <div className="flex gap-6 overflow-x-auto no-scrollbar px-8 mb-12">
+      <div className="flex gap-3 md:gap-6 overflow-x-auto no-scrollbar px-4 md:px-8 mb-8 md:mb-12">
         {categoriesToUse.map(cat => (
-          <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-8 py-4 rounded-full border transition-all whitespace-nowrap ${selectedCategory === cat ? 'bg-gold border-gold text-black' : 'border-white/10 text-white/40'}`}>
+          <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-5 py-3 md:px-8 md:py-4 rounded-full border text-xs md:text-sm transition-all whitespace-nowrap ${selectedCategory === cat ? 'bg-gold border-gold text-black' : 'border-white/10 text-white/40'}`}>
             {t(`menu.cat.${cat}`)}
           </button>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 px-4 md:px-8">
         {filteredDishes.map(dish => (
-          <motion.div key={dish.id} onClick={() => setSelectedDish(dish)} className="luxury-card rounded-[2.5rem] overflow-hidden p-6 cursor-pointer group">
-            <div className="aspect-square rounded-[2rem] overflow-hidden mb-6">
+          <motion.div key={dish.id} onClick={() => setSelectedDish(dish)} className="luxury-card rounded-2xl md:rounded-[2.5rem] overflow-hidden p-3 md:p-6 cursor-pointer group">
+            <div className="aspect-square rounded-xl md:rounded-[2rem] overflow-hidden mb-3 md:mb-6">
               <img src={dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
             </div>
-            <h3 className="text-white text-2xl font-serif italic mb-2">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h3>
-            <CurrencyPrice price={dish.price} className="text-gold font-mono" />
+            <h3 className="text-white text-sm md:text-2xl font-serif italic mb-1 md:mb-2 truncate-text">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h3>
+            <CurrencyPrice price={dish.price} className="text-gold text-xs md:text-base font-mono" />
           </motion.div>
         ))}
       </div>
