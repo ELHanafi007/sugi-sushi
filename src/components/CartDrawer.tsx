@@ -16,7 +16,7 @@ export default function CartDrawer({ isOrderFlow = false }: { isOrderFlow?: bool
     cartTotal, 
     itemCount, 
     submitOrder, 
-    activeOrder, 
+    activeOrders, 
     notification, 
     clearNotification, 
     tableNumber, 
@@ -31,12 +31,14 @@ export default function CartDrawer({ isOrderFlow = false }: { isOrderFlow?: bool
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [expandedNoteItemId, setExpandedNoteItemId] = useState<string | null>(null);
 
-  // Automatically open drawer when items are added (handled locally if not order flow, or rely on StickyCartBar)
+  const activeCount = activeOrders.filter(o => o.status !== 'served').length;
+
+  // Automatically open drawer when items are added
   useEffect(() => {
-    if (itemCount > 0 && !activeOrder && !isOrderFlow) {
+    if (itemCount > 0 && activeCount === 0 && !isOrderFlow) {
       setIsCartOpen(true);
     }
-  }, [itemCount, activeOrder, isOrderFlow, setIsCartOpen]);
+  }, [itemCount, activeCount, isOrderFlow, setIsCartOpen]);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -69,7 +71,7 @@ export default function CartDrawer({ isOrderFlow = false }: { isOrderFlow?: bool
     served: 'text-emerald-600',
   };
 
-  if (itemCount === 0 && !activeOrder && !isCartOpen) return null;
+  if (itemCount === 0 && activeOrders.length === 0 && !isCartOpen) return null;
 
   return (
     <>
@@ -109,7 +111,7 @@ export default function CartDrawer({ isOrderFlow = false }: { isOrderFlow?: bool
               {itemCount}
             </span>
           )}
-          {activeOrder && activeOrder.status !== 'served' && (
+          {activeCount > 0 && (
             <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 animate-pulse border-2 border-black" />
           )}
         </motion.button>
@@ -153,48 +155,61 @@ export default function CartDrawer({ isOrderFlow = false }: { isOrderFlow?: bool
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-8 no-scrollbar">
-              {activeOrder ? (
-                /* Active Order Status */
-                <div className="space-y-8">
-                  <div className="p-6 rounded-[2rem] bg-gold/[0.03] border border-gold/10 text-center">
-                    <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-4">
-                      {React.createElement(statusIcons[activeOrder.status] || Clock, { 
-                        size: 32, 
-                        className: `${statusColors[activeOrder.status]} ${activeOrder.status === 'preparing' ? 'animate-bounce' : ''}` 
-                      })}
+            <div className="flex-1 overflow-y-auto p-8 no-scrollbar space-y-12">
+              {/* Active Orders */}
+              {activeOrders.length > 0 && (
+                <div className="space-y-12">
+                  {activeOrders.map((order) => (
+                    <div key={order.id} className="space-y-8 pb-12 border-b border-white/5 last:border-0 last:pb-0">
+                      <div className="p-6 rounded-[2rem] bg-gold/[0.03] border border-gold/10 text-center">
+                        <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-4">
+                          {React.createElement(statusIcons[order.status] || Clock, { 
+                            size: 32, 
+                            className: `${statusColors[order.status]} ${order.status === 'preparing' ? 'animate-bounce' : ''}` 
+                          })}
+                        </div>
+                        <h3 className={`text-xl font-serif italic mb-1 ${statusColors[order.status]}`}>
+                          {t(`cart.status.${order.status}`)}
+                        </h3>
+                        <p className="text-white/20 text-[10px] uppercase tracking-widest">
+                          {t('cart.table')} {order.table_number} • {new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+
+                      <div className="space-y-4">
+                        <p className="text-white/40 text-[10px] uppercase tracking-widest font-black">{t('res.details')}</p>
+                        {order.items.map((item, idx) => (
+                          <div key={idx} className="flex justify-between items-center py-4 border-b border-white/[0.03]">
+                            <div>
+                              <p className="text-white/80 text-sm font-medium">{item.quantity}x {lang === 'ar' ? item.nameAr || item.name : item.name}</p>
+                              {item.portion && <p className="text-gold/40 text-[9px] uppercase tracking-widest">{item.portion.name}</p>}
+                              {item.note && <p className="text-white/40 text-[10px] italic mt-1">Note: {item.note}</p>}
+                            </div>
+                            <CurrencyPrice price={item.price} className="text-white/40 text-xs" />
+                          </div>
+                        ))}
+                        {order.general_note && (
+                           <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                             <p className="text-white/40 text-[9px] uppercase tracking-widest mb-1">General Note</p>
+                             <p className="text-white/80 text-sm italic">{order.general_note}</p>
+                           </div>
+                        )}
+                      </div>
                     </div>
-                    <h3 className={`text-xl font-serif italic mb-1 ${statusColors[activeOrder.status]}`}>
-                      {t(`cart.status.${activeOrder.status}`)}
-                    </h3>
-                    <p className="text-white/20 text-[10px] uppercase tracking-widest">
-                      {t('cart.table')} {activeOrder.table_number}
-                    </p>
+                  ))}
+                </div>
+              )}
+
+              {/* Cart Items */}
+              {cart.length > 0 && (
+                <div className="space-y-6">
+                  {activeOrders.length > 0 && <div className="h-px w-full bg-white/5 my-8" />}
+                  
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-xl font-serif italic text-white">Your Next Round</h3>
+                    <p className="text-white/20 text-[10px] uppercase tracking-widest">Items ready to be ordered</p>
                   </div>
 
-                  <div className="space-y-4">
-                    <p className="text-white/40 text-[10px] uppercase tracking-widest font-black">{t('res.details')}</p>
-                    {activeOrder.items.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-4 border-b border-white/[0.03]">
-                        <div>
-                          <p className="text-white/80 text-sm font-medium">{item.quantity}x {lang === 'ar' ? item.nameAr || item.name : item.name}</p>
-                          {item.portion && <p className="text-gold/40 text-[9px] uppercase tracking-widest">{item.portion.name}</p>}
-                          {item.note && <p className="text-white/40 text-[10px] italic mt-1">Note: {item.note}</p>}
-                        </div>
-                        <CurrencyPrice price={item.price} className="text-white/40 text-xs" />
-                      </div>
-                    ))}
-                    {activeOrder.general_note && (
-                       <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                         <p className="text-white/40 text-[9px] uppercase tracking-widest mb-1">General Note</p>
-                         <p className="text-white/80 text-sm italic">{activeOrder.general_note}</p>
-                       </div>
-                    )}
-                  </div>
-                </div>
-              ) : cart.length > 0 ? (
-                /* Cart Items */
-                <div className="space-y-6">
                   {/* Table Number Input - Only show if not in Order Flow */}
                   {!isOrderFlow && (
                     <div className="flex items-center gap-4 mb-8">
@@ -293,8 +308,10 @@ export default function CartDrawer({ isOrderFlow = false }: { isOrderFlow?: bool
                     />
                   </div>
                 </div>
-              ) : (
-                /* Empty Cart */
+              )}
+
+              {/* Empty State */}
+              {cart.length === 0 && activeOrders.length === 0 && (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-20">
                   <ShoppingBag size={64} className="mb-6" />
                   <p className="text-xl font-serif italic">{t('cart.empty')}</p>
@@ -303,7 +320,7 @@ export default function CartDrawer({ isOrderFlow = false }: { isOrderFlow?: bool
             </div>
 
             {/* Footer */}
-            {!activeOrder && cart.length > 0 && (
+            {cart.length > 0 && (
               <div className="p-8 border-t border-white/5 bg-white/[0.01] space-y-6">
                 <div className="flex justify-between items-end">
                   <span className="text-white/40 text-[10px] uppercase tracking-[0.2em] font-black">{t('cart.total')}</span>
@@ -322,7 +339,7 @@ export default function CartDrawer({ isOrderFlow = false }: { isOrderFlow?: bool
               </div>
             )}
             
-            {activeOrder && activeOrder.status === 'served' && (
+            {activeCount === 0 && activeOrders.length > 0 && cart.length === 0 && (
                <div className="p-8 border-t border-white/5 bg-white/[0.01]">
                  <p className="text-center text-emerald-400/60 text-[10px] uppercase tracking-widest font-black">
                    Enjoy your meal!
