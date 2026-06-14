@@ -53,9 +53,9 @@ export default function Hero({ onTabChange }: HeroProps) {
       {/* ─── CTA Buttons at Bottom ─── */}
       <motion.div
         style={{ opacity }}
-        className="absolute bottom-16 md:bottom-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-8 md:gap-12 w-full px-6"
+        className="absolute bottom-16 md:bottom-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-10 md:gap-14 w-full px-6"
       >
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 w-full max-w-lg md:max-w-2xl">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 md:gap-8 w-full max-w-lg md:max-w-3xl">
           {/* Primary CTA: Reservation */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -65,9 +65,9 @@ export default function Hero({ onTabChange }: HeroProps) {
           >
             <Link 
               href="/reserve"
-              className="group relative flex items-center justify-center w-full px-8 md:px-14 py-4 md:py-6 overflow-hidden rounded-full bg-gold shadow-[0_20px_50px_rgba(212,175,55,0.3)] transition-all duration-700 hover:scale-[1.05] active:scale-95"
+              className="group relative flex items-center justify-center w-full px-10 md:px-16 py-5 md:py-7 overflow-hidden rounded-full bg-gold shadow-[0_25px_60px_rgba(212,175,55,0.4)] transition-all duration-700 hover:scale-[1.05] active:scale-95"
             >
-              <span className="relative z-10 text-bg text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] font-black whitespace-nowrap">
+              <span className="relative z-10 text-bg text-[11px] md:text-sm uppercase tracking-[0.35em] md:tracking-[0.45em] font-black whitespace-nowrap">
                 {t('hero.reserve')}
               </span>
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
@@ -83,9 +83,9 @@ export default function Hero({ onTabChange }: HeroProps) {
           >
             <button 
               onClick={() => onTabChange('menu')}
-              className="group relative flex items-center justify-center w-full px-8 md:px-14 py-4 md:py-6 overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-xl transition-all duration-700 hover:bg-white/10 hover:border-white/40 active:scale-95"
+              className="group relative flex items-center justify-center w-full px-10 md:px-16 py-5 md:py-7 overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-2xl transition-all duration-700 hover:bg-white/10 hover:border-white/40 active:scale-95"
             >
-              <span className="relative z-10 text-white text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] font-black whitespace-nowrap">
+              <span className="relative z-10 text-white text-[11px] md:text-sm uppercase tracking-[0.35em] md:tracking-[0.45em] font-black whitespace-nowrap">
                 {t('hero.menu')}
               </span>
             </button>
