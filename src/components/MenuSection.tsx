@@ -149,7 +149,7 @@ const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; l
             <div className="h-px w-12 bg-gold/20" />
           </motion.div>
           
-          <h3 className="text-display liquid-gold mb-8 !text-4xl md:!text-7xl tracking-tightest leading-none">
+          <h3 className="text-display liquid-gold mb-8 !text-3xl sm:!text-4xl md:!text-6xl lg:!text-7xl tracking-tightest leading-none">
             {name}
           </h3>
           <p className="text-white/65 text-lg md:text-2xl font-serif italic mb-10 line-clamp-3 leading-relaxed">
@@ -271,7 +271,7 @@ function PhilosophySection() {
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
             transition={{ delay: 0.3, duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
-            className="text-white text-4xl md:text-7xl lg:text-8xl font-serif font-light mb-24 tracking-tightest leading-tight italic"
+            className="text-white text-3xl md:text-6xl lg:text-8xl font-serif font-light mb-24 tracking-tightest leading-tight italic"
           >
             {t('story.title')}
           </motion.h2>
@@ -345,7 +345,7 @@ function MenuExperience({
               initial={{ opacity: 0, x: -50, filter: 'blur(20px)' }}
               whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
               viewport={{ once: true }}
-              className="text-white text-6xl md:text-9xl lg:text-[11rem] font-serif font-light tracking-tighter leading-none italic"
+              className="text-white text-5xl md:text-8xl lg:text-[9rem] font-serif font-light tracking-tighter leading-none italic"
             >
               {t('menu.exp_title')}<span className="text-gold shimmer-gold not-italic !font-black">{t('menu.exp_span')}</span>
             </motion.h2>

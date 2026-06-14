@@ -6,10 +6,12 @@ import { ShoppingBag } from 'lucide-react';
 import CurrencyPrice from '@/components/CurrencyPrice';
 
 export default function StickyCartBar() {
-  const { cart, cartTotal, itemCount, activeOrder, setIsCartOpen } = useCart();
+  const { cart, cartTotal, itemCount, activeOrders, setIsCartOpen } = useCart();
 
+  const activeCount = activeOrders.filter(o => o.status !== 'served').length;
+  
   // Show if there are items in cart OR if there's an active order that's not served
-  const isVisible = (itemCount > 0 && !activeOrder) || (activeOrder && activeOrder.status !== 'served');
+  const isVisible = itemCount > 0 || activeCount > 0;
 
   return (
     <AnimatePresence>
@@ -28,17 +30,17 @@ export default function StickyCartBar() {
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <ShoppingBag size={20} />
-                  {itemCount > 0 && !activeOrder && (
+                  {itemCount > 0 && (
                     <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-black text-gold text-[10px] font-black flex items-center justify-center">
                       {itemCount}
                     </span>
                   )}
                 </div>
                 <span className="text-[11px] font-black uppercase tracking-[0.2em]">
-                  {activeOrder ? 'View Order Status' : 'View Cart'}
+                  {itemCount > 0 ? 'View Cart' : 'Order Status'}
                 </span>
               </div>
-              {!activeOrder && (
+              {itemCount > 0 && (
                 <CurrencyPrice price={`${cartTotal} SR`} className="font-serif italic font-bold" />
               )}
             </button>

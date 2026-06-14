@@ -40,7 +40,21 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
      LOGO ANIMATION
   ========================== */
   const logoY = useTransform(progress, [0, 1], ['45vh', '0vh'], { clamp: true });
-  const logoScale = useTransform(progress, [0, 1], [2.5, 1], { clamp: true });
+  
+  // Responsive logo scale to prevent overlap on tablet/mobile
+  const [scaleFactor, setScaleFactor] = useState(2.2);
+  useEffect(() => {
+    const updateScale = () => {
+      if (window.innerWidth < 640) setScaleFactor(1.5);
+      else if (window.innerWidth < 1024) setScaleFactor(1.8);
+      else setScaleFactor(2.5);
+    };
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
+
+  const logoScale = useTransform(progress, [0, 1], [scaleFactor, 1], { clamp: true });
 
   /* =========================
      NAV ANIMATION
@@ -160,7 +174,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
             className="flex-1 flex justify-end items-center gap-5"
           >
             {/* STATUS */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
               <span className="text-[10px] uppercase text-white/50 font-mono">
                 {t('contact.status')}
@@ -170,7 +184,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
             {/* RESERVE BUTTON */}
             <Link
               href="/reserve"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-yellow-400/20 transition"
+              className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-yellow-400/20 transition"
             >
               {t('nav.reservations')}
             </Link>

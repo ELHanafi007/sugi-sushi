@@ -36,7 +36,7 @@ interface CartContextType {
   clearCart: () => void;
   submitOrder: (tableNumber: string, sessionId?: string | null) => Promise<string | null>;
   buyNow: (dish: Dish, quantity: number, tableNumber: string, portionIdx?: number) => Promise<string | null>;
-  activeOrder: Order | null;
+  activeOrders: Order[];
   cartTotal: number;
   itemCount: number;
   tableNumber: string;
@@ -53,7 +53,7 @@ const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [activeOrder, setActiveOrder] = useState<Order | null>(null);
+  const [activeOrders, setActiveOrders] = useState<Order[]>([]);
   const [tableNumber, setTableNumber] = useState('2');
   const [notification, setNotification] = useState<string | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -67,9 +67,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const savedTable = localStorage.getItem('sugi-table-number');
     if (savedTable) setTableNumber(savedTable);
 
-    const savedOrderId = localStorage.getItem('sugi-active-order-id');
-    if (savedOrderId) {
-      fetchOrder(savedOrderId);
+    const savedOrderIdsStr = localStorage.getItem('sugi-active-order-ids');
+    if (savedOrderIdsStr) {
+      try {
+        const savedOrderIds = JSON.parse(savedOrderIdsStr);
+        if (Array.isArray(savedOrderIds) && savedOrderIds.length > 0) {
+          fetchOrders(savedOrderIds);
+        }
+      } catch (e) {
+        console.error('Failed to parse saved order ids', e);
+      }
+    } else {
+      // Backwards compatibility with old single order id
+      const oldOrderId = localStorage.getItem('sugi-active-order-id');
+      if (oldOrderId) {
+        fetchOrders([oldOrderId]);
+        localStorage.setItem('sugi-active-order-ids', JSON.stringify([oldOrderId]));
+        localStorage.removeItem('sugi-active-order-id');
+      }
     }
   }, []);
 
@@ -82,16 +97,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('sugi-table-number', tableNumber);
   }, [tableNumber]);
 
-  const fetchOrder = async (orderId: string) => {
+  const fetchOrders = async (orderIds: string[]) => {
     const { data, error } = await supabase
       .from('orders')
       .select('*')
-      .eq('id', orderId)
-      .single();
+      .in('id', orderIds);
 
     if (data && !error) {
-      setActiveOrder(data);
-      subscribeToOrder(orderId);
+      setActiveOrders(data);
+      orderIds.forEach(id => subscribeToOrder(id));
     }
   };
 
@@ -108,7 +122,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         },
         (payload) => {
           const updatedOrder = payload.new as Order;
-          setActiveOrder(updatedOrder);
+          setActiveOrders(prev => prev.map(o => o.id === orderId ? updatedOrder : o));
           
           // Notify user if status changed to preparing
           if (updatedOrder.status === 'preparing') {
@@ -217,8 +231,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
       const newOrder = data as Order;
       
-      setActiveOrder(newOrder);
-      localStorage.setItem('sugi-active-order-id', newOrder.id);
+      setActiveOrders(prev => {
+        const next = [...prev, newOrder];
+        localStorage.setItem('sugi-active-order-ids', JSON.stringify(next.map(o => o.id)));
+        return next;
+      });
       subscribeToOrder(newOrder.id);
       clearCart();
       setIsCartOpen(false); // Close cart on success
@@ -248,8 +265,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       if (data) {
         const newOrder = data as Order;
-        setActiveOrder(newOrder);
-        localStorage.setItem('sugi-active-order-id', newOrder.id);
+        setActiveOrders(prev => {
+          const next = [...prev, newOrder];
+          localStorage.setItem('sugi-active-order-ids', JSON.stringify(next.map(o => o.id)));
+          return next;
+        });
         subscribeToOrder(newOrder.id);
         clearCart();
         setIsCartOpen(false); // Close cart on success
@@ -292,8 +312,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     if (data) {
       const newOrder = data as Order;
-      setActiveOrder(newOrder);
-      localStorage.setItem('sugi-active-order-id', newOrder.id);
+      setActiveOrders(prev => {
+        const next = [...prev, newOrder];
+        localStorage.setItem('sugi-active-order-ids', JSON.stringify(next.map(o => o.id)));
+        return next;
+      });
       subscribeToOrder(newOrder.id);
       return newOrder.id;
     }
@@ -322,7 +345,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       clearCart,
       submitOrder,
       buyNow,
-      activeOrder,
+      activeOrders,
       cartTotal,
       itemCount,
       tableNumber,
