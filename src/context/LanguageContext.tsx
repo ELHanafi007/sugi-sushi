@@ -27,7 +27,8 @@ const translations = {
 
     // Hero
     'hero.est': 'Established 2024',
-    'hero.cta': 'Our Menu',
+    'hero.reserve': 'Reserve a Place',
+    'hero.menu': 'Our Menu',
     'hero.scroll': 'Scroll to Explore',
 
     // Atmosphere
