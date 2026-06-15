@@ -336,11 +336,23 @@ export default function StrictMenu({
   initialCategoryData: { name: string; image: string }[];
   onTabChange?: (tab: any) => void;
 }) {
-  const { lang, t } = useLanguage();
+  const { lang, t, activeCategory, setActiveCategory } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(initialCategories[0]);
+  const [selectedCategory, setSelectedCategory] = useState(activeCategory || initialCategories[0]);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
+
+  // Sync with global category if it changes
+  useEffect(() => {
+    if (activeCategory) {
+      setSelectedCategory(activeCategory);
+    }
+  }, [activeCategory]);
+
+  const handleCategorySelect = (cat: string) => {
+    setSelectedCategory(cat);
+    setActiveCategory(cat);
+  };
 
   const menuDataToUse = initialMenuData;
   const categoriesToUse = initialCategories;
@@ -375,12 +387,49 @@ export default function StrictMenu({
         <h1 className="text-white text-4xl md:text-7xl lg:text-8xl font-serif italic leading-tight">{t('menu.exp_title')} <span className="shimmer-gold not-italic font-black">{t('menu.discovery_title')}</span></h1>
       </div>
 
-      <div className="flex gap-3 md:gap-6 overflow-x-auto no-scrollbar px-4 md:px-8 mb-8 md:mb-12">
-        {categoriesToUse.map(cat => (
-          <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-5 py-3 md:px-8 md:py-4 rounded-full border text-xs md:text-sm transition-all whitespace-nowrap ${selectedCategory === cat ? 'bg-gold border-gold text-black' : 'border-white/10 text-white/40'}`}>
-            {t(`menu.cat.${cat}`)}
-          </button>
-        ))}
+      <div className="flex gap-4 md:gap-10 overflow-x-auto no-scrollbar px-4 md:px-8 mb-16 md:mb-24 pt-4">
+        {categoriesToUse.map(cat => {
+          const img = dynamicCategoryImages[cat.toLowerCase()];
+          const isActive = selectedCategory === cat;
+          
+          return (
+            <button 
+              key={cat} 
+              onClick={() => handleCategorySelect(cat)} 
+              className="flex flex-col items-center gap-5 flex-shrink-0 group relative"
+            >
+              <div className={`relative w-24 h-24 md:w-40 md:h-40 rounded-full overflow-hidden border transition-all duration-700 ${
+                isActive ? 'border-gold scale-110 shadow-[0_0_40px_rgba(212,175,55,0.4)]' : 'border-white/10 group-hover:border-white/30'
+              }`}>
+                <Image
+                  src={img || DEFAULT_IMAGE}
+                  alt={cat}
+                  fill
+                  className={`object-cover transition-all duration-[1.5s] ${isActive ? 'scale-110 brightness-110' : 'brightness-[0.35] group-hover:brightness-75 group-hover:scale-105'}`}
+                />
+                
+                {/* Kanji Overlay */}
+                <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-700 ${isActive ? 'opacity-0' : 'opacity-40 group-hover:opacity-20'}`}>
+                   <span className="text-white font-serif text-3xl md:text-5xl font-thin">{KANJI[cat]}</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center gap-2">
+                <span className={`text-[10px] md:text-xs uppercase tracking-[0.3em] font-black transition-all duration-500 ${
+                  isActive ? 'text-gold' : 'text-white/40 group-hover:text-white/70'
+                }`}>
+                  {t(`menu.cat.${cat}`)}
+                </span>
+                {isActive && (
+                  <motion.div 
+                    layoutId="active-cat-indicator"
+                    className="h-[2px] w-8 bg-gold rounded-full"
+                  />
+                )}
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 px-4 md:px-8">

@@ -9,6 +9,7 @@ import ChefArtistry from '@/components/ChefArtistry';
 
 const MenuSection = dynamic(() => import('@/components/MenuSection'), { ssr: false });
 const StrictMenu = dynamic(() => import('@/components/StrictMenu'), { ssr: false });
+const CategoryDiscovery = dynamic(() => import('@/components/CategoryDiscovery'), { ssr: false });
 const StoryPage = dynamic(() => import('@/components/StoryPage'), { ssr: false });
 const KineticGallery = dynamic(() => import('@/components/KineticGallery'), { ssr: false });
 const BeyondGallery = dynamic(() => import('@/components/BeyondGallery'), { ssr: false });
@@ -38,7 +39,7 @@ export default function HomeClient({
   const menuDataWithPrototype = initialMenuData;
 
 
-  const { activeTab, setActiveTab } = useLanguage();
+  const { activeTab, setActiveTab, setActiveCategory } = useLanguage();
   const [isLetterbox, setIsLetterbox] = useState(false);
   const { scrollYProgress } = useScroll();
   
@@ -137,6 +138,13 @@ export default function HomeClient({
             <Atmosphere />
 
             {/* Scene 3: Curated Selection */}
+            <CategoryDiscovery 
+              categories={initialCategoryData} 
+              onCategorySelect={(cat) => {
+                setActiveCategory(cat);
+                setActiveTab('menu');
+              }}
+            />
 
             {/* Scene 4: Emotional Peak */}
             <ChefArtistry />

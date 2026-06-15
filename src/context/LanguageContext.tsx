@@ -11,6 +11,8 @@ interface ContextType {
   setLang: (l: Lang) => void;
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
+  activeCategory: string | null;
+  setActiveCategory: (cat: string | null) => void;
   pendingDish: any;
   setPendingDish: (dish: any) => void;
   t: (k: string) => string;
@@ -465,6 +467,7 @@ const LanguageContext = createContext<ContextType | null>(null);
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLang] = useState<Lang>('en');
   const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [pendingDish, setPendingDish] = useState<any>(null);
   const isRTL = lang === 'ar';
 
@@ -499,10 +502,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLang,
     activeTab,
     setActiveTab,
+    activeCategory,
+    setActiveCategory,
     pendingDish,
     setPendingDish,
     t
-  }), [lang, isRTL, activeTab, pendingDish, t]);
+  }), [lang, isRTL, activeTab, activeCategory, pendingDish, t]);
 
   return (
     <LanguageContext.Provider value={value}>
