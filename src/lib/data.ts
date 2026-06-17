@@ -271,15 +271,43 @@ export async function getMenu(): Promise<MenuData> {
     }
 
     if (productsData && productsData.length > 0) {
-      // If categories table is blocked by RLS, derive from products
-      const categoryList = categoriesData && categoriesData.length > 0 
-        ? categoriesData 
-        : Array.from(new Set(productsData.map(p => p.category))).map(name => ({ name, image: '' }));
+      // 1. Normalize and De-duplicate raw items from DB
+      const uniqueProductsMap = new Map<string, any>();
+      productsData.forEach(p => {
+        // Normalize category: trim and title case
+        let cat = (p.category || 'Other').trim();
+        if (cat.toLowerCase() === 'kani crunchy roll') cat = 'kani  CRUNCHY   roll'; // Match existing case if specific
         
+        const normalizedProduct = {
+          ...p,
+          category: cat,
+          name: (p.name || '').trim(),
+        };
+        
+        // Use ID as primary key, but if multiple items have same ID, last one wins
+        uniqueProductsMap.set(p.id, normalizedProduct);
+      });
+
+      const deDuplicatedRaw = Array.from(uniqueProductsMap.values());
+
+      // If categories table is blocked by RLS, derive from products
+      let categoryList = categoriesData && categoriesData.length > 0 
+        ? categoriesData.map(c => ({ name: c.name.trim(), image: c.image })) 
+        : Array.from(new Set(deDuplicatedRaw.map(p => p.category))).map(name => ({ name, image: '' }));
+      
+      // De-duplicate category names (case-insensitive)
+      const seenCats = new Set<string>();
+      categoryList = categoryList.filter(c => {
+        const lower = c.name.toLowerCase();
+        if (seenCats.has(lower)) return false;
+        seenCats.add(lower);
+        return true;
+      });
+
       const categories = categoryList.map(c => c.name);
       const categoryData = categoryList;
       
-      const rawProducts: Dish[] = productsData.map(p => {
+      const rawProducts: Dish[] = deDuplicatedRaw.map(p => {
         return {
           id: p.id,
           name: p.name,
