@@ -923,21 +923,6 @@ export const menuData: Dish[] = [
     allergens: ['Shellfish', 'Dairy'],
   },
   {
-    id: 'california-005',
-    name: 'Classic California',
-    nameAr: 'كلاسيك كاليفورنيا',
-    description: 'Crab, avocado, cheese',
-    descriptionAr: 'كراب, افوكادو, جبنة',
-    price: '26 SR',
-    category: 'California Rolls',
-    tags: ['Classic', 'Seafood'],
-    portions: [
-      { name: 'Full Order', nameAr: 'طلب كامل', price: '38 SR', pieces: 8, tags: ['Best Value'] },
-      { name: 'Half Order', nameAr: 'نصف طلب', price: '24 SR', pieces: 4 }
-    ],
-    allergens: ['Shellfish', 'Dairy'],
-  },
-  {
     id: 'california-004',
     name: 'Shake Yake',
     nameAr: 'شاكي ياكي',

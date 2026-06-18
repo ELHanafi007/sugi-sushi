@@ -9,6 +9,8 @@ export interface MenuData {
   categoryData: { name: string; image: string }[];
 }
 
+type PortionWithDish = NonNullable<Dish['portions']>[number] & { originalDish: Dish };
+
 /* ─── Portion Indicator Helpers ─── */
 
 /** Indicators that suggest an item is part of a multi-portion set */
@@ -110,13 +112,6 @@ function mergePortionDuplicates(products: Dish[]): Dish[] {
       if (assigned.has(i)) continue;
       
       const current = dishes[i];
-      // Skip items that already have multiple portions defined manually
-      if (current.portions && current.portions.length > 1) {
-        result.push(current);
-        assigned.add(i);
-        continue;
-      }
-
       const group = [current];
       assigned.add(i);
       const baseName = getNormalizedBaseName(current.name);
@@ -125,8 +120,6 @@ function mergePortionDuplicates(products: Dish[]): Dish[] {
         if (assigned.has(j)) continue;
         
         const other = dishes[j];
-        if (other.portions && other.portions.length > 1) continue;
-
         const otherBase = getNormalizedBaseName(other.name);
         
         // Exact match or very close fuzzy match
@@ -142,6 +135,11 @@ function mergePortionDuplicates(products: Dish[]): Dish[] {
     for (const group of groups) {
       if (group.length === 1) {
         const dish = group[0];
+        if (dish.portions && dish.portions.length > 1) {
+          result.push(dish);
+          continue;
+        }
+
         const info = extractPortionInfo(dish.name, dish.description);
         
         if (info.pieces > 0) {
@@ -166,25 +164,38 @@ function mergePortionDuplicates(products: Dish[]): Dish[] {
         }
       } else {
         // Multiple items in group → merge
-        const portions = group.map(dish => {
+        const portions: PortionWithDish[] = group.flatMap(dish => {
+          if (dish.portions && dish.portions.length > 0) {
+            return dish.portions.map(portion => ({
+              ...portion,
+              price: portion.price || dish.price,
+              originalDish: dish
+            }));
+          }
+
           const info = extractPortionInfo(dish.name, dish.description);
           const priceVal = parseInt(dish.price) || 0;
           
-          return {
+          return [{
             name: info.label || (priceVal > 0 ? `Variant ${priceVal}` : 'Standard'),
             nameAr: info.pieces > 0 ? `${info.pieces} قطع` : 'قسم',
             price: dish.price,
             pieces: info.pieces || 0,
             originalDish: dish
-          };
+          }];
         }).sort((a, b) => {
           // Sort by pieces first, then by price if pieces are zero
           if (a.pieces !== b.pieces) return a.pieces - b.pieces;
           return (parseInt(a.price) || 0) - (parseInt(b.price) || 0);
         });
 
+        const uniquePortions = portions.filter((portion, index, list) => {
+          const portionKey = `${portion.pieces}-${portion.price}`;
+          return list.findIndex(item => `${item.pieces}-${item.price}` === portionKey) === index;
+        });
+
         // Assign logical piece counts if missing
-        portions.forEach((p, idx) => {
+        uniquePortions.forEach((p, idx) => {
           if (p.pieces === 0) {
             // Assume 4, 8, 12... based on price rank
             p.pieces = (idx + 1) * 4;
@@ -196,7 +207,7 @@ function mergePortionDuplicates(products: Dish[]): Dish[] {
         });
 
         // Pick the "main" dish (usually the one with more info or higher price)
-        const mainPortion = portions[portions.length - 1];
+        const mainPortion = uniquePortions[uniquePortions.length - 1];
         const mainDish = mainPortion.originalDish;
 
         // Clean the name
@@ -225,11 +236,11 @@ function mergePortionDuplicates(products: Dish[]): Dish[] {
         result.push({
           ...mainDish,
           name: cleanName.charAt(0).toUpperCase() + cleanName.slice(1),
-          portions: portions.map(({ originalDish, ...p }) => ({
+          portions: uniquePortions.map(({ originalDish, ...p }) => ({
              ...p,
              tags: p.pieces >= 8 ? ['Best Value'] : []
           })),
-          price: portions[0].price, // Base price is the cheapest
+          price: uniquePortions[0].price, // Base price is the cheapest
           tags: Array.from(allTags),
           allergens: Array.from(allAllergens),
         });
