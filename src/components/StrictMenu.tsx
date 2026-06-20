@@ -70,7 +70,7 @@ function DishModal({
   
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
-  const image = dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE;
+  const image = dish.image || DEFAULT_IMAGE;
 
   const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
 
@@ -306,7 +306,7 @@ function DishModal({
                  {menuDataToUse.filter(d => d.category === dish.category && d.id !== dish.id).slice(0, 4).map((item) => (
                    <div key={item.id} onClick={() => onDishSelect(item)} className="flex items-center gap-5 p-4 rounded-3xl luxury-card cursor-pointer group">
                      <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
-                       <img src={item.image || dynamicCategoryImages[item.category.toLowerCase()] || DEFAULT_IMAGE} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                       <img src={item.image || DEFAULT_IMAGE} alt={lang === 'ar' ? item.nameAr || item.name : item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
                      </div>
                      <div className="flex-1 min-w-0">
                        <h5 className="text-white/80 font-serif text-base group-hover:text-gold transition-colors">{lang === 'ar' ? item.nameAr || item.name : item.name}</h5>
@@ -436,7 +436,7 @@ export default function StrictMenu({
         {filteredDishes.map(dish => (
           <motion.div key={dish.id} onClick={() => setSelectedDish(dish)} className="luxury-card rounded-2xl md:rounded-[2.5rem] overflow-hidden p-3 md:p-6 cursor-pointer group">
             <div className="aspect-square rounded-xl md:rounded-[2rem] overflow-hidden mb-3 md:mb-6">
-              <img src={dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+              <img src={dish.image || DEFAULT_IMAGE} alt={lang === 'ar' ? dish.nameAr || dish.name : dish.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
             </div>
             <h3 className="text-white text-sm md:text-2xl font-serif italic mb-1 md:mb-2 truncate-text">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h3>
             <CurrencyPrice price={dish.price} className="text-gold text-xs md:text-base font-mono" />

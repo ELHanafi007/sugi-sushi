@@ -100,7 +100,7 @@ const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; l
   
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
-  const imageUrl = dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE;
+  const imageUrl = dish.image || DEFAULT_IMAGE;
   
   const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
 
@@ -198,7 +198,7 @@ const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; l
 const SecondaryDishCard = ({ dish, lang, idx, dynamicCategoryImages }: { dish: Dish; lang: 'en' | 'ar'; idx: number; dynamicCategoryImages: Record<string, string> }) => {
   const { t, setActiveTab, setPendingDish } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
-  const imageUrl = dish.image || dynamicCategoryImages[dish.category.toLowerCase()] || DEFAULT_IMAGE;
+  const imageUrl = dish.image || DEFAULT_IMAGE;
 
   return (
     <motion.div 
