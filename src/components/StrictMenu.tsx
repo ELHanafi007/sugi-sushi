@@ -11,18 +11,6 @@ import Image from 'next/image';
 import CurrencyPrice from '@/components/CurrencyPrice';
 import { PortionSelector } from '@/components/PortionSelector';
 
-const KANJI: Record<string, string> = {
-  'Salads': '菜', 'Soups': '汁', 'Starters': '前',
-  'Wok, Noodles & Rice': '炒', 'Tempura': '天', 'Sugi Dishes': '主',
-  'Sashimi': '刺', 'Tataki': '叩', 'Ceviche': '酢',
-  'Nigiri': '握', 'Gunkan': '軍', 'Temaki': '手',
-  'Maki Rolls': '巻', 'Aromaki Rolls': '香', 'Aromaki Fried': '揚',
-  'California Rolls': '加', 'Special Rolls': '特', 'Fried Rolls': '衣',
-  'Boxes': '箱', 'Sugi Boat': '舟',
-  'Cold Drinks': '冷', 'Fresh Juices': '搾', 'Hot Drinks': '温',
-  'Desserts': '甘', 'Extra Sauces': '醤',
-};
-
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
 
 /* ─── Dish Modal (Masterpiece Edition) ─── */
@@ -408,10 +396,6 @@ export default function StrictMenu({
                   className={`object-cover transition-all duration-[1.5s] ${isActive ? 'scale-110 brightness-110' : 'brightness-[0.35] group-hover:brightness-75 group-hover:scale-105'}`}
                 />
                 
-                {/* Kanji Overlay */}
-                <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-700 ${isActive ? 'opacity-0' : 'opacity-40 group-hover:opacity-20'}`}>
-                   <span className="text-white font-serif text-3xl md:text-5xl font-thin">{KANJI[cat]}</span>
-                </div>
               </div>
 
               <div className="flex flex-col items-center gap-2">

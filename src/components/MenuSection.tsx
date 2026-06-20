@@ -10,55 +10,36 @@ import { useRouter } from 'next/navigation';
 import CurrencyPrice from '@/components/CurrencyPrice';
 import { PortionSelector } from '@/components/PortionSelector';
 
-/* ─── Kanji per category ─── */
-const KANJI: Record<string, string> = {
-  'Salads': '菜', 'Soups': '汁', 'Starters': '前',
-  'Wok, Noodles & Rice': '炒', 'Tempura': '天', 'Sugi Dishes': '主',
-  'Sashimi': '刺', 'Tataki': '叩', 'Ceviche': '酢',
-  'Nigiri': '握', 'Gunkan': '軍', 'Temaki': '手',
-  'Maki Rolls': '巻', 'Aromaki Rolls': '香', 'Aromaki Fried': '揚',
-  'California Rolls': '加', 'Special Rolls': '特', 'Fried Rolls': '衣',
-  'Boxes': '箱', 'Sugi Boat': '舟',
-  'Cold Drinks': '冷', 'Fresh Juices': '搾', 'Hot Drinks': '温',
-  'Desserts': '甘', 'Extra Sauces': '醤',
-};
-
 const CHAPTERS = [
   { 
     id: 'beginnings', 
     titleKey: 'chapter.beginnings',
-    cats: ['Salads', 'Soups', 'Starters'],
-    kanji: '初'
+    cats: ['Salads', 'Soups', 'Starters']
   },
   { 
     id: 'main-works', 
     titleKey: 'chapter.mainworks',
-    cats: ['Wok, Noodles & Rice', 'Tempura', 'Sugi Dishes'],
-    kanji: '主'
+    cats: ['Wok, Noodles & Rice', 'Tempura', 'Sugi Dishes']
   },
   { 
     id: 'raw-art', 
     titleKey: 'chapter.rawart',
-    cats: ['Sashimi', 'Tataki', 'Ceviche', 'Nigiri', 'Gunkan', 'Temaki'],
-    kanji: '生'
+    cats: ['Sashimi', 'Tataki', 'Ceviche', 'Nigiri', 'Gunkan', 'Temaki']
   },
   { 
     id: 'rolls', 
     titleKey: 'chapter.rolls',
-    cats: ['Maki Rolls', 'Aromaki Rolls', 'Aromaki Fried', 'California Rolls', 'Special Rolls', 'Fried Rolls'],
-    kanji: '巻'
+    cats: ['Maki Rolls', 'Aromaki Rolls', 'Aromaki Fried', 'California Rolls', 'Special Rolls', 'Fried Rolls']
   },
   { 
     id: 'collections', 
     titleKey: 'chapter.collections',
-    cats: ['Boxes', 'Sugi Boat'],
-    kanji: '集'
+    cats: ['Boxes', 'Sugi Boat']
   },
   { 
     id: 'finale', 
     titleKey: 'chapter.finale',
-    cats: ['Desserts', 'Cold Drinks', 'Fresh Juices', 'Hot Drinks'],
-    kanji: '終'
+    cats: ['Desserts', 'Cold Drinks', 'Fresh Juices', 'Hot Drinks']
   }
 ];
 
@@ -363,9 +344,6 @@ function MenuExperience({
                     <span className="text-mono text-[11px] md:text-xs tracking-[0.4em] font-black uppercase text-gold/60 mb-1">
                       {t(chap.titleKey)}
                     </span>
-                    <span className="font-serif text-3xl md:text-5xl text-white font-thin">
-                      {chap.kanji}
-                    </span>
                   </div>
                   {activeChapter === chap.id && (
                     <motion.div 
@@ -401,7 +379,6 @@ function MenuExperience({
                   <div key={catName} className="relative">
                     <div className="flex flex-col md:flex-row md:items-end gap-6 mb-12 md:mb-32">
                       <div className="flex items-center gap-8">
-                        <span className="text-gold/60 font-serif text-6xl md:text-8xl font-thin leading-none">{KANJI[catName]}</span>
                         <div className="flex flex-col">
                           <span className="text-mono text-gold/40 text-[11px] tracking-[0.6em] font-black mb-2 uppercase">{t('menu.cat_label')}</span>
                           <h3 className="text-white/90 text-3xl md:text-6xl font-serif font-light tracking-tight italic">
