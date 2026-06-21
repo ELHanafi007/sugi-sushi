@@ -49,7 +49,7 @@ export function OrderSessionProvider({ children }: { children: React.ReactNode }
       saveTableId(table);
 
       // 2. Session Recovery Logic
-      let currentSessionId = sessionStorage.getItem('sugi_session_id');
+      const currentSessionId = sessionStorage.getItem('sugi_session_id');
 
       if (currentSessionId) {
         // Validate existing session

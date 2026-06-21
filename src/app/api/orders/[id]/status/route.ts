@@ -60,7 +60,7 @@ export async function PATCH(
     const supabase = getSupabaseAdmin();
 
     // Map status to timestamp column
-    let updateData: any = { status };
+    const updateData: any = { status };
     if (status === 'preparing') updateData.preparing_at = new Date().toISOString();
     else if (status === 'ready') updateData.ready_at = new Date().toISOString();
     else if (status === 'served' || status === 'delivered') {
