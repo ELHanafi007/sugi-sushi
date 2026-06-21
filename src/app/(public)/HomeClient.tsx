@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Calendar, ChevronRight, Images, Sparkles, UtensilsCrossed } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import Hero from '@/components/Hero';
 import CurrencyPrice from '@/components/CurrencyPrice';
 import { useLanguage } from '@/context/LanguageContext';
 import { Dish } from '@/data/menuData';
@@ -35,6 +36,18 @@ const itemReveal = {
   hidden: { opacity: 0, y: 22, scale: 0.98 },
   visible: { opacity: 1, y: 0, scale: 1 }
 };
+const SIGNATURE_CATEGORY_ORDER = [
+  'Special Rolls',
+  'California Rolls',
+  'Aromaki Rolls',
+  'Aromaki Fried',
+  'Fried Rolls',
+  'Maki Rolls',
+  'Sashimi',
+  'Nigiri',
+  'Boxes',
+  'Sugi Boat'
+];
 
 export default function HomeClient({
   initialMenuData,
@@ -63,10 +76,23 @@ export default function HomeClient({
   }, [initialCategoryData]);
 
   const signatureDishes = useMemo(() => {
-    const withImages = menuDataWithPrototype.filter((dish) => dish.image);
-    const tagged = withImages.filter((dish) => dish.tags?.some((tag) => ['Signature', 'Best Seller'].includes(tag)));
+    const categoryScore = (category: string) => {
+      const index = SIGNATURE_CATEGORY_ORDER.findIndex((name) => category.toLowerCase().includes(name.toLowerCase()));
+      return index === -1 ? SIGNATURE_CATEGORY_ORDER.length : index;
+    };
+    const showcasePool = menuDataWithPrototype.filter((dish) => {
+      const category = dish.category.toLowerCase();
+      const isShowcase = /roll|sashimi|nigiri|box|boat/.test(category);
+      const isSideCategory = /drink|juice|salad|soup|sauce|dessert/.test(category);
+      return isShowcase && !isSideCategory;
+    });
+    const tagged = showcasePool
+      .filter((dish) => dish.tags?.some((tag) => ['Signature', 'Best Seller'].includes(tag)))
+      .sort((a, b) => categoryScore(a.category) - categoryScore(b.category));
     const taggedIds = new Set(tagged.map((dish) => dish.id));
-    const supplemental = withImages.filter((dish) => !taggedIds.has(dish.id));
+    const supplemental = showcasePool
+      .filter((dish) => !taggedIds.has(dish.id))
+      .sort((a, b) => categoryScore(a.category) - categoryScore(b.category));
     return [...tagged, ...supplemental].slice(0, 3);
   }, [menuDataWithPrototype]);
 
@@ -92,7 +118,7 @@ export default function HomeClient({
   ], [t]);
 
   const landingImage = (src: string | undefined, index: number) => {
-    if (src?.startsWith('/')) return src;
+    if (src && (src.startsWith('/') || src.startsWith('http://') || src.startsWith('https://'))) return src;
     return LOCAL_LANDING_IMAGES[index % LOCAL_LANDING_IMAGES.length] || FALLBACK_IMAGE;
   };
 
@@ -100,6 +126,28 @@ export default function HomeClient({
     window.scrollTo({ top: 0, behavior: 'instant' });
     document.body.style.overflow = '';
     document.body.style.pointerEvents = 'auto';
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab !== 'home') {
+      document.documentElement.classList.remove('letterbox-active');
+      return;
+    }
+
+    const checkScroll = () => {
+      if (window.scrollY > window.innerHeight * 0.5) {
+        document.documentElement.classList.add('letterbox-active');
+      } else {
+        document.documentElement.classList.remove('letterbox-active');
+      }
+    };
+
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    checkScroll();
+    return () => {
+      window.removeEventListener('scroll', checkScroll);
+      document.documentElement.classList.remove('letterbox-active');
+    };
   }, [activeTab]);
 
   const openCategory = (category: string) => {
@@ -119,6 +167,9 @@ export default function HomeClient({
         />
       </AnimatePresence>
 
+      <div className="letterbox-bar top" />
+      <div className="letterbox-bar bottom" />
+
       {activeTab === 'home' && (
         <motion.div
           className="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-gold/20 via-gold/50 to-gold/20 z-[110] origin-left"
@@ -137,63 +188,19 @@ export default function HomeClient({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.45 }}
           >
-            <section className="relative min-h-[92vh] overflow-hidden bg-black">
-              <Image
-                src="/media/optimized/hero-wallpaper-alt-0.jpg"
-                alt="Sugi Sushi"
-                fill
-                priority
-                className="object-cover opacity-70 brightness-[0.55] contrast-110"
+            <Hero onTabChange={setActiveTab} />
+
+            <div className="h-16 md:h-24 flex items-center justify-center bg-bg">
+              <motion.div
+                initial={{ height: 0 }}
+                whileInView={{ height: '100%' }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2 }}
+                className="w-px bg-gradient-to-b from-transparent via-gold/20 to-transparent max-h-full"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-bg" />
-              <div className="absolute inset-0 bg-gradient-to-r from-bg/85 via-bg/25 to-transparent" />
+            </div>
 
-              <div className="relative z-10 min-h-[92vh] container-luxury flex items-end pb-10 md:pb-16 pt-32">
-                <div className={`w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-10 lg:gap-16 items-end ${lang === 'ar' ? 'lg:text-right' : ''}`}>
-                  <div className="max-w-5xl">
-                    <div className="flex flex-wrap items-center gap-3 mb-6">
-                      <span className="mono-tag !text-gold/80 !border-gold/20 !bg-gold/5">{t('landing.badge')}</span>
-                      <span className="text-white/45 text-[11px] font-mono uppercase tracking-[0.35em]">{t('landing.location')}</span>
-                    </div>
-                    <h1 className="text-white font-serif text-5xl sm:text-6xl md:text-8xl lg:text-[7.5rem] leading-[0.9] tracking-normal max-w-5xl">
-                      {t('landing.hero_title')}
-                    </h1>
-                    <p className="mt-7 max-w-2xl text-white/70 text-base md:text-xl leading-8 font-light">
-                      {t('landing.hero_copy')}
-                    </p>
-                    <div className="mt-9 flex flex-col sm:flex-row gap-3 sm:gap-4">
-                      <button
-                        onClick={() => setActiveTab('menu')}
-                        className="h-14 px-8 rounded-full bg-gold text-black text-[12px] font-black uppercase tracking-[0.25em] hover:bg-gold-bright transition-colors"
-                      >
-                        {t('landing.view_menu')}
-                      </button>
-                      <Link
-                        href="/reserve"
-                        className="h-14 px-8 rounded-full border border-white/15 bg-white/[0.04] text-white text-[12px] font-black uppercase tracking-[0.25em] flex items-center justify-center hover:border-white/35 hover:bg-white/[0.08] transition-colors"
-                      >
-                        {t('landing.reserve')}
-                      </Link>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 lg:grid-cols-1 gap-3">
-                    {[
-                      [t('landing.stat1'), t('landing.stat1_label')],
-                      [t('landing.stat2'), t('landing.stat2_label')],
-                      [t('landing.stat3'), t('landing.stat3_label')]
-                    ].map(([value, label]) => (
-                      <div key={label} className="border border-white/10 bg-black/35 backdrop-blur-xl rounded-lg p-4 md:p-5">
-                        <p className="text-gold text-xl md:text-3xl font-serif">{value}</p>
-                        <p className="mt-2 text-white/45 text-[9px] md:text-[10px] font-mono uppercase tracking-[0.25em] leading-5">{label}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section className="relative bg-[#07080a] pt-10 pb-16 md:pt-14 md:pb-20 border-y border-white/[0.06]">
+            <section className="relative overflow-hidden bg-[#07080a] pt-10 pb-16 md:pt-14 md:pb-20 border-y border-white/[0.06]">
               <div className="container-luxury">
                 <motion.div
                   variants={sectionReveal}
@@ -492,6 +499,8 @@ export default function HomeClient({
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div className="ambient-spotlight" />
     </main>
   );
 }
