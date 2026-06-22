@@ -14,12 +14,12 @@ const CHAPTERS = [
   { 
     id: 'beginnings', 
     titleKey: 'chapter.beginnings',
-    cats: ['Salads', 'Soups', 'Starters']
+    cats: ['Salad', 'Soup', 'Starters']
   },
   { 
     id: 'main-works', 
     titleKey: 'chapter.mainworks',
-    cats: ['Wok, Noodles & Rice', 'Tempura', 'Sugi Dishes']
+    cats: ['Wok & Noodles', 'Tempura & Fried', 'Sugi Dishes']
   },
   { 
     id: 'raw-art', 
@@ -29,31 +29,34 @@ const CHAPTERS = [
   { 
     id: 'rolls', 
     titleKey: 'chapter.rolls',
-    cats: ['Maki Rolls', 'Aromaki Rolls', 'Aromaki Fried', 'California Rolls', 'Special Rolls', 'Fried Rolls']
+    cats: ['Maki Rolls', 'Aromaki Rolls', 'Aromaki Fried', 'California Rolls', 'Special Rolls', 'Fry Rolls']
   },
   { 
     id: 'collections', 
     titleKey: 'chapter.collections',
-    cats: ['Boxes', 'Sugi Boat']
+    cats: ['Boxes', 'Boats']
   },
   { 
     id: 'finale', 
     titleKey: 'chapter.finale',
-    cats: ['Desserts', 'Cold Drinks', 'Fresh Juices', 'Hot Drinks']
+    cats: ['Dessert', 'Cold Drinks', 'Fresh Juices', 'Hot Drinks']
   }
 ];
 
 const CAT_IMAGES: Record<string, string> = {
-  'Salads': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80',
-  'Soups': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1200&q=80',
+  'Salad': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80',
+  'Soup': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1200&q=80',
   'Starters': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80',
-  'Wok, Noodles & Rice': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1200&q=80',
-  'Tempura': 'https://images.unsplash.com/photo-1569050278883-d5c58c39bb7a?auto=format&fit=crop&w=1200&q=80',
+  'Wok & Noodles': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1200&q=80',
+  'Tempura & Fried': 'https://images.unsplash.com/photo-1569050278883-d5c58c39bb7a?auto=format&fit=crop&w=1200&q=80',
   'Sugi Dishes': 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80',
   'Sashimi': 'https://images.unsplash.com/photo-1534256958597-7feec80116e7?auto=format&fit=crop&w=1200&q=80',
   'Tataki': 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=1200&q=80',
   'Ceviche': 'https://images.unsplash.com/photo-1534604973900-c41ab4c5e636?auto=format&fit=crop&w=1200&q=80',
   'Nigiri': 'https://images.unsplash.com/photo-1611712142469-e39736310f21?auto=format&fit=crop&w=1200&q=80',
+  'Fry Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=80',
+  'Boats': 'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?auto=format&fit=crop&w=1200&q=80',
+  'Dessert': 'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=1200&q=80',
 };
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
 
@@ -81,7 +84,8 @@ const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; l
   
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
   const desc = lang === 'ar' ? dish.descriptionAr || dish.description : dish.description;
-  const imageUrl = dish.image || DEFAULT_IMAGE;
+  const categoryKey = dish.category ? dish.category.toLowerCase() : '';
+  const imageUrl = dish.image || dynamicCategoryImages[categoryKey] || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
   
   const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
 
@@ -181,7 +185,8 @@ const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; l
 const SecondaryDishCard = ({ dish, lang, idx, dynamicCategoryImages }: { dish: Dish; lang: 'en' | 'ar'; idx: number; dynamicCategoryImages: Record<string, string> }) => {
   const { t, setActiveTab, setPendingDish } = useLanguage();
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
-  const imageUrl = dish.image || DEFAULT_IMAGE;
+  const categoryKey = dish.category ? dish.category.toLowerCase() : '';
+  const imageUrl = dish.image || dynamicCategoryImages[categoryKey] || CAT_IMAGES[dish.category] || DEFAULT_IMAGE;
 
   return (
     <motion.div 
