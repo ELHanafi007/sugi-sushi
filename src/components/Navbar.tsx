@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring
+  motion
 } from 'framer-motion';
 import { Images } from 'lucide-react';
 import Link from 'next/link';
@@ -26,22 +23,26 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   const isHome = activeTab === 'home';
 
   /* =========================
-     SCROLL MORPH ENGINE
+     SCROLL STATE
   ========================== */
-  const { scrollY } = useScroll();
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const progressRaw = useTransform(scrollY, [0, 400], [0, 1]);
-  const progress = useSpring(progressRaw, {
-    stiffness: 120,
-    damping: 25
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      // Only trigger state change if passing the threshold
+      if (window.scrollY > 50) {
+        if (!isScrolled) setIsScrolled(true);
+      } else {
+        if (isScrolled) setIsScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isScrolled]);
 
   /* =========================
-     LOGO ANIMATION
+     LOGO RESPONSIVE SCALE
   ========================== */
-  const logoY = useTransform(progress, [0, 1], ['45vh', '0vh'], { clamp: true });
-  
-  // Responsive logo scale to prevent overlap on tablet/mobile
   const [scaleFactor, setScaleFactor] = useState(2.2);
   useEffect(() => {
     const updateScale = () => {
@@ -53,17 +54,6 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
     window.addEventListener('resize', updateScale);
     return () => window.removeEventListener('resize', updateScale);
   }, []);
-
-  const logoScale = useTransform(progress, [0, 1], [scaleFactor, 1], { clamp: true });
-
-  /* =========================
-     NAV ANIMATION
-  ========================== */
-  const navOpacity = useTransform(progress, [0, 0.5], [0, 1]);
-  const navHeight = useTransform(progress, [0, 1], [140, 80]);
-  const logoFadeScale = useTransform(progress, [0.5, 1], [0.85, 1]);
-
-  const bgOpacity = useTransform(progress, [0, 1], [0.2, 0.85]);
 
   /* =========================
      NAV ITEMS
@@ -77,20 +67,25 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   return (
     <>
       {/* ================= NAVBAR ================= */}
-      <motion.header
+      <header
         style={{
-          height: isHome ? navHeight : 80,
-          backgroundColor: `rgba(6,6,8,${isHome ? bgOpacity : 0.85})`,
-          backdropFilter: 'blur(22px)',
-          borderBottom: '1px solid rgba(255,255,255,0.08)'
+          height: isHome && !isScrolled ? 140 : 80,
+          backgroundColor: isHome && !isScrolled ? 'transparent' : 'rgba(6,6,8,0.85)',
+          backdropFilter: isHome && !isScrolled ? 'none' : 'blur(22px)',
+          borderBottom: isHome && !isScrolled ? '1px solid transparent' : '1px solid rgba(255,255,255,0.08)',
+          transition: 'all 0.5s cubic-bezier(0.19, 1, 0.22, 1)'
         }}
-        className="fixed top-0 left-0 right-0 z-[10000] flex items-center"
+        className="fixed top-0 left-0 right-0 z-[10000] flex items-center will-change-transform"
       >
         <div className="max-w-[1800px] mx-auto w-full flex items-center justify-between px-6 md:px-16">
 
           {/* ================= LEFT ================= */}
-          <motion.div
-            style={{ opacity: isHome ? navOpacity : 1 }}
+          <div
+            style={{ 
+              opacity: isHome && !isScrolled ? 0 : 1,
+              transform: isHome && !isScrolled ? 'translateY(-10px)' : 'translateY(0)',
+              transition: 'all 0.5s cubic-bezier(0.19, 1, 0.22, 1)'
+            }}
             className="flex-1 flex items-center"
           >
             <nav className="hidden lg:flex gap-6">
@@ -131,16 +126,18 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                 );
               })}
             </nav>
-          </motion.div>
+          </div>
 
           {/* ================= CENTER LOGO ================= */}
           <div className="flex-1 flex justify-center relative">
-            <motion.div
+            <div
               style={{
-                y: isHome ? logoY : 0,
-                scale: isHome ? logoScale : 1,
+                transform: isHome && !isScrolled 
+                  ? `translateY(40vh) scale(${scaleFactor})` 
+                  : 'translateY(0) scale(1)',
+                transition: 'all 0.8s cubic-bezier(0.19, 1, 0.22, 1)'
               }}
-              className="origin-center z-[10001]"
+              className="origin-center z-[10001] will-change-transform"
             >
               <button
                 onClick={() => {
@@ -165,12 +162,16 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                   />
                 </div>
               </button>
-            </motion.div>
+            </div>
           </div>
 
           {/* ================= RIGHT ================= */}
-          <motion.div
-            style={{ opacity: isHome ? navOpacity : 1 }}
+          <div
+            style={{ 
+              opacity: isHome && !isScrolled ? 0 : 1,
+              transform: isHome && !isScrolled ? 'translateY(-10px)' : 'translateY(0)',
+              transition: 'all 0.5s cubic-bezier(0.19, 1, 0.22, 1)'
+            }}
             className="flex-1 flex justify-end items-center gap-5"
           >
             {/* STATUS */}
@@ -206,9 +207,9 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
               <span className="w-5 h-[2px] bg-white/70" />
               <span className="w-5 h-[2px] bg-white/70" />
             </button>
-          </motion.div>
+          </div>
         </div>
-      </motion.header>
+      </header>
 
       {/* ================= MOBILE MENU ================= */}
       {mobileOpen && (

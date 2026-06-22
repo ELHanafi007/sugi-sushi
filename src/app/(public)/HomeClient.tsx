@@ -4,7 +4,7 @@ import { useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Calendar, ChevronRight, Images, Sparkles, UtensilsCrossed } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
@@ -24,17 +24,42 @@ const LOCAL_LANDING_IMAGES = [
   '/media/landing/chef-roll.jpg',
   '/media/landing/sushi-rolls.jpg'
 ];
+
+/* Static fallback images per category — used when DB has no image */
+const CAT_IMAGES: Record<string, string> = {
+  'Special Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
+  'Sashimi': 'https://images.unsplash.com/photo-1534256958597-7feec80116e7?auto=format&fit=crop&w=800&q=75',
+  'Boxes': 'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?auto=format&fit=crop&w=800&q=75',
+  'Wok, Noodles & Rice': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800&q=75',
+  'Starters': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=75',
+  'California Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
+  'Desserts': 'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=800&q=75',
+  'Cold Drinks': 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=800&q=75',
+  'Salads': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=75',
+  'Soups': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=75',
+  'Tempura': 'https://images.unsplash.com/photo-1569050278883-d5c58c39bb7a?auto=format&fit=crop&w=800&q=75',
+  'Sugi Dishes': 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=800&q=75',
+  'Tataki': 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=800&q=75',
+  'Ceviche': 'https://images.unsplash.com/photo-1534604973900-c41ab4c5e636?auto=format&fit=crop&w=800&q=75',
+  'Nigiri': 'https://images.unsplash.com/photo-1611712142469-e39736310f21?auto=format&fit=crop&w=800&q=75',
+  'Maki Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
+  'Aromaki Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
+  'Sugi Boat': 'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?auto=format&fit=crop&w=800&q=75',
+  'Hot Drinks': 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=800&q=75',
+  'Fresh Juices': 'https://images.unsplash.com/photo-1622597467836-f3285f2131b8?auto=format&fit=crop&w=800&q=75',
+};
+
 const sectionReveal = {
-  hidden: { opacity: 0, y: 34 },
+  hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0 }
 };
 const staggerChildren = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.08 } }
+  visible: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } }
 };
 const itemReveal = {
-  hidden: { opacity: 0, y: 22, scale: 0.98 },
-  visible: { opacity: 1, y: 0, scale: 1 }
+  hidden: { opacity: 0, y: 18 },
+  visible: { opacity: 1, y: 0 }
 };
 const SIGNATURE_CATEGORY_ORDER = [
   'Special Rolls',
@@ -60,12 +85,6 @@ export default function HomeClient({
 }) {
   const menuDataWithPrototype = initialMenuData;
   const { activeTab, setActiveTab, setActiveCategory, t, lang } = useLanguage();
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
 
   const categoryImages = useMemo(() => {
     const map = new Map<string, string>();
@@ -117,8 +136,10 @@ export default function HomeClient({
     { value: '03', title: t('landing.step3'), copy: t('landing.step3_copy') }
   ], [t]);
 
-  const landingImage = (src: string | undefined, index: number) => {
+  /** Resolve image: DB → static fallback → local landing images → unsplash fallback */
+  const landingImage = (src: string | undefined, category: string, index: number) => {
     if (src && (src.startsWith('/') || src.startsWith('http://') || src.startsWith('https://'))) return src;
+    if (CAT_IMAGES[category]) return CAT_IMAGES[category];
     return LOCAL_LANDING_IMAGES[index % LOCAL_LANDING_IMAGES.length] || FALLBACK_IMAGE;
   };
 
@@ -128,28 +149,6 @@ export default function HomeClient({
     document.body.style.pointerEvents = 'auto';
   }, [activeTab]);
 
-  useEffect(() => {
-    if (activeTab !== 'home') {
-      document.documentElement.classList.remove('letterbox-active');
-      return;
-    }
-
-    const checkScroll = () => {
-      if (window.scrollY > window.innerHeight * 0.5) {
-        document.documentElement.classList.add('letterbox-active');
-      } else {
-        document.documentElement.classList.remove('letterbox-active');
-      }
-    };
-
-    window.addEventListener('scroll', checkScroll, { passive: true });
-    checkScroll();
-    return () => {
-      window.removeEventListener('scroll', checkScroll);
-      document.documentElement.classList.remove('letterbox-active');
-    };
-  }, [activeTab]);
-
   const openCategory = (category: string) => {
     setActiveCategory(category);
     setActiveTab('menu');
@@ -157,26 +156,6 @@ export default function HomeClient({
 
   return (
     <main className="relative min-h-screen bg-bg overflow-x-hidden pb-[104px]">
-      <AnimatePresence>
-        <motion.div
-          key={`${activeTab}-shutter`}
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 0 }}
-          transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
-          className="fixed inset-0 z-[500] bg-black pointer-events-none"
-        />
-      </AnimatePresence>
-
-      <div className="letterbox-bar top" />
-      <div className="letterbox-bar bottom" />
-
-      {activeTab === 'home' && (
-        <motion.div
-          className="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-gold/20 via-gold/50 to-gold/20 z-[110] origin-left"
-          style={{ scaleX }}
-        />
-      )}
-
       <Navbar onTabChange={setActiveTab} activeTab={activeTab} />
 
       <AnimatePresence mode="wait">
@@ -186,28 +165,24 @@ export default function HomeClient({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.45 }}
+            transition={{ duration: 0.4 }}
           >
             <Hero onTabChange={setActiveTab} />
 
+            {/* ─── Divider ─── */}
             <div className="h-16 md:h-24 flex items-center justify-center bg-bg">
-              <motion.div
-                initial={{ height: 0 }}
-                whileInView={{ height: '100%' }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2 }}
-                className="w-px bg-gradient-to-b from-transparent via-gold/20 to-transparent max-h-full"
-              />
+              <div className="w-px h-full bg-gradient-to-b from-transparent via-gold/20 to-transparent" />
             </div>
 
+            {/* ═══ CATEGORIES SECTION ═══ */}
             <section className="relative overflow-hidden bg-[#07080a] pt-10 pb-16 md:pt-14 md:pb-20 border-y border-white/[0.06]">
               <div className="container-luxury">
                 <motion.div
                   variants={sectionReveal}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
                   className="flex items-end justify-between gap-5"
                 >
                   <div>
@@ -227,27 +202,25 @@ export default function HomeClient({
                   variants={staggerChildren}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.2 }}
+                  viewport={{ once: true, amount: 0.15 }}
                   className="-mx-[var(--container-px)] mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto px-[var(--container-px)] pb-5 md:mx-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible md:px-0 lg:grid-cols-4"
                 >
                   {featuredCategories.map((category, index) => {
-                    const image = landingImage(categoryImages.get(category), index);
+                    const image = landingImage(categoryImages.get(category), category, index);
                     return (
                       <motion.button
                         key={category}
                         variants={itemReveal}
-                        whileTap={{ scale: 0.98 }}
-                        whileHover={{ y: -4 }}
-                        transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1] }}
+                        transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
                         onClick={() => openCategory(category)}
-                        className="group relative h-[330px] w-[76vw] min-w-[76vw] snap-center overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] text-left sm:w-[42vw] sm:min-w-[42vw] md:h-[360px] md:w-auto md:min-w-0"
+                        className="group relative h-[330px] w-[76vw] min-w-[76vw] snap-center overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] text-left sm:w-[42vw] sm:min-w-[42vw] md:h-[360px] md:w-auto md:min-w-0 active:scale-[0.98] transition-transform duration-200"
                       >
                         <Image
                           src={image}
                           alt={t(`menu.cat.${category}`)}
                           fill
                           sizes="(max-width: 768px) 76vw, (max-width: 1024px) 33vw, 25vw"
-                          className="object-cover brightness-[0.62] saturate-[1.08] transition-all duration-700 group-hover:scale-105 group-hover:brightness-[0.78]"
+                          className="object-cover brightness-[0.62] saturate-[1.08] transition-transform duration-700 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/5" />
                         <div className="absolute inset-x-4 bottom-4">
@@ -267,14 +240,15 @@ export default function HomeClient({
               </div>
             </section>
 
+            {/* ═══ SIGNATURE DISHES ═══ */}
             <section className="relative overflow-hidden bg-bg py-16 md:py-24">
               <div className="container-luxury">
                 <motion.div
                   variants={sectionReveal}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
                   className="max-w-2xl"
                 >
                   <span className="section-label">{t('landing.signatures_label')}</span>
@@ -286,23 +260,21 @@ export default function HomeClient({
                   variants={staggerChildren}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.18 }}
+                  viewport={{ once: true, amount: 0.15 }}
                   className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5"
                 >
                   {signatureDishes.map((dish, index) => {
-                    const image = landingImage(dish.image, index + 3);
+                    const image = landingImage(dish.image, dish.category, index + 3);
                     return (
                       <motion.button
                         key={dish.id}
                         variants={itemReveal}
-                        whileTap={{ scale: 0.985 }}
-                        whileHover={{ y: -6 }}
-                        transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1] }}
+                        transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
                         onClick={() => {
                           setActiveCategory(dish.category);
                           setActiveTab('menu');
                         }}
-                        className="group overflow-hidden rounded-lg border border-white/10 bg-[#0c0d10] text-left transition-colors hover:border-gold/30"
+                        className="group overflow-hidden rounded-lg border border-white/10 bg-[#0c0d10] text-left transition-colors hover:border-gold/30 active:scale-[0.985]"
                       >
                         <div className="relative aspect-[16/11] overflow-hidden bg-white/[0.04]">
                           <Image
@@ -334,14 +306,15 @@ export default function HomeClient({
               </div>
             </section>
 
+            {/* ═══ HOW TO ORDER ═══ */}
             <section className="bg-[#101114] py-14 md:py-20 border-y border-white/[0.06]">
               <div className="container-luxury grid grid-cols-1 gap-8 md:grid-cols-[0.8fr_1.2fr] md:items-center">
                 <motion.div
                   variants={sectionReveal}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
                 >
                   <span className="section-label">{t('landing.flow_label')}</span>
                   <h2 className="mt-4 text-white text-4xl md:text-5xl font-serif leading-tight">{t('landing.flow_title')}</h2>
@@ -352,14 +325,14 @@ export default function HomeClient({
                   variants={staggerChildren}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.25 }}
+                  viewport={{ once: true, amount: 0.2 }}
                   className="grid grid-cols-1 gap-3 sm:grid-cols-3"
                 >
                   {orderSteps.map((step) => (
                     <motion.div
                       key={step.value}
                       variants={itemReveal}
-                      transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1] }}
+                      transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
                       className="rounded-lg border border-white/10 bg-black/25 p-5"
                     >
                       <p className="text-gold text-xl font-serif">{step.value}</p>
@@ -371,32 +344,29 @@ export default function HomeClient({
               </div>
             </section>
 
+            {/* ═══ GALLERY PREVIEW + CTA ═══ */}
             <section className="bg-bg py-16 md:py-24">
               <div className="container-luxury grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
                 <motion.div
-                  initial={{ opacity: 0, x: lang === 'ar' ? 34 : -34 }}
+                  initial={{ opacity: 0, x: lang === 'ar' ? 30 : -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.28 }}
-                  transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
                   className="relative min-h-[470px] md:min-h-[620px]"
                 >
                   {galleryPreview.map((src, index) => (
-                    <motion.div
+                    <div
                       key={src}
-                      initial={{ opacity: 0, y: 24, rotate: index === 1 ? 4 : index === 2 ? -3 : 0 }}
-                      whileInView={{ opacity: 1, y: 0, rotate: index === 1 ? 2 : index === 2 ? -2 : 0 }}
-                      viewport={{ once: true, amount: 0.25 }}
-                      transition={{ delay: index * 0.12, duration: 0.75, ease: [0.19, 1, 0.22, 1] }}
                       className={[
                         'absolute overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] shadow-2xl',
                         index === 0 ? 'left-0 top-0 h-[58%] w-[68%]' : '',
-                        index === 1 ? 'right-0 top-[18%] h-[54%] w-[56%]' : '',
-                        index === 2 ? 'bottom-0 left-[16%] h-[38%] w-[62%]' : ''
+                        index === 1 ? 'right-0 top-[18%] h-[54%] w-[56%] rotate-2' : '',
+                        index === 2 ? 'bottom-0 left-[16%] h-[38%] w-[62%] -rotate-2' : ''
                       ].join(' ')}
                     >
                       <Image src={src} alt="Sugi Sushi" fill sizes="(max-width: 1024px) 70vw, 40vw" className="object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-                    </motion.div>
+                    </div>
                   ))}
                 </motion.div>
 
@@ -404,8 +374,8 @@ export default function HomeClient({
                   variants={sectionReveal}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
                   className="lg:pl-8"
                 >
                   <span className="section-label">{t('landing.craft_label')}</span>
@@ -437,13 +407,14 @@ export default function HomeClient({
               </div>
             </section>
 
+            {/* ═══ FINAL CTA ═══ */}
             <section className="bg-[#08090b] py-14 md:py-20">
               <motion.div
                 variants={sectionReveal}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.35 }}
-                transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
                 className="container-luxury"
               >
                 <div className="overflow-hidden rounded-lg border border-gold/20 bg-[linear-gradient(135deg,rgba(212,175,55,0.14),rgba(255,255,255,0.025)_45%,rgba(16,17,20,1))] p-6 md:p-10">
@@ -493,7 +464,7 @@ export default function HomeClient({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
           >
             <VerticalImageStack onComplete={() => setActiveTab('menu')} completeTab="menu" />
           </motion.div>

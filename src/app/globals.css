@@ -205,7 +205,6 @@ html, body {
 
 /* ─── The Obsidian Stage ─── */
 html {
-  scroll-behavior: smooth;
   background-color: var(--color-bg);
 }
 
@@ -309,6 +308,12 @@ body {
     transform: translateY(-100vh) translateX(50px) scale(0.3); 
     opacity: 0;
   }
+}
+
+/* ─── Scroll Cue Animation (GPU composited) ─── */
+@keyframes scrollCue {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
 }
 
 /* ─── Layout Utils ─── */

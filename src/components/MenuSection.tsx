@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -99,10 +99,12 @@ const FeaturedDishCard = ({ dish, lang, dynamicCategoryImages }: { dish: Dish; l
       }}
     >
       <div className="absolute inset-0 overflow-hidden">
-        <img
+        <Image
           src={imageUrl}
           alt={name}
-          className="w-full h-full object-cover transition-transform duration-[8s] group-hover:scale-110 saturate-[1.2]"
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover transition-transform duration-[8s] group-hover:scale-110 saturate-[1.2]"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
           }}
@@ -197,10 +199,12 @@ const SecondaryDishCard = ({ dish, lang, idx, dynamicCategoryImages }: { dish: D
       }}
     >
       <div className="absolute inset-0 overflow-hidden">
-        <img
+        <Image
           src={imageUrl}
           alt={name}
-          className="w-full h-full object-cover transition-transform duration-[6s] group-hover:scale-110"
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover transition-transform duration-[6s] group-hover:scale-110"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=800&q=60';
           }}

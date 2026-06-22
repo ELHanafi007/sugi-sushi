@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLanguage, NavTab } from '@/context/LanguageContext';
@@ -19,7 +19,6 @@ export default function Hero({ onTabChange }: HeroProps) {
     offset: ["start start", "end start"]
   });
 
-  const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
@@ -27,23 +26,21 @@ export default function Hero({ onTabChange }: HeroProps) {
       ref={containerRef} 
       className="relative h-[100vh] w-full flex items-center justify-center overflow-hidden bg-bg"
     >
-      {/* ─── Cinematic Background ─── */}
+      {/* ─── Cinematic Background (CSS parallax for GPU compositing) ─── */}
       <motion.div 
         style={{ opacity }}
         className="absolute inset-0 z-0"
       >
-        <motion.div
-          style={{ y: imageY }}
-          className="absolute inset-0 w-full h-[120%] -top-[10%]"
-        >
+        <div className="absolute inset-0 w-full h-[120%] -top-[10%] will-change-transform">
           <Image
             src="/media/optimized/hero-wallpaper-alt-0.jpg"
             alt="Sugi Sushi"
             fill
             priority
+            sizes="100vw"
             className="object-cover brightness-[0.35] saturate-[0.8] contrast-[1.1]"
           />
-        </motion.div>
+        </div>
         
         {/* Cinematic Overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-bg" />
@@ -60,12 +57,12 @@ export default function Hero({ onTabChange }: HeroProps) {
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.5, delay: 1.2, ease: [0.19, 1, 0.22, 1] }}
+            transition={{ duration: 1.2, delay: 0.8, ease: [0.19, 1, 0.22, 1] }}
             className="w-full sm:w-auto flex-1"
           >
             <Link 
               href="/reserve"
-              className="group relative flex items-center justify-center w-full px-10 md:px-16 py-5 md:py-7 overflow-hidden rounded-full bg-gold shadow-[0_25px_60px_rgba(212,175,55,0.4)] transition-all duration-700 hover:scale-[1.05] active:scale-95"
+              className="group relative flex items-center justify-center w-full px-10 md:px-16 py-5 md:py-7 overflow-hidden rounded-full bg-gold shadow-[0_25px_60px_rgba(212,175,55,0.4)] transition-all duration-500 hover:scale-[1.03] active:scale-95"
             >
               <span className="relative z-10 text-bg text-[11px] md:text-sm uppercase tracking-[0.35em] md:tracking-[0.45em] font-black whitespace-nowrap">
                 {t('hero.reserve')}
@@ -78,12 +75,12 @@ export default function Hero({ onTabChange }: HeroProps) {
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.5, delay: 1.4, ease: [0.19, 1, 0.22, 1] }}
+            transition={{ duration: 1.2, delay: 1.0, ease: [0.19, 1, 0.22, 1] }}
             className="w-full sm:w-auto flex-1"
           >
             <button 
               onClick={() => onTabChange('menu')}
-              className="group relative flex items-center justify-center w-full px-10 md:px-16 py-5 md:py-7 overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-2xl transition-all duration-700 hover:bg-white/10 hover:border-white/40 active:scale-95"
+              className="group relative flex items-center justify-center w-full px-10 md:px-16 py-5 md:py-7 overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-2xl transition-all duration-500 hover:bg-white/10 hover:border-white/40 active:scale-95"
             >
               <span className="relative z-10 text-white text-[11px] md:text-sm uppercase tracking-[0.35em] md:tracking-[0.45em] font-black whitespace-nowrap">
                 {t('hero.menu')}
@@ -96,15 +93,11 @@ export default function Hero({ onTabChange }: HeroProps) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.4 }}
-          transition={{ delay: 2, duration: 1 }}
+          transition={{ delay: 1.8, duration: 0.8 }}
           className="hidden md:flex flex-col items-center gap-2"
         >
           <div className="w-[1px] h-12 bg-gradient-to-b from-gold/50 to-transparent relative overflow-hidden">
-            <motion.div 
-              animate={{ y: ['-100%', '100%'] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0 bg-white/40"
-            />
+            <div className="absolute inset-0 bg-white/40 animate-[scrollCue_2s_linear_infinite]" />
           </div>
         </motion.div>
       </motion.div>

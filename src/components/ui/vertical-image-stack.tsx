@@ -6,16 +6,16 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 
 const images = [
-  { id: 1, src: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&q=80", alt: "Omakase Selection", title: "The Trust", desc: "Let the chef guide you" },
-  { id: 2, src: "https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&q=80", alt: "Fresh Sashimi", title: "Purity", desc: "Direct from the ocean" },
-  { id: 3, src: "https://images.unsplash.com/photo-1617196034183-421b4917c92d?w=800&q=80", alt: "Ocean Treasures", title: "Depth", desc: "Treasures of the sea" },
-  { id: 4, src: "https://images.unsplash.com/photo-1552611052-33e04de081de?w=800&q=80", alt: "Signature Ramen", title: "Warmth", desc: "Comfort in a bowl" },
-  { id: 5, src: "https://images.unsplash.com/photo-1580828369019-2238b909ca8c?w=800&q=80", alt: "Chef's Creation", title: "Craft", desc: "Years of mastery" },
-  { id: 6, src: "https://images.unsplash.com/photo-1534422298391-e4f8c170db76?w=800&q=80", alt: "Tempura", title: "Crisp", desc: "The light touch" },
-  { id: 7, src: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800&q=80", alt: "Artisan Sashimi", title: "Precision", desc: "Every cut matters" },
-  { id: 8, src: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80", alt: "Zen Interior", title: "Space", desc: "Minimalist beauty" },
-  { id: 9, src: "https://images.unsplash.com/photo-1590377435160-c335805f639a?w=800&q=80", alt: "Premium Sake", title: "Balance", desc: "The perfect pairing" },
-  { id: 10, src: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80", alt: "The Experience", title: "Together", desc: "Shared moments" },
+  { id: 1, src: "/media/optimized/brochure-3.jpg", alt: "Sugi Sushi Exterior", title: "Welcome", desc: "Your journey begins here" },
+  { id: 2, src: "/media/optimized/brochure-1.jpg", alt: "Dining Room", title: "Atmosphere", desc: "Modern luxury dining" },
+  { id: 3, src: "/media/optimized/brochure-4.jpg", alt: "Chef at work", title: "Mastery", desc: "Precision in every cut" },
+  { id: 4, src: "/media/optimized/brochure-2.jpg", alt: "Sushi Selection", title: "The Art", desc: "Colors of the ocean" },
+  { id: 5, src: "/media/optimized/brochure-5.jpg", alt: "Sugi Specialties", title: "Signature", desc: "Our proud creations" },
+  { id: 6, src: "/media/optimized/brochure-6.jpg", alt: "Fresh Ingredients", title: "Purity", desc: "Sourced with care" },
+  { id: 7, src: "/media/optimized/brochure-7.jpg", alt: "Culinary Details", title: "Craft", desc: "Perfection is standard" },
+  { id: 8, src: "/media/optimized/brochure-8.jpg", alt: "Dining Experience", title: "Moments", desc: "Shared at the table" },
+  { id: 9, src: "/media/optimized/brochure-9.jpg", alt: "Elegant Setting", title: "Space", desc: "Designed for comfort" },
+  { id: 10, src: "/media/optimized/brochure-10.jpg", alt: "Sugi Sushi Experience", title: "Legacy", desc: "Taste the tradition" },
 ]
 
 interface VerticalImageStackProps {
