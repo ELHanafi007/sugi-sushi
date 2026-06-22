@@ -123,7 +123,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
                 );
               })}
             </nav>
-          </div>
+          </motion.div>
 
           {/* ================= CENTER LOGO ================= */}
           <div className="flex-1 flex justify-center relative">
