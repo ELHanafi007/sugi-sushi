@@ -219,25 +219,6 @@ function DishModal({
                 </div>
               )}
 
-              <div className="w-full flex flex-col items-center gap-4">
-                <div className="rounded-2xl border border-gold/20 bg-gold/10 px-5 py-4 text-center max-w-xl">
-                  <p className="text-white/70 text-sm font-serif italic leading-relaxed">
-                    Reservations are currently the only way to enjoy this menu. Please reserve a table to continue.
-                  </p>
-                </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    onClose();
-                    window.location.assign('/reserve');
-                  }}
-                  className="py-4 md:py-5 rounded-2xl bg-gold text-black text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3"
-                >
-                  {t('landing.reserve')}
-                </motion.button>
-              </div>
             </div>
 
             <p className="text-base md:text-2xl text-white/40 font-serif italic leading-relaxed font-light text-center">&quot;{desc}&quot;</p>
