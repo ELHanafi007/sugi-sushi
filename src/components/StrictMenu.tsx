@@ -104,7 +104,9 @@ function DishModal({
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, []);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -140,10 +142,12 @@ function DishModal({
 
   return createPortal(
     <motion.div 
+      ref={scrollRef}
+      data-lenis-prevent
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[20000] modal-glass overflow-y-auto no-scrollbar outline-none pb-20"
+      className="fixed inset-0 z-[20000] modal-glass overflow-y-auto overscroll-contain no-scrollbar outline-none pb-20 touch-pan-y"
       onClick={onClose}
     >
       <div className="min-h-screen" onClick={e => e.stopPropagation()}>

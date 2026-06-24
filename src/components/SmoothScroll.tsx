@@ -13,14 +13,8 @@ export default function SmoothScroll() {
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 2,
+      autoRaf: true,
     });
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
 
     return () => {
       lenis.destroy();
