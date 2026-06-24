@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
-import { useCart } from '@/context/CartContext';
 import { menuData, CATEGORIES, Dish } from '@/data/menuData';
 import { getDynamicRecommendations } from '@/utils/recommendationEngine';
 import Image from 'next/image';
@@ -57,10 +56,7 @@ function DishModal({
   dynamicCategoryImages: Record<string, string>;
 }) {
   const { lang, t } = useLanguage();
-  const { addToCart, buyNow, tableNumber, setIsCartOpen } = useCart();
   const [selectedPortionIdx, setSelectedPortionIdx] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [isInstantLoading, setIsInstantLoading] = useState(false);
 
   // Set default portion to the cheapest one when dish changes
   useEffect(() => {
@@ -78,7 +74,6 @@ function DishModal({
     } else {
       setSelectedPortionIdx(0);
     }
-    setQuantity(1);
   }, [dish]);
   
   const name = lang === 'ar' ? dish.nameAr || dish.name : dish.name;
@@ -87,19 +82,6 @@ function DishModal({
   const image = dish.image || dynamicCategoryImages[categoryKey] || CAT_IMAGES[categoryKey] || DEFAULT_IMAGE;
 
   const currentPrice = (dish.portions && dish.portions.length > 1) ? dish.portions[selectedPortionIdx].price : dish.price;
-
-  const handleAddToCart = () => {
-    addToCart(dish, quantity, selectedPortionIdx);
-    setIsCartOpen(true);
-    onClose();
-  };
-
-  const handleInstantDelight = async () => {
-    setIsInstantLoading(true);
-    await buyNow(dish, quantity, tableNumber, selectedPortionIdx);
-    setIsInstantLoading(false);
-    onClose();
-  };
 
   const recommendations = useMemo(() => {
     return getDynamicRecommendations(dish, menuDataToUse, lang as 'en' | 'ar');
@@ -239,39 +221,24 @@ function DishModal({
                 </div>
               )}
 
-              {/* Order Controls */}
-              <div className="w-full flex flex-col items-center gap-6 md:gap-8">
-                <div className="flex items-center gap-6 md:gap-10 bg-white/[0.03] border border-white/10 rounded-full p-2 px-6 md:px-8 backdrop-blur-md">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-12 h-12 flex items-center justify-center text-white/20 hover:text-gold transition-colors text-2xl font-light">—</button>
-                  <div className="flex flex-col items-center min-w-[40px]">
-                    <span className="text-white text-2xl font-mono font-bold">{quantity}</span>
-                    <span className="text-[7px] text-white/20 uppercase tracking-[0.2em] font-black mt-1">Quantity</span>
-                  </div>
-                  <button onClick={() => setQuantity(quantity + 1)} className="w-12 h-12 flex items-center justify-center text-white/20 hover:text-gold transition-colors text-2xl font-light">+</button>
+              <div className="w-full flex flex-col items-center gap-4">
+                <div className="rounded-2xl border border-gold/20 bg-gold/10 px-5 py-4 text-center max-w-xl">
+                  <p className="text-white/70 text-sm font-serif italic leading-relaxed">
+                    Reservations are currently the only way to enjoy this menu. Please reserve a table to continue.
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleAddToCart}
-                    className="py-4 md:py-5 rounded-2xl border border-gold/30 text-gold text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14m-7-7v14"/></svg>
-                    {t('cart.add_to_order')}
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleInstantDelight}
-                    disabled={isInstantLoading}
-                    className="py-4 md:py-5 rounded-2xl bg-gold text-black text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 disabled:opacity-50"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    {isInstantLoading ? '...' : t('cart.instant_delight')}
-                  </motion.button>
-                </div>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    onClose();
+                    window.location.assign('/reserve');
+                  }}
+                  className="py-4 md:py-5 rounded-2xl bg-gold text-black text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3"
+                >
+                  {t('landing.reserve')}
+                </motion.button>
               </div>
             </div>
 

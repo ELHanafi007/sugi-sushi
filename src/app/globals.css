@@ -1,19 +1,30 @@
 @import "tailwindcss";
 
 @theme {
+  /* ─── Obsidian Kinetic: Background Tiers ─── */
+  --color-void: #030304;
   --color-bg: #060608;
   --color-bg-elevated: #0d0d12;
+  --color-onyx: #0a0a0e;
   --color-bg-card: #0f0f14;
+  --color-graphite: #101114;
+  --color-slate: #18181c;
+
+  /* ─── Gold Spectrum ─── */
   --color-gold: #d4af37;
   --color-gold-bright: #f5e6a3;
   --color-gold-dim: #8a6d00;
+  --color-gold-white: #fdf6e3;
   --color-gold-muted: rgba(212, 175, 55, 0.08);
-  
+
+  /* ─── Typography Stack ─── */
+  --font-display: "Cinzel", serif;
   --font-serif: "Shippori Mincho", serif;
   --font-brand-serif: "Playfair Display", serif;
   --font-arabic: "Noto Sans Arabic", sans-serif;
   --font-mono: "Space Mono", monospace;
 
+  /* ─── Easing ─── */
   --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
@@ -59,15 +70,25 @@ html, body {
   padding-right: var(--container-px);
 }
 
-/* ─── Typography System ─── */
+/* ─── Typography System (Enforced) ─── */
 .text-display {
+  font-family: var(--font-display);
   font-size: var(--type-display);
   line-height: 0.85;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.04em;
   font-weight: 700;
   text-transform: uppercase;
   font-kerning: normal;
   font-feature-settings: "kern" 1, "liga" 1;
+}
+
+.text-headline {
+  font-family: var(--font-brand-serif);
+  font-size: var(--type-h1);
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  font-style: italic;
 }
 
 .text-h1 {

@@ -90,7 +90,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({ items, accentColor, a
                     animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                     exit={{ opacity: 0, y: 4, filter: 'blur(8px)' }}
                     transition={{ type: 'spring', stiffness: 600, damping: 40 }}
-                    className="text-[7px] font-mono font-bold uppercase tracking-[0.25em] text-gold mt-1.5 block"
+                    className="text-[9px] font-mono font-bold uppercase tracking-[0.25em] text-gold mt-1.5 block"
                   >
                     {item.label}
                   </motion.span>

@@ -1,7 +1,6 @@
 "use client";
 import BottomNavWrapper from "@/components/BottomNavWrapper";
 import CinematicReveal from "@/components/CinematicReveal";
-import CartDrawer from "@/components/CartDrawer";
 
 export default function PublicLayout({
   children,
@@ -13,7 +12,6 @@ export default function PublicLayout({
       <CinematicReveal>
         {children}
       </CinematicReveal>
-      <CartDrawer />
       <BottomNavWrapper />
     </>
   );

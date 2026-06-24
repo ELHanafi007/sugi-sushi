@@ -1,331 +1,159 @@
-"use client"
+'use client';
 
-import { useState, useCallback, useEffect, useRef } from "react"
-import { motion, type PanInfo, AnimatePresence } from "framer-motion"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useState, useRef, useEffect } from "react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
+import { ArrowLeft, ArrowRight, MousePointerClick } from "lucide-react";
 
-const images = [
-  { id: 1, src: "/media/optimized/brochure-3.jpg", alt: "Sugi Sushi Exterior", title: "Welcome", desc: "Your journey begins here" },
-  { id: 2, src: "/media/optimized/brochure-1.jpg", alt: "Dining Room", title: "Atmosphere", desc: "Modern luxury dining" },
-  { id: 3, src: "/media/optimized/brochure-4.jpg", alt: "Chef at work", title: "Mastery", desc: "Precision in every cut" },
-  { id: 4, src: "/media/optimized/brochure-2.jpg", alt: "Sushi Selection", title: "The Art", desc: "Colors of the ocean" },
-  { id: 5, src: "/media/optimized/brochure-5.jpg", alt: "Sugi Specialties", title: "Signature", desc: "Our proud creations" },
-  { id: 6, src: "/media/optimized/brochure-6.jpg", alt: "Fresh Ingredients", title: "Purity", desc: "Sourced with care" },
-  { id: 7, src: "/media/optimized/brochure-7.jpg", alt: "Culinary Details", title: "Craft", desc: "Perfection is standard" },
-  { id: 8, src: "/media/optimized/brochure-8.jpg", alt: "Dining Experience", title: "Moments", desc: "Shared at the table" },
-  { id: 9, src: "/media/optimized/brochure-9.jpg", alt: "Elegant Setting", title: "Space", desc: "Designed for comfort" },
-  { id: 10, src: "/media/optimized/brochure-10.jpg", alt: "Sugi Sushi Experience", title: "Legacy", desc: "Taste the tradition" },
-]
+const GALLERY_IMAGES = [
+  { id: 1, src: "/media/optimized/brochure-3.jpg", alt: "Sugi Sushi Exterior", titleKey: "gallery.item2.title", tagKey: "gallery.item2.tag" },
+  { id: 2, src: "/media/optimized/brochure-1.jpg", alt: "Dining Room", titleKey: "gallery.item1.title", tagKey: "gallery.item1.tag" },
+  { id: 3, src: "/media/optimized/brochure-4.jpg", alt: "Chef at work", titleKey: "gallery.item3.title", tagKey: "gallery.item3.tag" },
+  { id: 4, src: "/media/optimized/brochure-2.jpg", alt: "Sushi Selection", titleKey: "gallery.item4.title", tagKey: "gallery.item4.tag" },
+  { id: 5, src: "/media/optimized/brochure-5.jpg", alt: "Sugi Specialties", titleKey: "gallery.item5.title", tagKey: "gallery.item5.tag" },
+  { id: 6, src: "/media/optimized/brochure-6.jpg", alt: "Fresh Ingredients", titleKey: "gallery.item6.title", tagKey: "gallery.item6.tag" },
+  { id: 7, src: "/media/optimized/brochure-7.jpg", alt: "Culinary Details", titleKey: "gallery.item1.title", tagKey: "gallery.item1.tag" },
+];
 
 interface VerticalImageStackProps {
-  onComplete?: () => void
-  completeTab?: string
+  onComplete?: () => void;
+  completeTab?: string;
 }
 
+/**
+ * IMMERSIVE GALLERY — Obsidian Kinetic
+ *
+ * Full-viewport horizontal scroll gallery using Framer Motion useScroll.
+ * Features:
+ * - 80vw images with internal parallax
+ * - Cinematic typography & cursor
+ * - Progress indicator
+ */
 export function VerticalImageStack({ onComplete, completeTab }: VerticalImageStackProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [showFinal, setShowFinal] = useState(false)
-  const lastNavigationTime = useRef(0)
-  const navigationCooldown = 400
+  const { t, lang } = useLanguage();
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Horizontal scroll progress
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+  });
 
-  const navigate = useCallback((newDirection: number, forceAdvance = false) => {
-    if (showFinal) return
-    
-    const now = Date.now()
-    if (now - lastNavigationTime.current < navigationCooldown && !forceAdvance) return
-    lastNavigationTime.current = now
+  const smoothProgress = useSpring(scrollYProgress, { damping: 20, stiffness: 100 });
+  const x = useTransform(smoothProgress, [0, 1], ["0%", `-${100 * (GALLERY_IMAGES.length - 1)}vw`]);
 
-    setCurrentIndex((prev) => {
-      if (newDirection > 0) {
-        if (prev === images.length - 1 && !showFinal) {
-          setShowFinal(true)
-          return prev
-        }
-        return prev === images.length - 1 ? 0 : prev + 1
-      }
-      if (showFinal && newDirection < 0) {
-        setShowFinal(false)
-        return prev
-      }
-      return prev === 0 ? images.length - 1 : prev - 1
-    })
-  }, [showFinal])
-
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    if (showFinal) return
-    const threshold = 50
-    if (info.offset.y < -threshold) {
-      navigate(1)
-    } else if (info.offset.y > threshold) {
-      navigate(-1)
-    }
-  }
-
-  const handleWheel = useCallback(
-    (e: WheelEvent) => {
-      if (showFinal) return
-      if (Math.abs(e.deltaY) > 30) {
-        if (e.deltaY > 0) {
-          navigate(1)
-        } else {
-          navigate(-1)
-        }
-      }
-    },
-    [navigate, showFinal],
-  )
-
+  // Lock body scroll temporarily to prevent double scrollbars, 
+  // actually since this is a horizontal scroll mapped to vertical, we need the page to scroll.
+  // The container will be height: N * 100vh.
   useEffect(() => {
-    window.addEventListener("wheel", handleWheel, { passive: true })
-    return () => window.removeEventListener("wheel", handleWheel)
-  }, [handleWheel])
-
-  const getCardStyle = (index: number) => {
-    const total = images.length
-    let diff = index - currentIndex
-    if (diff > total / 2) diff -= total
-    if (diff < -total / 2) diff += total
-
-    if (diff === 0) {
-      return { y: 0, scale: 1, opacity: 1, zIndex: 5, rotateX: 0 }
-    } else if (diff === -1) {
-      return { y: -160, scale: 0.82, opacity: 0.6, zIndex: 4, rotateX: 8 }
-    } else if (diff === -2) {
-      return { y: -280, scale: 0.7, opacity: 0.3, zIndex: 3, rotateX: 15 }
-    } else if (diff === 1) {
-      return { y: 160, scale: 0.82, opacity: 0.6, zIndex: 4, rotateX: -8 }
-    } else if (diff === 2) {
-      return { y: 280, scale: 0.7, opacity: 0.3, zIndex: 3, rotateX: -15 }
-    } else {
-      return { y: diff > 0 ? 400 : -400, scale: 0.6, opacity: 0, zIndex: 0, rotateX: diff > 0 ? -20 : 20 }
-    }
-  }
-
-  const isVisible = (index: number) => {
-    const total = images.length
-    let diff = index - currentIndex
-    if (diff > total / 2) diff -= total
-    if (diff < -total / 2) diff += total
-    return Math.abs(diff) <= 2
-  }
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   return (
-    <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-black">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-yellow-400/[0.03] blur-3xl" />
-      </div>
+    <div ref={containerRef} className="relative bg-void w-full" style={{ height: `${GALLERY_IMAGES.length * 100}vh` }}>
+      
+      {/* ─── Sticky Viewport ─── */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center">
+        
+        {/* Background Noise & Vignette */}
+        <div className="absolute inset-0 noise-overlay z-[1]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(3,3,4,0.8)_100%)] z-[2] pointer-events-none" />
 
-      <div className="relative flex h-[500px] w-[320px] items-center justify-center" style={{ perspective: "1200px" }}>
-        {images.map((image, index) => {
-          if (!isVisible(index)) return null
-          const style = getCardStyle(index)
-          const isCurrent = index === currentIndex
-
-          return (
-            <motion.div
-              key={image.id}
-              className="absolute cursor-grab active:cursor-grabbing"
-              animate={{
-                y: style.y,
-                scale: style.scale,
-                opacity: style.opacity,
-                rotateX: style.rotateX,
-                zIndex: style.zIndex,
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-                mass: 1,
-              }}
-              drag={isCurrent ? "y" : false}
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={0.2}
-              onDragEnd={handleDragEnd}
-              style={{
-                transformStyle: "preserve-3d",
-                zIndex: style.zIndex,
-              }}
-            >
-              <div
-                className="relative h-[420px] w-[280px] overflow-hidden rounded-3xl bg-zinc-900 ring-1 ring-yellow-400/20"
-                style={{
-                  boxShadow: isCurrent
-                    ? "0 25px 50px -12px rgba(212,175,55,0.15), 0 0 0 1px rgba(212,175,55,0.05)"
-                    : "0 10px 30px -10px rgba(0,0,0,0.3)",
-                }}
-              >
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-yellow-400/10 via-transparent to-transparent" />
-
-                <Image
-                  src={image.src}
-                  alt={image.alt}
-                  fill
-                  className="object-cover"
-                  draggable={false}
-                  priority={isCurrent}
-                  sizes="280px"
-                />
-
-                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
-              </div>
-            </motion.div>
-          )
-        })}
-      </div>
-
-      <div className="absolute right-8 top-1/2 flex -translate-y-1/2 flex-col gap-2">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              if (index !== currentIndex) {
-                setCurrentIndex(index)
-              }
-            }}
-            className={`h-2 w-2 rounded-full transition-all duration-300 ${
-              index === currentIndex ? "h-6 bg-yellow-400" : "bg-white/20 hover:bg-white/40"
-            }`}
-            aria-label={`Go to image ${index + 1}`}
-          />
-        ))}
-      </div>
-
-      <motion.div
-        className="absolute bottom-12 left-1/2 -translate-x-1/2"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.6 }}
-      >
-        <div className="flex flex-col items-center gap-2 text-white/40">
-          <motion.div
-            animate={{ y: [0, -8, 0] }}
-            transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5, ease: "easeInOut" }}
+        {/* ─── Header Info ─── */}
+        <div className="absolute top-8 md:top-12 left-6 md:left-12 z-[10] flex items-center gap-4">
+          <button 
+            onClick={() => onComplete?.()}
+            className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center hover:bg-white/[0.08] hover:border-gold/30 transition-all duration-300"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M12 5v14M5 12l7-7 7 7" />
-            </svg>
-          </motion.div>
-          <span className="text-xs font-medium tracking-widest uppercase">Scroll or drag</span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5, ease: "easeInOut" }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M12 5v14M19 12l-7 7-7-7" />
-            </svg>
-          </motion.div>
+            <ArrowLeft className="text-white/60" size={18} />
+          </button>
+          <div className="flex flex-col">
+            <span className="text-gold text-[9px] font-mono uppercase tracking-[0.4em]">{t('gallery.label')}</span>
+            <span className="text-white/40 text-[10px] uppercase tracking-[0.2em] font-medium">Sugi Sushi</span>
+          </div>
         </div>
-      </motion.div>
 
-      <div className="absolute left-8 top-1/2 -translate-y-1/2">
-        <div className="flex flex-col items-center">
-          <span className="text-3xl md:text-4xl font-light text-yellow-400 tabular-nums">
-            {String(currentIndex + 1).padStart(2, "0")}
-          </span>
-          <div className="my-2 h-px w-8 bg-yellow-400/20" />
-          <span className="text-sm text-white/40 tabular-nums">{String(images.length).padStart(2, "0")}</span>
+        {/* ─── Track ─── */}
+        <motion.div style={{ x }} className="flex h-full items-center relative z-[5]">
+          {GALLERY_IMAGES.map((image, index) => {
+            // Calculate individual parallax based on scroll progress
+            return (
+              <GalleryItem 
+                key={image.id} 
+                image={image} 
+                index={index} 
+                progress={smoothProgress} 
+                total={GALLERY_IMAGES.length} 
+              />
+            );
+          })}
+        </motion.div>
+
+        {/* ─── Progress Bar ─── */}
+        <div className="absolute bottom-12 md:bottom-16 left-6 right-6 md:left-24 md:right-24 z-[10] flex items-center gap-6">
+          <span className="text-white/40 font-mono text-xs">01</span>
+          <div className="flex-1 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
+            <motion.div 
+              style={{ scaleX: smoothProgress, transformOrigin: 'left' }}
+              className="absolute inset-0 bg-gold rounded-full"
+            />
+          </div>
+          <span className="text-white/40 font-mono text-xs">{String(GALLERY_IMAGES.length).padStart(2, '0')}</span>
         </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-32 md:bottom-12 right-6 md:right-12 z-[10] flex items-center gap-3 opacity-50">
+          <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-white">Scroll</span>
+          <MousePointerClick size={14} className="text-white animate-bounce" />
+        </div>
+
       </div>
-
-      <AnimatePresence>
-        {showFinal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-black"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-center px-6"
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                className="relative inline-flex items-center justify-center mb-8"
-              >
-                <div className="w-24 h-px bg-yellow-400/30" />
-                <span className="text-yellow-400 text-xs tracking-[0.6em] uppercase font-bold mx-4">
-                  The Journey
-                </span>
-                <div className="w-24 h-px bg-yellow-400/30" />
-              </motion.div>
-              
-              <motion.h2 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-                className="text-4xl md:text-6xl font-serif italic text-white mb-6"
-              >
-                Taste the <span className="text-yellow-400">story</span>
-              </motion.h2>
-
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                className="flex items-center justify-center gap-8 md:gap-16 mb-12"
-              >
-                <div className="text-center">
-                  <span className="block text-3xl md:text-4xl font-serif text-yellow-400">200g</span>
-                  <span className="text-xs text-white/40 uppercase tracking-wider">fresh fish</span>
-                </div>
-                <div className="w-px h-12 bg-white/10" />
-                <div className="text-center">
-                  <span className="block text-3xl md:text-4xl font-serif text-yellow-400">3.5cm</span>
-                  <span className="text-xs text-white/40 uppercase tracking-wider">perfect cut</span>
-                </div>
-                <div className="w-px h-12 bg-white/10" />
-                <div className="text-center">
-                  <span className="block text-3xl md:text-4xl font-serif text-yellow-400">18°</span>
-                  <span className="text-xs text-white/40 uppercase tracking-wider">degrees</span>
-                </div>
-              </motion.div>
-
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-                className="text-white/50 text-sm md:text-base max-w-md mx-auto mb-12"
-              >
-                Each nigiri: a moment frozen in time. 
-                Chef&apos;s vision, ocean&apos;s gift, rice farmer&apos;s prayer — on your plate.
-              </motion.p>
-
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.3 }}
-              >
-                <button 
-                  onClick={() => {
-                    if (onComplete && completeTab) {
-                      onComplete()
-                    } else if (completeTab) {
-                      window.scrollTo({ top: 0, behavior: 'smooth' })
-                    }
-                  }}
-                  className="group flex items-center gap-3 text-yellow-400 text-sm tracking-[0.3em] uppercase hover:text-white transition-colors mx-auto"
-                >
-                  <span>Explore the menu</span>
-                  <motion.span 
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.5 }}
-                    className="group-hover:text-white"
-                  >
-                    →
-                  </motion.span>
-                </button>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
-  )
+  );
+}
+
+function GalleryItem({ image, index, progress, total }: { image: any, index: number, progress: any, total: number }) {
+  const { t } = useLanguage();
+  
+  // Calculate when this specific item is in view to trigger internal parallax
+  const start = index / total;
+  const end = (index + 1) / total;
+  
+  const innerScale = useTransform(progress, [start - 0.2, start, end], [1.2, 1, 1.1]);
+  const opacity = useTransform(progress, [start - 0.1, start, start + 0.1], [0.3, 1, 1]);
+
+  return (
+    <motion.div 
+      style={{ opacity }}
+      className="w-[100vw] h-[100vh] flex-shrink-0 flex items-center justify-center p-6 md:p-24"
+    >
+      <div className="relative w-full max-w-[1400px] aspect-[4/5] md:aspect-[16/9] overflow-hidden rounded-2xl md:rounded-3xl border border-white/[0.05]" style={{ boxShadow: '0 25px 60px rgba(0,0,0,0.6)' }}>
+        
+        <motion.div style={{ scale: innerScale }} className="absolute inset-0 w-full h-full">
+          <Image
+            src={image.src}
+            alt={image.alt}
+            fill
+            sizes="(max-width: 768px) 100vw, 80vw"
+            className="object-cover"
+            priority={index < 2}
+          />
+        </motion.div>
+
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-transparent to-transparent" />
+        
+        {/* Caption */}
+        <div className="absolute bottom-8 md:bottom-12 left-8 md:left-16 flex flex-col gap-2">
+          <span className="text-gold text-[9px] font-mono font-bold uppercase tracking-[0.4em]">
+            {t(image.tagKey)}
+          </span>
+          <h2 className="text-white text-3xl md:text-5xl lg:text-7xl" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>
+            {t(image.titleKey)}
+          </h2>
+        </div>
+        
+      </div>
+    </motion.div>
+  );
 }

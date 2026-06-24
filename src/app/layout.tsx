@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
-import { CartProvider } from "@/context/CartContext";
 import BottomNavWrapper from "@/components/BottomNavWrapper";
 import CinematicReveal from "@/components/CinematicReveal";
+import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
   title: "SUGI — Kinetic Dining",
@@ -42,9 +42,8 @@ export default function RootLayout({
       </head>
       <body className="antialiased select-none">
         <LanguageProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
+          <SmoothScroll />
+          {children}
         </LanguageProvider>
 
         {/* Film Grain — low z, pointer-events none */}

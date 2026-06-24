@@ -4,10 +4,11 @@ import { useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Calendar, ChevronRight, Images, Sparkles, UtensilsCrossed } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { ArrowRight, Calendar, ChevronRight, Images, Sparkles, UtensilsCrossed, Star, MousePointerClick, CheckCircle, Utensils } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
+import Footer from '@/components/Footer';
 import CurrencyPrice from '@/components/CurrencyPrice';
 import { useLanguage } from '@/context/LanguageContext';
 import { Dish } from '@/data/menuData';
@@ -25,7 +26,6 @@ const LOCAL_LANDING_IMAGES = [
   '/media/landing/sushi-rolls.jpg'
 ];
 
-/* Static fallback images per category — used when DB has no image */
 const CAT_IMAGES: Record<string, string> = {
   'Special Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
   'Sashimi': 'https://images.unsplash.com/photo-1534256958597-7feec80116e7?auto=format&fit=crop&w=800&q=75',
@@ -50,29 +50,43 @@ const CAT_IMAGES: Record<string, string> = {
   'Fry Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
 };
 
-const sectionReveal = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 }
+/* ─── Unique Section Animations ─── */
+const fadeUp: any = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.19, 1, 0.22, 1] } }
 };
-const staggerChildren = {
+const fadeSlideLeft: any = {
+  hidden: { opacity: 0, x: -50 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.9, ease: [0.19, 1, 0.22, 1] } }
+};
+const slideFromRightRotate: any = {
+  hidden: { opacity: 0, x: "50%", rotate: 5 },
+  visible: { opacity: 1, x: 0, rotate: 0, transition: { duration: 1.0, ease: [0.19, 1, 0.22, 1] } }
+};
+const slideFromLeftRotate: any = {
+  hidden: { opacity: 0, x: "-50%", rotate: -5 },
+  visible: { opacity: 1, x: 0, rotate: 0, transition: { duration: 1.0, ease: [0.19, 1, 0.22, 1] } }
+};
+const fadeSlideRight: any = {
+  hidden: { opacity: 0, x: 50 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.9, ease: [0.19, 1, 0.22, 1] } }
+};
+const scaleReveal: any = {
+  hidden: { opacity: 0, scale: 0.92 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: [0.19, 1, 0.22, 1] } }
+};
+const staggerChildren: any = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } }
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } }
 };
-const itemReveal = {
-  hidden: { opacity: 0, y: 18 },
-  visible: { opacity: 1, y: 0 }
+const itemReveal: any = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.19, 1, 0.22, 1] } }
 };
+
 const SIGNATURE_CATEGORY_ORDER = [
-  'Special Rolls',
-  'California Rolls',
-  'Aromaki Rolls',
-  'Aromaki Fried',
-  'Fry Rolls',
-  'Maki Rolls',
-  'Sashimi',
-  'Nigiri',
-  'Boxes',
-  'Boats'
+  'Special Rolls', 'California Rolls', 'Aromaki Rolls', 'Aromaki Fried',
+  'Fry Rolls', 'Maki Rolls', 'Sashimi', 'Nigiri', 'Boxes', 'Boats'
 ];
 
 export default function HomeClient({
@@ -122,22 +136,15 @@ export default function HomeClient({
       ...preferred.filter((cat) => initialCategories.includes(cat)),
       ...initialCategories.filter((cat) => !preferred.includes(cat))
     ];
-    return ordered.slice(0, 9);
+    return ordered.slice(0, 8);
   }, [initialCategories]);
 
-  const galleryPreview = useMemo(() => [
-    '/media/landing/sushi-counter.jpg',
-    '/media/landing/dining-room.jpg',
-    '/media/landing/sushi-closeup.jpg'
-  ], []);
-
   const orderSteps = useMemo(() => [
-    { value: '01', title: t('landing.step1'), copy: t('landing.step1_copy') },
-    { value: '02', title: t('landing.step2'), copy: t('landing.step2_copy') },
-    { value: '03', title: t('landing.step3'), copy: t('landing.step3_copy') }
+    { value: '01', title: t('landing.step1'), copy: t('landing.step1_copy'), icon: '🍱' },
+    { value: '02', title: t('landing.step2'), copy: t('landing.step2_copy'), icon: '⭐' },
+    { value: '03', title: t('landing.step3'), copy: t('landing.step3_copy'), icon: '🥢' }
   ], [t]);
 
-  /** Resolve image: DB → static fallback → local landing images → unsplash fallback */
   const landingImage = (src: string | undefined, category: string, index: number) => {
     if (src && (src.startsWith('/') || src.startsWith('http://') || src.startsWith('https://'))) return src;
     if (CAT_IMAGES[category]) return CAT_IMAGES[category];
@@ -170,29 +177,30 @@ export default function HomeClient({
           >
             <Hero onTabChange={setActiveTab} />
 
-            {/* ─── Divider ─── */}
-            <div className="h-16 md:h-24 flex items-center justify-center bg-bg">
-              <div className="w-px h-full bg-gradient-to-b from-transparent via-gold/20 to-transparent" />
-            </div>
+            {/* ═══════════════════════════════════════════════════
+                 SECTION 1: CATEGORIES — Horizontal Discovery
+            ═══════════════════════════════════════════════════ */}
+            <section className="relative overflow-hidden bg-onyx py-16 md:py-24 border-y border-white/[0.04]">
+              {/* Ambient glow */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gold/[0.02] blur-[120px] rounded-full pointer-events-none" />
 
-            {/* ═══ CATEGORIES SECTION ═══ */}
-            <section className="relative overflow-hidden bg-[#07080a] pt-10 pb-16 md:pt-14 md:pb-20 border-y border-white/[0.06]">
-              <div className="container-luxury">
+              <div className="container-luxury relative z-10">
                 <motion.div
-                  variants={sectionReveal}
+                  variants={fadeSlideLeft}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-                  className="flex items-end justify-between gap-5"
+                  className="flex items-end justify-between gap-5 mb-10"
                 >
                   <div>
                     <span className="section-label">{t('landing.categories_label')}</span>
-                    <h2 className="mt-3 text-white text-3xl md:text-5xl font-serif leading-tight">{t('landing.categories_title')}</h2>
+                    <h2 className="mt-4 text-white text-3xl md:text-5xl leading-tight" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>
+                      {t('landing.categories_title')}
+                    </h2>
                   </div>
                   <button
                     onClick={() => setActiveTab('menu')}
-                    className="hidden md:inline-flex items-center gap-2 text-gold/85 text-[11px] font-mono uppercase tracking-[0.28em] hover:text-gold-bright transition-colors"
+                    className="hidden md:inline-flex items-center gap-2 text-gold/70 text-[10px] font-mono uppercase tracking-[0.28em] hover:text-gold transition-colors duration-500"
                   >
                     {t('landing.all_menu')}
                     <ChevronRight size={14} />
@@ -203,8 +211,8 @@ export default function HomeClient({
                   variants={staggerChildren}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.15 }}
-                  className="-mx-[var(--container-px)] mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto px-[var(--container-px)] pb-5 md:mx-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible md:px-0 lg:grid-cols-4"
+                  viewport={{ once: true, amount: 0.1 }}
+                  className="-mx-[var(--container-px)] flex snap-x snap-mandatory gap-4 overflow-x-auto px-[var(--container-px)] pb-6 md:mx-0 md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:px-0 no-scrollbar"
                 >
                   {featuredCategories.map((category, index) => {
                     const image = landingImage(categoryImages.get(category), category, index);
@@ -212,26 +220,36 @@ export default function HomeClient({
                       <motion.button
                         key={category}
                         variants={itemReveal}
-                        transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
                         onClick={() => openCategory(category)}
-                        className="group relative h-[330px] w-[76vw] min-w-[76vw] snap-center overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] text-left sm:w-[42vw] sm:min-w-[42vw] md:h-[360px] md:w-auto md:min-w-0 active:scale-[0.98] transition-transform duration-200"
+                        className="group relative h-[340px] w-[72vw] min-w-[72vw] snap-center overflow-hidden rounded-2xl text-left sm:w-[42vw] sm:min-w-[42vw] md:h-[380px] md:w-auto md:min-w-0 active:scale-[0.98] transition-transform duration-300"
+                        style={{
+                          boxShadow: '0 8px 32px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.06)',
+                        }}
                       >
                         <Image
                           src={image}
                           alt={t(`menu.cat.${category}`)}
                           fill
-                          sizes="(max-width: 768px) 76vw, (max-width: 1024px) 33vw, 25vw"
-                          className="object-cover brightness-[0.62] saturate-[1.08] transition-transform duration-700 group-hover:scale-105"
+                          sizes="(max-width: 768px) 72vw, (max-width: 1024px) 33vw, 25vw"
+                          className="object-cover brightness-[0.5] saturate-[1.1] transition-all duration-700 group-hover:scale-110 group-hover:brightness-[0.6]"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/5" />
-                        <div className="absolute inset-x-4 bottom-4">
-                          <div className="mb-4 inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-gold/25 bg-black/35 px-3 text-gold text-[10px] font-mono tracking-[0.18em]">
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-void via-void/30 to-transparent" />
+
+                        {/* Gold border glow on hover */}
+                        <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-gold/20 transition-colors duration-700" />
+
+                        {/* Content */}
+                        <div className="absolute inset-x-5 bottom-5 md:inset-x-6 md:bottom-6">
+                          <div className="mb-3 inline-flex h-7 min-w-7 items-center justify-center rounded-full border border-gold/20 bg-void/60 backdrop-blur-sm px-3 text-gold text-[9px] font-mono tracking-[0.2em]">
                             {String(index + 1).padStart(2, '0')}
                           </div>
-                          <h3 className="text-white text-2xl md:text-3xl font-serif leading-none">{t(`menu.cat.${category}`)}</h3>
-                          <p className="mt-3 flex items-center gap-2 text-gold/80 text-[10px] font-mono uppercase tracking-[0.24em]">
+                          <h3 className="text-white text-xl md:text-2xl leading-tight" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>
+                            {t(`menu.cat.${category}`)}
+                          </h3>
+                          <p className="mt-2 flex items-center gap-2 text-gold/60 text-[9px] font-mono uppercase tracking-[0.3em] group-hover:text-gold transition-colors duration-500">
                             {t('landing.open')}
-                            <ArrowRight size={13} className={lang === 'ar' ? 'rotate-180' : ''} />
+                            <ArrowRight size={12} className={`transition-transform duration-500 group-hover:translate-x-1 ${lang === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
                           </p>
                         </div>
                       </motion.button>
@@ -241,204 +259,355 @@ export default function HomeClient({
               </div>
             </section>
 
-            {/* ═══ SIGNATURE DISHES ═══ */}
-            <section className="relative overflow-hidden bg-bg py-16 md:py-24">
+            {/* ═══════════════════════════════════════════════════
+                 SECTION 2: SIGNATURE DISHES — Asymmetric Grid
+            ═══════════════════════════════════════════════════ */}
+            <section className="relative overflow-hidden bg-bg py-20 md:py-32">
               <div className="container-luxury">
                 <motion.div
-                  variants={sectionReveal}
+                  variants={fadeUp}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-                  className="max-w-2xl"
+                  className="max-w-2xl mb-12 md:mb-16"
                 >
                   <span className="section-label">{t('landing.signatures_label')}</span>
-                  <h2 className="mt-4 text-white text-4xl md:text-6xl font-serif leading-tight">{t('landing.signatures_title')}</h2>
-                  <p className="mt-5 text-white/58 text-base md:text-lg leading-8">{t('landing.signatures_copy')}</p>
+                  <h2 className="mt-4 text-white text-3xl md:text-5xl lg:text-6xl leading-tight" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>
+                    {t('landing.signatures_title')}
+                  </h2>
+                  <p className="mt-5 text-white/45 text-base md:text-lg leading-8">{t('landing.signatures_copy')}</p>
+                </motion.div>
+
+                {/* Asymmetric: 1 large + 2 stacked */}
+                <div className="grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-5">
+                  {signatureDishes.length > 0 && (
+                    <motion.button
+                      variants={slideFromRightRotate}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.4 }}
+                      onClick={() => { setActiveCategory(signatureDishes[0].category); setActiveTab('menu'); }}
+                      className="group overflow-hidden rounded-2xl text-left md:row-span-2 transition-all duration-700 active:scale-[0.985]"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.06)',
+                      }}
+                    >
+                      <div className="relative aspect-[4/5] md:aspect-auto md:h-full overflow-hidden">
+                        <Image
+                          src={landingImage(signatureDishes[0].image, signatureDishes[0].category, 3)}
+                          alt={lang === 'ar' ? signatureDishes[0].nameAr || signatureDishes[0].name : signatureDishes[0].name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 55vw"
+                          className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-void via-void/40 to-transparent" />
+
+                        {/* Badge */}
+                        <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-gold/20 bg-void/60 backdrop-blur-sm px-3 py-1.5">
+                          <Star size={10} className="text-gold fill-gold" />
+                          <span className="text-gold text-[8px] font-mono font-bold uppercase tracking-[0.3em]">
+                            {lang === 'ar' ? 'اختيار الشيف' : "Chef's Pick"}
+                          </span>
+                        </div>
+
+                        {/* Content */}
+                        <div className="absolute inset-x-6 bottom-6 md:inset-x-8 md:bottom-8">
+                          <h3 className="text-white text-2xl md:text-4xl leading-tight mb-2" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>
+                            {lang === 'ar' ? signatureDishes[0].nameAr || signatureDishes[0].name : signatureDishes[0].name}
+                          </h3>
+                          <div className="flex items-center gap-4">
+                            <CurrencyPrice price={signatureDishes[0].price} className="text-gold text-lg font-mono" />
+                            <span className="text-white/25 text-[9px] font-mono uppercase tracking-[0.2em]">{t(`menu.cat.${signatureDishes[0].category}`)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.button>
+                  )}
+
+                  {/* Right column: 2 smaller cards */}
+                  <div className="flex flex-col gap-5">
+                    {signatureDishes.slice(1, 3).map((dish, index) => {
+                      const image = landingImage(dish.image, dish.category, index + 4);
+                      return (
+                        <motion.button
+                          key={dish.id}
+                          variants={index === 0 ? slideFromLeftRotate : slideFromRightRotate}
+                          initial="hidden"
+                          whileInView="visible"
+                          viewport={{ once: true, amount: 0.4 }}
+                          onClick={() => { setActiveCategory(dish.category); setActiveTab('menu'); }}
+                          className="group overflow-hidden rounded-2xl text-left transition-all duration-700 hover:border-gold/20 active:scale-[0.985]"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.06)',
+                          }}
+                        >
+                          <div className="relative aspect-[16/10] overflow-hidden">
+                            <Image
+                              src={image}
+                              alt={lang === 'ar' ? dish.nameAr || dish.name : dish.name}
+                              fill
+                              sizes="(max-width: 768px) 100vw, 40vw"
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-void/20 to-transparent" />
+                          </div>
+                          <div className="p-5 md:p-6">
+                            <div className="flex items-start justify-between gap-4">
+                              <h3 className="text-white text-lg md:text-xl leading-tight" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>
+                                {lang === 'ar' ? dish.nameAr || dish.name : dish.name}
+                              </h3>
+                              <CurrencyPrice price={dish.price} className="shrink-0 text-gold/80 text-sm font-mono" />
+                            </div>
+                            <p className="mt-2 text-white/35 text-sm leading-6 line-clamp-2">{lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}</p>
+                            <div className="mt-4 flex items-center justify-between border-t border-white/[0.05] pt-3">
+                              <span className="text-white/25 text-[9px] font-mono uppercase tracking-[0.2em]">{t(`menu.cat.${dish.category}`)}</span>
+                              <ArrowRight size={14} className={`text-gold/50 transition-transform duration-500 group-hover:translate-x-1 ${lang === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
+                            </div>
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════
+                 SECTION 3: BRAND / STORY — Split Layout
+            ═══════════════════════════════════════════════════ */}
+            <section className="relative overflow-hidden bg-graphite py-20 md:py-32 border-y border-white/[0.04]">
+              <div className="container-luxury">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                  {/* Image */}
+                  <motion.div
+                    variants={scaleReveal}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                    className="relative aspect-[4/5] lg:aspect-[3/4] rounded-2xl overflow-hidden"
+                    style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}
+                  >
+                    <Image
+                      src="/media/optimized/brochure-4.jpg"
+                      alt="Sugi Sushi Chef"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-void/60 via-transparent to-void/20" />
+                    {/* Floating badge */}
+                    <div className="absolute bottom-6 left-6 right-6 flex items-center gap-4">
+                      <div className="h-[1px] flex-1 bg-gradient-to-r from-gold/30 to-transparent" />
+                      <span className="text-gold/60 text-[8px] font-mono uppercase tracking-[0.5em]">Est. 2024</span>
+                      <div className="h-[1px] flex-1 bg-gradient-to-l from-gold/30 to-transparent" />
+                    </div>
+                  </motion.div>
+
+                  {/* Text */}
+                  <motion.div
+                    variants={fadeSlideRight}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.3 }}
+                    className="flex flex-col gap-8"
+                  >
+                    <span className="section-label">{t('landing.craft_label')}</span>
+                    <h2 className="text-white text-3xl md:text-5xl leading-tight" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>
+                      {t('landing.craft_title')}
+                    </h2>
+                    <p className="text-white/45 text-base md:text-lg leading-8">{t('landing.craft_copy')}</p>
+
+                    {/* Detail cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                      <div className="rounded-xl p-5 border border-white/[0.05] bg-white/[0.02]">
+                        <Sparkles className="text-gold/50 mb-4" size={20} />
+                        <p className="text-white text-lg mb-1" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>{t('landing.detail1')}</p>
+                        <p className="text-white/30 text-sm leading-6">{t('landing.detail1_copy')}</p>
+                      </div>
+                      <div className="rounded-xl p-5 border border-white/[0.05] bg-white/[0.02]">
+                        <UtensilsCrossed className="text-gold/50 mb-4" size={20} />
+                        <p className="text-white text-lg mb-1" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>{t('landing.detail2')}</p>
+                        <p className="text-white/30 text-sm leading-6">{t('landing.detail2_copy')}</p>
+                      </div>
+                    </div>
+
+                    {/* CTAs */}
+                    <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                      <Link href="/reserve" className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gold px-7 text-void text-[10px] font-black uppercase tracking-[0.2em] hover:shadow-[0_16px_40px_rgba(212,175,55,0.2)] transition-shadow duration-500">
+                        <Calendar size={14} />
+                        {t('landing.reserve')}
+                      </Link>
+                      <button onClick={() => setActiveTab('gallery')} className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/10 px-7 text-white/70 text-[10px] font-black uppercase tracking-[0.2em] hover:border-gold/20 hover:text-gold transition-all duration-500">
+                        <Images size={14} />
+                        {t('landing.gallery')}
+                      </button>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════
+                 SECTION 4: HOW TO ORDER — Connected Flow
+            ═══════════════════════════════════════════════════ */}
+            <section className="bg-bg py-20 md:py-28">
+              <div className="container-luxury">
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  className="text-center max-w-2xl mx-auto mb-12 md:mb-16"
+                >
+                  <span className="section-label">{t('landing.flow_label')}</span>
+                  <h2 className="mt-4 text-white text-3xl md:text-5xl leading-tight" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>
+                    {t('landing.flow_title')}
+                  </h2>
+                  <p className="mt-4 text-white/40 text-base leading-7">{t('landing.flow_copy')}</p>
                 </motion.div>
 
                 <motion.div
-                  variants={staggerChildren}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.15 }}
-                  className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5"
+                  viewport={{ once: true, amount: 0.3 }}
+                  style={{ perspective: "1200px" }}
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.25, delayChildren: 0.1 } }
+                  }}
+                  className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 relative mt-8 md:mt-12"
                 >
-                  {signatureDishes.map((dish, index) => {
-                    const image = landingImage(dish.image, dish.category, index + 3);
+                  {/* Animated Connecting Timeline */}
+                  <motion.div 
+                    variants={{
+                      hidden: { scaleX: 0, opacity: 0 },
+                      visible: { scaleX: 1, opacity: 1, transition: { duration: 1.5, delay: 0.5, ease: [0.19, 1, 0.22, 1] } }
+                    }}
+                    style={{ transformOrigin: 'left' }}
+                    className="hidden md:block absolute top-[45%] left-[10%] right-[10%] h-[2px] bg-white/[0.03] -translate-y-1/2 rounded-full overflow-hidden"
+                  >
+                    <motion.div 
+                      className="h-full bg-gradient-to-r from-transparent via-gold to-transparent"
+                      initial={{ x: '-100%' }}
+                      whileInView={{ x: '100%' }}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
+                    />
+                  </motion.div>
+
+                  {orderSteps.map((step, i) => {
+                    const Icon = i === 0 ? MousePointerClick : i === 1 ? CheckCircle : Utensils;
                     return (
-                      <motion.button
-                        key={dish.id}
-                        variants={itemReveal}
-                        transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
-                        onClick={() => {
-                          setActiveCategory(dish.category);
-                          setActiveTab('menu');
+                      <motion.div
+                        key={step.value}
+                        variants={{
+                          hidden: { opacity: 0, y: 120, rotateX: -30, scale: 0.8, filter: "blur(12px)" },
+                          visible: { 
+                            opacity: 1, 
+                            y: i === 1 ? 40 : 0, // Middle card is slightly offset downward
+                            rotateX: 0, 
+                            scale: 1, 
+                            filter: "blur(0px)",
+                            transition: { duration: 1.4, ease: [0.19, 1, 0.22, 1] } 
+                          }
                         }}
-                        className="group overflow-hidden rounded-lg border border-white/10 bg-[#0c0d10] text-left transition-colors hover:border-gold/30 active:scale-[0.985]"
+                        className="group relative rounded-3xl p-8 md:p-10 text-left bg-void border border-white/[0.05] overflow-hidden transition-all duration-700 hover:border-gold/30 hover:bg-white/[0.02] hover:-translate-y-2"
+                        style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.6)', transformStyle: "preserve-3d" }}
                       >
-                        <div className="relative aspect-[16/11] overflow-hidden bg-white/[0.04]">
-                          <Image
-                            src={image}
-                            alt={lang === 'ar' ? dish.nameAr || dish.name : dish.name}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 33vw"
-                            className="object-cover transition-transform duration-700 group-hover:scale-105"
-                          />
-                          <div className="absolute left-3 top-3 rounded-full border border-white/15 bg-black/55 px-3 py-1 text-white/70 text-[10px] font-mono tracking-[0.2em]">
-                            {String(index + 1).padStart(2, '0')}
+                        {/* Massive Background Number */}
+                        <motion.div 
+                          variants={{
+                            hidden: { opacity: 0, scale: 0.5, x: 50 },
+                            visible: { opacity: 1, scale: 1, x: 0, transition: { duration: 1.2, delay: 0.3 + (i * 0.2), ease: [0.19, 1, 0.22, 1] } }
+                          }}
+                          className="absolute -bottom-8 -right-4 text-[160px] font-bold text-white/[0.02] transition-colors duration-700 group-hover:text-gold/[0.05] select-none" 
+                          style={{ fontFamily: 'var(--font-brand-serif)', lineHeight: 1 }}
+                        >
+                          {step.value}
+                        </motion.div>
+
+                        {/* Top Accent Line */}
+                        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold/50 to-transparent scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-100 transition-all duration-700" />
+
+                        {/* Icon & Content */}
+                        <div className="relative z-10">
+                          <motion.div 
+                            variants={{
+                              hidden: { opacity: 0, scale: 0 },
+                              visible: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 200, damping: 20, delay: 0.4 + (i * 0.2) } }
+                            }}
+                            className="w-14 h-14 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center mb-8 transition-colors duration-700 group-hover:border-gold/30 group-hover:bg-gold/[0.05]"
+                          >
+                            <Icon className="text-white/40 group-hover:text-gold transition-colors duration-700" size={24} strokeWidth={1} />
+                          </motion.div>
+                          
+                          <div className="flex items-baseline gap-4 mb-4">
+                            <span className="text-gold text-sm font-mono tracking-[0.2em]">{step.value}.</span>
+                            <h3 className="text-white text-2xl" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>{step.title}</h3>
                           </div>
+                          
+                          <p className="text-white/40 text-sm leading-relaxed max-w-[90%]">{step.copy}</p>
                         </div>
-                        <div className="p-5 md:p-6">
-                          <div className="flex items-start justify-between gap-4">
-                            <h3 className="text-white text-2xl md:text-3xl font-serif leading-tight">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h3>
-                            <CurrencyPrice price={dish.price} className="shrink-0 text-gold/85 text-sm font-mono" />
-                          </div>
-                          <p className="mt-3 min-h-[48px] text-white/48 text-sm leading-6 line-clamp-2">{lang === 'ar' ? dish.descriptionAr || dish.description : dish.description}</p>
-                          <div className="mt-5 flex items-center justify-between border-t border-white/[0.08] pt-4">
-                            <span className="text-white/38 text-[10px] font-mono uppercase tracking-[0.22em]">{t(`menu.cat.${dish.category}`)}</span>
-                            <ArrowRight size={16} className={`text-gold/80 transition-transform group-hover:translate-x-1 ${lang === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
-                          </div>
-                        </div>
-                      </motion.button>
+                      </motion.div>
                     );
                   })}
                 </motion.div>
               </div>
             </section>
 
-            {/* ═══ HOW TO ORDER ═══ */}
-            <section className="bg-[#101114] py-14 md:py-20 border-y border-white/[0.06]">
-              <div className="container-luxury grid grid-cols-1 gap-8 md:grid-cols-[0.8fr_1.2fr] md:items-center">
-                <motion.div
-                  variants={sectionReveal}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-                >
-                  <span className="section-label">{t('landing.flow_label')}</span>
-                  <h2 className="mt-4 text-white text-4xl md:text-5xl font-serif leading-tight">{t('landing.flow_title')}</h2>
-                  <p className="mt-5 text-white/55 text-base leading-8">{t('landing.flow_copy')}</p>
-                </motion.div>
-
-                <motion.div
-                  variants={staggerChildren}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.2 }}
-                  className="grid grid-cols-1 gap-3 sm:grid-cols-3"
-                >
-                  {orderSteps.map((step) => (
-                    <motion.div
-                      key={step.value}
-                      variants={itemReveal}
-                      transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
-                      className="rounded-lg border border-white/10 bg-black/25 p-5"
-                    >
-                      <p className="text-gold text-xl font-serif">{step.value}</p>
-                      <h3 className="mt-5 text-white text-xl font-serif">{step.title}</h3>
-                      <p className="mt-3 text-white/48 text-sm leading-6">{step.copy}</p>
-                    </motion.div>
-                  ))}
-                </motion.div>
+            {/* ═══════════════════════════════════════════════════
+                 SECTION 5: FINAL CTA — Cinematic Call
+            ═══════════════════════════════════════════════════ */}
+            <section className="relative overflow-hidden py-24 md:py-36">
+              {/* Background image */}
+              <div className="absolute inset-0">
+                <Image
+                  src="/media/optimized/enseigne-1.jpg"
+                  alt="Sugi Sushi"
+                  fill
+                  sizes="100vw"
+                  className="object-cover brightness-[0.2] saturate-[0.6]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-void/40" />
               </div>
-            </section>
 
-            {/* ═══ GALLERY PREVIEW + CTA ═══ */}
-            <section className="bg-bg py-16 md:py-24">
-              <div className="container-luxury grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-                <motion.div
-                  initial={{ opacity: 0, x: lang === 'ar' ? 30 : -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.25 }}
-                  transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
-                  className="relative min-h-[470px] md:min-h-[620px]"
-                >
-                  {galleryPreview.map((src, index) => (
-                    <div
-                      key={src}
-                      className={[
-                        'absolute overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] shadow-2xl',
-                        index === 0 ? 'left-0 top-0 h-[58%] w-[68%]' : '',
-                        index === 1 ? 'right-0 top-[18%] h-[54%] w-[56%] rotate-2' : '',
-                        index === 2 ? 'bottom-0 left-[16%] h-[38%] w-[62%] -rotate-2' : ''
-                      ].join(' ')}
-                    >
-                      <Image src={src} alt="Sugi Sushi" fill sizes="(max-width: 1024px) 70vw, 40vw" className="object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-                    </div>
-                  ))}
-                </motion.div>
-
-                <motion.div
-                  variants={sectionReveal}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-                  className="lg:pl-8"
-                >
-                  <span className="section-label">{t('landing.craft_label')}</span>
-                  <h2 className="mt-4 text-white text-4xl md:text-6xl font-serif leading-tight">{t('landing.craft_title')}</h2>
-                  <p className="mt-6 text-white/58 text-base md:text-lg leading-8">{t('landing.craft_copy')}</p>
-                  <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div className="rounded-lg border border-white/10 bg-white/[0.025] p-5">
-                      <Sparkles className="text-gold/80" size={20} />
-                      <p className="mt-5 text-white text-xl font-serif">{t('landing.detail1')}</p>
-                      <p className="mt-2 text-white/45 text-sm leading-6">{t('landing.detail1_copy')}</p>
-                    </div>
-                    <div className="rounded-lg border border-white/10 bg-white/[0.025] p-5">
-                      <UtensilsCrossed className="text-gold/80" size={20} />
-                      <p className="mt-5 text-white text-xl font-serif">{t('landing.detail2')}</p>
-                      <p className="mt-2 text-white/45 text-sm leading-6">{t('landing.detail2_copy')}</p>
-                    </div>
-                  </div>
-                  <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                    <Link href="/reserve" className="inline-flex h-13 min-h-13 items-center justify-center gap-2 rounded-full bg-white px-7 text-black text-[11px] font-black uppercase tracking-[0.22em]">
-                      <Calendar size={16} />
-                      {t('landing.reserve')}
-                    </Link>
-                    <button onClick={() => setActiveTab('gallery')} className="inline-flex h-13 min-h-13 items-center justify-center gap-2 rounded-full border border-white/15 px-7 text-white text-[11px] font-black uppercase tracking-[0.22em]">
-                      <Images size={16} />
-                      {t('landing.gallery')}
-                    </button>
-                  </div>
-                </motion.div>
-              </div>
-            </section>
-
-            {/* ═══ FINAL CTA ═══ */}
-            <section className="bg-[#08090b] py-14 md:py-20">
               <motion.div
-                variants={sectionReveal}
+                variants={scaleReveal}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
-                className="container-luxury"
+                className="container-luxury relative z-10 text-center"
               >
-                <div className="overflow-hidden rounded-lg border border-gold/20 bg-[linear-gradient(135deg,rgba(212,175,55,0.14),rgba(255,255,255,0.025)_45%,rgba(16,17,20,1))] p-6 md:p-10">
-                  <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_auto] md:items-end">
-                    <div>
-                      <p className="text-gold/80 text-[11px] font-mono uppercase tracking-[0.32em]">{t('landing.visit_label')}</p>
-                      <h2 className="mt-4 max-w-3xl text-white text-4xl md:text-6xl font-serif leading-tight">{t('landing.visit_title')}</h2>
-                      <p className="mt-5 max-w-2xl text-white/58 text-base leading-8">{t('landing.visit_copy')}</p>
-                    </div>
-                    <div className="flex flex-col gap-3 sm:flex-row md:flex-col">
-                      <button onClick={() => setActiveTab('menu')} className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-gold px-8 text-black text-[12px] font-black uppercase tracking-[0.22em]">
-                        {t('landing.view_menu')}
-                        <ArrowRight size={16} className={lang === 'ar' ? 'rotate-180' : ''} />
-                      </button>
-                      <Link href="/reserve" className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-white/15 px-8 text-white text-[12px] font-black uppercase tracking-[0.22em]">
-                        {t('landing.reserve')}
-                        <Calendar size={16} />
-                      </Link>
-                    </div>
+                <div className="max-w-3xl mx-auto">
+                  <span className="section-label">{t('landing.visit_label')}</span>
+                  <h2 className="mt-6 text-white text-4xl md:text-6xl lg:text-7xl leading-[0.95]" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>
+                    {t('landing.visit_title')}
+                  </h2>
+                  <p className="mt-6 text-white/40 text-base md:text-lg leading-8 max-w-xl mx-auto">{t('landing.visit_copy')}</p>
+
+                  <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                      onClick={() => setActiveTab('menu')}
+                      className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-gold px-10 text-void text-[11px] font-black uppercase tracking-[0.2em] hover:shadow-[0_20px_50px_rgba(212,175,55,0.25)] transition-shadow duration-700 active:scale-95"
+                    >
+                      {t('landing.view_menu')}
+                      <ArrowRight size={16} className={lang === 'ar' ? 'rotate-180' : ''} />
+                    </button>
+                    <Link
+                      href="/reserve"
+                      className="inline-flex h-14 items-center justify-center gap-3 rounded-full border border-white/15 bg-white/[0.03] backdrop-blur-lg px-10 text-white/80 text-[11px] font-black uppercase tracking-[0.2em] hover:border-gold/25 hover:text-gold transition-all duration-700 active:scale-95"
+                    >
+                      {t('landing.reserve')}
+                      <Calendar size={14} />
+                    </Link>
                   </div>
                 </div>
               </motion.div>
             </section>
+
+            {/* ═══ FOOTER ═══ */}
+            <Footer />
           </motion.div>
         )}
 
