@@ -69,6 +69,8 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
     'drop-shadow(0 0 30px rgba(255,255,255,0.15))',
     'drop-shadow(0 0 10px rgba(255,255,255,0.08))',
   ]);
+  const topLineOpacity = useTransform(scrollY, [100, 250], [0, 1]);
+  const bottomBorderOpacity = useTransform(scrollY, [100, 250], [0, 0.5]);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -117,9 +119,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
         {/* Gold top-line accent */}
         <motion.div
           style={{
-            opacity: isHome
-              ? useTransform(scrollY, [100, 250], [0, 1])
-              : 1,
+            opacity: isHome ? topLineOpacity : 1,
           }}
           className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/25 to-transparent"
         />
@@ -127,9 +127,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
         {/* Bottom border */}
         <motion.div
           style={{
-            opacity: isHome
-              ? useTransform(scrollY, [100, 250], [0, 0.5])
-              : 0.5,
+            opacity: isHome ? bottomBorderOpacity : 0.5,
           }}
           className="absolute bottom-0 left-0 right-0 h-[1px] bg-white/[0.06]"
         />
