@@ -341,7 +341,7 @@ export default function StrictMenu({
   const dynamicCategoryImages = useMemo(() => {
     const map: Record<string, string> = {};
     initialCategoryData.forEach(cat => {
-      map[cat.name.toLowerCase()] = cat.image;
+      map[(cat.name || '').toLowerCase()] = cat.image;
     });
     return map;
   }, [initialCategoryData]);
@@ -349,9 +349,9 @@ export default function StrictMenu({
   const filteredDishes = useMemo(() => {
     return menuDataToUse.filter(dish => {
       const matchesCategory = selectedCategory === 'All' || dish.category === selectedCategory;
-      const matchesSearch = dish.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const matchesSearch = (dish.name || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
                           (dish.nameAr || '').includes(searchQuery) ||
-                          dish.description.toLowerCase().includes(searchQuery.toLowerCase());
+                          (dish.description || '').toLowerCase().includes(searchQuery.toLowerCase());
       
       const basicMatches = matchesCategory && matchesSearch;
       
@@ -370,7 +370,8 @@ export default function StrictMenu({
 
       <div className="flex gap-4 md:gap-10 overflow-x-auto no-scrollbar px-4 md:px-8 mb-16 md:mb-24 pt-4">
         {categoriesToUse.map(cat => {
-          const img = dynamicCategoryImages[cat.toLowerCase()];
+          const catLower = (cat || '').toLowerCase();
+          const img = dynamicCategoryImages[catLower];
           const isActive = selectedCategory === cat;
           
           return (
@@ -383,7 +384,7 @@ export default function StrictMenu({
                 isActive ? 'border-gold scale-110 shadow-[0_0_40px_rgba(212,175,55,0.4)]' : 'border-white/10 group-hover:border-white/30'
               }`}>
                 <Image
-                  src={img || CAT_IMAGES[cat.toLowerCase()] || DEFAULT_IMAGE}
+                  src={img || CAT_IMAGES[catLower] || DEFAULT_IMAGE}
                   alt={cat}
                   fill
                   sizes="(max-width: 768px) 96px, 160px"
