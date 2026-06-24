@@ -83,28 +83,17 @@ export default function Footer() {
             </h4>
             <nav className="flex flex-col gap-3">
               {[
-                { label: t('nav.menu'), action: 'menu' },
-                { label: t('nav.gallery'), action: 'gallery' },
+                { label: t('nav.menu'), href: '/menu' },
                 { label: t('nav.reservations'), href: '/reserve' },
               ].map((item) => (
-                item.href ? (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className="text-white/30 text-sm hover:text-gold transition-colors duration-500"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    {item.label}
-                  </Link>
-                ) : (
-                  <button
-                    key={item.label}
-                    className="text-white/30 text-sm text-left hover:text-gold transition-colors duration-500"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    {item.label}
-                  </button>
-                )
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="text-white/30 text-sm hover:text-gold transition-colors duration-500"
+                  style={{ fontFamily: 'var(--font-serif)' }}
+                >
+                  {item.label}
+                </Link>
               ))}
             </nav>
           </div>

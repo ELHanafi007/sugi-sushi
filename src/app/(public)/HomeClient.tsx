@@ -1,13 +1,11 @@
 'use client';
 
-'use client';
-
 import { useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Calendar, ChevronRight, Images, Sparkles, UtensilsCrossed, Star, MousePointerClick, CheckCircle, Utensils } from 'lucide-react';
+import { ArrowRight, Calendar, ChevronRight, Sparkles, UtensilsCrossed, Star, MousePointerClick, CheckCircle, Utensils } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
@@ -16,7 +14,6 @@ import { useLanguage, NavTab } from '@/context/LanguageContext';
 import { Dish } from '@/data/menuData';
 
 const StrictMenu = dynamic(() => import('@/components/StrictMenu'), { ssr: false });
-const VerticalImageStack = dynamic(() => import('@/components/ui/vertical-image-stack').then(m => m.VerticalImageStack), { ssr: false });
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
 const LOCAL_LANDING_IMAGES = [
@@ -449,10 +446,10 @@ export default function HomeClient({
                         <Calendar size={14} />
                         {t('landing.reserve')}
                       </Link>
-                      <button onClick={() => setActiveTab('gallery')} className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/10 px-7 text-white/70 text-[10px] font-black uppercase tracking-[0.2em] hover:border-gold/20 hover:text-gold transition-all duration-500">
-                        <Images size={14} />
-                        {t('landing.gallery')}
-                      </button>
+                      <Link href="/menu" className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/10 px-7 text-white/70 text-[10px] font-black uppercase tracking-[0.2em] hover:border-gold/20 hover:text-gold transition-all duration-500">
+                        <ArrowRight size={14} />
+                        {t('landing.view_menu')}
+                      </Link>
                     </div>
                   </motion.div>
                 </div>
@@ -597,13 +594,13 @@ export default function HomeClient({
                   <p className="mt-6 text-white/40 text-base md:text-lg leading-8 max-w-xl mx-auto">{t('landing.visit_copy')}</p>
 
                   <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                    <button
-                      onClick={() => setActiveTab('menu')}
+                    <Link
+                      href="/menu"
                       className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-gold px-10 text-void text-[11px] font-black uppercase tracking-[0.2em] hover:shadow-[0_20px_50px_rgba(212,175,55,0.25)] transition-shadow duration-700 active:scale-95"
                     >
                       {t('landing.view_menu')}
                       <ArrowRight size={16} className={lang === 'ar' ? 'rotate-180' : ''} />
-                    </button>
+                    </Link>
                     <Link
                       href="/reserve"
                       className="inline-flex h-14 items-center justify-center gap-3 rounded-full border border-white/15 bg-white/[0.03] backdrop-blur-lg px-10 text-white/80 text-[11px] font-black uppercase tracking-[0.2em] hover:border-gold/25 hover:text-gold transition-all duration-700 active:scale-95"
@@ -638,17 +635,6 @@ export default function HomeClient({
           </motion.div>
         )}
 
-        {activeTab === 'gallery' && (
-          <motion.div
-            key="gallery"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <VerticalImageStack onComplete={() => setActiveTab('menu')} completeTab="menu" />
-          </motion.div>
-        )}
       </AnimatePresence>
 
       <div className="ambient-spotlight" />

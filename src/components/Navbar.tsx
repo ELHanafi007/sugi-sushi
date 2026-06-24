@@ -86,10 +86,14 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
   const navItems: { id: NavTab; labelKey: string; hasIcon?: boolean }[] = [
     { id: 'home', labelKey: 'nav.home' },
     { id: 'menu', labelKey: 'nav.menu' },
-    { id: 'gallery', labelKey: 'nav.gallery', hasIcon: true },
   ];
 
   const navigateTo = (tab: NavTab) => {
+    if (tab === 'menu') {
+      router.push('/menu');
+      return;
+    }
+
     if (window.location.pathname !== '/') {
       onTabChange(tab);
       router.push('/');

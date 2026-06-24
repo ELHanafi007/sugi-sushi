@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 type Lang = 'en' | 'ar';
-export type NavTab = 'home' | 'menu' | 'gallery';
+export type NavTab = 'home' | 'menu';
 
 interface ContextType {
   lang: Lang;
@@ -24,7 +24,6 @@ const translations = {
     'nav.home': 'Home',
     'nav.menu': 'Menu',
     'nav.reservations': 'Reservations',
-    'nav.gallery': 'Gallery',
     'nav.contact': 'Contact',
 
     // Hero
@@ -172,22 +171,6 @@ const translations = {
     // Reveal
     'reveal.sub': 'Kinetic Experience',
 
-    // Gallery
-    'gallery.label': 'Gallery',
-    'gallery.description': '"In every grain of rice and every cut of fish, we find the poetry of nature. This archive captures the fleeting beauty of our craft."',
-    'gallery.item1.title': 'The Preparation',
-    'gallery.item1.tag': 'CRAFT',
-    'gallery.item2.title': 'Sanctuary of Senses',
-    'gallery.item2.tag': 'ATMOSPHERE',
-    'gallery.item3.title': 'Master\'s Focus',
-    'gallery.item3.tag': 'ARTISTRY',
-    'gallery.item4.title': 'Umami Symphony',
-    'gallery.item4.tag': 'CUISINE',
-    'gallery.item5.title': 'Hidden Details',
-    'gallery.item5.tag': 'TEXTURE',
-    'gallery.item6.title': 'Liquid Gold',
-    'gallery.item6.tag': 'ELIXIR',
-
     // Filters
     'filter.vegetarian': 'Vegetarian',
     'filter.spicy': 'Spicy',
@@ -220,7 +203,6 @@ const translations = {
     'landing.detail1_copy': 'Rolls and hot dishes are prepared close to serving time.',
     'landing.detail2': 'Easy to share',
     'landing.detail2_copy': 'Boxes, boats, rolls, and sides built for tables, friends, and family.',
-    'landing.gallery': 'Gallery',
     'landing.flow_label': 'Reservation flow',
     'landing.flow_title': 'Built for calm, easy planning.',
     'landing.flow_copy': 'Move from planning your visit to securing your table without friction. The landing page now behaves like a guided reservation experience.',
@@ -282,7 +264,6 @@ const translations = {
     'nav.home': 'الرئيسية',
     'nav.menu': 'القائمة',
     'nav.reservations': 'الحجز',
-    'nav.gallery': 'الصور',
     'nav.contact': 'تواصل',
 
     // Hero
@@ -431,22 +412,6 @@ const translations = {
     // Reveal
     'reveal.sub': 'تجربة حركية',
 
-    // Gallery
-    'gallery.label': 'المعرض',
-    'gallery.description': '"في كل حبة أرز وكل قطعة سمك، نجد شعر الطبيعة. يوثق هذا الأرشيف الجماليات العابرة لمهنتنا."',
-    'gallery.item1.title': 'التناغم',
-    'gallery.item1.tag': 'إتقان',
-    'gallery.item2.title': 'ملاذ الحواس',
-    'gallery.item2.tag': 'أجواء',
-    'gallery.item3.title': 'دقة المعلم',
-    'gallery.item3.tag': 'فن',
-    'gallery.item4.title': 'سيمفونية الأومامي',
-    'gallery.item4.tag': 'تذوق',
-    'gallery.item5.title': 'الأسرار الدقيقة',
-    'gallery.item5.tag': 'تفاصيل',
-    'gallery.item6.title': 'الذهب السائل',
-    'gallery.item6.tag': 'إكسير',
-
     // Filters
     'filter.vegetarian': 'نباتي',
     'filter.spicy': 'حار',
@@ -479,7 +444,6 @@ const translations = {
     'landing.detail1_copy': 'تُحضّر لفائفنا وأطباقنا الساخنة فور طلبكم لضمان أعلى درجات الجودة.',
     'landing.detail2': 'تجارب مشتركة',
     'landing.detail2_copy': 'مجموعات وقوارب صُممت لتشاركوا بها من تحبون في لحظات لا تُنسى.',
-    'landing.gallery': 'المعرض',
     'landing.flow_label': 'مسار الحجز',
     'landing.flow_title': 'سلاسة في التخطيط والانتظار.',
     'landing.flow_copy': 'من تخطيط زيارتكم إلى تأكيد طاولتكم، تظل التجربة سلسة ومميزة.',
