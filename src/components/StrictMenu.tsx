@@ -115,21 +115,15 @@ function DishModal({
   const contentVariants = {
     initial: (direction: number) => ({
       opacity: 0,
-      x: direction > 0 ? 90 : -90,
-      scale: 0.985,
-      filter: 'blur(8px)',
+      x: direction > 0 ? 40 : -40,
     }),
     animate: {
       opacity: 1,
       x: 0,
-      scale: 1,
-      filter: 'blur(0px)',
     },
     exit: (direction: number) => ({
       opacity: 0,
-      x: direction > 0 ? -70 : 70,
-      scale: 0.98,
-      filter: 'blur(6px)',
+      x: direction > 0 ? -30 : 30,
     }),
   };
 
@@ -176,7 +170,7 @@ function DishModal({
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1] }}
+            transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
             className="max-w-2xl mx-auto px-4 md:px-6 pb-40"
           >
             <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mt-4 mb-2 md:hidden" />
@@ -419,7 +413,7 @@ export default function StrictMenu({
         {filteredDishes.map(dish => (
           <motion.div key={dish.id} onClick={() => setSelectedDish(dish)} className="luxury-card rounded-2xl md:rounded-[2.5rem] overflow-hidden p-3 md:p-6 cursor-pointer group">
             <div className="aspect-square rounded-xl md:rounded-[2rem] overflow-hidden mb-3 md:mb-6">
-              <img src={dish.image || DEFAULT_IMAGE} alt={lang === 'ar' ? dish.nameAr || dish.name : dish.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+              <img src={dish.image || DEFAULT_IMAGE} alt={lang === 'ar' ? dish.nameAr || dish.name : dish.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
             </div>
             <h3 className="text-white text-sm md:text-2xl font-serif italic mb-1 md:mb-2 truncate-text">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h3>
             <CurrencyPrice price={dish.price} className="text-gold text-xs md:text-base font-mono" />

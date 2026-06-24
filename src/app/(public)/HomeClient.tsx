@@ -4,7 +4,7 @@ import { useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Calendar, ChevronRight, Sparkles, UtensilsCrossed, Star, MousePointerClick, CheckCircle, Utensils } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
@@ -49,39 +49,42 @@ const CAT_IMAGES: Record<string, string> = {
   'Fry Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
 };
 
-/* ─── Unique Section Animations ─── */
+const EASE = [0.19, 1, 0.22, 1] as const;
+
 const fadeUp: any = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.19, 1, 0.22, 1] } }
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } }
 };
 const fadeSlideLeft: any = {
-  hidden: { opacity: 0, x: -50 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.9, ease: [0.19, 1, 0.22, 1] } }
+  hidden: { opacity: 0, x: -28 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.45, ease: EASE } }
 };
 const slideFromRightRotate: any = {
-  hidden: { opacity: 0, x: "50%", rotate: 5 },
-  visible: { opacity: 1, x: 0, rotate: 0, transition: { duration: 1.0, ease: [0.19, 1, 0.22, 1] } }
+  hidden: { opacity: 0, x: '12%', rotate: 2 },
+  visible: { opacity: 1, x: 0, rotate: 0, transition: { duration: 0.5, ease: EASE } }
 };
 const slideFromLeftRotate: any = {
-  hidden: { opacity: 0, x: "-50%", rotate: -5 },
-  visible: { opacity: 1, x: 0, rotate: 0, transition: { duration: 1.0, ease: [0.19, 1, 0.22, 1] } }
+  hidden: { opacity: 0, x: '-12%', rotate: -2 },
+  visible: { opacity: 1, x: 0, rotate: 0, transition: { duration: 0.5, ease: EASE } }
 };
 const fadeSlideRight: any = {
-  hidden: { opacity: 0, x: 50 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.9, ease: [0.19, 1, 0.22, 1] } }
+  hidden: { opacity: 0, x: 28 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.45, ease: EASE } }
 };
 const scaleReveal: any = {
-  hidden: { opacity: 0, scale: 0.92 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: [0.19, 1, 0.22, 1] } }
+  hidden: { opacity: 0, scale: 0.96 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.45, ease: EASE } }
 };
 const staggerChildren: any = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } }
+  visible: { transition: { staggerChildren: 0.05, delayChildren: 0.02 } }
 };
 const itemReveal: any = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.19, 1, 0.22, 1] } }
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE } }
 };
+
+const VIEWPORT = { once: true, amount: 0.15, margin: '0px 0px -40px 0px' };
 
 const SIGNATURE_CATEGORY_ORDER = [
   'Special Rolls', 'California Rolls', 'Aromaki Rolls', 'Aromaki Fried',
@@ -189,14 +192,14 @@ export default function HomeClient({
             ═══════════════════════════════════════════════════ */}
             <section className="relative overflow-hidden bg-onyx py-16 md:py-24 border-y border-white/[0.04]">
               {/* Ambient glow */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gold/[0.02] blur-[120px] rounded-full pointer-events-none" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
 
               <div className="container-luxury relative z-10">
                 <motion.div
                   variants={fadeSlideLeft}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
+                  viewport={VIEWPORT}
                   className="flex items-end justify-between gap-5 mb-10"
                 >
                   <div>
@@ -218,7 +221,7 @@ export default function HomeClient({
                   variants={staggerChildren}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.1 }}
+                  viewport={{ once: true, amount: 0.15, margin: '0px 0px -40px 0px' }}
                   className="-mx-[var(--container-px)] flex snap-x snap-mandatory gap-4 overflow-x-auto px-[var(--container-px)] pb-6 md:mx-0 md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:px-0 no-scrollbar"
                 >
                   {featuredCategories.map((category, index) => {
@@ -275,7 +278,7 @@ export default function HomeClient({
                   variants={fadeUp}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
+                  viewport={VIEWPORT}
                   className="max-w-2xl mb-12 md:mb-16"
                 >
                   <span className="section-label">{t('landing.signatures_label')}</span>
@@ -397,7 +400,7 @@ export default function HomeClient({
                     style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}
                   >
                     <Image
-                      src="/media/optimized/brochure-4.jpg"
+                      src="/media/landing/dining-room.jpg"
                       alt="Sugi Sushi Chef"
                       fill
                       sizes="(max-width: 1024px) 100vw, 50vw"
@@ -417,7 +420,7 @@ export default function HomeClient({
                     variants={fadeSlideRight}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: true, amount: 0.3 }}
+                    viewport={VIEWPORT}
                     className="flex flex-col gap-8"
                   >
                     <span className="section-label">{t('landing.craft_label')}</span>
@@ -465,7 +468,7 @@ export default function HomeClient({
                   variants={fadeUp}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
+                  viewport={VIEWPORT}
                   className="text-center max-w-2xl mx-auto mb-12 md:mb-16"
                 >
                   <span className="section-label">{t('landing.flow_label')}</span>
@@ -476,84 +479,42 @@ export default function HomeClient({
                 </motion.div>
 
                 <motion.div
+                  variants={staggerChildren}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
-                  style={{ perspective: "1200px" }}
-                  variants={{
-                    hidden: {},
-                    visible: { transition: { staggerChildren: 0.25, delayChildren: 0.1 } }
-                  }}
+                  viewport={VIEWPORT}
                   className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 relative mt-8 md:mt-12"
                 >
-                  {/* Animated Connecting Timeline */}
-                  <motion.div 
-                    variants={{
-                      hidden: { scaleX: 0, opacity: 0 },
-                      visible: { scaleX: 1, opacity: 1, transition: { duration: 1.5, delay: 0.5, ease: [0.19, 1, 0.22, 1] } }
-                    }}
-                    style={{ transformOrigin: 'left' }}
-                    className="hidden md:block absolute top-[45%] left-[10%] right-[10%] h-[2px] bg-white/[0.03] -translate-y-1/2 rounded-full overflow-hidden"
-                  >
-                    <motion.div 
-                      className="h-full bg-gradient-to-r from-transparent via-gold to-transparent"
-                      initial={{ x: '-100%' }}
-                      whileInView={{ x: '100%' }}
-                      transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
-                    />
-                  </motion.div>
+                  <div className="hidden md:block absolute top-[45%] left-[10%] right-[10%] h-[2px] bg-white/[0.03] -translate-y-1/2 rounded-full" />
 
                   {orderSteps.map((step, i) => {
                     const Icon = i === 0 ? MousePointerClick : i === 1 ? CheckCircle : Utensils;
                     return (
                       <motion.div
                         key={step.value}
-                        variants={{
-                          hidden: { opacity: 0, y: 120, rotateX: -30, scale: 0.8, filter: "blur(12px)" },
-                          visible: { 
-                            opacity: 1, 
-                            y: i === 1 ? 40 : 0, // Middle card is slightly offset downward
-                            rotateX: 0, 
-                            scale: 1, 
-                            filter: "blur(0px)",
-                            transition: { duration: 1.4, ease: [0.19, 1, 0.22, 1] } 
-                          }
-                        }}
-                        className="group relative rounded-3xl p-8 md:p-10 text-left bg-void border border-white/[0.05] overflow-hidden transition-all duration-700 hover:border-gold/30 hover:bg-white/[0.02] hover:-translate-y-2"
-                        style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.6)', transformStyle: "preserve-3d" }}
+                        variants={itemReveal}
+                        className="group relative rounded-3xl p-8 md:p-10 text-left bg-void border border-white/[0.05] overflow-hidden transition-all duration-300 hover:border-gold/30 hover:bg-white/[0.02] hover:-translate-y-1"
+                        style={{ boxShadow: '0 16px 40px rgba(0,0,0,0.45)' }}
                       >
-                        {/* Massive Background Number */}
-                        <motion.div 
-                          variants={{
-                            hidden: { opacity: 0, scale: 0.5, x: 50 },
-                            visible: { opacity: 1, scale: 1, x: 0, transition: { duration: 1.2, delay: 0.3 + (i * 0.2), ease: [0.19, 1, 0.22, 1] } }
-                          }}
-                          className="absolute -bottom-8 -right-4 text-[160px] font-bold text-white/[0.02] transition-colors duration-700 group-hover:text-gold/[0.05] select-none" 
+                        <div
+                          className="absolute -bottom-8 -right-4 text-[160px] font-bold text-white/[0.02] transition-colors duration-300 group-hover:text-gold/[0.05] select-none"
                           style={{ fontFamily: 'var(--font-brand-serif)', lineHeight: 1 }}
                         >
                           {step.value}
-                        </motion.div>
+                        </div>
 
-                        {/* Top Accent Line */}
-                        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold/50 to-transparent scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-100 transition-all duration-700" />
+                        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold/50 to-transparent scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-100 transition-all duration-300" />
 
-                        {/* Icon & Content */}
                         <div className="relative z-10">
-                          <motion.div 
-                            variants={{
-                              hidden: { opacity: 0, scale: 0 },
-                              visible: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 200, damping: 20, delay: 0.4 + (i * 0.2) } }
-                            }}
-                            className="w-14 h-14 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center mb-8 transition-colors duration-700 group-hover:border-gold/30 group-hover:bg-gold/[0.05]"
-                          >
-                            <Icon className="text-white/40 group-hover:text-gold transition-colors duration-700" size={24} strokeWidth={1} />
-                          </motion.div>
-                          
+                          <div className="w-14 h-14 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center mb-8 transition-colors duration-300 group-hover:border-gold/30 group-hover:bg-gold/[0.05]">
+                            <Icon className="text-white/40 group-hover:text-gold transition-colors duration-300" size={24} strokeWidth={1} />
+                          </div>
+
                           <div className="flex items-baseline gap-4 mb-4">
                             <span className="text-gold text-sm font-mono tracking-[0.2em]">{step.value}.</span>
                             <h3 className="text-white text-2xl" style={{ fontFamily: 'var(--font-brand-serif)', fontStyle: 'italic' }}>{step.title}</h3>
                           </div>
-                          
+
                           <p className="text-white/40 text-sm leading-relaxed max-w-[90%]">{step.copy}</p>
                         </div>
                       </motion.div>
@@ -570,7 +531,7 @@ export default function HomeClient({
               {/* Background image */}
               <div className="absolute inset-0">
                 <Image
-                  src="/media/optimized/enseigne-1.jpg"
+                  src="/media/landing/sushi-counter.jpg"
                   alt="Sugi Sushi"
                   fill
                   sizes="100vw"
@@ -583,7 +544,7 @@ export default function HomeClient({
                 variants={scaleReveal}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
+                viewport={VIEWPORT}
                 className="container-luxury relative z-10 text-center"
               >
                 <div className="max-w-3xl mx-auto">
@@ -624,7 +585,7 @@ export default function HomeClient({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
+            transition={{ duration: 0.25 }}
           >
             <StrictMenu
               onTabChange={setActiveTab}

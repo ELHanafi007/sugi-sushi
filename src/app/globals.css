@@ -41,20 +41,8 @@ html.lenis body {
   height: auto;
 }
 
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
 .lenis.lenis-smooth [data-lenis-prevent] {
   overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-smooth iframe {
-  pointer-events: none;
 }
 
 /* ─── Global Spacing Scale ─── */
@@ -165,8 +153,7 @@ html.lenis body {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: var(--elev-1);
-  transition: all 0.5s var(--ease-expo);
-  will-change: transform, opacity;
+  transition: border-color 0.3s var(--ease-expo), box-shadow 0.3s var(--ease-expo), background 0.3s var(--ease-expo);
 }
 
 .luxury-card:hover {
@@ -389,9 +376,15 @@ body {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.028;
+  opacity: 0.015;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 768px) {
+  .noise-overlay {
+    display: none;
+  }
 }
 
 /* ─── Ambient Spotlight ─── */
@@ -539,9 +532,9 @@ img {
   width: 100%;
   max-width: 500px;
   height: 70px;
-  background: rgba(6, 6, 8, 0.94);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
+  background: rgba(6, 6, 8, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 35px;
   display: flex;
@@ -588,7 +581,8 @@ img {
   border-radius: 9999px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--component-shadow);
   z-index: 1000;
-  backdrop-filter: blur(32px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   gap: 0.25rem;
 }
@@ -603,7 +597,7 @@ img {
   background: transparent;
   color: var(--component-inactive-color);
   cursor: pointer;
-  transition: all 0.6s var(--ease-expo);
+  transition: color 0.2s var(--ease-expo), background-color 0.2s var(--ease-expo);
   gap: 0.6rem;
   position: relative;
   outline: none;
@@ -675,11 +669,11 @@ img {
 .modal-glass {
   background: linear-gradient(
     160deg,
-    rgba(10, 10, 12, 0.94) 0%,
+    rgba(10, 10, 12, 0.96) 0%,
     rgba(6, 6, 8, 0.98) 100%
   );
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   border-radius: 32px 32px 0 0;
 }
 

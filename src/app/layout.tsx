@@ -3,7 +3,6 @@ import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import BottomNavWrapper from "@/components/BottomNavWrapper";
 import CinematicReveal from "@/components/CinematicReveal";
-import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
   title: "SUGI — Kinetic Dining",
@@ -42,7 +41,6 @@ export default function RootLayout({
       </head>
       <body className="antialiased select-none">
         <LanguageProvider>
-          <SmoothScroll />
           {children}
         </LanguageProvider>
 
