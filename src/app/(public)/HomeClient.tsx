@@ -1,5 +1,7 @@
 'use client';
 
+'use client';
+
 import { useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -10,7 +12,7 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
 import CurrencyPrice from '@/components/CurrencyPrice';
-import { useLanguage } from '@/context/LanguageContext';
+import { useLanguage, NavTab } from '@/context/LanguageContext';
 import { Dish } from '@/data/menuData';
 
 const StrictMenu = dynamic(() => import('@/components/StrictMenu'), { ssr: false });
@@ -92,11 +94,13 @@ const SIGNATURE_CATEGORY_ORDER = [
 export default function HomeClient({
   initialMenuData,
   initialCategories,
-  initialCategoryData
+  initialCategoryData,
+  initialTab
 }: {
   initialMenuData: Dish[];
   initialCategories: string[];
   initialCategoryData: { name: string, image: string }[];
+  initialTab?: NavTab;
 }) {
   const menuDataWithPrototype = initialMenuData;
   const { activeTab, setActiveTab, setActiveCategory, t, lang } = useLanguage();
@@ -150,6 +154,12 @@ export default function HomeClient({
     if (CAT_IMAGES[category]) return CAT_IMAGES[category];
     return LOCAL_LANDING_IMAGES[index % LOCAL_LANDING_IMAGES.length] || FALLBACK_IMAGE;
   };
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab, setActiveTab]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
