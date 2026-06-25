@@ -36,7 +36,7 @@ export default function Hero({ onTabChange }: HeroProps) {
     >
       <motion.div style={{ y: bgY }} className="absolute inset-0 z-0">
         <Image
-          src="/media/landing/sushi-selection.jpg"
+          src="/media/optimized/hero-wallpaper-alt-0.jpg"
           alt="Sugi Sushi"
           fill
           priority
