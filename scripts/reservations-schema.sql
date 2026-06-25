@@ -14,8 +14,12 @@ CREATE TABLE IF NOT EXISTS reservations (
   notes TEXT,
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'cancelled')),
   is_seen BOOLEAN DEFAULT false,
+  table_id TEXT REFERENCES public.restaurant_tables(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now())
 );
+
+-- Run this to update existing tables:
+-- ALTER TABLE reservations ADD COLUMN IF NOT EXISTS table_id TEXT REFERENCES public.restaurant_tables(id) ON DELETE SET NULL;
 
 -- Create auto-incrementing code trigger
 CREATE SEQUENCE IF NOT EXISTS reservation_code_seq START 1;

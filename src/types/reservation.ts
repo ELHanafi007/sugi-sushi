@@ -11,6 +11,7 @@ export interface Reservation {
   notes?: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   is_seen: boolean;
+  table_id?: string | null;
   created_at: string;
 }
 

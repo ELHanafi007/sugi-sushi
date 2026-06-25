@@ -1,24 +1,53 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, XCircle, Clock, Users, Phone, Mail, Calendar, MessageSquare, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { X, Check, XCircle, Clock, Users, Phone, Mail, Calendar, MessageSquare, Sparkles, Eye, EyeOff, Table2 } from 'lucide-react';
 import { Reservation } from '@/types/reservation';
+import { supabase } from '@/lib/supabase';
 
 /* ─── Reservation Detail Modal ─── */
-function ReservationCard({ reservation, onClose, onStatusChange }: {
+function ReservationCard({ reservation, onClose, onStatusChange, tables, onSeat }: {
   reservation: Reservation;
   onClose: () => void;
-  onStatusChange: (id: string, status: 'pending' | 'confirmed' | 'cancelled') => void;
+  onStatusChange: (id: string, status: 'pending' | 'confirmed' | 'cancelled', tableId?: string | null) => void;
+  tables: any[];
+  onSeat: () => void;
 }) {
+  const [isAssigningTable, setIsAssigningTable] = useState(false);
+  const [selectedTableId, setSelectedTableId] = useState<string | null>(reservation.table_id || null);
+
   const handleConfirm = () => {
-    onStatusChange(reservation.id, 'confirmed');
-    onClose();
+    setIsAssigningTable(true);
   };
 
   const handleCancel = () => {
     onStatusChange(reservation.id, 'cancelled');
     onClose();
+  };
+
+  const handleSeatGuests = async () => {
+    if (!reservation.table_id) return;
+    try {
+      const { error: sessionError } = await supabase
+        .from('sessions')
+        .insert({ table_id: reservation.table_id, status: 'active' });
+      
+      if (sessionError) throw sessionError;
+
+      const { error: tableError } = await supabase
+        .from('restaurant_tables')
+        .update({ status: 'seated' })
+        .eq('id', reservation.table_id);
+
+      if (tableError) throw tableError;
+
+      onSeat();
+      onClose();
+    } catch (error) {
+      console.error('Error seating guests:', error);
+      alert('Failed to seat guests. Please try again.');
+    }
   };
 
   const statusConfig = {
@@ -27,6 +56,120 @@ function ReservationCard({ reservation, onClose, onStatusChange }: {
     cancelled: { bg: 'bg-red-400/15', text: 'text-red-400', border: 'border-red-400/20', label: 'Cancelled' }
   };
   const status = statusConfig[reservation.status];
+
+  if (isAssigningTable) {
+    const tablesByZone: Record<string, any[]> = {};
+    tables.forEach(t => {
+      const zone = t.floor_zone || 'Other';
+      if (!tablesByZone[zone]) tablesByZone[zone] = [];
+      tablesByZone[zone].push(t);
+    });
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+          onClick={(e) => e.stopPropagation()}
+          className="bg-[#0a0a0c] border border-white/[0.08] rounded-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]"
+        >
+          {/* Header */}
+          <div className="p-5 border-b border-white/[0.05] flex items-center justify-between shrink-0">
+            <div>
+              <p className="text-white font-serif italic text-lg">Assign Table</p>
+              <p className="text-white/40 text-[10px] font-mono uppercase tracking-widest mt-0.5">
+                {reservation.guests} guests · {reservation.time}
+              </p>
+            </div>
+            <button onClick={() => setIsAssigningTable(false)} className="p-1.5 rounded-lg text-white/20 hover:text-white/50 hover:bg-white/[0.04] transition-all">
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Tables List */}
+          <div className="p-5 overflow-y-auto space-y-5 flex-1 min-h-0 custom-scrollbar">
+            {Object.entries(tablesByZone).map(([zone, zoneTables]: [string, any[]]) => (
+              <div key={zone} className="space-y-2">
+                <p className="text-gold/60 text-[9px] font-mono uppercase tracking-widest">{zone}</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {zoneTables.map((t) => {
+                    const isSelected = selectedTableId === t.id;
+                    const isSeated = t.status !== 'empty';
+                    const isPerfectMatch = t.capacity >= reservation.guests && !isSeated;
+                    
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => setSelectedTableId(t.id)}
+                        className={`p-3 rounded-xl border text-left transition-all relative flex flex-col justify-between h-20 ${
+                          isSelected ? 'bg-gold/10 border-gold shadow-md shadow-gold/5' :
+                          isSeated ? 'bg-white/[0.01] border-white/[0.04] opacity-50' :
+                          isPerfectMatch ? 'bg-emerald-500/[0.02] border-emerald-500/20 hover:border-emerald-500/40' :
+                          'bg-white/[0.02] border-white/[0.06] hover:border-white/15'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <span className={`font-mono text-sm font-bold ${isSelected ? 'text-gold' : 'text-white/80'}`}>{t.label}</span>
+                          {isSeated && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-sky-500" title="Seated" />
+                          )}
+                        </div>
+                        <div className="flex flex-col mt-1">
+                          <span className="text-[10px] text-white/40 font-mono">{t.capacity} seats</span>
+                          {isPerfectMatch && !isSelected && (
+                            <span className="text-[8px] text-emerald-400 font-mono uppercase tracking-wide mt-0.5">Match</span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer Actions */}
+          <div className="p-5 bg-white/[0.015] border-t border-white/[0.04] flex flex-col gap-2 shrink-0">
+            <button
+              onClick={() => {
+                onStatusChange(reservation.id, 'confirmed', selectedTableId);
+                onClose();
+              }}
+              disabled={!selectedTableId}
+              className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:hover:bg-emerald-500 text-white py-3 rounded-xl font-medium text-[12px] transition-colors"
+            >
+              <Check size={16} />
+              Confirm with Selected Table
+            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  onStatusChange(reservation.id, 'confirmed', null);
+                  onClose();
+                }}
+                className="flex-1 flex items-center justify-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] text-white/80 py-2.5 rounded-xl font-medium text-[11px] transition-colors border border-white/[0.06]"
+              >
+                No Table
+              </button>
+              <button
+                onClick={() => setIsAssigningTable(false)}
+                className="flex-1 flex items-center justify-center gap-2 bg-red-500/15 hover:bg-red-500/25 text-red-400 py-2.5 rounded-xl font-medium text-[11px] transition-colors border border-red-500/20"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -75,6 +218,29 @@ function ReservationCard({ reservation, onClose, onStatusChange }: {
             <DetailRow icon={Users} label="Party Size" value={`${reservation.guests} guests`} />
           </div>
 
+          {/* Table Assignment Row */}
+          <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            <div className="flex items-center gap-3 min-w-0">
+              <Table2 size={16} className={reservation.table_id ? 'text-gold' : 'text-white/20'} />
+              <div className="min-w-0">
+                <p className="text-white/20 text-[9px] font-mono uppercase tracking-widest">Assigned Table</p>
+                <p className="text-white/80 text-[13px] font-medium truncate">
+                  {reservation.table_id 
+                    ? (tables.find(t => t.id === reservation.table_id)?.label || reservation.table_id)
+                    : 'None assigned'}
+                </p>
+              </div>
+            </div>
+            {reservation.status !== 'cancelled' && (
+              <button
+                onClick={() => setIsAssigningTable(true)}
+                className="text-[10px] font-mono text-gold/80 hover:text-gold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition-all"
+              >
+                {reservation.table_id ? 'Change' : 'Assign'}
+              </button>
+            )}
+          </div>
+
           {reservation.email && (
             <DetailRow icon={Mail} label="Email" value={reservation.email} />
           )}
@@ -109,13 +275,24 @@ function ReservationCard({ reservation, onClose, onStatusChange }: {
             </>
           )}
           {reservation.status === 'confirmed' && (
-            <button
-              onClick={handleCancel}
-              className="w-full flex items-center justify-center gap-2 bg-red-500/15 hover:bg-red-500/25 text-red-400 py-3 rounded-xl font-medium text-[12px] transition-colors border border-red-500/20"
-            >
-              <XCircle size={16} />
-              Cancel Reservation
-            </button>
+            <div className="w-full flex flex-col gap-2">
+              {reservation.table_id && tables.find(t => t.id === reservation.table_id)?.status === 'empty' && (
+                <button
+                  onClick={handleSeatGuests}
+                  className="w-full flex items-center justify-center gap-2 bg-gold hover:brightness-110 text-black py-3 rounded-xl font-bold text-[12px] transition-all active:scale-[0.98]"
+                >
+                  <Users size={16} />
+                  Seat Guests at Table {tables.find(t => t.id === reservation.table_id)?.label}
+                </button>
+              )}
+              <button
+                onClick={handleCancel}
+                className="w-full flex items-center justify-center gap-2 bg-red-500/15 hover:bg-red-500/25 text-red-400 py-3 rounded-xl font-medium text-[12px] transition-colors border border-red-500/20"
+              >
+                <XCircle size={16} />
+                Cancel Reservation
+              </button>
+            </div>
           )}
           {reservation.status === 'cancelled' && (
             <button
@@ -148,6 +325,7 @@ function DetailRow({ icon: Icon, label, value, highlight }: { icon: any; label: 
 /* ─── Main Page ─── */
 export default function ReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [tables, setTables] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'cancelled'>('all');
@@ -165,24 +343,39 @@ export default function ReservationsPage() {
     }
   };
 
+  const fetchTables = async () => {
+    try {
+      const res = await fetch('/api/floorplan');
+      if (res.ok) {
+        const data = await res.json();
+        setTables(data);
+      }
+    } catch (error) {
+      console.error('Error fetching tables:', error);
+    }
+  };
+
   useEffect(() => {
     fetchReservations();
+    fetchTables();
 
     const interval = setInterval(() => {
       fetchReservations(true);
+      fetchTables();
     }, 15000); // Auto-refresh every 15 seconds
 
     return () => clearInterval(interval);
   }, []);
 
-  const handleStatusChange = async (id: string, status: 'pending' | 'confirmed' | 'cancelled') => {
+  const handleStatusChange = async (id: string, status: 'pending' | 'confirmed' | 'cancelled', tableId?: string | null) => {
     try {
       await fetch('/api/reservations', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status }),
+        body: JSON.stringify({ id, status, table_id: tableId }),
       });
       fetchReservations();
+      fetchTables();
     } catch (error) {
       console.error('Error updating reservation:', error);
     }
@@ -345,6 +538,12 @@ export default function ReservationsPage() {
                       <Users size={11} />
                       {reservation.guests}
                     </span>
+                    {reservation.table_id && (
+                      <span className="flex items-center gap-1 text-gold/80 bg-gold/[0.04] px-1.5 py-0.5 rounded border border-gold/10 text-[10px]">
+                        <Table2 size={10} />
+                        {tables.find(t => t.id === reservation.table_id)?.label || reservation.table_id}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -369,6 +568,11 @@ export default function ReservationsPage() {
             reservation={selectedReservation}
             onClose={() => setSelectedReservation(null)}
             onStatusChange={handleStatusChange}
+            tables={tables}
+            onSeat={() => {
+              fetchReservations();
+              fetchTables();
+            }}
           />
         )}
       </AnimatePresence>

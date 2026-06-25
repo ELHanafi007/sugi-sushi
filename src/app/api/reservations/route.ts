@@ -60,14 +60,14 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {
-    const { id, status } = await request.json();
+    const { id, status, table_id } = await request.json();
 
     if (!id) {
       return NextResponse.json({ error: 'ID required' }, { status: 400 });
     }
 
-    if (status) {
-      const success = await updateReservationStatus(id, status);
+    if (status || table_id !== undefined) {
+      const success = await updateReservationStatus(id, status, table_id);
       return NextResponse.json({ success });
     }
 

@@ -41,7 +41,8 @@ export async function getUnseenReservations() {
 
 export async function updateReservationStatus(
   id: string,
-  status: 'pending' | 'confirmed' | 'cancelled'
+  status: 'pending' | 'confirmed' | 'cancelled',
+  table_id?: string | null
 ) {
   const supabase = getSupabaseAdmin();
 
@@ -57,9 +58,14 @@ export async function updateReservationStatus(
     return false;
   }
 
+  const updateData: any = { status };
+  if (table_id !== undefined) {
+    updateData.table_id = table_id;
+  }
+
   const { error } = await supabase
     .from('reservations')
-    .update({ status })
+    .update(updateData)
     .eq('id', id);
 
   if (error) {
@@ -69,7 +75,7 @@ export async function updateReservationStatus(
 
   // If status is changed to confirmed, send the email (non-blocking)
   if (status === 'confirmed' && reservation.email) {
-    sendConfirmationEmail(reservation as Reservation).catch(err => {
+    sendConfirmationEmail({ ...reservation, ...updateData } as Reservation).catch(err => {
       console.error('Failed to send confirmation email:', err);
     });
   }

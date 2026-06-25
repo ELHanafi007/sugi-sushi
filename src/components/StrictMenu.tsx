@@ -102,12 +102,16 @@ function DishModal({
     return map[a] ? (lang === 'ar' ? map[a].ar : map[a].en) : a;
   };
 
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    setMounted(true);
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
     };
   }, []);
+
+  if (!mounted) return null;
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [transitionDirection, setTransitionDirection] = useState(1);
@@ -179,13 +183,16 @@ function DishModal({
           <motion.div
             className="relative w-full h-[35vh] md:h-[65vh] rounded-2xl md:rounded-[2.5rem] overflow-hidden mb-8 shadow-[0_40px_80px_rgba(0,0,0,0.8)] luxury-card"
           >
-            <img
+            <Image
               src={image}
               alt={name}
-              className="w-full h-full object-cover"
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 80vw"
+              className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 z-10">
               <span className="text-mono text-white/30 text-[9px] tracking-[0.8em] font-black uppercase block mb-2">{t('menu.featured')}</span>
               <h2 className="text-3xl md:text-6xl font-serif text-white tracking-tightest leading-tight italic">{name}</h2>
             </div>
@@ -265,8 +272,8 @@ function DishModal({
                <div className="grid grid-cols-1 gap-4">
                  {menuDataToUse.filter(d => d.category === dish.category && d.id !== dish.id).slice(0, 4).map((item) => (
                    <div key={item.id} onClick={() => onDishSelect(item)} className="flex items-center gap-5 p-4 rounded-3xl luxury-card cursor-pointer group">
-                     <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
-                       <img src={item.image || DEFAULT_IMAGE} alt={lang === 'ar' ? item.nameAr || item.name : item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                     <div className="relative w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
+                       <Image src={item.image || DEFAULT_IMAGE} alt={lang === 'ar' ? item.nameAr || item.name : item.name} fill sizes="64px" className="object-cover group-hover:scale-110 transition-transform duration-1000" />
                      </div>
                      <div className="flex-1 min-w-0">
                        <h5 className="text-white/80 font-serif text-base group-hover:text-gold transition-colors">{lang === 'ar' ? item.nameAr || item.name : item.name}</h5>
@@ -392,10 +399,17 @@ export default function StrictMenu({
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 px-4 md:px-8">
-        {filteredDishes.map(dish => (
+        {filteredDishes.map((dish, idx) => (
           <motion.div key={dish.id} onClick={() => setSelectedDish(dish)} className="luxury-card rounded-2xl md:rounded-[2.5rem] overflow-hidden p-3 md:p-6 cursor-pointer group">
-            <div className="aspect-square rounded-xl md:rounded-[2rem] overflow-hidden mb-3 md:mb-6">
-              <img src={dish.image || DEFAULT_IMAGE} alt={lang === 'ar' ? dish.nameAr || dish.name : dish.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+            <div className="relative aspect-square rounded-xl md:rounded-[2rem] overflow-hidden mb-3 md:mb-6 bg-white/[0.02]">
+              <Image
+                src={dish.image || DEFAULT_IMAGE}
+                alt={lang === 'ar' ? dish.nameAr || dish.name : dish.name}
+                fill
+                sizes="(max-width: 768px) 50vw, 33vw"
+                priority={idx < 4}
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
             </div>
             <h3 className="text-white text-sm md:text-2xl font-serif italic mb-1 md:mb-2 truncate-text">{lang === 'ar' ? dish.nameAr || dish.name : dish.name}</h3>
             <CurrencyPrice price={dish.price} className="text-gold text-xs md:text-base font-mono" />

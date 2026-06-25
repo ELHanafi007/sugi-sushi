@@ -13,7 +13,7 @@ import CurrencyPrice from '@/components/CurrencyPrice';
 import { useLanguage, NavTab } from '@/context/LanguageContext';
 import { Dish } from '@/data/menuData';
 
-const StrictMenu = dynamic(() => import('@/components/StrictMenu'), { ssr: false });
+import StrictMenu from '@/components/StrictMenu';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
 const LOCAL_LANDING_IMAGES = [
