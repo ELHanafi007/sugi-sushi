@@ -348,7 +348,7 @@ export default function StrictMenu({
       </div>
 
       <div className="flex gap-4 md:gap-10 overflow-x-auto no-scrollbar px-4 md:px-8 mb-16 md:mb-24 pt-4">
-        {categoriesToUse.map(cat => {
+        {categoriesToUse.map((cat, idx) => {
           const catLower = (cat || '').toLowerCase();
           const img = dynamicCategoryImages[catLower];
           const isActive = selectedCategory === cat;
@@ -367,6 +367,7 @@ export default function StrictMenu({
                   alt={cat}
                   fill
                   sizes="(max-width: 768px) 96px, 160px"
+                  priority={idx < 6}
                   className={`object-cover transition-all duration-700 ${isActive ? 'scale-110 brightness-110' : 'brightness-[0.35] group-hover:brightness-75 group-hover:scale-105'}`}
                 />
                 

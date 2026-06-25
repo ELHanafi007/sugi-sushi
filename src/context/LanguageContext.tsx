@@ -71,8 +71,8 @@ const translations = {
 
     // Menu
     'menu.archive': 'The Collection',
-    'menu.exp_title': 'Culinary',
-    'menu.discovery_title': 'Discovery',
+    'menu.exp_title': "The Connoisseur's",
+    'menu.discovery_title': 'Selection',
     'menu.selected_count': 'Items',
     'menu.search': 'Search for your favorite...',
     'menu.selections': 'Selections',
@@ -312,8 +312,8 @@ const translations = {
 
     // Menu
     'menu.archive': 'المجموعة',
-    'menu.exp_title': 'رحلة',
-    'menu.discovery_title': 'التذوق',
+    'menu.exp_title': 'مختارات',
+    'menu.discovery_title': 'الذواق',
     'menu.selected_count': 'أصناف',
     'menu.search': 'ابحث عن طبقك المفضل...',
     'menu.selections': 'مختارات',
