@@ -158,7 +158,7 @@ const translations = {
     'contact.cta': 'Book Your Experience',
 
     // Menu Section Specifics
-    'menu.label': 'The Menu',
+    'menu.label': 'Menu',
     'menu.exp_span': ' Mastery',
     'menu.cat_label': 'Category',
 

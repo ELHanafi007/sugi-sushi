@@ -344,7 +344,7 @@ export default function StrictMenu({
   return (
     <div className="min-h-screen bg-bg pt-24 md:pt-48 pb-[120px]">
       <div className="px-4 md:px-8 mb-8 md:mb-16">
-        <h1 className="text-white text-4xl md:text-7xl lg:text-8xl font-serif italic leading-tight">{t('menu.exp_title')} <span className="shimmer-gold not-italic font-black">{t('menu.discovery_title')}</span></h1>
+        <h1 className="text-white text-4xl md:text-7xl lg:text-8xl font-serif italic leading-tight">{t('menu.label')}</h1>
       </div>
 
       <div className="flex gap-4 md:gap-10 overflow-x-auto no-scrollbar px-4 md:px-8 mb-16 md:mb-24 pt-4">
