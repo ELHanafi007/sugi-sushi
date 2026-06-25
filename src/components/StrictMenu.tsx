@@ -111,10 +111,17 @@ function DishModal({
     };
   }, []);
 
-  if (!mounted) return null;
-
   const scrollRef = useRef<HTMLDivElement>(null);
   const [transitionDirection, setTransitionDirection] = useState(1);
+
+  // Immediate scroll reset on dish change
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [dish.id]);
+
+  if (!mounted) return null;
 
   const contentVariants = {
     initial: (direction: number) => ({
@@ -130,13 +137,6 @@ function DishModal({
       x: direction > 0 ? -30 : 30,
     }),
   };
-
-  // Immediate scroll reset on dish change
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = 0;
-    }
-  }, [dish.id]);
 
   return createPortal(
     <motion.div 
