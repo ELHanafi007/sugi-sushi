@@ -17,6 +17,10 @@ function ReservationCard({ reservation, onClose, onStatusChange, tables, onSeat 
   const [isAssigningTable, setIsAssigningTable] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string | null>(reservation.table_id || null);
 
+  useEffect(() => {
+    setSelectedTableId(reservation.table_id || null);
+  }, [reservation.id, reservation.table_id]);
+
   const handleConfirm = () => {
     setIsAssigningTable(true);
   };
@@ -138,8 +142,8 @@ function ReservationCard({ reservation, onClose, onStatusChange, tables, onSeat 
           {/* Footer Actions */}
           <div className="p-5 bg-white/[0.015] border-t border-white/[0.04] flex flex-col gap-2 shrink-0">
             <button
-              onClick={() => {
-                onStatusChange(reservation.id, 'confirmed', selectedTableId);
+              onClick={async () => {
+                await onStatusChange(reservation.id, 'confirmed', selectedTableId);
                 onClose();
               }}
               disabled={!selectedTableId}
@@ -150,8 +154,8 @@ function ReservationCard({ reservation, onClose, onStatusChange, tables, onSeat 
             </button>
             <div className="flex gap-2">
               <button
-                onClick={() => {
-                  onStatusChange(reservation.id, 'confirmed', null);
+                onClick={async () => {
+                  await onStatusChange(reservation.id, 'confirmed', null);
                   onClose();
                 }}
                 className="flex-1 flex items-center justify-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] text-white/80 py-2.5 rounded-xl font-medium text-[11px] transition-colors border border-white/[0.06]"
@@ -369,15 +373,19 @@ export default function ReservationsPage() {
 
   const handleStatusChange = async (id: string, status: 'pending' | 'confirmed' | 'cancelled', tableId?: string | null) => {
     try {
-      await fetch('/api/reservations', {
+      const res = await fetch('/api/reservations', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, status, table_id: tableId }),
       });
-      fetchReservations();
-      fetchTables();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Failed to update reservation (${res.status})`);
+      }
+      await Promise.all([fetchReservations(), fetchTables()]);
     } catch (error) {
       console.error('Error updating reservation:', error);
+      alert('Failed to update reservation. Please try again.');
     }
   };
 

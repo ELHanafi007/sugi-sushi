@@ -66,7 +66,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'ID required' }, { status: 400 });
     }
 
-    if (status || table_id !== undefined) {
+    if (status !== undefined || table_id !== undefined) {
       const success = await updateReservationStatus(id, status, table_id);
       return NextResponse.json({ success });
     }
