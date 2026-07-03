@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ollama": {
+      "api": "openai",
+      "name": "Ollama",
+      "options": {
+        "apiKey": "2a494ee34adb4802b18743c2a40f24ca.AId0PslhLYlwKcQoHUJ-e72Q",
+        "baseURL": "https://api.ollama.com/v1"
+      }
+    }
+  }
+}

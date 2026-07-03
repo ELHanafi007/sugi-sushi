@@ -83,6 +83,7 @@ const translations = {
     
     // Strict Menu / Details
     'strict.clear': 'Clear Search',
+    'strict.calories': 'Calories',
     'strict.allergens': 'Allergen Information',
     'strict.no_allergens': 'No known allergens.',
     'strict.details': 'Dish Details',
@@ -324,6 +325,7 @@ const translations = {
     
     // Strict Menu / Details
     'strict.clear': 'مسح',
+    'strict.calories': 'السعرات الحرارية',
     'strict.allergens': 'الحساسية',
     'strict.no_allergens': 'ما فيه مسببات حساسية مذكورة.',
     'strict.details': 'التفاصيل',

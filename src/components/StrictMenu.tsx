@@ -231,6 +231,22 @@ function DishModal({
             <p className="text-base md:text-2xl text-white/40 font-serif italic leading-relaxed font-light text-center">&quot;{desc}&quot;</p>
 
             <div className="pt-8 md:pt-12 border-t border-white/[0.03] space-y-8 md:space-y-12">
+              {/* Calories */}
+              {dish.calories && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-[1px] bg-gold/20" />
+                    <h4 className="text-gold/30 text-[10px] uppercase tracking-[0.6em] font-black font-mono">{t('strict.calories')}</h4>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="px-5 py-2 rounded-xl bg-gold/5 border border-gold/10 text-[11px] text-gold/70 uppercase tracking-[0.15em] font-bold font-mono flex items-center gap-2">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gold/50"><path d="M12 22c-4.97 0-9-2.69-9-6 0-4 5-11.5 8-14 .33-.28.83-.28 1.16 0 3 2.5 7.84 10 7.84 14 0 3.31-4.04 6-8 6z"/><path d="M12 22c-1.66 0-3-1.34-3-3 0-2 1.5-5.5 3-7 1.5 1.5 3 5 3 7 0 1.66-1.34 3-3 3z"/></svg>
+                      {dish.calories}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-6">
                 <div className="flex items-center gap-6">
                   <div className="w-16 h-[1px] bg-gold/20" />
