@@ -1,5 +1,7 @@
 import { Dish, CATEGORIES, menuData } from '@/data/menuData';
 import { createClient } from '@supabase/supabase-js';
+import fs from 'fs';
+import path from 'path';
 
 
 
@@ -7,6 +9,61 @@ export interface MenuData {
   categories: string[];
   products: Dish[];
   categoryData: { name: string; image: string }[];
+}
+
+/* ─── Caching Layer ─── */
+// In-memory cache: survives across requests in the same server process
+// File cache: survives server restarts, used as fallback when Supabase is down
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes — menu doesn't change every second
+const CACHE_FILE = process.env.VERCEL
+  ? '/tmp/sugi-menu-cache.json'
+  : path.join(process.cwd(), '.cache', 'sugi-menu-cache.json');
+
+let memoryCache: { data: MenuData; timestamp: number } | null = null;
+
+function getMemoryCache(): MenuData | null {
+  if (memoryCache && (Date.now() - memoryCache.timestamp) < CACHE_TTL_MS) {
+    return memoryCache.data;
+  }
+  return null;
+}
+
+function setMemoryCache(data: MenuData): void {
+  memoryCache = { data, timestamp: Date.now() };
+}
+
+function readFileCache(): MenuData | null {
+  try {
+    if (fs.existsSync(CACHE_FILE)) {
+      const raw = fs.readFileSync(CACHE_FILE, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.data && parsed.data.products?.length > 0) {
+        console.log('[Cache] Serving menu from file cache (last good Supabase data)');
+        return parsed.data;
+      }
+    }
+  } catch (e) {
+    console.warn('[Cache] Failed to read file cache:', e);
+  }
+  return null;
+}
+
+function writeFileCache(data: MenuData): void {
+  try {
+    const dir = path.dirname(CACHE_FILE);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(
+      CACHE_FILE,
+      JSON.stringify({ data, timestamp: Date.now() }),
+      'utf-8'
+    );
+  } catch (e) {
+    // Silently fail — Vercel's filesystem may be read-only outside /tmp
+    console.warn('[Cache] Failed to write file cache:', e);
+  }
 }
 
 type PortionWithDish = NonNullable<Dish['portions']>[number] & { originalDish: Dish };
@@ -251,14 +308,19 @@ function mergePortionDuplicates(products: Dish[]): Dish[] {
   return result;
 }
 
-export async function getMenu(): Promise<MenuData> {
+/**
+ * Fetch raw menu data from Supabase (no caching — called only when cache is stale).
+ * Returns null on any failure so the caller can fall back gracefully.
+ */
+async function _fetchMenuFromSupabase(): Promise<MenuData | null> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('CRITICAL: Supabase credentials missing in getMenu');
-    return { categories: CATEGORIES, products: menuData, categoryData: [] };
+    console.error('[Supabase] CRITICAL: credentials missing');
+    return null;
   }
+
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
 
   const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -277,77 +339,115 @@ export async function getMenu(): Promise<MenuData> {
     ]);
 
     if (catError || prodError) {
-      console.error('Supabase fetch error:', catError || prodError);
-      return { categories: CATEGORIES, products: menuData, categoryData: [] };
+      console.error('[Supabase] Fetch error:', catError || prodError);
+      return null;
     }
 
-    if (productsData && productsData.length > 0) {
-      // 1. Normalize and De-duplicate raw items from DB
-      const uniqueProductsMap = new Map<string, any>();
-      productsData.forEach(p => {
-        // Normalize category: trim and title case
-        let cat = (p.category || 'Other').trim();
-        if (cat.toLowerCase() === 'kani crunchy roll') cat = 'kani  CRUNCHY   roll'; // Match existing case if specific
-        
-        const normalizedProduct = {
-          ...p,
-          category: cat,
-          name: (p.name || '').trim(),
-        };
-        
-        // Use ID as primary key, but if multiple items have same ID, last one wins
-        uniqueProductsMap.set(p.id, normalizedProduct);
-      });
-
-      const deDuplicatedRaw = Array.from(uniqueProductsMap.values());
-
-      // If categories table is blocked by RLS, derive from products
-      let categoryList = categoriesData && categoriesData.length > 0 
-        ? categoriesData.map(c => ({ name: c.name.trim(), image: c.image })) 
-        : Array.from(new Set(deDuplicatedRaw.map(p => p.category))).map(name => ({ name, image: '' }));
-      
-      // De-duplicate category names (case-insensitive)
-      const seenCats = new Set<string>();
-      categoryList = categoryList.filter(c => {
-        const lower = c.name.toLowerCase();
-        if (seenCats.has(lower)) return false;
-        seenCats.add(lower);
-        return true;
-      });
-
-      const categories = categoryList.map(c => c.name);
-      const categoryData = categoryList;
-      
-      const rawProducts: Dish[] = deDuplicatedRaw.map(p => {
-        return {
-          id: p.id,
-          name: p.name,
-          nameAr: p.name_ar,
-          description: p.description,
-          descriptionAr: p.description_ar,
-          price: p.price,
-          category: p.category,
-          calories: p.calories,
-          tags: p.tags || [],
-          portions: p.portions || [],
-          image: p.image,
-          allergens: p.allergens || []
-        };
-      });
-
-      // Merge duplicate portion items (e.g. "Roll 4 PCS" + "Roll 8 PCS" → single item)
-      const products = mergePortionDuplicates(rawProducts);
-      
-      return { categories, products, categoryData };
+    if (!productsData || productsData.length === 0) {
+      console.warn('[Supabase] No products returned');
+      return null;
     }
 
-    // Apply merging to static fallback data as well
-    return { categories: CATEGORIES, products: mergePortionDuplicates(menuData), categoryData: [] };
+    // 1. Normalize and De-duplicate raw items from DB
+    const uniqueProductsMap = new Map<string, any>();
+    productsData.forEach(p => {
+      // Normalize category: trim and title case
+      let cat = (p.category || 'Other').trim();
+      if (cat.toLowerCase() === 'kani crunchy roll') cat = 'kani  CRUNCHY   roll'; // Match existing case if specific
+      
+      const normalizedProduct = {
+        ...p,
+        category: cat,
+        name: (p.name || '').trim(),
+      };
+      
+      // Use ID as primary key, but if multiple items have same ID, last one wins
+      uniqueProductsMap.set(p.id, normalizedProduct);
+    });
+
+    const deDuplicatedRaw = Array.from(uniqueProductsMap.values());
+
+    // If categories table is blocked by RLS, derive from products
+    let categoryList = categoriesData && categoriesData.length > 0 
+      ? categoriesData.map(c => ({ name: c.name.trim(), image: c.image })) 
+      : Array.from(new Set(deDuplicatedRaw.map(p => p.category))).map(name => ({ name, image: '' }));
+    
+    // De-duplicate category names (case-insensitive)
+    const seenCats = new Set<string>();
+    categoryList = categoryList.filter(c => {
+      const lower = c.name.toLowerCase();
+      if (seenCats.has(lower)) return false;
+      seenCats.add(lower);
+      return true;
+    });
+
+    const categories = categoryList.map(c => c.name);
+    const categoryData = categoryList;
+    
+    const rawProducts: Dish[] = deDuplicatedRaw.map(p => {
+      return {
+        id: p.id,
+        name: p.name,
+        nameAr: p.name_ar,
+        description: p.description,
+        descriptionAr: p.description_ar,
+        price: p.price,
+        category: p.category,
+        calories: p.calories,
+        tags: p.tags || [],
+        portions: p.portions || [],
+        image: p.image,
+        allergens: p.allergens || []
+      };
+    });
+
+    // Merge duplicate portion items (e.g. "Roll 4 PCS" + "Roll 8 PCS" → single item)
+    const products = mergePortionDuplicates(rawProducts);
+    
+    return { categories, products, categoryData };
   } catch (error) {
-    console.error('Error fetching from Supabase:', error);
-    // Apply merging to static fallback data as well
-    return { categories: CATEGORIES, products: mergePortionDuplicates(menuData), categoryData: [] };
+    console.error('[Supabase] Error fetching:', error);
+    return null;
   }
 }
 
+/**
+ * Get menu data with 3-tier caching:
+ *   1. In-memory cache (5-min TTL) — instant, zero network calls
+ *   2. Supabase fetch — on cache miss, saves to both caches on success
+ *   3. File cache — last known good data, survives restarts & Supabase outages
+ *   4. Static fallback — hardcoded menuData.ts as absolute last resort
+ */
+export async function getMenu(): Promise<MenuData> {
+  // ── Tier 1: In-memory cache ──
+  const cached = getMemoryCache();
+  if (cached) {
+    return cached;
+  }
+
+  // ── Tier 2: Fresh fetch from Supabase ──
+  const freshData = await _fetchMenuFromSupabase();
+  if (freshData) {
+    console.log('[Cache] Fresh data from Supabase — updating caches');
+    setMemoryCache(freshData);
+    writeFileCache(freshData);
+    return freshData;
+  }
+
+  // ── Tier 3: File cache (last known good data) ──
+  const fileCached = readFileCache();
+  if (fileCached) {
+    // Also warm the memory cache so subsequent requests are fast
+    setMemoryCache(fileCached);
+    return fileCached;
+  }
+
+  // ── Tier 4: Static fallback (ancient hardcoded data — absolute last resort) ──
+  console.warn('[Cache] All caches exhausted — serving static fallback data');
+  const staticFallback = { categories: CATEGORIES, products: mergePortionDuplicates(menuData), categoryData: [] };
+  setMemoryCache(staticFallback);
+  return staticFallback;
+}
+
 export const dynamic = 'force-dynamic';
+
