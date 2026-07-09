@@ -450,7 +450,14 @@ export default function ReservationsPage() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between p-4 rounded-xl bg-gold/[0.06] border border-gold/15"
+          className="flex items-center justify-between p-4 rounded-xl bg-gold/[0.06] border border-gold/15 cursor-pointer hover:bg-gold/[0.08] transition-colors"
+          onClick={() => {
+            const firstUnseen = reservations.find(r => !r.is_seen && r.status === 'pending');
+            if (firstUnseen) {
+              setSelectedReservation(firstUnseen);
+              handleMarkSeen(firstUnseen.id);
+            }
+          }}
         >
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
