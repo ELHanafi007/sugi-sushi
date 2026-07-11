@@ -287,6 +287,10 @@ export default function CashierTablesPage() {
               mapping[r.table_id].push(r as Reservation);
             }
           });
+          // Sort reservations by time
+          Object.values(mapping).forEach(reservations => {
+            reservations.sort((a, b) => a.time.localeCompare(b.time));
+          });
           setTableReservations(mapping);
         }
       } catch (err) {
@@ -520,6 +524,12 @@ export default function CashierTablesPage() {
                       `}
                     >
                       <span className="font-bold">{table.label}</span>
+                      {hasReservation && (
+                        <span className={`text-[7px] md:text-[8px] mt-0.5 px-1 py-0.5 rounded font-bold whitespace-nowrap flex items-center gap-0.5 ${dbTable?.status === 'empty' ? 'bg-gold text-black' : 'bg-gold/20 text-gold'}`}>
+                          {tableRes[0].time}
+                          {tableRes.length > 1 && <span className="opacity-70">+{tableRes.length - 1}</span>}
+                        </span>
+                      )}
                       {activeSessionsOrders[table.id]?.total > 0 && (
                         <span className="text-[7.5px] md:text-[9.5px] font-mono text-gold mt-0.5 whitespace-nowrap opacity-90">
                           {activeSessionsOrders[table.id].total.toFixed(0)} MAD
@@ -527,12 +537,7 @@ export default function CashierTablesPage() {
                       )}
                     </span>
 
-                    {/* Reservation indicator */}
-                    {hasReservation && (
-                      <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-gold text-black px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider whitespace-nowrap shadow-lg">
-                        {tableRes[0].time} • {tableRes[0].name.split(' ')[0]}
-                      </span>
-                    )}
+                    {/* Removed floating reservation indicator to embed it inside main badge for perfect alignment */}
 
                     {/* Pulsing alert dot */}
                     {dbTable && dbTable.status !== 'empty' && (
