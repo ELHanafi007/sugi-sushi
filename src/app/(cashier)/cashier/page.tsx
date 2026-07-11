@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, XCircle, Clock, Users, Phone, Mail, Calendar, MessageSquare, Sparkles, Eye, EyeOff, Table2 } from 'lucide-react';
-import { Reservation } from '@/types/reservation';
+import { X, Check, XCircle, Clock, Users, Phone, Mail, Calendar, MessageSquare, Sparkles, Eye, EyeOff, Table2, Plus } from 'lucide-react';
+import { Reservation, OCCASIONS, TIME_SLOTS } from '@/types/reservation';
 import { supabase } from '@/lib/supabase';
 
 /* ─── Reservation Detail Modal ─── */
@@ -326,6 +326,138 @@ function DetailRow({ icon: Icon, label, value, highlight }: { icon: any; label: 
   );
 }
 
+/* ─── Manual Reservation Panel ─── */
+function ManualReservationPanel({ onClose, onSuccess, tables }: {
+  onClose: () => void;
+  onSuccess: () => void;
+  tables: any[];
+}) {
+  const [loading, setLoading] = useState(false);
+  const [autoConfirm, setAutoConfirm] = useState(true);
+
+  const today = new Date().toISOString().split('T')[0];
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    formData.append('auto_confirm', autoConfirm.toString());
+
+    try {
+      const res = await fetch('/api/reservations', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error('Failed to create reservation');
+      
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert('Error creating reservation');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex justify-end"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-md bg-[#0a0a0c] border-l border-white/[0.08] h-full flex flex-col"
+      >
+        <div className="p-6 border-b border-white/[0.05] flex items-center justify-between shrink-0">
+          <div>
+            <h2 className="text-xl font-serif italic text-white">Manual Booking</h2>
+            <p className="text-[10px] text-white/40 font-mono uppercase tracking-widest mt-1">Walk-in / Phone</p>
+          </div>
+          <button type="button" onClick={onClose} className="p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-white/40 transition-colors">
+            <X size={16} />
+          </button>
+        </div>
+
+        <form id="manual-booking-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
+          <div className="space-y-4">
+            <div className="flex gap-4">
+              <div className="flex-1 space-y-1.5">
+                <label className="text-[10px] uppercase tracking-widest font-bold text-white/40">Guest Name *</label>
+                <input required name="name" type="text" className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold/50" placeholder="John Doe" />
+              </div>
+              <div className="flex-1 space-y-1.5">
+                <label className="text-[10px] uppercase tracking-widest font-bold text-white/40">Phone *</label>
+                <input required name="phone" type="tel" className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold/50" placeholder="0500..." />
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-1 space-y-1.5">
+                <label className="text-[10px] uppercase tracking-widest font-bold text-white/40">Date *</label>
+                <input required name="date" type="date" defaultValue={today} min={today} className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold/50 [color-scheme:dark]" />
+              </div>
+              <div className="flex-1 space-y-1.5">
+                <label className="text-[10px] uppercase tracking-widest font-bold text-white/40">Time *</label>
+                <select required name="time" className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold/50 appearance-none">
+                  <option value="">Select</option>
+                  {TIME_SLOTS.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-1 space-y-1.5">
+                <label className="text-[10px] uppercase tracking-widest font-bold text-white/40">Guests *</label>
+                <select required name="guests" defaultValue={2} className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold/50 appearance-none">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(g => <option key={g} value={g}>{g}</option>)}
+                </select>
+              </div>
+              <div className="flex-1 space-y-1.5">
+                <label className="text-[10px] uppercase tracking-widest font-bold text-white/40">Assign Table</label>
+                <select name="table_id" className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold/50 appearance-none">
+                  <option value="">None</option>
+                  {tables.map(t => <option key={t.id} value={t.id}>{t.label} ({t.capacity} seats)</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] uppercase tracking-widest font-bold text-white/40">Notes</label>
+              <textarea name="notes" rows={2} className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold/50 resize-none" placeholder="Allergies, preferences..." />
+            </div>
+
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <button type="button" onClick={() => setAutoConfirm(!autoConfirm)} className={`w-10 h-6 rounded-full transition-colors relative ${autoConfirm ? 'bg-gold' : 'bg-white/10'}`}>
+                <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${autoConfirm ? 'translate-x-4' : ''}`} />
+              </button>
+              <div>
+                <p className="text-sm font-medium text-white/90">Auto-confirm</p>
+                <p className="text-[10px] text-white/40 font-mono uppercase tracking-widest">Mark as confirmed instantly</p>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div className="p-6 border-t border-white/[0.05] bg-black/20 shrink-0">
+          <button type="submit" form="manual-booking-form" disabled={loading} className="w-full flex items-center justify-center gap-2 bg-gold hover:brightness-110 text-black py-4 rounded-xl font-bold uppercase tracking-widest text-xs transition-all active:scale-[0.98]">
+            {loading ? 'Saving...' : 'Create Booking'}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 /* ─── Main Page ─── */
 export default function ReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -333,6 +465,7 @@ export default function ReservationsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'cancelled'>('all');
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
 
   const fetchReservations = async (silent = false) => {
     try {
@@ -443,6 +576,14 @@ export default function ReservationsPage() {
             </div>
           </div>
         </div>
+        
+        <button
+          onClick={() => setIsManualModalOpen(true)}
+          className="flex items-center gap-2 bg-gold/10 hover:bg-gold/20 text-gold border border-gold/20 px-4 py-2.5 rounded-xl transition-colors shrink-0"
+        >
+          <Plus size={16} />
+          <span className="text-xs font-bold uppercase tracking-widest">New Booking</span>
+        </button>
       </div>
 
       {/* New reservations alert */}
@@ -576,8 +717,19 @@ export default function ReservationsPage() {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Modals */}
       <AnimatePresence>
+        {isManualModalOpen && (
+          <ManualReservationPanel
+            onClose={() => setIsManualModalOpen(false)}
+            onSuccess={() => {
+              fetchReservations();
+              fetchTables();
+            }}
+            tables={tables}
+          />
+        )}
+        
         {selectedReservation && (
           <ReservationCard
             reservation={selectedReservation}

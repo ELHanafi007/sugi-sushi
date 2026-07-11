@@ -14,7 +14,9 @@ import {
   Users,
   CircleDot,
   ArrowRight,
+  Calendar,
 } from 'lucide-react';
+import { Reservation } from '@/types/reservation';
 
 type TableStatus = 'empty' | 'seated' | 'ordering' | 'waiting' | 'ready' | 'delivered' | 'billing';
 type TableZone = 'Reception' | 'Main Hall' | 'Window Booths' | 'Sushi Bar' | 'Side Wall';
@@ -145,6 +147,7 @@ function getTableMeta(dbTable: any) {
 /* ─── Legend items ─── */
 const legendItems = [
   { label: 'Available', color: 'bg-white/20' },
+  { label: 'Reserved', color: 'bg-gold' },
   { label: 'Seated', color: 'bg-sky-500' },
   { label: 'Ordered', color: 'bg-amber-500', pulse: true },
   { label: 'Ready', color: 'bg-emerald-500', pulse: true },
@@ -154,15 +157,17 @@ const legendItems = [
 ];
 
 /* ─── Summary stats ─── */
-function useStats(dbTables: any[]) {
+function useStats(dbTables: any[], tableReservations: Record<string, Reservation[]>) {
   const occupied = dbTables.filter(t => t.status !== 'empty').length;
   const alerts = dbTables.filter(t => t.call_waiter || t.status === 'billing').length;
   const total = dbTables.length;
-  return { occupied, alerts, total, available: total - occupied };
+  const reserved = Object.keys(tableReservations).length;
+  return { occupied, alerts, total, available: total - occupied, reserved };
 }
 
 export default function CashierTablesPage() {
   const [dbTables, setDbTables] = useState<any[]>([]);
+  const [tableReservations, setTableReservations] = useState<Record<string, Reservation[]>>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [tableOrders, setTableOrders] = useState<any[]>([]);
@@ -172,7 +177,7 @@ export default function CashierTablesPage() {
   const knownAlertsRef = useRef<Set<string>>(new Set());
   const initialLoadDone = useRef(false);
 
-  const stats = useStats(dbTables);
+  const stats = useStats(dbTables, tableReservations);
 
   /* ─── Audio ─── */
   const playAlert = useCallback(() => {
@@ -264,6 +269,29 @@ export default function CashierTablesPage() {
       } catch (err) {
         console.error('Error fetching active sessions orders:', err);
       }
+
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const { data: resData } = await supabase
+          .from('reservations')
+          .select('*')
+          .eq('status', 'confirmed')
+          .eq('date', today)
+          .not('table_id', 'is', null);
+
+        if (resData) {
+          const mapping: Record<string, Reservation[]> = {};
+          resData.forEach(r => {
+            if (r.table_id) {
+              if (!mapping[r.table_id]) mapping[r.table_id] = [];
+              mapping[r.table_id].push(r as Reservation);
+            }
+          });
+          setTableReservations(mapping);
+        }
+      } catch (err) {
+        console.error('Error fetching reservations:', err);
+      }
     }
   }, [playAlert]);
 
@@ -299,6 +327,7 @@ export default function CashierTablesPage() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'restaurant_tables' }, fetchTables)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, fetchTables)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'sessions' }, fetchTables)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reservations' }, fetchTables)
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchTables]);
@@ -386,6 +415,18 @@ export default function CashierTablesPage() {
           <div className="w-px h-6 bg-white/[0.06]" />
 
           <div className="flex items-center gap-2">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${stats.reserved > 0 ? 'bg-gold/10' : 'bg-white/[0.03]'}`}>
+              <Calendar size={16} className={stats.reserved > 0 ? 'text-gold' : 'text-white/20'} />
+            </div>
+            <div>
+              <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest leading-none">Reserved</p>
+              <p className={`text-sm font-semibold ${stats.reserved > 0 ? 'text-gold' : 'text-white/40'}`}>{stats.reserved}</p>
+            </div>
+          </div>
+
+          <div className="w-px h-6 bg-white/[0.06]" />
+
+          <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
               <CheckCircle2 size={16} className="text-emerald-400" />
             </div>
@@ -435,6 +476,8 @@ export default function CashierTablesPage() {
                 const meta = getTableMeta(dbTable);
                 const isSelected = selectedId === table.id;
                 const isAlert = dbTable?.call_waiter || dbTable?.status === 'billing';
+                const tableRes = tableReservations[table.id] || [];
+                const hasReservation = tableRes.length > 0;
 
                 return (
                   <button
@@ -455,6 +498,11 @@ export default function CashierTablesPage() {
                         className="absolute -inset-1 rounded-xl border-2 border-gold/60 bg-gold/[0.06]"
                         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                       />
+                    )}
+                    
+                    {/* Reserved empty table glow */}
+                    {hasReservation && dbTable?.status === 'empty' && !isSelected && (
+                      <div className="absolute inset-0 rounded-xl border border-gold/40 shadow-[0_0_15px_rgba(212,175,55,0.15)] pointer-events-none" />
                     )}
 
                     {/* Status badge */}
@@ -478,6 +526,13 @@ export default function CashierTablesPage() {
                         </span>
                       )}
                     </span>
+
+                    {/* Reservation indicator */}
+                    {hasReservation && (
+                      <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-gold text-black px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider whitespace-nowrap shadow-lg">
+                        {tableRes[0].time} • {tableRes[0].name.split(' ')[0]}
+                      </span>
+                    )}
 
                     {/* Pulsing alert dot */}
                     {dbTable && dbTable.status !== 'empty' && (
@@ -543,6 +598,38 @@ export default function CashierTablesPage() {
 
               {/* Panel body */}
               <div className="flex-1 p-5 overflow-y-auto space-y-4">
+                {/* Reservations for this table */}
+                {tableReservations[selectedDbTable.id] && tableReservations[selectedDbTable.id].length > 0 && (
+                  <div className="space-y-3">
+                    {tableReservations[selectedDbTable.id].map(res => (
+                      <div key={res.id} className="rounded-xl border border-gold/20 bg-gold/[0.04] p-4 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-3 opacity-10">
+                          <Calendar size={40} />
+                        </div>
+                        <div className="relative z-10 space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <p className="text-gold font-serif italic text-lg">{res.name}</p>
+                              <p className="text-white/40 text-[10px] font-mono uppercase tracking-widest">{res.code}</p>
+                            </div>
+                            <div className="flex gap-2 text-gold/80">
+                              <span className="flex items-center gap-1 text-[11px] font-bold"><Clock size={12}/> {res.time}</span>
+                              <span className="flex items-center gap-1 text-[11px] font-bold"><Users size={12}/> {res.guests}</span>
+                            </div>
+                          </div>
+                          
+                          {(res.occasion || res.notes) && (
+                            <div className="pt-3 border-t border-gold/10 space-y-2">
+                              {res.occasion && <p className="text-[11px] text-gold/60"><span className="font-bold">Occasion:</span> {res.occasion}</p>}
+                              {res.notes && <p className="text-[11px] text-white/50 italic">"{res.notes}"</p>}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* Call waiter action */}
                 {selectedDbTable.call_waiter && (
                   <button
@@ -623,7 +710,7 @@ export default function CashierTablesPage() {
                   {selectedDbTable.status === 'empty' ? (
                     <>
                       <Users size={14} />
-                      Seat Table
+                      {tableReservations[selectedDbTable.id] ? `Seat ${tableReservations[selectedDbTable.id][0].name.split(' ')[0]}` : 'Seat Table'}
                       <ArrowRight size={14} className="ml-1 opacity-50" />
                     </>
                   ) : (

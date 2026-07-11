@@ -23,12 +23,13 @@ export async function POST(request: Request) {
     const cookieStore = await cookies();
     const adminSession = cookieStore.get('admin_session');
     const cashierSession = cookieStore.get('cashier_session');
+    const isAuthorizedRequest = !!(adminSession || cashierSession);
 
     // POST requests can either be public (creating a reservation)
     // or authenticated admin/cashier (like marking as seen, which passes JSON payload)
     const contentType = request.headers.get('content-type') || '';
     if (contentType.includes('application/json')) {
-      if (!adminSession && !cashierSession) {
+      if (!isAuthorizedRequest) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
 
@@ -40,9 +41,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
-    // Public booking creation using form data
+    // Booking creation using form data (from public or manual staff form)
     const formData = await request.formData();
-    const result = await createReservation(formData);
+    const result = await createReservation(formData, { isAuthorized: isAuthorizedRequest });
 
     if (result.success) {
       return NextResponse.json({ success: true, reservation: result.reservation }, { status: 201 });

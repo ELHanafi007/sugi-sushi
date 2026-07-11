@@ -60,7 +60,7 @@ function generateEasyToRememberNumber(): string {
   return randomPattern();
 }
 
-export async function createReservation(formData: FormData) {
+export async function createReservation(formData: FormData, options?: { isAuthorized?: boolean }) {
   const supabase = getSupabaseAdmin();
 
   const name = formData.get('name') as string;
@@ -71,6 +71,12 @@ export async function createReservation(formData: FormData) {
   const guests = parseInt(formData.get('guests') as string) || 2;
   const occasion = formData.get('occasion') as string;
   const notes = formData.get('notes') as string;
+  
+  const isAuthorized = options?.isAuthorized === true;
+  const autoConfirm = isAuthorized && formData.get('auto_confirm') === 'true';
+  const tableId = (isAuthorized && formData.get('table_id')) ? (formData.get('table_id') as string) : null;
+  const initialStatus = autoConfirm ? 'confirmed' : 'pending';
+  const isSeen = autoConfirm; // If auto-confirmed by staff, it's already "seen"
 
   const { data: existingReservations } = await supabase
     .from('reservations')
@@ -106,8 +112,9 @@ export async function createReservation(formData: FormData) {
       guests,
       occasion: occasion || null,
       notes: notes || null,
-      status: 'pending',
-      is_seen: false
+      status: initialStatus,
+      is_seen: isSeen,
+      table_id: tableId
     })
     .select()
     .single();
