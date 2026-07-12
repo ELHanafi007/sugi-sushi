@@ -532,7 +532,7 @@ export default function CashierTablesPage() {
                       )}
                       {activeSessionsOrders[table.id]?.total > 0 && (
                         <span className="text-[7.5px] md:text-[9.5px] font-mono text-gold mt-0.5 whitespace-nowrap opacity-90">
-                          {activeSessionsOrders[table.id].total.toFixed(0)} MAD
+                          {activeSessionsOrders[table.id].total.toFixed(0)} SR
                         </span>
                       )}
                     </span>
@@ -668,7 +668,7 @@ export default function CashierTablesPage() {
                                   {item.quantity}x {item.name} {item.portion ? `(${item.portion.name})` : ''}
                                 </span>
                                 <span className="text-gold/90 font-mono text-[11px] tabular-nums whitespace-nowrap">
-                                  {(parseFloat(item.price.toString().replace(/[^0-9.]/g, '')) * item.quantity).toFixed(2)} MAD
+                                  {(parseFloat(item.price.toString().replace(/[^0-9.]/g, '')) * item.quantity).toFixed(2)} SR
                                 </span>
                               </div>
                             ))}
@@ -676,7 +676,7 @@ export default function CashierTablesPage() {
                           
                           <div className="flex justify-between text-[11px] font-semibold pt-1.5 border-t border-white/[0.02] mt-2">
                             <span className="text-white/40">Subtotal</span>
-                            <span className="text-gold font-mono tabular-nums">{Number(order.total_price).toFixed(2)} MAD</span>
+                            <span className="text-gold font-mono tabular-nums">{Number(order.total_price).toFixed(2)} SR</span>
                           </div>
                         </div>
                       ))}
@@ -684,7 +684,7 @@ export default function CashierTablesPage() {
                     <div className="px-4 py-3 border-t border-white/[0.06] bg-white/[0.02] flex items-center justify-between">
                       <span className="text-xs text-white/70 font-semibold">Total Bill</span>
                       <span className="text-base text-gold font-bold font-mono tabular-nums">
-                        {tableOrders.reduce((sum, o) => sum + (Number(o.total_price) || 0), 0).toFixed(2)} MAD
+                        {tableOrders.reduce((sum, o) => sum + (Number(o.total_price) || 0), 0).toFixed(2)} SR
                       </span>
                     </div>
                   </div>
