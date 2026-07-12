@@ -390,27 +390,67 @@ export default function HomeClient({
             <section className="relative overflow-hidden bg-graphite py-20 md:py-32 border-y border-white/[0.04]">
               <div className="container-luxury">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-                  {/* Image */}
+                  {/* Vertical Carousel Images */}
                   <motion.div
                     variants={scaleReveal}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
-                    className="relative aspect-[4/5] lg:aspect-[3/4] rounded-2xl overflow-hidden"
+                    className="relative h-[500px] lg:h-[600px] rounded-2xl overflow-hidden bg-void flex gap-4 p-4"
                     style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}
                   >
-                    <Image
-                      src="/media/landing/dining-room.jpg"
-                      alt="Sugi Sushi Chef"
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-void/60 via-transparent to-void/20" />
+                    {/* Gradient Masks */}
+                    <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-void to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-void to-transparent z-10 pointer-events-none" />
+
+                    {/* Column 1 - Scrolling Down */}
+                    <div className="flex-1 overflow-hidden relative rounded-xl">
+                      <motion.div
+                        animate={{ y: ['-50%', '0%'] }}
+                        transition={{ repeat: Infinity, ease: 'linear', duration: 30 }}
+                        className="flex flex-col gap-4 absolute top-0 inset-x-0"
+                      >
+                        {[
+                          '/images/carousel/IMG_4154.JPG',
+                          '/images/carousel/IMG_4158.JPG',
+                          '/images/carousel/IMG_4159.JPG',
+                          '/images/carousel/IMG_4154.JPG',
+                          '/images/carousel/IMG_4158.JPG',
+                          '/images/carousel/IMG_4159.JPG'
+                        ].map((src, idx) => (
+                          <div key={idx} className="relative w-full pb-[133%] rounded-xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                            <Image src={src} alt="Kitchen Image" fill className="object-cover" />
+                          </div>
+                        ))}
+                      </motion.div>
+                    </div>
+
+                    {/* Column 2 - Scrolling Up */}
+                    <div className="flex-1 overflow-hidden relative rounded-xl">
+                      <motion.div
+                        animate={{ y: ['0%', '-50%'] }}
+                        transition={{ repeat: Infinity, ease: 'linear', duration: 25 }}
+                        className="flex flex-col gap-4 absolute top-0 inset-x-0"
+                      >
+                        {[
+                          '/images/carousel/IMG_4160.JPG',
+                          '/images/carousel/r.PNG',
+                          '/images/carousel/IMG_4154.JPG',
+                          '/images/carousel/IMG_4160.JPG',
+                          '/images/carousel/r.PNG',
+                          '/images/carousel/IMG_4154.JPG'
+                        ].map((src, idx) => (
+                          <div key={idx} className="relative w-full pb-[125%] rounded-xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                            <Image src={src} alt="Kitchen Image" fill className="object-cover" />
+                          </div>
+                        ))}
+                      </motion.div>
+                    </div>
+                    
                     {/* Floating badge */}
-                    <div className="absolute bottom-6 left-6 right-6 flex items-center gap-4">
+                    <div className="absolute bottom-6 left-6 right-6 flex items-center gap-4 z-20">
                       <div className="h-[1px] flex-1 bg-gradient-to-r from-gold/30 to-transparent" />
-                      <span className="text-gold/60 text-[8px] font-mono uppercase tracking-[0.5em]">Est. 2024</span>
+                      <span className="text-gold/60 text-[8px] font-mono uppercase tracking-[0.5em] bg-void/50 px-2 py-1 rounded backdrop-blur-md">Est. 2024</span>
                       <div className="h-[1px] flex-1 bg-gradient-to-l from-gold/30 to-transparent" />
                     </div>
                   </motion.div>
@@ -528,16 +568,17 @@ export default function HomeClient({
                  SECTION 5: FINAL CTA — Cinematic Call
             ═══════════════════════════════════════════════════ */}
             <section className="relative overflow-hidden py-24 md:py-36">
-              {/* Background image */}
+              {/* Background Video */}
               <div className="absolute inset-0">
-                <Image
-                  src="/media/landing/sushi-counter.jpg"
-                  alt="Sugi Sushi"
-                  fill
-                  sizes="100vw"
-                  className="object-cover brightness-[0.2] saturate-[0.6]"
+                <video
+                  src="/media/real/cta-bg.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover brightness-[0.3] saturate-[0.7]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-void/40" />
+                <div className="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-void/40 z-10" />
               </div>
 
               <motion.div

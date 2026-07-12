@@ -188,6 +188,7 @@ function DishModal({
               alt={name}
               fill
               priority
+              unoptimized={true}
               sizes="(max-width: 768px) 100vw, 80vw"
               className="object-cover"
             />
@@ -289,7 +290,7 @@ function DishModal({
                  {menuDataToUse.filter(d => d.category === dish.category && d.id !== dish.id).slice(0, 4).map((item) => (
                    <div key={item.id} onClick={() => onDishSelect(item)} className="flex items-center gap-5 p-4 rounded-3xl luxury-card cursor-pointer group">
                      <div className="relative w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-white/[0.04]">
-                       <Image src={item.image || DEFAULT_IMAGE} alt={lang === 'ar' ? item.nameAr || item.name : item.name} fill sizes="64px" className="object-cover group-hover:scale-110 transition-transform duration-1000" />
+                       <Image unoptimized={true} src={item.image || DEFAULT_IMAGE} alt={lang === 'ar' ? item.nameAr || item.name : item.name} fill sizes="64px" className="object-cover group-hover:scale-110 transition-transform duration-1000" />
                      </div>
                      <div className="flex-1 min-w-0">
                        <h5 className="text-white/80 font-serif text-base group-hover:text-gold transition-colors">{lang === 'ar' ? item.nameAr || item.name : item.name}</h5>
@@ -389,8 +390,9 @@ export default function StrictMenu({
                   src={img || CAT_IMAGES[catLower] || DEFAULT_IMAGE}
                   alt={cat}
                   fill
+                  unoptimized={true}
                   sizes="(max-width: 768px) 96px, 160px"
-                  priority={idx < 6}
+                  priority={idx < 15}
                   className={`object-cover transition-all duration-700 ${isActive ? 'scale-110 brightness-110' : 'brightness-[0.35] group-hover:brightness-75 group-hover:scale-105'}`}
                 />
                 
@@ -422,8 +424,9 @@ export default function StrictMenu({
                 src={dish.image || DEFAULT_IMAGE}
                 alt={lang === 'ar' ? dish.nameAr || dish.name : dish.name}
                 fill
+                unoptimized={true}
                 sizes="(max-width: 768px) 50vw, 33vw"
-                priority={idx < 4}
+                priority={idx < 12}
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
             </div>

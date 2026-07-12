@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useLanguage, NavTab } from '@/context/LanguageContext';
 
@@ -35,13 +34,13 @@ export default function Hero({ onTabChange }: HeroProps) {
       style={{ backgroundColor: '#030304' }}
     >
       <motion.div style={{ y: bgY }} className="absolute inset-0 z-0">
-        <Image
-          src="/media/optimized/hero-wallpaper-alt-0.jpg"
-          alt="Sugi Sushi"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover brightness-[0.3] saturate-[0.7] contrast-[1.15]"
+        <video
+          src="/media/real/hero-bg.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover brightness-[0.4] saturate-[0.8] contrast-[1.1]"
         />
       </motion.div>
 
