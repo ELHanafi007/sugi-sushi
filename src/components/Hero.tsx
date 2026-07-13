@@ -40,17 +40,9 @@ export default function Hero({ onTabChange }: HeroProps) {
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover brightness-[0.4] saturate-[0.8] contrast-[1.1]"
+          className="absolute inset-0 w-full h-full object-cover"
         />
       </motion.div>
-
-      <div className="absolute inset-0 z-[1]">
-        <div className="absolute inset-0 bg-gradient-to-b from-void/80 via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-void/50 via-transparent to-void/50" />
-      </div>
-
-      <div className="absolute inset-0 z-[2] pointer-events-none bg-[radial-gradient(ellipse_at_50%_40%,rgba(212,175,55,0.05),transparent_60%)]" />
 
       <motion.div
         style={{ y: kanjiY, opacity: kanjiOpacity }}
