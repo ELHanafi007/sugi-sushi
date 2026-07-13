@@ -44,6 +44,8 @@ export default function Hero({ onTabChange }: HeroProps) {
         />
       </motion.div>
 
+      <div className="absolute inset-0 z-[1] bg-black/25 pointer-events-none" />
+
       <motion.div
         style={{ y: kanjiY, opacity: kanjiOpacity }}
         className="absolute inset-0 z-[3] flex items-center justify-center pointer-events-none select-none"
@@ -89,12 +91,12 @@ export default function Hero({ onTabChange }: HeroProps) {
 
           <button
             onClick={() => onTabChange('menu')}
-            className="group relative w-full sm:w-auto flex items-center justify-center px-10 md:px-14 py-4 md:py-5 rounded-full border border-white/15 bg-white/[0.06] transition-all duration-300 hover:bg-white/[0.1] hover:border-gold/30 active:scale-95"
+            className="group relative w-full sm:w-auto flex items-center justify-center px-10 md:px-14 py-4 md:py-5 rounded-full border border-white/10 bg-void transition-all duration-300 hover:bg-void/90 hover:border-gold/30 active:scale-95"
             style={{
-              boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
             }}
           >
-            <span className="relative z-10 text-white/90 text-[10px] md:text-[11px] uppercase tracking-[0.35em] font-black whitespace-nowrap group-hover:text-gold-bright transition-colors duration-300">
+            <span className="relative z-10 text-white text-[10px] md:text-[11px] uppercase tracking-[0.35em] font-black whitespace-nowrap group-hover:text-gold-bright transition-colors duration-300">
               {t('hero.menu')}
             </span>
           </button>
