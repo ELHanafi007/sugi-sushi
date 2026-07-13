@@ -44,7 +44,7 @@ export default function Hero({ onTabChange }: HeroProps) {
         />
       </motion.div>
 
-      <div className="absolute inset-0 z-[1] bg-black/25 pointer-events-none" />
+      <div className="absolute inset-0 z-[1] bg-black/40 pointer-events-none" />
 
       <motion.div
         style={{ y: kanjiY, opacity: kanjiOpacity }}
