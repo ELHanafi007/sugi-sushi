@@ -12,6 +12,7 @@ import { Images } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage, NavTab } from '@/context/LanguageContext';
+import LanguageToggle from '@/components/LanguageToggle';
 
 const EASE = [0.19, 1, 0.22, 1] as const;
 
@@ -21,7 +22,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
-  const { lang, setLang, t } = useLanguage();
+  const { lang, t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navSolid, setNavSolid] = useState(false);
   const router = useRouter();
@@ -188,12 +189,7 @@ export default function Navbar({ onTabChange, activeTab }: NavbarProps) {
               {t('nav.reservations')}
             </Link>
 
-            <button
-              onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
-              className="w-9 h-9 md:w-10 md:h-10 rounded-full border border-white/10 bg-white/[0.03] text-[10px] font-bold text-white/50 hover:text-gold hover:border-gold/20 transition-all duration-300"
-            >
-              {lang === 'en' ? 'AR' : 'EN'}
-            </button>
+            <LanguageToggle />
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
