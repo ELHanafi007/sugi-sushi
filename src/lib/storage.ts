@@ -1,9 +1,22 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+let _supabaseStorage: SupabaseClient | null = null;
 
-export const supabaseStorage = createClient(supabaseUrl, supabaseAnonKey);
+function getSupabaseStorage() {
+  if (!_supabaseStorage) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) throw new Error('Supabase env vars are required');
+    _supabaseStorage = createClient(url, key);
+  }
+  return _supabaseStorage;
+}
+
+export const supabaseStorage = new Proxy({} as SupabaseClient, {
+  get(_, prop) {
+    return (getSupabaseStorage() as any)[prop];
+  }
+});
 
 export async function uploadProductImage(file: File, productId: string): Promise<string | null> {
   const fileExt = file.name.split('.').pop();
