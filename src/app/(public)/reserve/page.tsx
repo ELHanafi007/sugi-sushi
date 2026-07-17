@@ -74,9 +74,8 @@ export default function ReservePage() {
     );
   }
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().split('T')[0];
+  const today = new Date();
+  const minDate = today.toISOString().split('T')[0];
 
   return (
     <div className="min-h-screen bg-[#060608] py-8 md:py-12 px-6">
