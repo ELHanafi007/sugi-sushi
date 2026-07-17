@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, Users, Phone, Mail, MessageSquare, Sparkles, ChevronLeft, MapPin } from 'lucide-react';
+import { Calendar, Clock, Users, Phone, Mail, MessageSquare, Sparkles, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { OCCASIONS, TIME_SLOTS } from '@/types/reservation';
 import { useLanguage } from '@/context/LanguageContext';
@@ -65,23 +65,12 @@ export default function ReservePage() {
             Please save this code. We will contact you shortly to confirm your reservation.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a
-              href="https://maps.app.goo.gl/yPVuU91kChmBAxip6?g_st=iw"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-6 text-gold text-xs font-bold uppercase tracking-wider hover:bg-gold hover:text-black transition-all duration-300 active:scale-95 cursor-pointer"
-            >
-              <MapPin size={14} />
-              {lang === 'ar' ? 'عرض الموقع على الخريطة' : 'Show Location'}
-            </a>
-            <Link
-              href="/"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gold text-black px-6 text-xs font-bold uppercase tracking-wider hover:scale-105 active:scale-95 transition-transform"
-            >
-              {lang === 'ar' ? 'الرئيسية' : 'Back to Home'}
-            </Link>
-          </div>
+          <Link
+            href="/"
+            className="inline-block bg-gold text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider text-xs hover:scale-105 active:scale-95 transition-transform"
+          >
+            Back to Home
+          </Link>
         </motion.div>
       </div>
     );
@@ -117,64 +106,95 @@ export default function ReservePage() {
           </p>
         </motion.div>
 
-        {/* Contact, Location & Hours Info Block */}
+        {/* Contact, Location & Hours Info Cards */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 p-5 rounded-3xl bg-white/[0.02] border border-white/5 text-center sm:text-left"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 text-center sm:text-left"
         >
-          {/* Location / Google Maps Link */}
+          {/* Location / Google Maps Link Card */}
           <a
             href="https://maps.app.goo.gl/yPVuU91kChmBAxip6?g_st=iw"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col sm:flex-row items-center gap-3 p-3 rounded-2xl hover:bg-white/[0.02] transition-colors group cursor-pointer"
+            className="flex flex-col items-center sm:items-start justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-gold/30 hover:bg-white/[0.04] transition-all duration-500 group cursor-pointer relative overflow-hidden"
           >
-            <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
-              <MapPin size={18} />
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform duration-500 shrink-0">
+                <MapPin size={18} />
+              </div>
+              <div className="text-center sm:text-left">
+                <p className="text-[9px] text-white/30 uppercase tracking-widest font-black mb-0.5">
+                  {lang === 'ar' ? 'الموقع' : 'Location'}
+                </p>
+                <p className="text-white/80 text-xs font-serif italic">
+                  {lang === 'ar' ? 'الرياض، السعودية' : 'Riyadh, Saudi Arabia'}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] text-white/30 uppercase tracking-widest font-black mb-0.5">
-                {lang === 'ar' ? 'الموقع' : 'Location'}
-              </p>
-              <p className="text-white/80 text-xs font-serif italic group-hover:text-gold transition-colors">
-                {lang === 'ar' ? 'الرياض، السعودية' : 'Riyadh, Saudi Arabia'}
-              </p>
+            
+            <div className="mt-5 flex items-center gap-1 text-[10px] text-gold uppercase tracking-widest font-bold group-hover:translate-x-1 transition-all duration-500">
+              <span>{lang === 'ar' ? 'افتح الخريطة' : 'View Map'}</span>
+              <ChevronRight size={10} className={lang === 'ar' ? 'rotate-180' : ''} />
             </div>
+
+            {/* Subtle background glow on hover */}
+            <div className="absolute -right-10 -bottom-10 w-24 h-24 bg-gold/5 rounded-full blur-xl group-hover:bg-gold/10 transition-all duration-500" />
           </a>
 
-          {/* Direct Calling Link */}
+          {/* Direct Calling Link Card */}
           <a
             href="tel:+966501335273"
-            className="flex flex-col sm:flex-row items-center gap-3 p-3 rounded-2xl hover:bg-white/[0.02] transition-colors group cursor-pointer"
+            className="flex flex-col items-center sm:items-start justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-gold/30 hover:bg-white/[0.04] transition-all duration-500 group cursor-pointer relative overflow-hidden"
           >
-            <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
-              <Phone size={18} />
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform duration-500 shrink-0">
+                <Phone size={18} />
+              </div>
+              <div className="text-center sm:text-left">
+                <p className="text-[9px] text-white/30 uppercase tracking-widest font-black mb-0.5">
+                  {lang === 'ar' ? 'اتصل بنا' : 'Call Us'}
+                </p>
+                <p className="text-white/80 text-xs font-mono">
+                  +966 50 133 5273
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] text-white/30 uppercase tracking-widest font-black mb-0.5">
-                {lang === 'ar' ? 'اتصل بنا' : 'Call Us'}
-              </p>
-              <p className="text-white/80 text-xs font-mono group-hover:text-gold transition-colors">
-                +966 50 133 5273
-              </p>
+            
+            <div className="mt-5 flex items-center gap-1 text-[10px] text-gold uppercase tracking-widest font-bold group-hover:translate-x-1 transition-all duration-500">
+              <span>{lang === 'ar' ? 'اتصل الآن' : 'Call Now'}</span>
+              <ChevronRight size={10} className={lang === 'ar' ? 'rotate-180' : ''} />
             </div>
+
+            {/* Subtle background glow on hover */}
+            <div className="absolute -right-10 -bottom-10 w-24 h-24 bg-gold/5 rounded-full blur-xl group-hover:bg-gold/10 transition-all duration-500" />
           </a>
 
-          {/* Opening Hours Display */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 p-3">
-            <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold">
-              <Clock size={18} />
+          {/* Opening Hours Display Card */}
+          <div
+            className="flex flex-col items-center sm:items-start justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 relative overflow-hidden"
+          >
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold shrink-0">
+                <Clock size={18} />
+              </div>
+              <div className="text-center sm:text-left">
+                <p className="text-[9px] text-white/30 uppercase tracking-widest font-black mb-0.5">
+                  {lang === 'ar' ? 'أوقات العمل' : 'Opening Hours'}
+                </p>
+                <p className="text-white/80 text-xs font-mono">
+                  {lang === 'ar' ? '١٢:٣٠ م - ١:٣٠ ص' : '12:30 PM - 1:30 AM'}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] text-white/30 uppercase tracking-widest font-black mb-0.5">
-                {lang === 'ar' ? 'أوقات العمل' : 'Opening Hours'}
-              </p>
-              <p className="text-white/80 text-xs font-mono">
-                {lang === 'ar' ? '١٢:٣٠ م - ١:٣٠ ص' : '12:30 PM - 1:30 AM'}
-              </p>
+            
+            <div className="mt-5 text-[9px] text-white/30 uppercase tracking-widest font-black">
+              {lang === 'ar' ? 'كل الأيام' : 'Daily'}
             </div>
+
+            {/* Subtle background glow */}
+            <div className="absolute -right-10 -bottom-10 w-24 h-24 bg-white/[0.01] rounded-full blur-xl" />
           </div>
         </motion.div>
 
