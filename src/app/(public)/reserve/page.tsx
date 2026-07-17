@@ -65,12 +65,23 @@ export default function ReservePage() {
             Please save this code. We will contact you shortly to confirm your reservation.
           </p>
 
-          <Link
-            href="/"
-            className="inline-block bg-gold text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider text-xs hover:scale-105 active:scale-95 transition-transform"
-          >
-            Back to Home
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a
+              href="https://maps.app.goo.gl/yPVuU91kChmBAxip6?g_st=iw"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-6 text-gold text-xs font-bold uppercase tracking-wider hover:bg-gold hover:text-black transition-all duration-300 active:scale-95 cursor-pointer"
+            >
+              <MapPin size={14} />
+              {lang === 'ar' ? 'عرض الموقع على الخريطة' : 'Show Location'}
+            </a>
+            <Link
+              href="/"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gold text-black px-6 text-xs font-bold uppercase tracking-wider hover:scale-105 active:scale-95 transition-transform"
+            >
+              {lang === 'ar' ? 'الرئيسية' : 'Back to Home'}
+            </Link>
+          </div>
         </motion.div>
       </div>
     );
