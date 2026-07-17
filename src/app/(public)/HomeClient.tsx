@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Calendar, ChevronRight, Sparkles, UtensilsCrossed, Star, MousePointerClick, CheckCircle, Utensils } from 'lucide-react';
+import { ArrowRight, Calendar, ChevronRight, Sparkles, UtensilsCrossed, Star, MousePointerClick, CheckCircle, Utensils, MapPin } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
@@ -610,6 +610,15 @@ export default function HomeClient({
                       {t('landing.reserve')}
                       <Calendar size={14} />
                     </Link>
+                    <a
+                      href="https://maps.app.goo.gl/yPVuU91kChmBAxip6?g_st=iw"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-14 items-center justify-center gap-3 rounded-full border border-white/15 bg-white/[0.03] backdrop-blur-lg px-10 text-white/80 text-[11px] font-black uppercase tracking-[0.2em] hover:border-gold/25 hover:text-gold transition-all duration-700 active:scale-95 cursor-pointer"
+                    >
+                      {lang === 'ar' ? 'افتح الخريطة' : 'Get Directions'}
+                      <MapPin size={14} />
+                    </a>
                   </div>
                 </div>
               </motion.div>

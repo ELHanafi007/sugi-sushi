@@ -308,13 +308,18 @@ export default function ReservationPage() {
                 </h4>
                 
                 <div className="space-y-6">
-                  <div className="flex gap-4">
-                    <MapPin size={18} className="text-gold/40 shrink-0" />
+                  <a
+                    href="https://maps.app.goo.gl/yPVuU91kChmBAxip6?g_st=iw"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex gap-4 group cursor-pointer hover:text-gold transition-colors"
+                  >
+                    <MapPin size={18} className="text-gold/40 shrink-0 group-hover:text-gold transition-colors" />
                     <div>
-                      <p className="text-[10px] uppercase text-white/20 mb-1 tracking-widest">{t('res.address')}</p>
-                      <p className="text-white/80 text-sm font-serif italic">{t('loc.address')}, {t('loc.city')}</p>
+                      <p className="text-[10px] uppercase text-white/20 mb-1 tracking-widest group-hover:text-gold/80 transition-colors">{t('res.address')}</p>
+                      <p className="text-white/80 text-sm font-serif italic group-hover:text-gold/95 transition-colors">{t('loc.address')}, {t('loc.city')}</p>
                     </div>
-                  </div>
+                  </a>
 
                   <div className="flex gap-4">
                     <Clock size={18} className="text-gold/40 shrink-0" />
@@ -324,13 +329,16 @@ export default function ReservationPage() {
                     </div>
                   </div>
 
-                  <div className="flex gap-4">
-                    <PhoneCall size={18} className="text-gold/40 shrink-0" />
+                  <a
+                    href="tel:+966501335273"
+                    className="flex gap-4 group cursor-pointer hover:text-gold transition-colors"
+                  >
+                    <PhoneCall size={18} className="text-gold/40 shrink-0 group-hover:text-gold transition-colors" />
                     <div>
-                      <p className="text-[10px] uppercase text-white/20 mb-1 tracking-widest">{t('res.contact')}</p>
-                      <p className="text-white/80 text-sm font-mono">+966 50 000 0000</p>
+                      <p className="text-[10px] uppercase text-white/20 mb-1 tracking-widest group-hover:text-gold/80 transition-colors">{t('res.contact')}</p>
+                      <p className="text-white/80 text-sm font-mono group-hover:text-gold/95 transition-colors">+966 50 133 5273</p>
                     </div>
-                  </div>
+                  </a>
                 </div>
               </div>
 

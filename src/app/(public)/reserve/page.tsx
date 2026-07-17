@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, Users, Phone, Mail, MessageSquare, Sparkles, ChevronLeft } from 'lucide-react';
+import { Calendar, Clock, Users, Phone, Mail, MessageSquare, Sparkles, ChevronLeft, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { OCCASIONS, TIME_SLOTS } from '@/types/reservation';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function ReservePage() {
+  const { lang } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [reservationCode, setReservationCode] = useState('');
@@ -94,10 +96,75 @@ export default function ReservePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-10"
         >
-          <h1 className="text-gold font-serif text-5xl md:text-6xl italic tracking-tighter mb-4 shimmer-gold">Reserve</h1>
-          <p className="text-white/40 text-xs uppercase tracking-[0.4em]">Book Your Masterpiece</p>
+          <h1 className="text-gold font-serif text-5xl md:text-6xl italic tracking-tighter mb-4 shimmer-gold">
+            {lang === 'ar' ? 'حجز' : 'Reserve'}
+          </h1>
+          <p className="text-white/40 text-xs uppercase tracking-[0.4em]">
+            {lang === 'ar' ? 'احجز تحفتك الفنية' : 'Book Your Masterpiece'}
+          </p>
+        </motion.div>
+
+        {/* Contact, Location & Hours Info Block */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 p-5 rounded-3xl bg-white/[0.02] border border-white/5 text-center sm:text-left"
+        >
+          {/* Location / Google Maps Link */}
+          <a
+            href="https://maps.app.goo.gl/yPVuU91kChmBAxip6?g_st=iw"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col sm:flex-row items-center gap-3 p-3 rounded-2xl hover:bg-white/[0.02] transition-colors group cursor-pointer"
+          >
+            <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
+              <MapPin size={18} />
+            </div>
+            <div>
+              <p className="text-[10px] text-white/30 uppercase tracking-widest font-black mb-0.5">
+                {lang === 'ar' ? 'الموقع' : 'Location'}
+              </p>
+              <p className="text-white/80 text-xs font-serif italic group-hover:text-gold transition-colors">
+                {lang === 'ar' ? 'الرياض، السعودية' : 'Riyadh, Saudi Arabia'}
+              </p>
+            </div>
+          </a>
+
+          {/* Direct Calling Link */}
+          <a
+            href="tel:+966501335273"
+            className="flex flex-col sm:flex-row items-center gap-3 p-3 rounded-2xl hover:bg-white/[0.02] transition-colors group cursor-pointer"
+          >
+            <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
+              <Phone size={18} />
+            </div>
+            <div>
+              <p className="text-[10px] text-white/30 uppercase tracking-widest font-black mb-0.5">
+                {lang === 'ar' ? 'اتصل بنا' : 'Call Us'}
+              </p>
+              <p className="text-white/80 text-xs font-mono group-hover:text-gold transition-colors">
+                +966 50 133 5273
+              </p>
+            </div>
+          </a>
+
+          {/* Opening Hours Display */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 p-3">
+            <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold">
+              <Clock size={18} />
+            </div>
+            <div>
+              <p className="text-[10px] text-white/30 uppercase tracking-widest font-black mb-0.5">
+                {lang === 'ar' ? 'أوقات العمل' : 'Opening Hours'}
+              </p>
+              <p className="text-white/80 text-xs font-mono">
+                {lang === 'ar' ? '١٢:٣٠ م - ١:٣٠ ص' : '12:30 PM - 1:30 AM'}
+              </p>
+            </div>
+          </div>
         </motion.div>
 
         <motion.form

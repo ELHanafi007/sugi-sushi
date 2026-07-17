@@ -54,14 +54,19 @@ export default function Footer() {
               {lang === 'ar' ? 'زورنا' : 'Visit'}
             </h4>
             <div className="flex flex-col gap-5">
-              <div className="flex items-start gap-3">
-                <MapPin size={16} strokeWidth={1} className="text-gold/40 mt-0.5 shrink-0" />
+              <a
+                href="https://maps.app.goo.gl/yPVuU91kChmBAxip6?g_st=iw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-3 group hover:text-gold transition-colors duration-300"
+              >
+                <MapPin size={16} strokeWidth={1} className="text-gold/40 mt-0.5 shrink-0 group-hover:text-gold transition-colors" />
                 <div>
-                  <p className="text-white/50 text-sm" style={{ fontFamily: 'var(--font-serif)' }}>
+                  <p className="text-white/50 text-sm group-hover:text-gold transition-colors" style={{ fontFamily: 'var(--font-serif)' }}>
                     {t('loc.city')}
                   </p>
                 </div>
-              </div>
+              </a>
               <div className="flex items-start gap-3">
                 <Clock size={16} strokeWidth={1} className="text-gold/40 mt-0.5 shrink-0" />
                 <div>
