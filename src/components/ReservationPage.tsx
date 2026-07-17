@@ -203,6 +203,7 @@ export default function ReservationPage() {
                         <input
                           type="date"
                           value={formData.date}
+                          min={new Date().toISOString().split('T')[0]}
                           onChange={e => updateFormData('date', e.target.value)}
                           className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-gold/50 outline-none transition-all [color-scheme:dark]"
                         />
@@ -213,7 +214,7 @@ export default function ReservationPage() {
                           <Clock size={12} /> {t('res.time')}
                         </label>
                         <div className="grid grid-cols-3 gap-3">
-                          {['19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00'].map(slot => (
+                          {['12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30', '00:00', '00:30', '01:00'].map(slot => (
                             <button
                               key={slot}
                               onClick={() => updateFormData('time', slot)}

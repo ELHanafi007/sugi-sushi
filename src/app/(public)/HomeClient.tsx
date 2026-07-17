@@ -317,7 +317,7 @@ export default function HomeClient({
                         <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-gold/20 bg-void/60 backdrop-blur-sm px-3 py-1.5">
                           <Star size={10} className="text-gold fill-gold" />
                           <span className="text-gold text-[8px] font-mono font-bold uppercase tracking-[0.3em]">
-                            {lang === 'ar' ? 'اختيار الشيف' : "Chef's Pick"}
+                            {t('landing.chefs_pick')}
                           </span>
                         </div>
 

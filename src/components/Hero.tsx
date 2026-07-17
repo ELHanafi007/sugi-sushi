@@ -116,7 +116,7 @@ export default function Hero({ onTabChange }: HeroProps) {
           className="w-[1px] h-10 bg-gradient-to-b from-gold/40 to-transparent"
         />
         <span className="text-white/20 text-[8px] font-mono uppercase tracking-[0.5em]">
-          {lang === 'ar' ? 'انزل' : 'Scroll'}
+          {t('hero.scroll')}
         </span>
       </motion.div>
 
