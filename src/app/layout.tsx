@@ -3,6 +3,7 @@ import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import BottomNavWrapper from "@/components/BottomNavWrapper";
 import CinematicReveal from "@/components/CinematicReveal";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "SUGI — Kinetic Dining",
@@ -47,6 +48,7 @@ export default function RootLayout({
 
         {/* Film Grain — low z, pointer-events none */}
         <div className="noise-overlay" aria-hidden="true" />
+        <Analytics />
       </body>
     </html>
   );
