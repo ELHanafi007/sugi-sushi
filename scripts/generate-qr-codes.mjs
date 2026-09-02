@@ -22,26 +22,29 @@ const BASE_URL = 'https://www.sugisushi.com.sa';
 
 const OUTPUT_DIR = join(process.env.HOME, 'Desktop', '66');
 
-// All 18 restaurant tables from the system + 1 extra (table 19 as t19)
+// All 21 restaurant tables and bar seats (14 Tables + 7 Bar Seats)
 const TABLES = [
-  { id: 'l01', label: 'L01', zone: 'Side Wall',     seats: 2 },
-  { id: 'l02', label: 'L02', zone: 'Side Wall',     seats: 2 },
-  { id: 'l03', label: 'L03', zone: 'Side Wall',     seats: 2 },
-  { id: 'l04', label: 'L04', zone: 'Side Wall',     seats: 2 },
-  { id: 'l05', label: 'L05', zone: 'Side Wall',     seats: 2 },
-  { id: 'l06', label: 'L06', zone: 'Side Wall',     seats: 2 },
-  { id: 'l07', label: 'L07', zone: 'Side Wall',     seats: 2 },
-  { id: 'm01', label: 'M01', zone: 'Main Hall',     seats: 4 },
-  { id: 'm02', label: 'M02', zone: 'Main Hall',     seats: 4 },
-  { id: 'm03', label: 'M03', zone: 'Main Hall',     seats: 4 },
-  { id: 'm04', label: 'M04', zone: 'Main Hall',     seats: 4 },
-  { id: 'm05', label: 'M05', zone: 'Main Hall',     seats: 4 },
-  { id: 'w01', label: 'W01', zone: 'Window Booths', seats: 6 },
-  { id: 'w02', label: 'W02', zone: 'Window Booths', seats: 6 },
-  { id: 'w03', label: 'W03', zone: 'Window Booths', seats: 6 },
-  { id: 'b01', label: 'B01', zone: 'Sushi Bar',     seats: 6 },
-  { id: 'b02', label: 'B02', zone: 'Sushi Bar',     seats: 6 },
-  { id: 'r01', label: 'R01', zone: 'Reception',     seats: 2 },
+  { id: 't01', label: 'Table 1', zone: 'Side Wall',     seats: 2 },
+  { id: 't02', label: 'Table 2', zone: 'Side Wall',     seats: 2 },
+  { id: 't03', label: 'Table 3', zone: 'Side Wall',     seats: 2 },
+  { id: 't04', label: 'Table 4', zone: 'Side Wall',     seats: 2 },
+  { id: 't05', label: 'Table 5', zone: 'Side Wall',     seats: 2 },
+  { id: 't06', label: 'Table 6', zone: 'Side Wall',     seats: 2 },
+  { id: 't07', label: 'Table 7', zone: 'Side Wall',     seats: 2 },
+  { id: 't08', label: 'Table 8', zone: 'Reception',     seats: 2 },
+  { id: 't09', label: 'Table 9', zone: 'Main Hall',     seats: 4 },
+  { id: 't10', label: 'Table 10', zone: 'Main Hall',    seats: 4 },
+  { id: 't11', label: 'Table 11', zone: 'Main Hall',    seats: 4 },
+  { id: 't12', label: 'Table 12', zone: 'Window Booths', seats: 6 },
+  { id: 't13', label: 'Table 13', zone: 'Window Booths', seats: 6 },
+  { id: 't14', label: 'Table 14', zone: 'Window Booths', seats: 6 },
+  { id: 'b01', label: 'Bar 1', zone: 'Sushi Bar',       seats: 1 },
+  { id: 'b02', label: 'Bar 2', zone: 'Sushi Bar',       seats: 1 },
+  { id: 'b03', label: 'Bar 3', zone: 'Sushi Bar',       seats: 1 },
+  { id: 'b04', label: 'Bar 4', zone: 'Sushi Bar',       seats: 1 },
+  { id: 'b05', label: 'Bar 5', zone: 'Sushi Bar',       seats: 1 },
+  { id: 'b06', label: 'Bar 6', zone: 'Sushi Bar',       seats: 1 },
+  { id: 'b07', label: 'Bar 7', zone: 'Sushi Bar',       seats: 1 },
 ];
 
 // ─── QR Code Generation (pure SVG → PNG via sharp) ──────────

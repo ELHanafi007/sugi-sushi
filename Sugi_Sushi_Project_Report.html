@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sugi Sushi — Project Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1a1a2e;
+    background: #fff;
+    font-size: 11px;
+    line-height: 1.6;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 40px 50px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #0f0f1a;
+  }
+
+  .brand h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f0f1a;
+    letter-spacing: -0.5px;
+  }
+
+  .brand p {
+    font-size: 10px;
+    color: #888;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .doc-meta {
+    text-align: right;
+    font-size: 10px;
+    color: #666;
+    line-height: 1.8;
+  }
+
+  .doc-meta strong {
+    color: #0f0f1a;
+  }
+
+  /* Section Title */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f0f1a;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .section-subtitle {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+
+  /* Scope Table */
+  .scope-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 28px;
+    font-size: 10.5px;
+  }
+
+  .scope-table th {
+    background: #0f0f1a;
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .scope-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+  }
+
+  .scope-table tr:nth-child(even) td {
+    background: #fafafa;
+  }
+
+  .scope-table .feature-name {
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+
+  .scope-table .category-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-design { background: #ede9fe; color: #6d28d9; }
+  .tag-ux { background: #dbeafe; color: #1d4ed8; }
+  .tag-system { background: #d1fae5; color: #059669; }
+  .tag-infra { background: #fef3c7; color: #b45309; }
+  .tag-comms { background: #fce7f3; color: #be185d; }
+  .tag-ops { background: #f3e8ff; color: #7c3aed; }
+
+  /* Financial Summary */
+  .financial {
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-top: 28px;
+    margin-bottom: 24px;
+  }
+
+  .financial h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: #0f0f1a;
+    margin-bottom: 14px;
+  }
+
+  .financial-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    font-size: 11px;
+  }
+
+  .financial-row.total {
+    border-top: 2px solid #0f0f1a;
+    margin-top: 8px;
+    padding-top: 10px;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .financial-label {
+    color: #555;
+  }
+
+  .financial-value {
+    font-weight: 600;
+    color: #0f0f1a;
+  }
+
+  /* Note */
+  .note {
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    padding: 12px 16px;
+    margin-top: 20px;
+    font-size: 10px;
+    color: #92400e;
+    line-height: 1.6;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .note strong {
+    color: #78350f;
+  }
+
+  /* Footer */
+  .page-footer {
+    position: absolute;
+    bottom: 30px;
+    left: 50px;
+    right: 50px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: #aaa;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+  }
+
+  /* Intro block */
+  .intro {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .intro-left {
+    flex: 1;
+  }
+
+  .intro-left h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: #0f0f1a;
+    margin-bottom: 8px;
+  }
+
+  .intro-left p {
+    font-size: 11px;
+    color: #555;
+    line-height: 1.7;
+  }
+
+  .intro-right {
+    flex: 0 0 180px;
+    background: #0f0f1a;
+    color: #fff;
+    border-radius: 8px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .intro-right .label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 4px;
+  }
+
+  .intro-right .value {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fbbf24;
+  }
+
+  .intro-right .sub {
+    font-size: 9px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+
+  .badge-gold { background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
+
+  @media print {
+    .page { padding: 35px 45px; }
+    body { background: #fff; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <h1>Sugi Sushi</h1>
+      <p>Digital Menu & Reservation Platform</p>
+    </div>
+    <div class="doc-meta">
+      <strong>Project Scope Report</strong><br>
+      Date: July 2025<br>
+      Prepared for: Youssef Benchama
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro">
+    <div class="intro-left">
+      <h2>Scope of Work & Deliverables</h2>
+      <p>
+        This report outlines the full scope of work completed for the Sugi Sushi digital platform. 
+        The project began with a standard digital menu agreement and evolved into a comprehensive 
+        restaurant technology solution through collaborative development and additional requirements 
+        identified during the process.
+      </p>
+    </div>
+    <div class="intro-right">
+      <div class="label">Original Agreement</div>
+      <div class="value">1,200 MAD</div>
+      <div class="sub">Digital Menu Only<br>1 Week Delivery</div>
+    </div>
+  </div>
+
+  <!-- Original Scope -->
+  <h3 class="section-title">Original Agreed Scope</h3>
+  <p class="section-subtitle">
+    The following features were part of the initial agreement and are included in the original price of 1,200 MAD.
+  </p>
+
+  <table class="scope-table">
+    <thead>
+      <tr>
+        <th style="width:45%">Feature</th>
+        <th style="width:30%">Description</th>
+        <th style="width:25%">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="feature-name">Digital Menu via QR Code</td>
+        <td>QR code linking to web-based menu</td>
+        <td>Delivered</td>
+      </tr>
+      <tr>
+        <td class="feature-name">Category Display</td>
+        <td>Organized menu categories</td>
+        <td>Delivered</td>
+      </tr>
+      <tr>
+        <td class="feature-name">Product Listings</td>
+        <td>Image, name, price, description, ingredients</td>
+        <td>Delivered</td>
+      </tr>
+      <tr>
+        <td class="feature-name">Responsive Design (Mobile)</td>
+        <td>Mobile-optimized layout</td>
+        <td>Delivered</td>
+      </tr>
+      <tr>
+        <td class="feature-name">Admin Panel with CRUD</td>
+        <td>Add, edit, update prices, images, delete products</td>
+        <td>Delivered</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Additional Features -->
+  <h3 class="section-title">Additional Features & Services Delivered</h3>
+  <p class="section-subtitle">
+    The following features were developed beyond the original scope to create a complete, production-ready platform.
+  </p>
+
+  <table class="scope-table">
+    <thead>
+      <tr>
+        <th style="width:35%">Feature</th>
+        <th style="width:40%">Description</th>
+        <th style="width:25%">Category</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="feature-name">Premium Custom Luxury Design</td>
+        <td>High-end cinematic UI with gold accents, serif typography, and luxury branding</td>
+        <td><span class="category-tag tag-design">Design</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Advanced Animations & Transitions</td>
+        <td>Cinematic reveal, scroll parallax, animated navigation, and page transitions</td>
+        <td><span class="category-tag tag-design">Design</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Full Bilingual Support (AR / EN)</td>
+        <td>Complete Arabic and English translations with one-tap language toggle</td>
+        <td><span class="category-tag tag-ux">UX</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">RTL Arabic Support</td>
+        <td>Full right-to-left layout adaptation for Arabic readers</td>
+        <td><span class="category-tag tag-ux">UX</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Reservation System</td>
+        <td>Multi-step booking flow with date, time, and guest count selection</td>
+        <td><span class="category-tag tag-system">System</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Reservation Management</td>
+        <td>Cashier dashboard: confirm, decline, seat guests, table assignment</td>
+        <td><span class="category-tag tag-system">System</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Email Confirmations</td>
+        <td>Automated bilingual emails for booking receipt and confirmation</td>
+        <td><span class="category-tag tag-comms">Comms</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Professional Email Setup</td>
+        <td>Custom domain email (info@sugisushi.com.sa) via Resend</td>
+        <td><span class="category-tag tag-infra">Infra</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Database Integration</td>
+        <td>Supabase cloud database for menu, orders, reservations, and tables</td>
+        <td><span class="category-tag tag-infra">Infra</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Security & Authentication</td>
+        <td>Protected admin and cashier routes with session-based middleware</td>
+        <td><span class="category-tag tag-infra">Infra</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Smart Dish Recommendations</td>
+        <td>AI-powered pairing suggestions based on dish category and taste</td>
+        <td><span class="category-tag tag-ux">UX</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Hosting & Deployment</td>
+        <td>Production deployment on Vercel with domain and SSL</td>
+        <td><span class="category-tag tag-infra">Infra</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Domain Configuration</td>
+        <td>Domain setup and DNS configuration for sugisushi.com.sa</td>
+        <td><span class="category-tag tag-infra">Infra</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Performance Optimization</td>
+        <td>Image optimization, caching, compression, and security headers</td>
+        <td><span class="category-tag tag-ops">Ops</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Testing & Bug Fixing</td>
+        <td>Quality assurance, cross-device testing, and issue resolution</td>
+        <td><span class="category-tag tag-ops">Ops</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Content Integration</td>
+        <td>Full menu data entry with images, pricing, and descriptions</td>
+        <td><span class="category-tag tag-ops">Ops</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Multiple Revision Cycles</td>
+        <td>Iterative refinements based on feedback throughout development</td>
+        <td><span class="category-tag tag-ops">Ops</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Currency Display (SAR)</td>
+        <td>Custom Saudi Riyal symbol rendering for local pricing</td>
+        <td><span class="category-tag tag-ux">UX</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Page Footer -->
+  <div class="page-footer">
+    <span>Sugi Sushi — Project Report</span>
+    <span>Page 1 of 2</span>
+  </div>
+
+</div>
+
+<!-- PAGE 2 -->
+<div class="page">
+
+  <!-- Header repeat -->
+  <div class="header">
+    <div class="brand">
+      <h1>Sugi Sushi</h1>
+      <p>Financial Summary</p>
+    </div>
+    <div class="doc-meta">
+      <strong>Project Scope Report</strong><br>
+      Date: July 2025
+    </div>
+  </div>
+
+  <!-- Financial Summary -->
+  <div class="financial">
+    <h3>Financial Summary</h3>
+    <div class="financial-row">
+      <span class="financial-label">Original Agreement</span>
+      <span class="financial-value">1,200 MAD</span>
+    </div>
+    <div class="financial-row">
+      <span class="financial-label">Additional Features & Services</span>
+      <span class="financial-value">2,600 MAD</span>
+    </div>
+    <div class="financial-row total">
+      <span class="financial-label">Total Project Value</span>
+      <span class="financial-value">3,800 MAD</span>
+    </div>
+    <div class="financial-row">
+      <span class="financial-label">Advance Payment Received</span>
+      <span class="financial-value" style="color: #dc2626;">-600 MAD</span>
+    </div>
+    <div class="financial-row total">
+      <span class="financial-label">Outstanding Balance Due</span>
+      <span class="financial-value">3,200 MAD</span>
+    </div>
+  </div>
+
+  <!-- Key Deliverables Summary -->
+  <h3 class="section-title">Key Deliverables Summary</h3>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px;">
+    <div style="background: #f8f9fa; border-radius: 8px; padding: 16px; border: 1px solid #e5e7eb;">
+      <div style="font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; margin-bottom: 6px;">Design & Experience</div>
+      <div style="font-size: 12px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px;">Premium Luxury UI</div>
+      <div style="font-size: 10px; color: #666; line-height: 1.6;">Cinematic animations, gold-accented branding, scroll-driven parallax effects, and a polished mobile-first experience that reflects the Sugi Sushi brand identity.</div>
+    </div>
+    <div style="background: #f8f9fa; border-radius: 8px; padding: 16px; border: 1px solid #e5e7eb;">
+      <div style="font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; margin-bottom: 6px;">Bilingual Platform</div>
+      <div style="font-size: 12px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px;">Arabic & English</div>
+      <div style="font-size: 10px; color: #666; line-height: 1.6;">Full two-language support with seamless RTL adaptation, allowing guests to switch between Arabic and English with a single tap.</div>
+    </div>
+    <div style="background: #f8f9fa; border-radius: 8px; padding: 16px; border: 1px solid #e5e7eb;">
+      <div style="font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; margin-bottom: 6px;">Reservation System</div>
+      <div style="font-size: 12px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px;">End-to-End Booking</div>
+      <div style="font-size: 10px; color: #666; line-height: 1.6;">Multi-step reservation flow for guests, backed by a cashier management dashboard with table assignment, confirmation, and live status updates.</div>
+    </div>
+    <div style="background: #f8f9fa; border-radius: 8px; padding: 16px; border: 1px solid #e5e7eb;">
+      <div style="font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; margin-bottom: 6px;">Infrastructure</div>
+      <div style="font-size: 12px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px;">Production-Ready Stack</div>
+      <div style="font-size: 10px; color: #666; line-height: 1.6;">Cloud database, automated emails, secure authentication, Vercel hosting, and performance optimization for a reliable, scalable platform.</div>
+    </div>
+  </div>
+
+  <!-- Closing -->
+  <div style="margin-top: 32px; padding: 20px; background: #0f0f1a; border-radius: 8px; color: #fff; text-align: center;">
+    <div style="font-family: 'Playfair Display', serif; font-size: 16px; font-style: italic; margin-bottom: 6px;">
+      Thank you for the opportunity
+    </div>
+    <div style="font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35);">
+      Sugi Sushi Digital Platform — Delivered with Care
+    </div>
+  </div>
+
+  <!-- Page Footer -->
+  <div class="page-footer">
+    <span>Sugi Sushi — Project Report</span>
+    <span>Page 2 of 2</span>
+  </div>
+
+</div>
+
+</body>
+</html>

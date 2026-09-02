@@ -1,9 +1,11 @@
 'use client';
 
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguage, NavTab } from '@/context/LanguageContext';
+import DeliveryBikeIcon from '@/components/DeliveryBikeIcon';
+import DeliveryModal from '@/components/DeliveryModal';
 
 interface HeroProps {
   onTabChange: (tab: NavTab) => void;
@@ -14,6 +16,7 @@ const EASE = [0.19, 1, 0.22, 1] as const;
 export default function Hero({ onTabChange }: HeroProps) {
   const { t, lang } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -28,80 +31,104 @@ export default function Hero({ onTabChange }: HeroProps) {
   const overlayOpacity = useTransform(scrollYProgress, [0.35, 0.75], [0, 1]);
 
   return (
-    <section
-      ref={containerRef}
-      className="relative h-[100svh] w-full flex items-center justify-center overflow-hidden"
-      style={{ backgroundColor: '#030304' }}
-    >
-      <motion.div style={{ y: bgY }} className="absolute inset-0 z-0">
-        <video
-          src="/media/real/hero-bg.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-      </motion.div>
-
-      <div className="absolute inset-0 z-[1] bg-black/40 pointer-events-none" />
-
-      <motion.div
-        style={{ y: kanjiY, opacity: kanjiOpacity }}
-        className="absolute inset-0 z-[3] flex items-center justify-center pointer-events-none select-none"
+    <>
+      <section
+        ref={containerRef}
+        className="relative h-[100svh] w-full flex items-center justify-center overflow-hidden"
+        style={{ backgroundColor: '#030304' }}
       >
-        <span className="text-[50vh] md:text-[70vh] leading-none text-white/[0.04]" style={{ fontFamily: 'serif' }}>
-          杉
-        </span>
-      </motion.div>
+        <motion.div style={{ y: bgY }} className="absolute inset-0 z-0">
+          <video
+            src="/media/real/hero-bg.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </motion.div>
 
-      <motion.div style={{ opacity: contentOpacity, y: contentY }} className="relative z-[10] w-full h-full">
+        <div className="absolute inset-0 z-[1] bg-black/40 pointer-events-none" />
+
         <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1, ease: EASE }}
-          className="absolute top-[28svh] left-1/2 -translate-x-1/2 flex items-center justify-center gap-4 w-full"
+          style={{ y: kanjiY, opacity: kanjiOpacity }}
+          className="absolute inset-0 z-[3] flex items-center justify-center pointer-events-none select-none"
         >
-          <div className="w-12 h-[1px] bg-gradient-to-r from-transparent to-gold/40" />
-          <span className="text-gold/50 text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-[0.6em] whitespace-nowrap">
-            {lang === 'ar' ? 'الرياض' : 'Riyadh, KSA'}
+          <span className="text-[50vh] md:text-[70vh] leading-none text-white/[0.04]" style={{ fontFamily: 'serif' }}>
+            杉
           </span>
-          <div className="w-12 h-[1px] bg-gradient-to-l from-transparent to-gold/40" />
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, delay: 0.35, ease: EASE }}
-          className="absolute top-[68svh] left-1/2 -translate-x-1/2 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-[90%] sm:w-auto"
-        >
-          <Link
-            href="/reserve"
-            className="group relative w-full sm:w-auto flex items-center justify-center px-10 md:px-14 py-4 md:py-5 rounded-full overflow-hidden transition-transform duration-300 active:scale-95"
-            style={{
-              background: 'linear-gradient(135deg, #d4af37 0%, #b8962e 100%)',
-              boxShadow: '0 20px 50px rgba(212,175,55,0.25), 0 0 0 1px rgba(212,175,55,0.3)',
-            }}
+        <motion.div style={{ opacity: contentOpacity, y: contentY }} className="relative z-[10] w-full h-full">
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: EASE }}
+            className="absolute top-[26svh] sm:top-[28svh] left-1/2 -translate-x-1/2 flex items-center justify-center gap-4 w-full"
           >
-            <span className="relative z-10 text-void text-[10px] md:text-[11px] uppercase tracking-[0.35em] font-black whitespace-nowrap">
-              {t('hero.reserve')}
+            <div className="w-12 h-[1px] bg-gradient-to-r from-transparent to-gold/40" />
+            <span className="text-gold/50 text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-[0.6em] whitespace-nowrap">
+              {lang === 'ar' ? 'الرياض' : 'Riyadh, KSA'}
             </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-gold-white/0 via-gold-white/30 to-gold-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
-          </Link>
+            <div className="w-12 h-[1px] bg-gradient-to-l from-transparent to-gold/40" />
+          </motion.div>
 
-          <button
-            onClick={() => onTabChange('menu')}
-            className="group relative w-full sm:w-auto flex items-center justify-center px-10 md:px-14 py-4 md:py-5 rounded-full border border-white/10 bg-void transition-all duration-300 hover:bg-void/90 hover:border-gold/30 active:scale-95"
-            style={{
-              boxShadow: '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
-            }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.35, ease: EASE }}
+            className="absolute top-[68svh] left-1/2 -translate-x-1/2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-5 w-[90%] sm:w-auto"
           >
-            <span className="relative z-10 text-white text-[10px] md:text-[11px] uppercase tracking-[0.35em] font-black whitespace-nowrap group-hover:text-gold-bright transition-colors duration-300">
-              {t('hero.menu')}
-            </span>
-          </button>
+            {/* 1. Reserve CTA */}
+            <Link
+              href="/reserve"
+              className="group relative w-full sm:w-auto flex items-center justify-center px-7 sm:px-9 md:px-11 py-3.5 sm:py-4 md:py-4.5 rounded-full overflow-hidden transition-all duration-300 active:scale-95 shrink-0"
+              style={{
+                background: 'linear-gradient(135deg, #d4af37 0%, #b8962e 100%)',
+                boxShadow: '0 16px 40px rgba(212,175,55,0.22), 0 0 0 1px rgba(212,175,55,0.3)',
+              }}
+            >
+              <span className="relative z-10 text-void text-[10px] md:text-[11px] uppercase tracking-[0.35em] font-black whitespace-nowrap">
+                {t('hero.reserve')}
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-gold-white/0 via-gold-white/30 to-gold-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
+            </Link>
+
+            {/* 2. For Delivery CTA */}
+            <button
+              onClick={() => setIsDeliveryOpen(true)}
+              className="group relative w-full sm:w-auto flex items-center justify-center gap-2.5 px-7 sm:px-9 md:px-11 py-3.5 sm:py-4 md:py-4.5 rounded-full border border-gold/40 bg-void/90 transition-all duration-300 hover:bg-void hover:border-gold hover:shadow-[0_12px_36px_rgba(212,175,55,0.25)] active:scale-95 cursor-pointer shrink-0"
+              style={{
+                boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(212,175,55,0.15)',
+              }}
+            >
+              <DeliveryBikeIcon
+                size={18}
+                className={`text-gold transition-transform duration-300 ${
+                  lang === 'ar'
+                    ? 'group-hover:-translate-x-1'
+                    : 'group-hover:translate-x-1'
+                }`}
+              />
+              <span className="relative z-10 text-white text-[10px] md:text-[11px] uppercase tracking-[0.35em] font-black whitespace-nowrap group-hover:text-gold-bright transition-colors duration-300">
+                {t('hero.delivery')}
+              </span>
+            </button>
+
+            {/* 3. Our Menu CTA */}
+            <button
+              onClick={() => onTabChange('menu')}
+              className="group relative w-full sm:w-auto flex items-center justify-center px-7 sm:px-9 md:px-11 py-3.5 sm:py-4 md:py-4.5 rounded-full border border-white/10 bg-void/80 transition-all duration-300 hover:bg-void hover:border-white/30 active:scale-95 cursor-pointer shrink-0"
+              style={{
+                boxShadow: '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
+              }}
+            >
+              <span className="relative z-10 text-white/90 text-[10px] md:text-[11px] uppercase tracking-[0.35em] font-black whitespace-nowrap group-hover:text-white transition-colors duration-300">
+                {t('hero.menu')}
+              </span>
+            </button>
+          </motion.div>
         </motion.div>
-      </motion.div>
 
       <motion.div
         initial={{ opacity: 0 }}
@@ -122,5 +149,11 @@ export default function Hero({ onTabChange }: HeroProps) {
 
       <motion.div style={{ opacity: overlayOpacity }} className="absolute inset-0 z-[5] bg-bg pointer-events-none" />
     </section>
+
+    <DeliveryModal
+      isOpen={isDeliveryOpen}
+      onClose={() => setIsDeliveryOpen(false)}
+    />
+  </>
   );
 }

@@ -29,6 +29,7 @@ const translations = {
     // Hero
     'hero.est': 'Established 2024',
     'hero.reserve': 'Reserve a Place',
+    'hero.delivery': 'For Delivery',
     'hero.menu': 'Our Menu',
     'hero.scroll': 'Scroll to Explore',
 
@@ -272,6 +273,7 @@ const translations = {
     'hero.est': '٢٠٢٤',
     'hero.cta': 'شوف القائمة',
     'hero.reserve': 'احجز طاولتك',
+    'hero.delivery': 'طلب توصيل',
     'hero.menu': 'القائمة',
     'hero.scroll': 'تابع للأسفل',
 

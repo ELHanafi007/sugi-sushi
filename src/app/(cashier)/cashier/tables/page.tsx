@@ -35,24 +35,27 @@ type FloorTable = {
 const FLOOR_PLAN_IMAGE = '/media/cashier-floor-plan.png';
 
 const floorTables: FloorTable[] = [
-  { id: 'l01', label: 'L01', seats: 2, x: 9.2, y: 17.5, w: 4.7, h: 7.5, zone: 'Side Wall' },
-  { id: 'l02', label: 'L02', seats: 2, x: 9.2, y: 26.7, w: 4.7, h: 7.5, zone: 'Side Wall' },
-  { id: 'l03', label: 'L03', seats: 2, x: 9.2, y: 41, w: 4.7, h: 7.5, zone: 'Side Wall' },
-  { id: 'l04', label: 'L04', seats: 2, x: 9.2, y: 49.9, w: 4.7, h: 7.5, zone: 'Side Wall' },
-  { id: 'l05', label: 'L05', seats: 2, x: 9.2, y: 63.9, w: 4.7, h: 7.5, zone: 'Side Wall' },
-  { id: 'l06', label: 'L06', seats: 2, x: 9.2, y: 72.8, w: 4.7, h: 7.5, zone: 'Side Wall' },
-  { id: 'l07', label: 'L07', seats: 2, x: 9.2, y: 84.7, w: 4.7, h: 7.5, zone: 'Side Wall' },
-  { id: 'm01', label: 'M01', seats: 4, x: 42.1, y: 8.8, w: 9, h: 13.8, zone: 'Main Hall' },
-  { id: 'm02', label: 'M02', seats: 4, x: 56.4, y: 8.8, w: 9, h: 13.8, zone: 'Main Hall' },
-  { id: 'm03', label: 'M03', seats: 4, x: 56.4, y: 35.8, w: 9, h: 13.8, zone: 'Main Hall' },
-  { id: 'm04', label: 'M04', seats: 4, x: 29.3, y: 56.3, w: 13.6, h: 10.5, zone: 'Main Hall' },
-  { id: 'm05', label: 'M05', seats: 4, x: 57.1, y: 56.3, w: 13.6, h: 10.5, zone: 'Main Hall' },
-  { id: 'w01', label: 'W01', seats: 6, x: 82.9, y: 12.6, w: 12.2, h: 22.2, zone: 'Window Booths' },
-  { id: 'w02', label: 'W02', seats: 6, x: 82.9, y: 37.3, w: 12.2, h: 22.2, zone: 'Window Booths' },
-  { id: 'w03', label: 'W03', seats: 6, x: 82.9, y: 61.8, w: 12.2, h: 22.2, zone: 'Window Booths' },
-  { id: 'b01', label: 'B01', seats: 6, x: 35.2, y: 76.6, w: 14.2, h: 9.7, zone: 'Sushi Bar' },
-  { id: 'b02', label: 'B02', seats: 6, x: 51.8, y: 76.6, w: 14.2, h: 9.7, zone: 'Sushi Bar' },
-  { id: 'r01', label: 'R01', seats: 2, x: 23.3, y: 13.6, w: 10.4, h: 12.2, zone: 'Reception' },
+  { id: 't01', label: 'Table 1', seats: 2, x: 12.0, y: 19.5, w: 5.5, h: 6.5, zone: 'Side Wall' },
+  { id: 't02', label: 'Table 2', seats: 2, x: 12.0, y: 28.5, w: 5.5, h: 6.5, zone: 'Side Wall' },
+  { id: 't03', label: 'Table 3', seats: 2, x: 12.0, y: 39.5, w: 5.5, h: 6.5, zone: 'Side Wall' },
+  { id: 't04', label: 'Table 4', seats: 2, x: 12.0, y: 48.5, w: 5.5, h: 6.5, zone: 'Side Wall' },
+  { id: 't05', label: 'Table 5', seats: 2, x: 12.0, y: 62.5, w: 5.5, h: 6.5, zone: 'Side Wall' },
+  { id: 't06', label: 'Table 6', seats: 2, x: 12.0, y: 71.5, w: 5.5, h: 6.5, zone: 'Side Wall' },
+  { id: 't07', label: 'Table 7', seats: 2, x: 12.0, y: 83.5, w: 5.5, h: 6.5, zone: 'Side Wall' },
+  { id: 't08', label: 'Table 8', seats: 2, x: 23.5, y: 19.5, w: 6.5, h: 7.5, zone: 'Reception' },
+  { id: 't09', label: 'Table 9', seats: 4, x: 43.5, y: 16.5, w: 7.5, h: 9.5, zone: 'Main Hall' },
+  { id: 't10', label: 'Table 10', seats: 4, x: 57.5, y: 16.5, w: 7.5, h: 9.5, zone: 'Main Hall' },
+  { id: 't11', label: 'Table 11', seats: 4, x: 57.5, y: 42.5, w: 7.5, h: 9.5, zone: 'Main Hall' },
+  { id: 't12', label: 'Table 12', seats: 6, x: 86.5, y: 20.0, w: 9.5, h: 12.0, zone: 'Window Booths' },
+  { id: 't13', label: 'Table 13', seats: 6, x: 86.5, y: 47.0, w: 9.5, h: 12.0, zone: 'Window Booths' },
+  { id: 't14', label: 'Table 14', seats: 6, x: 86.5, y: 71.5, w: 9.5, h: 12.0, zone: 'Window Booths' },
+  { id: 'b01', label: 'Bar 1', seats: 1, x: 34.7, y: 72.0, w: 4.8, h: 5.5, zone: 'Sushi Bar' },
+  { id: 'b02', label: 'Bar 2', seats: 1, x: 40.0, y: 78.2, w: 4.8, h: 5.5, zone: 'Sushi Bar' },
+  { id: 'b03', label: 'Bar 3', seats: 1, x: 45.6, y: 72.0, w: 4.8, h: 5.5, zone: 'Sushi Bar' },
+  { id: 'b04', label: 'Bar 4', seats: 1, x: 51.1, y: 78.2, w: 4.8, h: 5.5, zone: 'Sushi Bar' },
+  { id: 'b05', label: 'Bar 5', seats: 1, x: 56.5, y: 72.0, w: 4.8, h: 5.5, zone: 'Sushi Bar' },
+  { id: 'b06', label: 'Bar 6', seats: 1, x: 61.7, y: 78.2, w: 4.8, h: 5.5, zone: 'Sushi Bar' },
+  { id: 'b07', label: 'Bar 7', seats: 1, x: 66.9, y: 72.0, w: 4.8, h: 5.5, zone: 'Sushi Bar' },
 ];
 
 /* ─── Status meta helper ─── */
@@ -67,73 +70,73 @@ const STATUS_META: Record<string, {
 }> = {
   call_waiter: {
     label: 'Call Waiter',
-    bg: 'bg-red-500/15',
-    ring: 'ring-red-500/60',
-    text: 'text-red-400',
-    dot: 'bg-red-500',
+    bg: 'bg-[#dc2626]',
+    ring: 'ring-2 ring-red-300',
+    text: 'text-white',
+    dot: 'bg-red-300',
     pulse: true,
     icon: BellRing,
   },
   billing: {
     label: 'Bill Requested',
-    bg: 'bg-purple-500/15',
-    ring: 'ring-purple-500/60',
-    text: 'text-purple-400',
-    dot: 'bg-purple-500',
+    bg: 'bg-[#7e22ce]',
+    ring: 'ring-2 ring-purple-300',
+    text: 'text-white',
+    dot: 'bg-purple-300',
     pulse: true,
     icon: Receipt,
   },
   seated: {
     label: 'Seated',
-    bg: 'bg-sky-500/12',
-    ring: 'ring-sky-500/40',
-    text: 'text-sky-400',
-    dot: 'bg-sky-500',
+    bg: 'bg-[#0284c7]',
+    ring: 'ring-2 ring-sky-300',
+    text: 'text-white',
+    dot: 'bg-sky-300',
     pulse: false,
     icon: User,
   },
   ordering: {
     label: 'Ordering',
-    bg: 'bg-sky-500/12',
-    ring: 'ring-sky-500/40',
-    text: 'text-sky-400',
-    dot: 'bg-sky-500',
+    bg: 'bg-[#0284c7]',
+    ring: 'ring-2 ring-sky-300',
+    text: 'text-white',
+    dot: 'bg-sky-300',
     pulse: false,
     icon: User,
   },
   waiting: {
     label: 'Order Placed',
-    bg: 'bg-amber-500/15',
-    ring: 'ring-amber-500/50',
-    text: 'text-amber-400',
-    dot: 'bg-amber-500',
+    bg: 'bg-[#d97706]',
+    ring: 'ring-2 ring-amber-300',
+    text: 'text-white',
+    dot: 'bg-amber-300',
     pulse: true,
     icon: Clock,
   },
   ready: {
     label: 'Ready to Serve',
-    bg: 'bg-emerald-500/15',
-    ring: 'ring-emerald-500/50',
-    text: 'text-emerald-400',
-    dot: 'bg-emerald-500',
+    bg: 'bg-[#059669]',
+    ring: 'ring-2 ring-emerald-300',
+    text: 'text-white',
+    dot: 'bg-emerald-300',
     pulse: true,
     icon: CheckCircle2,
   },
   delivered: {
     label: 'Delivered',
-    bg: 'bg-teal-500/12',
-    ring: 'ring-teal-500/40',
-    text: 'text-teal-400',
-    dot: 'bg-teal-400',
+    bg: 'bg-[#0d9488]',
+    ring: 'ring-2 ring-teal-300',
+    text: 'text-white',
+    dot: 'bg-teal-300',
     pulse: false,
     icon: CheckCircle2,
   },
   empty: {
     label: 'Available',
-    bg: 'bg-white/[0.04]',
-    ring: 'ring-white/10',
-    text: 'text-white/30',
-    dot: 'bg-white/20',
+    bg: 'bg-[#181924]',
+    ring: 'ring-1 ring-white/40',
+    text: 'text-white',
+    dot: 'bg-emerald-400',
     pulse: false,
     icon: CircleDot,
   },
@@ -463,15 +466,20 @@ export default function CashierTablesPage() {
             </div>
           </div>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center p-4 bg-[#0a0a0d]">
-            <div className="relative w-full h-full max-w-[1200px] max-h-[calc(100vh-160px)]" style={{ aspectRatio: '1350 / 1050' }}>
+          <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-[#08080c] overflow-auto">
+            <div
+              className="relative shadow-[0_20px_60px_rgba(0,0,0,0.8)] rounded-xl overflow-hidden shrink-0 select-none"
+              style={{
+                width: 'min(100%, calc((100vh - 150px) * 1448 / 1086))',
+                aspectRatio: '1448 / 1086',
+              }}
+            >
               {/* Floor plan image */}
               <img
                 src={FLOOR_PLAN_IMAGE}
                 alt="SUGI Floor Plan"
-                className="absolute inset-0 w-full h-full object-contain rounded-xl select-none pointer-events-none"
+                className="absolute inset-0 w-full h-full object-fill select-none pointer-events-none"
                 draggable={false}
-                style={{ filter: 'brightness(0.92) contrast(1.05)' }}
               />
 
               {/* Table hotspots */}
@@ -482,6 +490,8 @@ export default function CashierTablesPage() {
                 const isAlert = dbTable?.call_waiter || dbTable?.status === 'billing';
                 const tableRes = tableReservations[table.id] || [];
                 const hasReservation = tableRes.length > 0;
+                const isBar = table.zone === 'Sushi Bar';
+                const isAvailable = !dbTable || dbTable.status === 'empty';
 
                 return (
                   <button
@@ -493,20 +503,21 @@ export default function CashierTablesPage() {
                       top: `${table.y}%`,
                       width: `${table.w}%`,
                       height: `${table.h}%`,
+                      transform: 'translate(-50%, -50%)',
                     }}
                   >
                     {/* Selection highlight ring */}
                     {isSelected && (
                       <motion.div
                         layoutId="table-selection"
-                        className="absolute -inset-1 rounded-xl border-2 border-gold/60 bg-gold/[0.06]"
+                        className={`absolute ${isBar ? '-inset-1 rounded-lg' : '-inset-1.5 rounded-xl'} border-2 border-gold bg-gold/10 shadow-[0_0_20px_rgba(212,175,55,0.4)]`}
                         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                       />
                     )}
                     
-                    {/* Reserved empty table glow */}
-                    {hasReservation && dbTable?.status === 'empty' && !isSelected && (
-                      <div className="absolute inset-0 rounded-xl border border-gold/40 shadow-[0_0_15px_rgba(212,175,55,0.15)] pointer-events-none" />
+                    {/* Reserved table outline */}
+                    {hasReservation && isAvailable && !isSelected && (
+                      <div className={`absolute ${isBar ? '-inset-0.5 rounded-lg' : '-inset-1 rounded-xl'} border-2 border-gold/70 shadow-[0_0_15px_rgba(212,175,55,0.3)] pointer-events-none`} />
                     )}
 
                     {/* Status badge */}
@@ -514,51 +525,48 @@ export default function CashierTablesPage() {
                       className={`
                         absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10
                         flex flex-col items-center justify-center
-                        py-1 px-2 md:px-3 rounded-xl
-                        text-[9px] font-black tracking-wider leading-none
-                        ring-1 shadow-lg backdrop-blur-sm
-                        transition-all duration-300
-                        md:text-[11px]
-                        ${meta.bg} ${meta.ring} ${meta.text}
-                        ${isSelected ? 'scale-110 ring-2 ring-gold/60 shadow-gold/20' : 'group-hover:scale-105'}
+                        ${isBar ? 'py-1 px-1.5 sm:px-2 rounded-lg text-[9px] sm:text-[10px]' : 'py-1.5 px-2.5 sm:px-3 md:px-3.5 rounded-xl text-[10px] sm:text-[11px] md:text-[12px]'}
+                        font-sans font-bold tracking-wide leading-none
+                        shadow-[0_4px_16px_rgba(0,0,0,0.65)]
+                        transition-all duration-200
+                        ${hasReservation && isAvailable ? 'bg-gold text-black ring-2 ring-amber-300 font-black' : `${meta.bg} ${meta.ring} ${meta.text}`}
+                        ${isSelected ? 'scale-110 ring-2 ring-gold shadow-gold/40 z-30' : 'group-hover:scale-105'}
                       `}
                     >
-                      <span className="font-bold">{table.label}</span>
+                      <span className="font-bold whitespace-nowrap drop-shadow-sm">{dbTable?.label || table.label}</span>
                       {hasReservation && (
-                        <span className={`text-[7px] md:text-[8px] mt-0.5 px-1 py-0.5 rounded font-bold whitespace-nowrap flex items-center gap-0.5 ${dbTable?.status === 'empty' ? 'bg-gold text-black' : 'bg-gold/20 text-gold'}`}>
+                        <span className={`text-[7px] sm:text-[8px] mt-0.5 px-1 py-0.5 rounded font-black whitespace-nowrap flex items-center gap-0.5 ${isAvailable ? 'bg-black text-gold' : 'bg-gold text-black'}`}>
                           {tableRes[0].time}
                           {tableRes.length > 1 && <span className="opacity-70">+{tableRes.length - 1}</span>}
                         </span>
                       )}
                       {activeSessionsOrders[table.id]?.total > 0 && (
-                        <span className="text-[7.5px] md:text-[9.5px] font-mono text-gold mt-0.5 whitespace-nowrap opacity-90">
+                        <span className="text-[7.5px] sm:text-[8.5px] font-mono font-bold text-amber-300 mt-0.5 whitespace-nowrap">
                           {activeSessionsOrders[table.id].total.toFixed(0)} SR
                         </span>
                       )}
                     </span>
 
-                    {/* Removed floating reservation indicator to embed it inside main badge for perfect alignment */}
-
-                    {/* Pulsing alert dot */}
+                    {/* Status dot */}
                     {dbTable && dbTable.status !== 'empty' && (
                       <span
                         className={`
                           absolute z-20 rounded-full
                           w-2.5 h-2.5 md:w-3 md:h-3
-                          border border-[#0a0a0d]
+                          border-2 border-[#0a0a0d]
                           ${meta.dot}
                           ${meta.pulse ? 'animate-pulse shadow-lg' : ''}
                         `}
                         style={{
                           top: 'calc(50% - 16px)',
-                          left: 'calc(50% + 10px)',
+                          left: 'calc(50% + 14px)',
                         }}
                       />
                     )}
 
                     {/* Alert glow */}
                     {isAlert && (
-                      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 rounded-full animate-ping opacity-20 bg-red-500 pointer-events-none" />
+                      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 rounded-full animate-ping opacity-30 bg-red-500 pointer-events-none" />
                     )}
                   </button>
                 );
@@ -581,7 +589,7 @@ export default function CashierTablesPage() {
               <div className="p-5 pb-4 border-b border-white/[0.06]">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="text-2xl font-serif italic text-white tracking-tight">{selectedTable.label}</h3>
+                    <h3 className="text-2xl font-serif italic text-white tracking-tight">{selectedDbTable?.label || selectedTable.label}</h3>
                     <p className="text-[10px] text-white/25 font-mono uppercase tracking-widest mt-0.5">
                       {selectedTable.zone} · {selectedTable.seats} seats
                     </p>
