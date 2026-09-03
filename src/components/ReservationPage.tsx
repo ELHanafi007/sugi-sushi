@@ -53,7 +53,7 @@ export default function ReservationPage() {
       {/* Background Ambience */}
       <div className="absolute inset-0 z-0 opacity-15 pointer-events-none">
         <Image
-          src="https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1600&q=80"
+          src="/media/landing/dining-room.jpg"
           alt="Atmosphere"
           fill
           className="object-cover grayscale"

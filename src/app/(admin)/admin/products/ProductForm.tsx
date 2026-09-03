@@ -278,7 +278,7 @@ export default function ProductForm({
                   alt="Preview" 
                   className="w-full h-full object-cover" 
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
+                    (e.target as HTMLImageElement).src = '/media/landing/sushi-closeup.jpg';
                   }}
                 />
                 <button 

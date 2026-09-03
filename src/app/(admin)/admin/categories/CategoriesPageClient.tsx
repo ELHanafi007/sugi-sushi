@@ -198,7 +198,7 @@ export default function CategoriesPageClient({ initialCategories }: { initialCat
                           alt={cat.name} 
                           className="object-cover w-full h-full"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=100&q=20';
+                            (e.target as HTMLImageElement).src = '/media/landing/sushi-closeup.jpg';
                           }}
                         />
                         <button 

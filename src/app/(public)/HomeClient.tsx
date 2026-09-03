@@ -15,7 +15,7 @@ import { Dish } from '@/data/menuData';
 
 import StrictMenu from '@/components/StrictMenu';
 
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=80';
+const FALLBACK_IMAGE = '/media/landing/sushi-closeup.jpg';
 const LOCAL_LANDING_IMAGES = [
   '/media/landing/sushi-counter.jpg',
   '/media/landing/sushi-closeup.jpg',
@@ -26,27 +26,27 @@ const LOCAL_LANDING_IMAGES = [
 ];
 
 const CAT_IMAGES: Record<string, string> = {
-  'Special Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
-  'Sashimi': 'https://images.unsplash.com/photo-1534256958597-7feec80116e7?auto=format&fit=crop&w=800&q=75',
-  'Boxes': 'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?auto=format&fit=crop&w=800&q=75',
-  'Wok & Noodles': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800&q=75',
-  'Starters': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=75',
-  'California Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
-  'Dessert': 'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=800&q=75',
-  'Cold Drinks': 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=800&q=75',
-  'Salad': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=75',
-  'Soup': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=75',
-  'Tempura & Fried': 'https://images.unsplash.com/photo-1569050278883-d5c58c39bb7a?auto=format&fit=crop&w=800&q=75',
-  'Sugi Dishes': 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=800&q=75',
-  'Tataki': 'https://images.unsplash.com/photo-1617196034183-421b4917c92d?auto=format&fit=crop&w=800&q=75',
-  'Ceviche': 'https://images.unsplash.com/photo-1534604973900-c41ab4c5e636?auto=format&fit=crop&w=800&q=75',
-  'Nigiri': 'https://images.unsplash.com/photo-1611712142469-e39736310f21?auto=format&fit=crop&w=800&q=75',
-  'Maki Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
-  'Aromaki Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
-  'Boats': 'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?auto=format&fit=crop&w=800&q=75',
-  'Hot Drinks': 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=800&q=75',
-  'Fresh Juices': 'https://images.unsplash.com/photo-1622597467836-f3285f2131b8?auto=format&fit=crop&w=800&q=75',
-  'Fry Rolls': 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=75',
+  'Special Rolls': '/media/landing/sushi-rolls.jpg',
+  'Sashimi': '/media/real/IMG_4159.JPG',
+  'Boxes': '/media/real/IMG_4158.JPG',
+  'Wok & Noodles': '/media/real/IMG_4154.JPG',
+  'Starters': '/media/landing/sushi-selection.jpg',
+  'California Rolls': '/media/landing/chef-roll.jpg',
+  'Dessert': '/media/optimized/brochure-9.jpg',
+  'Cold Drinks': '/media/real/IMG_4154.JPG',
+  'Salad': '/media/optimized/brochure-1.jpg',
+  'Soup': '/media/optimized/brochure-2.jpg',
+  'Tempura & Fried': '/media/real/r.PNG',
+  'Sugi Dishes': '/media/landing/sushi-closeup.jpg',
+  'Tataki': '/media/real/IMG_4160.JPG',
+  'Ceviche': '/media/real/IMG_4159.JPG',
+  'Nigiri': '/media/landing/sushi-selection.jpg',
+  'Maki Rolls': '/media/landing/sushi-rolls.jpg',
+  'Aromaki Rolls': '/media/landing/chef-roll.jpg',
+  'Boats': '/media/real/IMG_4158.JPG',
+  'Hot Drinks': '/media/real/IMG_4154.JPG',
+  'Fresh Juices': '/media/real/IMG_4154.JPG',
+  'Fry Rolls': '/media/real/r.PNG',
 };
 
 const EASE = [0.19, 1, 0.22, 1] as const;
