@@ -53,6 +53,7 @@ export const menuData: Dish[] = [
     category: 'Salads',
     calories: '50 cal',
     tags: ['Signature', 'Seafood'],
+    image: '/media/dishes/beef-salad.jpg',
     allergens: ['Shellfish', 'Nuts'],
   },
   {
@@ -65,6 +66,7 @@ export const menuData: Dish[] = [
     category: 'Salads',
     calories: '60 cal',
     tags: ['Best Seller', 'Seafood'],
+    image: '/media/dishes/crab-salad.jpg',
     allergens: ['Shellfish', 'Egg'],
   },
   {
@@ -77,6 +79,7 @@ export const menuData: Dish[] = [
     category: 'Salads',
     calories: '60 cal',
     tags: ['Classic'],
+    image: '/media/dishes/beef-salad.jpg',
     allergens: ['Soy', 'Gluten'],
   },
   {
@@ -89,6 +92,7 @@ export const menuData: Dish[] = [
     category: 'Salads',
     calories: '140 cal',
     tags: ['Signature', 'Seafood', 'Chef\'s Choice'],
+    image: '/media/dishes/crab-salad.jpg',
     allergens: ['Shellfish', 'Fish'],
   },
   {
@@ -101,6 +105,7 @@ export const menuData: Dish[] = [
     category: 'Salads',
     calories: '70 cal',
     tags: ['Vegetarian', 'Healthy'],
+    image: '/media/dishes/dsc09235.jpg',
     allergens: ['Sesame'],
   },
 
@@ -115,6 +120,7 @@ export const menuData: Dish[] = [
     category: 'Soups',
     calories: '35 cal',
     tags: ['Classic', 'Vegetarian'],
+    image: '/media/dishes/miso-soup.jpg',
     allergens: ['Soy'],
   },
   {
@@ -127,6 +133,7 @@ export const menuData: Dish[] = [
     category: 'Soups',
     calories: '80 cal',
     tags: ['Spicy', 'Seafood'],
+    image: '/media/dishes/tum-yum-kung-soup.jpg',
     allergens: ['Shellfish'],
   },
   {
@@ -139,6 +146,7 @@ export const menuData: Dish[] = [
     category: 'Soups',
     calories: '150 cal',
     tags: ['Premium', 'Seafood', 'Chef\'s Choice'],
+    image: '/media/dishes/royal-sea-food-soup.jpg',
     allergens: ['Shellfish', 'Fish', 'Gluten'],
   },
 
@@ -153,6 +161,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '140 cal',
     tags: ['Best Seller', 'Seafood'],
+    image: '/media/dishes/gyoza-shrimp.jpg',
     allergens: ['Shellfish', 'Gluten', 'Soy'],
   },
   {
@@ -165,6 +174,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '120 cal',
     tags: ['Classic'],
+    image: '/media/dishes/gyoza-beef.jpg',
     allergens: ['Gluten', 'Soy'],
   },
   {
@@ -177,6 +187,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '140 cal',
     tags: ['Signature'],
+    image: '/media/menu/starters.jpg',
     allergens: ['Gluten', 'Soy'],
   },
   {
@@ -188,6 +199,7 @@ export const menuData: Dish[] = [
     price: '',
     category: 'Starters',
     tags: ['Spicy', 'Seafood', 'New'],
+    image: '/media/menu/starters.jpg',
     allergens: ['Shellfish', 'Egg', 'Gluten'],
   },
   {
@@ -200,6 +212,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '200 cal',
     tags: ['Classic'],
+    image: '/media/menu/starters.jpg',
     allergens: ['Gluten', 'Shellfish'],
   },
   {
@@ -212,6 +225,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '200 cal',
     tags: ['Seafood'],
+    image: '/media/dishes/nems-spring-roll-shrimps.jpg',
     allergens: ['Gluten', 'Shellfish'],
   },
   {
@@ -224,6 +238,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '200 cal',
     tags: ['Signature', 'Spicy', 'Best Seller'],
+    image: '/media/dishes/dynamite-shrimp.jpg',
     allergens: ['Shellfish', 'Egg', 'Gluten'],
   },
   {
@@ -235,6 +250,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '650 cal',
     tags: ['Vegetarian', 'Classic'],
+    image: '/media/dishes/edamame.jpg',
     allergens: ['Soy'],
   },
   {
@@ -246,6 +262,7 @@ export const menuData: Dish[] = [
     category: 'Starters',
     calories: '660 cal',
     tags: ['Spicy', 'Vegetarian'],
+    image: '/media/menu/starters.jpg',
     allergens: ['Soy'],
   },
 
@@ -259,6 +276,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '300 cal',
     tags: ['Vegetarian'],
+    image: '/media/menu/wok--noodles---rice.jpg',
     allergens: ['Gluten', 'Soy'],
   },
   {
@@ -270,6 +288,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '510 cal',
     tags: ['Classic'],
+    image: '/media/dishes/noodles-chiken.jpg',
     allergens: ['Gluten', 'Soy'],
   },
   {
@@ -281,6 +300,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '430 cal',
     tags: ['Best Seller'],
+    image: '/media/dishes/noodles-beef.jpg',
     allergens: ['Gluten', 'Soy'],
   },
   {
@@ -292,6 +312,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '420 cal',
     tags: ['Seafood'],
+    image: '/media/menu/wok--noodles---rice.jpg',
     allergens: ['Gluten', 'Soy', 'Shellfish'],
   },
   {
@@ -303,6 +324,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '300 cal',
     tags: ['Vegetarian'],
+    image: '/media/menu/wok--noodles---rice.jpg',
     allergens: ['Egg', 'Soy'],
   },
   {
@@ -314,6 +336,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '360 cal',
     tags: ['Classic'],
+    image: '/media/menu/wok--noodles---rice.jpg',
     allergens: ['Egg', 'Soy'],
   },
   {
@@ -325,6 +348,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '370 cal',
     tags: ['Seafood'],
+    image: '/media/menu/wok--noodles---rice.jpg',
     allergens: ['Egg', 'Soy', 'Shellfish'],
   },
   {
@@ -336,6 +360,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '350 cal',
     tags: ['Best Seller'],
+    image: '/media/menu/wok--noodles---rice.jpg',
     allergens: ['Egg', 'Soy'],
   },
   {
@@ -347,6 +372,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '320 cal',
     tags: ['Premium', 'Seafood'],
+    image: '/media/menu/wok--noodles---rice.jpg',
     allergens: ['Fish', 'Soy'],
   },
   {
@@ -358,6 +384,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '410 cal',
     tags: ['Classic'],
+    image: '/media/menu/wok--noodles---rice.jpg',
     allergens: ['Soy'],
   },
   {
@@ -369,6 +396,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '350 cal',
     tags: ['Seafood'],
+    image: '/media/menu/wok--noodles---rice.jpg',
     allergens: ['Shellfish', 'Soy'],
   },
   {
@@ -380,6 +408,7 @@ export const menuData: Dish[] = [
     category: 'Wok, Noodles & Rice',
     calories: '450 cal',
     tags: ['Best Seller'],
+    image: '/media/menu/wok--noodles---rice.jpg',
     allergens: ['Soy'],
   },
 
@@ -393,6 +422,7 @@ export const menuData: Dish[] = [
     category: 'Tempura',
     calories: '320 cal',
     tags: ['Best Seller', 'Seafood'],
+    image: '/media/dishes/shrimp-tempura.jpg',
     allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
@@ -404,6 +434,7 @@ export const menuData: Dish[] = [
     price: '',
     category: 'Tempura',
     tags: ['New'],
+    image: '/media/menu/tempura.jpg',
     allergens: ['Gluten', 'Egg'],
   },
 
@@ -418,6 +449,7 @@ export const menuData: Dish[] = [
     category: 'Sugi Dishes',
     calories: '350 cal',
     tags: ['Signature', 'Best Seller'],
+    image: '/media/dishes/beef-teppenyaki.png',
     allergens: ['Soy', 'Gluten'],
   },
   {
@@ -430,6 +462,7 @@ export const menuData: Dish[] = [
     category: 'Sugi Dishes',
     calories: '400 cal',
     tags: ['Premium', 'Chef\'s Choice'],
+    image: '/media/menu/sugi-dishes.jpg',
     allergens: ['Soy', 'Gluten'],
   },
   {
@@ -442,6 +475,7 @@ export const menuData: Dish[] = [
     category: 'Sugi Dishes',
     calories: '240 cal',
     tags: ['Signature', 'Seafood', 'Chef\'s Choice'],
+    image: '/media/menu/sugi-dishes.jpg',
     allergens: ['Fish', 'Soy'],
   },
   {
@@ -454,6 +488,7 @@ export const menuData: Dish[] = [
     category: 'Sugi Dishes',
     calories: '350 cal',
     tags: ['Best Seller'],
+    image: '/media/menu/sugi-dishes.jpg',
     allergens: ['Gluten', 'Egg', 'Soy'],
   },
   {
@@ -466,6 +501,7 @@ export const menuData: Dish[] = [
     category: 'Sugi Dishes',
     calories: '450 cal',
     tags: ['Signature', 'Spicy'],
+    image: '/media/menu/sugi-dishes.jpg',
     allergens: ['Peanuts', 'Soy'],
   },
   {
@@ -477,6 +513,7 @@ export const menuData: Dish[] = [
     price: '',
     category: 'Sugi Dishes',
     tags: ['Spicy', 'Seafood', 'New'],
+    image: '/media/menu/sugi-dishes.jpg',
     allergens: ['Shellfish', 'Peanuts', 'Soy'],
   },
 
@@ -490,6 +527,7 @@ export const menuData: Dish[] = [
     category: 'Sashimi',
     calories: '130 cal',
     tags: ['Classic', 'Seafood'],
+    image: '/media/dishes/salmon-sashimi.jpg',
     allergens: ['Fish'],
   },
   {
@@ -501,6 +539,7 @@ export const menuData: Dish[] = [
     category: 'Sashimi',
     calories: '120 cal',
     tags: ['Premium', 'Seafood'],
+    image: '/media/dishes/dsc09269.jpg',
     allergens: ['Fish'],
   },
 
@@ -514,6 +553,7 @@ export const menuData: Dish[] = [
     category: 'Tataki',
     calories: '120 cal',
     tags: ['Signature', 'Seafood'],
+    image: '/media/dishes/salamon-tataki.jpg',
     allergens: ['Fish', 'Soy'],
   },
   {
@@ -525,6 +565,7 @@ export const menuData: Dish[] = [
     category: 'Tataki',
     calories: '120 cal',
     tags: ['Premium', 'Seafood'],
+    image: '/media/dishes/dsc09269.jpg',
     allergens: ['Fish', 'Soy'],
   },
 
@@ -538,6 +579,7 @@ export const menuData: Dish[] = [
     category: 'Ceviche',
     calories: '210 cal',
     tags: ['Signature', 'Seafood'],
+    image: '/media/menu/ceviche.jpg',
     allergens: ['Fish'],
   },
   {
@@ -549,6 +591,7 @@ export const menuData: Dish[] = [
     category: 'Ceviche',
     calories: '180 cal',
     tags: ['Premium', 'Seafood'],
+    image: '/media/menu/ceviche.jpg',
     allergens: ['Fish'],
   },
 
@@ -562,6 +605,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '110 cal',
     tags: ['Classic', 'Seafood'],
+    image: '/media/dishes/flamed-salmon-roll.jpg',
     allergens: ['Fish'],
   },
   {
@@ -573,6 +617,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '110 cal',
     tags: ['Signature', 'Seafood'],
+    image: '/media/dishes/salmon-flamed-nigiri.jpg',
     allergens: ['Fish'],
   },
   {
@@ -584,6 +629,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '90 cal',
     tags: ['Classic', 'Seafood'],
+    image: '/media/dishes/gunkan-tuna.jpg',
     allergens: ['Fish'],
   },
   {
@@ -595,6 +641,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '80 cal',
     tags: ['Classic', 'Seafood'],
+    image: '/media/dishes/corn-shrimp-tempura.jpg',
     allergens: ['Shellfish'],
   },
   {
@@ -606,6 +653,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '80 cal',
     tags: ['Seafood'],
+    image: '/media/dishes/crab-maki.jpg',
     allergens: ['Shellfish'],
   },
   {
@@ -617,6 +665,7 @@ export const menuData: Dish[] = [
     category: 'Nigiri',
     calories: '130 cal',
     tags: ['Premium', 'Seafood'],
+    image: '/media/menu/nigiri.jpg',
     allergens: ['Fish', 'Soy'],
   },
 
@@ -630,6 +679,7 @@ export const menuData: Dish[] = [
     category: 'Gunkan',
     calories: '140 cal',
     tags: ['Seafood'],
+    image: '/media/dishes/flamed-salmon-roll.jpg',
     allergens: ['Fish'],
   },
   {
@@ -641,6 +691,7 @@ export const menuData: Dish[] = [
     category: 'Gunkan',
     calories: '90 cal',
     tags: ['Seafood'],
+    image: '/media/dishes/gunkan-tuna.jpg',
     allergens: ['Fish'],
   },
 
@@ -655,6 +706,7 @@ export const menuData: Dish[] = [
     category: 'Temaki',
     calories: '110 cal',
     tags: ['Classic'],
+    image: '/media/dishes/classic-roll.jpg',
     allergens: ['Shellfish'],
   },
   {
@@ -667,6 +719,7 @@ export const menuData: Dish[] = [
     category: 'Temaki',
     calories: '210 cal',
     tags: ['Best Seller', 'Seafood'],
+    image: '/media/dishes/shrimp-tempura.jpg',
     allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
@@ -679,6 +732,7 @@ export const menuData: Dish[] = [
     category: 'Temaki',
     calories: '170 cal',
     tags: ['Signature', 'Seafood'],
+    image: '/media/dishes/flamed-salmon-roll.jpg',
     allergens: ['Fish'],
   },
   {
@@ -691,6 +745,7 @@ export const menuData: Dish[] = [
     category: 'Temaki',
     calories: '150 cal',
     tags: ['Premium', 'Seafood'],
+    image: '/media/menu/temaki.jpg',
     allergens: ['Shellfish', 'Egg'],
   },
 
@@ -704,6 +759,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '140 cal',
     tags: ['Classic', 'Seafood'],
+    image: '/media/menu/maki-rolls.jpg',
     allergens: ['Fish'],
   },
   {
@@ -715,6 +771,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '150 cal',
     tags: ['Seafood'],
+    image: '/media/dishes/salmon-avocado-maki.jpg',
     allergens: ['Fish'],
   },
   {
@@ -726,6 +783,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '260 cal',
     tags: ['Best Seller', 'Seafood'],
+    image: '/media/dishes/shrimp-tempura-maki.jpg',
     allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
@@ -737,6 +795,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '100 cal',
     tags: ['Vegetarian', 'Classic'],
+    image: '/media/dishes/cucumber-maki.jpg',
     allergens: [],
   },
   {
@@ -748,6 +807,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '120 cal',
     tags: ['Seafood'],
+    image: '/media/dishes/crab-maki.jpg',
     allergens: ['Shellfish'],
   },
   {
@@ -759,6 +819,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '130 cal',
     tags: ['Seafood'],
+    image: '/media/menu/maki-rolls.jpg',
     allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
@@ -770,6 +831,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '130 cal',
     tags: ['Seafood'],
+    image: '/media/dishes/dsc09269.jpg',
     allergens: ['Fish'],
   },
   {
@@ -781,6 +843,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '140 cal',
     tags: ['Seafood'],
+    image: '/media/dishes/cucumber-maki.jpg',
     allergens: ['Fish'],
   },
   {
@@ -792,6 +855,7 @@ export const menuData: Dish[] = [
     category: 'Maki Rolls',
     calories: '120 cal',
     tags: ['Vegetarian'],
+    image: '/media/dishes/cucumber-maki.jpg',
     allergens: [],
   },
 
@@ -806,6 +870,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Rolls',
     calories: '170 cal',
     tags: ['Signature', 'Best Seller', 'Seafood'],
+    image: '/media/menu/aromaki-rolls.jpg',
     allergens: ['Fish', 'Dairy', 'Shellfish'],
   },
   {
@@ -818,6 +883,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Rolls',
     calories: '250 cal',
     tags: ['Signature', 'Seafood'],
+    image: '/media/menu/aromaki-rolls.jpg',
     allergens: ['Shellfish', 'Fish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
@@ -830,6 +896,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Rolls',
     calories: '120 cal',
     tags: ['Premium', 'Chef\'s Choice', 'Seafood'],
+    image: '/media/menu/aromaki-rolls.jpg',
     allergens: ['Fish', 'Shellfish', 'Dairy'],
   },
   {
@@ -842,6 +909,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Rolls',
     calories: '150 cal',
     tags: ['Vegetarian'],
+    image: '/media/menu/aromaki-rolls.jpg',
     allergens: [],
   },
 
@@ -856,6 +924,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Fried',
     calories: '210 cal',
     tags: ['Signature', 'Seafood'],
+    image: '/media/menu/aromaki-fried.jpg',
     allergens: ['Shellfish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
@@ -868,6 +937,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Fried',
     calories: '180 cal',
     tags: ['Signature', 'Seafood'],
+    image: '/media/menu/aromaki-fried.jpg',
     allergens: ['Fish', 'Dairy', 'Shellfish', 'Gluten', 'Egg'],
   },
   {
@@ -880,6 +950,7 @@ export const menuData: Dish[] = [
     category: 'Aromaki Fried',
     calories: '170 cal',
     tags: ['Best Seller', 'Seafood'],
+    image: '/media/menu/aromaki-fried.jpg',
     allergens: ['Shellfish', 'Fish', 'Dairy', 'Gluten', 'Egg'],
   },
 
@@ -893,6 +964,7 @@ export const menuData: Dish[] = [
     price: '38 SR',
     category: 'California Rolls',
     tags: ['Seafood', 'Signature'],
+    image: '/media/dishes/shrimp-tempura.jpg',
     portions: [
       { name: 'Full Order', nameAr: 'طلب كامل', price: '38 SR', pieces: 8, tags: ['Best Value'] },
       { name: 'Half Order', nameAr: 'نصف طلب', price: '24 SR', pieces: 4 }
@@ -908,6 +980,7 @@ export const menuData: Dish[] = [
     price: '22 SR',
     category: 'California Rolls',
     tags: ['Seafood'],
+    image: '/media/menu/california-rolls.jpg',
     allergens: ['Fish', 'Sesame'],
   },
   {
@@ -920,6 +993,7 @@ export const menuData: Dish[] = [
     category: 'California Rolls',
     calories: '190 cal',
     tags: ['Premium', 'Seafood'],
+    image: '/media/menu/california-rolls.jpg',
     allergens: ['Shellfish', 'Dairy'],
   },
   {
@@ -932,6 +1006,7 @@ export const menuData: Dish[] = [
     category: 'California Rolls',
     calories: '400 cal',
     tags: ['Best Seller', 'Seafood'],
+    image: '/media/menu/california-rolls.jpg',
     allergens: ['Fish', 'Dairy'],
   },
 
@@ -946,6 +1021,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '190 cal',
     tags: ['Signature', 'Chef\'s Choice', 'Seafood'],
+    image: '/media/dishes/ora-win-roll.jpg',
     allergens: ['Shellfish', 'Dairy'],
   },
   {
@@ -958,6 +1034,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '300 cal',
     tags: ['Signature', 'Seafood'],
+    image: '/media/dishes/dsc09278.jpg',
     allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
@@ -970,6 +1047,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '240 cal',
     tags: ['Best Seller', 'Seafood'],
+    image: '/media/menu/special-rolls.jpg',
     allergens: ['Shellfish', 'Gluten', 'Egg', 'Fish'],
   },
   {
@@ -982,6 +1060,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '340 cal',
     tags: ['Signature', 'Spicy', 'Best Seller'],
+    image: '/media/menu/special-rolls.jpg',
     allergens: ['Shellfish', 'Gluten', 'Egg', 'Fish'],
   },
   {
@@ -994,6 +1073,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '320 cal',
     tags: ['Classic'],
+    image: '/media/menu/special-rolls.jpg',
     allergens: ['Soy', 'Gluten'],
   },
   {
@@ -1006,6 +1086,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '310 cal',
     tags: ['Spicy', 'Best Seller', 'Seafood'],
+    image: '/media/dishes/kani-crunchy-roll.jpg',
     allergens: ['Shellfish', 'Egg', 'Gluten'],
   },
   {
@@ -1018,6 +1099,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '280 cal',
     tags: ['Spicy', 'Seafood'],
+    image: '/media/dishes/fire-crunchy-roll.jpg',
     allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
@@ -1030,6 +1112,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '200 cal',
     tags: ['Seafood'],
+    image: '/media/menu/special-rolls.jpg',
     allergens: ['Fish', 'Dairy'],
   },
   {
@@ -1042,6 +1125,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '140 cal',
     tags: ['Vegetarian'],
+    image: '/media/dishes/dsc09229.jpg',
     allergens: [],
   },
   {
@@ -1054,6 +1138,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '210 cal',
     tags: ['Classic'],
+    image: '/media/dishes/chiken-tempura-roll.jpg',
     allergens: ['Gluten', 'Egg'],
   },
   {
@@ -1066,6 +1151,7 @@ export const menuData: Dish[] = [
     category: 'Special Rolls',
     calories: '350 cal',
     tags: ['Spicy', 'Signature', 'Seafood'],
+    image: '/media/dishes/salmon-roll.jpg',
     allergens: ['Fish', 'Gluten', 'Soy'],
   },
   {
@@ -1077,6 +1163,7 @@ export const menuData: Dish[] = [
     price: '',
     category: 'Special Rolls',
     tags: ['Spicy', 'Seafood', 'New'],
+    image: '/media/dishes/flame-crab-roll.jpg',
     allergens: ['Shellfish', 'Dairy'],
   },
   {
@@ -1088,6 +1175,7 @@ export const menuData: Dish[] = [
     price: '49 SR',
     category: 'Special Rolls',
     tags: ['Premium', 'Chef\'s Choice', 'Seafood'],
+    image: '/media/menu/special-rolls.jpg',
     allergens: ['Shellfish', 'Fish'],
   },
   {
@@ -1099,6 +1187,7 @@ export const menuData: Dish[] = [
     price: '39 SR',
     category: 'Special Rolls',
     tags: ['Premium', 'Chef\'s Choice', 'Seafood'],
+    image: '/media/menu/special-rolls.jpg',
     allergens: ['Fish', 'Dairy'],
   },
 
@@ -1112,6 +1201,7 @@ export const menuData: Dish[] = [
     category: 'Fried Rolls',
     calories: '280 cal',
     tags: ['Signature', 'Seafood'],
+    image: '/media/menu/fried-rolls.jpg',
     allergens: ['Shellfish', 'Gluten', 'Egg'],
   },
   {
@@ -1124,6 +1214,7 @@ export const menuData: Dish[] = [
     category: 'Fried Rolls',
     calories: '260 cal',
     tags: ['Best Seller', 'Seafood'],
+    image: '/media/dishes/golden-fry.jpg',
     allergens: ['Shellfish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
@@ -1136,6 +1227,7 @@ export const menuData: Dish[] = [
     category: 'Fried Rolls',
     calories: '250 cal',
     tags: ['Signature', 'Seafood', 'Chef\'s Choice'],
+    image: '/media/menu/fried-rolls.jpg',
     allergens: ['Shellfish', 'Fish', 'Gluten', 'Egg', 'Soy'],
   },
   {
@@ -1147,6 +1239,7 @@ export const menuData: Dish[] = [
     price: '',
     category: 'Fried Rolls',
     tags: ['Seafood', 'New'],
+    image: '/media/menu/fried-rolls.jpg',
     allergens: ['Fish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
@@ -1159,6 +1252,7 @@ export const menuData: Dish[] = [
     category: 'Fried Rolls',
     calories: '220 cal',
     tags: ['Best Seller', 'Seafood'],
+    image: '/media/menu/fried-rolls.jpg',
     allergens: ['Fish', 'Dairy', 'Shellfish', 'Gluten', 'Egg'],
   },
   {
@@ -1170,6 +1264,7 @@ export const menuData: Dish[] = [
     category: 'Fried Rolls',
     calories: '220 cal',
     tags: ['Seafood', 'New'],
+    image: '/media/menu/fried-rolls.jpg',
     allergens: ['Shellfish', 'Dairy', 'Gluten', 'Egg'],
   },
 
@@ -1182,6 +1277,7 @@ export const menuData: Dish[] = [
     price: '91 SR',
     category: 'Boxes',
     tags: ['Signature', 'Seafood', 'Best Seller'],
+    image: '/media/dishes/nigiri-box.jpg',
     allergens: ['Fish', 'Shellfish', 'Soy'],
   },
   {
@@ -1193,6 +1289,7 @@ export const menuData: Dish[] = [
     category: 'Boxes',
     calories: '550 cal',
     tags: ['Premium', 'Seafood'],
+    image: '/media/menu/boxes.jpg',
     allergens: ['Fish', 'Shellfish'],
   },
   {
@@ -1204,6 +1301,7 @@ export const menuData: Dish[] = [
     category: 'Boxes',
     calories: '490 cal',
     tags: ['Signature', 'Seafood', 'Best Seller'],
+    image: '/media/dishes/salmon-box.jpg',
     allergens: ['Fish'],
   },
   {
@@ -1215,6 +1313,7 @@ export const menuData: Dish[] = [
     category: 'Boxes',
     calories: '605 cal',
     tags: ['Signature', 'Chef\'s Choice', 'Best Seller'],
+    image: '/media/dishes/sugi-box.jpg',
     allergens: ['Fish', 'Shellfish', 'Gluten', 'Egg', 'Soy', 'Dairy'],
   },
   {
@@ -1226,6 +1325,7 @@ export const menuData: Dish[] = [
     category: 'Boxes',
     calories: '780 cal',
     tags: ['Best Seller'],
+    image: '/media/menu/boxes.jpg',
     allergens: ['Shellfish', 'Dairy', 'Gluten', 'Egg'],
   },
   {
@@ -1237,6 +1337,7 @@ export const menuData: Dish[] = [
     category: 'Boxes',
     calories: '370 cal',
     tags: ['Seafood'],
+    image: '/media/menu/boxes.jpg',
     allergens: ['Fish', 'Shellfish', 'Gluten', 'Egg', 'Dairy'],
   },
 
@@ -1250,6 +1351,7 @@ export const menuData: Dish[] = [
     price: '257 SR',
     category: 'Sugi Boat',
     tags: ['Premium', 'Chef\'s Choice', 'Sharing'],
+    image: '/media/dishes/mini-boat.jpg',
     allergens: ['Fish', 'Shellfish', 'Gluten', 'Egg', 'Soy', 'Dairy'],
   },
   {
@@ -1261,6 +1363,7 @@ export const menuData: Dish[] = [
     price: '318 SR',
     category: 'Sugi Boat',
     tags: ['Premium', 'Chef\'s Choice', 'Sharing'],
+    image: '/media/menu/sugi-boat.jpg',
     allergens: ['Fish', 'Shellfish', 'Gluten', 'Egg', 'Soy', 'Dairy'],
   },
   {
@@ -1272,6 +1375,7 @@ export const menuData: Dish[] = [
     price: '516 SR',
     category: 'Sugi Boat',
     tags: ['Premium', 'Chef\'s Choice', 'Sharing'],
+    image: '/media/menu/sugi-boat.jpg',
     allergens: ['Fish', 'Shellfish', 'Gluten', 'Egg', 'Soy', 'Dairy'],
   },
 
@@ -1284,6 +1388,7 @@ export const menuData: Dish[] = [
     price: '5 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    image: '/media/menu/cold-drinks.jpg',
     allergens: [],
   },
   {
@@ -1294,6 +1399,7 @@ export const menuData: Dish[] = [
     price: '5 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    image: '/media/menu/cold-drinks.jpg',
     allergens: [],
   },
   {
@@ -1304,6 +1410,7 @@ export const menuData: Dish[] = [
     price: '5 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    image: '/media/menu/cold-drinks.jpg',
     allergens: [],
   },
   {
@@ -1314,6 +1421,7 @@ export const menuData: Dish[] = [
     price: '5 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    image: '/media/menu/cold-drinks.jpg',
     allergens: [],
   },
   {
@@ -1324,6 +1432,7 @@ export const menuData: Dish[] = [
     price: '5 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    image: '/media/menu/cold-drinks.jpg',
     allergens: [],
   },
   {
@@ -1334,6 +1443,7 @@ export const menuData: Dish[] = [
     price: '4 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    image: '/media/menu/cold-drinks.jpg',
     allergens: [],
   },
   {
@@ -1344,6 +1454,7 @@ export const menuData: Dish[] = [
     price: '8 SR',
     category: 'Cold Drinks',
     tags: ['Premium'],
+    image: '/media/menu/cold-drinks.jpg',
     allergens: [],
   },
   {
@@ -1354,6 +1465,7 @@ export const menuData: Dish[] = [
     price: '8 SR',
     category: 'Cold Drinks',
     tags: ['Classic'],
+    image: '/media/menu/cold-drinks.jpg',
     allergens: [],
   },
 
@@ -1367,6 +1479,7 @@ export const menuData: Dish[] = [
     category: 'Fresh Juices',
     calories: '120 cal',
     tags: ['Classic', 'Fresh'],
+    image: '/media/dishes/orange-juice.jpg',
     allergens: [],
   },
   {
@@ -1378,6 +1491,7 @@ export const menuData: Dish[] = [
     category: 'Fresh Juices',
     calories: '40 cal',
     tags: ['Fresh', 'Healthy'],
+    image: '/media/menu/fresh-juices.jpg',
     allergens: [],
   },
   {
@@ -1389,6 +1503,7 @@ export const menuData: Dish[] = [
     category: 'Fresh Juices',
     calories: '120 cal',
     tags: ['Fresh', 'Signature'],
+    image: '/media/menu/fresh-juices.jpg',
     allergens: [],
   },
   {
@@ -1400,6 +1515,7 @@ export const menuData: Dish[] = [
     category: 'Fresh Juices',
     calories: '110 cal',
     tags: ['Fresh', 'Signature'],
+    image: '/media/menu/fresh-juices.jpg',
     allergens: [],
   },
   {
@@ -1411,6 +1527,7 @@ export const menuData: Dish[] = [
     category: 'Fresh Juices',
     calories: '80 cal',
     tags: ['Fresh', 'Signature'],
+    image: '/media/menu/fresh-juices.jpg',
     allergens: [],
   },
   {
@@ -1421,6 +1538,7 @@ export const menuData: Dish[] = [
     price: '28 SR',
     category: 'Fresh Juices',
     tags: ['Premium', 'Signature'],
+    image: '/media/menu/fresh-juices.jpg',
     allergens: [],
   },
 
@@ -1434,6 +1552,7 @@ export const menuData: Dish[] = [
     category: 'Hot Drinks',
     calories: '0 cal',
     tags: ['Classic'],
+    image: '/media/menu/hot-drinks.jpg',
     allergens: [],
   },
   {
@@ -1445,6 +1564,7 @@ export const menuData: Dish[] = [
     category: 'Hot Drinks',
     calories: '40 cal',
     tags: ['Classic'],
+    image: '/media/menu/hot-drinks.jpg',
     allergens: [],
   },
 
@@ -1459,6 +1579,7 @@ export const menuData: Dish[] = [
     category: 'Desserts',
     calories: '156 cal',
     tags: ['Signature', 'Best Seller'],
+    image: '/media/dishes/mochi.jpg',
     allergens: ['Dairy', 'Soy'],
   },
   {
@@ -1470,6 +1591,7 @@ export const menuData: Dish[] = [
     category: 'Desserts',
     calories: '110 cal',
     tags: ['Classic'],
+    image: '/media/menu/desserts.jpg',
     allergens: ['Dairy', 'Nuts'],
   },
   {
@@ -1481,6 +1603,7 @@ export const menuData: Dish[] = [
     category: 'Desserts',
     calories: '420 cal',
     tags: ['Best Seller'],
+    image: '/media/menu/desserts.jpg',
     allergens: ['Dairy', 'Gluten', 'Egg'],
   },
   {
@@ -1492,6 +1615,7 @@ export const menuData: Dish[] = [
     category: 'Desserts',
     calories: '230 cal',
     tags: ['Signature', 'Chef\'s Choice'],
+    image: '/media/menu/desserts.jpg',
     allergens: ['Dairy', 'Gluten', 'Egg'],
   },
 
@@ -1504,6 +1628,7 @@ export const menuData: Dish[] = [
     price: '1 SR',
     category: 'Extra Sauces',
     tags: ['Classic'],
+    image: '/media/dishes/soya-sauce.jpg',
     allergens: ['Soy', 'Gluten'],
   },
   {
@@ -1514,6 +1639,7 @@ export const menuData: Dish[] = [
     price: '1 SR',
     category: 'Extra Sauces',
     tags: ['Healthy'],
+    image: '/media/menu/extra-sauces.jpg',
     allergens: ['Soy', 'Gluten'],
   },
   {
@@ -1524,6 +1650,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Classic'],
+    image: '/media/menu/extra-sauces.jpg',
     allergens: ['Soy', 'Gluten'],
   },
   {
@@ -1534,6 +1661,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Spicy', 'Signature'],
+    image: '/media/menu/extra-sauces.jpg',
     allergens: ['Egg', 'Gluten'],
   },
   {
@@ -1544,6 +1672,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Spicy'],
+    image: '/media/menu/extra-sauces.jpg',
     allergens: ['Egg'],
   },
   {
@@ -1554,6 +1683,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Classic'],
+    image: '/media/menu/extra-sauces.jpg',
     allergens: [],
   },
   {
@@ -1564,6 +1694,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Classic'],
+    image: '/media/menu/extra-sauces.jpg',
     allergens: [],
   },
   {
@@ -1574,6 +1705,7 @@ export const menuData: Dish[] = [
     price: '2 SR',
     category: 'Extra Sauces',
     tags: ['Spicy'],
+    image: '/media/menu/extra-sauces.jpg',
     allergens: [],
   },
 ];

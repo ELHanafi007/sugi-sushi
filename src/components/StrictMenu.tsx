@@ -12,28 +12,36 @@ import { PortionSelector } from '@/components/PortionSelector';
 
 const DEFAULT_IMAGE = '/media/landing/sushi-closeup.jpg';
 
-/* Static fallback images per category — used when DB has no image */
+/* Static fallback images per category — authentic local food photography */
 const CAT_IMAGES: Record<string, string> = {
-  'salad': '/media/optimized/brochure-1.jpg',
-  'soup': '/media/optimized/brochure-2.jpg',
-  'starters': '/media/landing/sushi-selection.jpg',
-  'wok & noodles': '/media/real/IMG_4154.JPG',
-  'tempura & fried': '/media/real/r.PNG',
-  'sugi dishes': '/media/landing/sushi-closeup.jpg',
-  'sashimi': '/media/real/IMG_4159.JPG',
-  'tataki': '/media/real/IMG_4160.JPG',
-  'ceviche': '/media/real/IMG_4159.JPG',
-  'nigiri': '/media/landing/sushi-selection.jpg',
-  'maki rolls': '/media/landing/sushi-rolls.jpg',
-  'aromaki rolls': '/media/landing/chef-roll.jpg',
-  'special rolls': '/media/landing/sushi-rolls.jpg',
-  'fry rolls': '/media/real/r.PNG',
-  'boxes': '/media/real/IMG_4158.JPG',
-  'boats': '/media/real/IMG_4158.JPG',
-  'cold drinks': '/media/real/IMG_4154.JPG',
-  'fresh juices': '/media/real/IMG_4154.JPG',
-  'hot drinks': '/media/real/IMG_4154.JPG',
-  'dessert': '/media/optimized/brochure-9.jpg',
+  'salad': '/media/menu/salad.jpg',
+  'soup': '/media/menu/soup.jpg',
+  'starters': '/media/menu/starters.jpg',
+  'wok & noodles': '/media/menu/wok-noodles.jpg',
+  'tempura & fried': '/media/menu/tempura-fried.jpg',
+  'sugi dishes': '/media/menu/sugi-dishes.jpg',
+  'sashimi': '/media/menu/sashimi.jpg',
+  'tataki': '/media/menu/tataki.jpg',
+  'ceviche': '/media/menu/sashimi.jpg',
+  'nigiri': '/media/menu/nigiri.jpg',
+  'temaki': '/media/menu/maki-rolls.jpg',
+  'gunkan': '/media/menu/nigiri.jpg',
+  'maki rolls': '/media/menu/maki-rolls.jpg',
+  'aromaki rolls': '/media/menu/california-rolls.jpg',
+  'aromaki fried': '/media/menu/fry-rolls.jpg',
+  'california rolls': '/media/menu/california-rolls.jpg',
+  'special rolls': '/media/menu/special-rolls.jpg',
+  'fried rolls': '/media/menu/fry-rolls.jpg',
+  'fry rolls': '/media/menu/fry-rolls.jpg',
+  'boxes': '/media/menu/boxes.jpg',
+  'sugi boat': '/media/menu/boats.jpg',
+  'boats': '/media/menu/boats.jpg',
+  'cold drinks': '/media/menu/cold-drinks.jpg',
+  'fresh juices': '/media/menu/fresh-juices.jpg',
+  'hot drinks': '/media/menu/hot-drinks.jpg',
+  'desserts': '/media/menu/dessert.jpg',
+  'dessert': '/media/menu/dessert.jpg',
+  'extra sauces': '/media/landing/sushi-selection.jpg',
   'extra sauce': '/media/landing/sushi-selection.jpg',
 };
 
@@ -403,7 +411,9 @@ export default function StrictMenu({
   const dynamicCategoryImages = useMemo(() => {
     const map: Record<string, string> = {};
     initialCategoryData.forEach(cat => {
-      map[(cat.name || '').toLowerCase()] = cat.image;
+      if (cat.image && !cat.image.includes('supabase.co') && !cat.image.includes('unsplash.com')) {
+        map[(cat.name || '').toLowerCase()] = cat.image;
+      }
     });
     return map;
   }, [initialCategoryData]);
