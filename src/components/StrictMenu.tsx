@@ -47,11 +47,14 @@ const CAT_IMAGES: Record<string, string> = {
 
 function getDishImage(dish: Dish, dynamicCategoryImages: Record<string, string>): string {
   const categoryKey = (dish.category || '').toLowerCase();
-  if (dish.image && !dish.image.includes('supabase.co') && !dish.image.includes('unsplash.com')) {
+  // Prefer the real product photo from Supabase. Unsplash remains blocked because
+  // those URLs are placeholders, while the Image onError handler below preserves
+  // the local category fallback for unavailable files.
+  if (dish.image && !dish.image.includes('unsplash.com')) {
     return dish.image;
   }
   const dynamicImg = dynamicCategoryImages[categoryKey];
-  if (dynamicImg && !dynamicImg.includes('supabase.co') && !dynamicImg.includes('unsplash.com')) {
+  if (dynamicImg && !dynamicImg.includes('unsplash.com')) {
     return dynamicImg;
   }
   return CAT_IMAGES[categoryKey] || DEFAULT_IMAGE;
@@ -411,7 +414,7 @@ export default function StrictMenu({
   const dynamicCategoryImages = useMemo(() => {
     const map: Record<string, string> = {};
     initialCategoryData.forEach(cat => {
-      if (cat.image && !cat.image.includes('supabase.co') && !cat.image.includes('unsplash.com')) {
+      if (cat.image && !cat.image.includes('unsplash.com')) {
         map[(cat.name || '').toLowerCase()] = cat.image;
       }
     });

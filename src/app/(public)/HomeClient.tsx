@@ -150,7 +150,9 @@ export default function HomeClient({
   ], [t]);
 
   const landingImage = (src: string | undefined, category: string, index: number) => {
-    if (src && src.startsWith('/') && !src.includes('supabase.co')) return src;
+    // Use the real Supabase photo when one is available. Unsplash entries are
+    // placeholders and should continue to use the local fallback imagery.
+    if (src && (src.startsWith('/') || src.includes('supabase.co')) && !src.includes('unsplash.com')) return src;
     if (CAT_IMAGES[category]) return CAT_IMAGES[category];
     return LOCAL_LANDING_IMAGES[index % LOCAL_LANDING_IMAGES.length] || FALLBACK_IMAGE;
   };
