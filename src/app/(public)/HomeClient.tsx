@@ -150,7 +150,7 @@ export default function HomeClient({
   ], [t]);
 
   const landingImage = (src: string | undefined, category: string, index: number) => {
-    if (src && (src.startsWith('/') || src.startsWith('http://') || src.startsWith('https://'))) return src;
+    if (src && src.startsWith('/') && !src.includes('supabase.co')) return src;
     if (CAT_IMAGES[category]) return CAT_IMAGES[category];
     return LOCAL_LANDING_IMAGES[index % LOCAL_LANDING_IMAGES.length] || FALLBACK_IMAGE;
   };
