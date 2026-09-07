@@ -1,6 +1,9 @@
 import { Resend } from 'resend';
 import { Reservation } from '@/types/reservation';
 
+const RESTAURANT_PHONE = '+966 50 133 5273';
+const RESTAURANT_PHONE_AR = '٠٥٠ ١٣٣ ٥٢٧٣';
+
 const getResend = () => {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey && process.env.NODE_ENV === 'production') {
@@ -63,7 +66,7 @@ export async function sendConfirmationEmail(reservation: Reservation) {
             <div dir="rtl" style="text-align: right;">
               <h2 style="color: #c4a661; font-size: 24px; margin-bottom: 10px;">تم تأكيد حجزك!</h2>
               <p style="color: #666; font-size: 18px; font-weight: bold; color: #c4a661; margin-bottom: 15px;">طاولتك بانتظارك الآن.</p>
-              <p style="color: #666; font-size: 14px;">يسعدنا استقبالكم في سوجي سوشي.</p>
+              <p style="color: #666; font-size: 14px;">يسعدنا أن نرحب بكم في سوجي سوشي.</p>
               
               <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px;">
                 <p style="margin: 5px 0;"><strong>الاسم:</strong> ${reservation.name}</p>
@@ -75,8 +78,8 @@ export async function sendConfirmationEmail(reservation: Reservation) {
             </div>
 
             <div style="text-align: center; margin-top: 40px;">
-              <p style="color: #888; font-size: 14px;">If you need to cancel or modify your reservation, please contact us at +971 (0) 50 123 4567</p>
-              <p style="color: #888; font-size: 14px; margin-top: 5px;">إذا كنت بحاجة إلى إلغاء أو تعديل حجزك، يرجى الاتصال بنا على 0501234567</p>
+              <p style="color: #888; font-size: 14px;">If you need to cancel or modify your reservation, please contact us at ${RESTAURANT_PHONE}</p>
+              <p style="color: #888; font-size: 14px; margin-top: 5px;">إذا كنت بحاجة إلى إلغاء أو تعديل حجزك، يرجى الاتصال بنا على ${RESTAURANT_PHONE_AR}</p>
             </div>
           </div>
           
@@ -148,7 +151,7 @@ export async function sendReceivedEmail(reservation: Reservation) {
             </div>
 
             <div style="text-align: center; margin-top: 40px;">
-              <p style="color: #888; font-size: 14px;">If you have any questions, please contact us at +971 (0) 50 123 4567</p>
+              <p style="color: #888; font-size: 14px;">If you have any questions, please contact us at ${RESTAURANT_PHONE}</p>
             </div>
           </div>
           
