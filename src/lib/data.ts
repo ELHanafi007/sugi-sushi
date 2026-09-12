@@ -29,6 +29,17 @@ function getMemoryCache(): MenuData | null {
   return null;
 }
 
+export function clearMenuCache(): void {
+  memoryCache = null;
+  try {
+    if (fs.existsSync(CACHE_FILE)) {
+      fs.unlinkSync(CACHE_FILE);
+    }
+  } catch (e) {
+    console.warn('[Cache] Failed to delete file cache:', e);
+  }
+}
+
 function setMemoryCache(data: MenuData): void {
   memoryCache = { data, timestamp: Date.now() };
 }

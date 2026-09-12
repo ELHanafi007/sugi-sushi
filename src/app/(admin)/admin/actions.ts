@@ -4,6 +4,7 @@ import { Dish } from '@/data/menuData';
 import { revalidatePath, updateTag } from 'next/cache';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { cookies } from 'next/headers';
+import { clearMenuCache } from '@/lib/data';
 
 export async function upsertProduct(product: Dish) {
   // Security check: verify admin session
@@ -85,7 +86,8 @@ export async function upsertProduct(product: Dish) {
     
     console.log('=== UPSERT SUCCESS ===');
     
-    // Next.js 16 revalidation
+    // Invalidate caches
+    clearMenuCache();
     updateTag('products');
     revalidatePath('/');
     revalidatePath('/admin/products');
@@ -118,6 +120,7 @@ export async function deleteProduct(id: string) {
     return false;
   }
   
+  clearMenuCache();
   updateTag('products');
   revalidatePath('/');
   revalidatePath('/admin/products');
@@ -152,6 +155,7 @@ export async function updateCategories(categories: { name: string, image: string
     return false;
   }
   
+  clearMenuCache();
   revalidatePath('/');
   revalidatePath('/admin/categories');
   return true;
